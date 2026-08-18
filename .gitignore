@@ -1,0 +1,15 @@
+# .NET build output
+bin/
+obj/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Rider / VS Code
+.idea/
+.vscode/
+
+# graphify working files (graph.json/GRAPH_REPORT.md/graph.html are kept)
+graphify-out/*.graphify_*
