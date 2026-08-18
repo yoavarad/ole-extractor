@@ -2,14 +2,19 @@
 """YDK unified guard hook - all guard checks in one script."""
 
 import json
-import select
 import sys
 from pathlib import Path
 
-# Read stdin (Claude Code pipes tool context as JSON)
-if select.select([sys.stdin], [], [], 0.5)[0]:
+# Read stdin (Claude Code pipes tool context as JSON).
+# select.select() on stdin is socket-only on Windows (raises WinError 10093
+# for pipes/console handles) -- a plain blocking read is portable and safe
+# here since the harness always closes stdin after writing the payload.
+try:
     raw = sys.stdin.read()
-else:
+except Exception:
+    sys.exit(0)  # Unreadable stdin = allow
+
+if not raw:
     sys.exit(0)  # No data = allow
 
 try:
@@ -32,10 +37,10 @@ root = Path(cwd)
 # --- GUARD: no-manual-pr and no-direct-push ---
 if tool_name == "Bash" and ("gh pr create" in command or "gh pr merge" in command):
     sys.stderr.write(
-        "BLOCKED: Use 'ydk task done' to create PRs � it captures verification proof.\n"
+        "BLOCKED: Use 'ydk task done' to create PRs -- it captures verification proof.\n"
     )
     sys.exit(2)
-# git push is allowed � ydk task done needs it internally
+# git push is allowed -- ydk task done needs it internally
 # Only gh pr create is blocked (forces proof-based PRs)
 
 # --- GUARD: no-proof-tamper ---
@@ -82,10 +87,10 @@ if state_file.exists() and file_path:
         if stage in ("01", "02") and file_path.startswith(("src/", "app/", "tests/")):
             if not file_path.startswith(".ydk/"):
                 sys.stderr.write(
-                    f"BLOCKED: Stage {stage} � cannot edit source files yet.\n"
+                    f"BLOCKED: Stage {stage} -- cannot edit source files yet.\n"
                 )
                 sys.exit(2)
     except Exception:
         pass  # State unreadable = allow
 
-sys.exit(0)  # All checks passed � allow
+sys.exit(0)  # All checks passed -- allow
