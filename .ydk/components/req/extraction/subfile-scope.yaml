@@ -1,0 +1,26 @@
+$schema: ydk:schema:req
+id: ydk:req:extraction/subfile-scope
+description: Defines exactly which embedded content counts as a subfile in ExtractionResult.Subfiles.
+type: business-rule
+priority: critical
+rule: >
+  Subfiles MUST include both (a) OLE-embedded objects — docx/xlsx/pptx
+  embeddings/ parts, and legacy doc/xls/ppt embedded-object storages — and
+  (b) inline media referenced by the document body (images, audio, video),
+  regardless of embedding mechanism. Subfiles MUST NOT include: XML parts
+  internal to the OOXML package structure that aren't embeddings or media
+  (styles.xml, theme*.xml, numbering.xml, settings.xml, docProps/*.xml,
+  [Content_Types].xml, and _rels/* relationship parts), or content nested
+  inside a subfile's own
+  binary (only first-layer/direct embeddings are extracted in v1 — no
+  recursive unpacking of a subfile that is itself a container).
+failure_behavior: N/A — correctness rule verified by tests, not a runtime error.
+related_components:
+  - ydk:entity:extraction/SubfileItem
+  - ydk:entity:extraction/ExtractionResult
+  - ydk:contract:extraction/extract
+acceptance_criteria:
+  - "Test: a docx with an embedded xlsx object AND an inline PNG image both appear in Subfiles, but internal package XML parts (styles.xml, theme1.xml, numbering.xml, settings.xml, docProps/*.xml, [Content_Types].xml, _rels/*) do not."
+  - "Test: a document with one corrupt embedded object among otherwise-valid embeddings extracts successfully, omits only the corrupt one from Subfiles, and logs the omission — the overall Extract() call does not throw."
+  - "Test: a legacy ppt with an embedded OLE object (e.g. an embedded doc) has that object appear in Subfiles as raw bytes, named by its CFB storage name."
+  - "Test: a subfile that is itself a container (e.g. an embedded xlsx inside a docx) is extracted as one opaque SubfileItem — its own internal parts are not separately listed."

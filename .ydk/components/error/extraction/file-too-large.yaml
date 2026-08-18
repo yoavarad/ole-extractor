@@ -1,0 +1,21 @@
+$schema: ydk:schema:error
+id: ydk:error:extraction/file-too-large
+description: >
+  Input exceeds the configured max-file-size limit
+  ([ydk:nfr:extraction/max-file-size]). Rejected before any parsing begins.
+  Every occurrence MUST be logged (file size, filename, configured limit)
+  per the NFR's monitoring requirement.
+status_code: 413
+code: FILE_TOO_LARGE
+detail_template: "File size ${actualBytes} bytes exceeds configured limit of ${limitBytes} bytes."
+response_shape:
+  code: string
+  detail: string
+  actualBytes: long
+  limitBytes: long
+triggers:
+  - MimeDetectionRequest.FileBytes.Length or ExtractionRequest.FileBytes.Length exceeds the configured limit
+related:
+  - ydk:contract:extraction/detect-mime-type
+  - ydk:contract:extraction/extract
+  - ydk:nfr:extraction/max-file-size

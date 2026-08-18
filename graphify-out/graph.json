@@ -1,0 +1,4540 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "label": "DocumentExtractionResult",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/DTOs/DocumentExtractionResult.cs",
+      "source_location": "L7",
+      "metadata": {
+        "namespace": "ExtractorOLE.DTOs",
+        "scope_chain": [
+          "s75"
+        ]
+      },
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "extractorole_dtos_documentextractionresult_extractorole_dtos_documentextractionresult",
+      "community": 0,
+      "community_name": "DTO <-> Strategy Cross-Refs",
+      "norm_label": "documentextractionresult"
+    },
+    {
+      "label": "EmbeddedFileItem",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/DTOs/DocumentExtractionResult.cs",
+      "source_location": "L31",
+      "metadata": {
+        "namespace": "ExtractorOLE.DTOs",
+        "scope_chain": [
+          "s75"
+        ]
+      },
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "extractorole_dtos_documentextractionresult_extractorole_dtos_embeddedfileitem",
+      "community": 0,
+      "community_name": "DTO <-> Strategy Cross-Refs",
+      "norm_label": "embeddedfileitem"
+    },
+    {
+      "label": "FileMetadata",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/DTOs/DocumentExtractionResult.cs",
+      "source_location": "L22",
+      "metadata": {
+        "namespace": "ExtractorOLE.DTOs",
+        "scope_chain": [
+          "s75"
+        ]
+      },
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "extractorole_dtos_documentextractionresult_extractorole_dtos_filemetadata",
+      "community": 0,
+      "community_name": "DTO <-> Strategy Cross-Refs",
+      "norm_label": "filemetadata"
+    },
+    {
+      "label": "ExcelOpenStrategy",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/ExcelOpenStrategy.cs",
+      "source_location": "L7",
+      "metadata": {
+        "namespace": "ExtractorOLE.Helpers.FileTypeStrategy",
+        "scope_chain": [
+          "s87"
+        ]
+      },
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "extractorole_helpers_filetypestrategy_excelopenstrategy_extractorole_helpers_filetypestrategy_excelopenstrategy",
+      "community": 0,
+      "community_name": "DTO <-> Strategy Cross-Refs",
+      "norm_label": "excelopenstrategy"
+    },
+    {
+      "label": "IOpenStrategy",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/IOpenStrategy.cs",
+      "source_location": "L5",
+      "metadata": {
+        "namespace": "ExtractorOLE.Helpers.FileTypeStrategy",
+        "scope_chain": [
+          "s28"
+        ]
+      },
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "extractorole_helpers_filetypestrategy_iopenstrategy_extractorole_helpers_filetypestrategy_iopenstrategy",
+      "community": 0,
+      "community_name": "DTO <-> Strategy Cross-Refs",
+      "norm_label": "iopenstrategy"
+    },
+    {
+      "label": "PowerPointOpenStrategy",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/PowerPointOpenStrategy.cs",
+      "source_location": "L7",
+      "metadata": {
+        "namespace": "ExtractorOLE.Helpers.FileTypeStrategy",
+        "scope_chain": [
+          "s87"
+        ]
+      },
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "extractorole_helpers_filetypestrategy_powerpointopenstrategy_extractorole_helpers_filetypestrategy_powerpointopenstrategy",
+      "community": 0,
+      "community_name": "DTO <-> Strategy Cross-Refs",
+      "norm_label": "powerpointopenstrategy"
+    },
+    {
+      "label": "WordOpenStrategy",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/WordOpenStrategy.cs",
+      "source_location": "L7",
+      "metadata": {
+        "namespace": "ExtractorOLE.Helpers.FileTypeStrategy",
+        "scope_chain": [
+          "s87"
+        ]
+      },
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "extractorole_helpers_filetypestrategy_wordopenstrategy_extractorole_helpers_filetypestrategy_wordopenstrategy",
+      "community": 0,
+      "community_name": "DTO <-> Strategy Cross-Refs",
+      "norm_label": "wordopenstrategy"
+    },
+    {
+      "label": "ZipFallbackOpenStrategy",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/ZipFallbackOpenStrategy.cs",
+      "source_location": "L5",
+      "metadata": {
+        "namespace": "ExtractorOLE.Helpers.FileTypeStrategy",
+        "scope_chain": [
+          "s28"
+        ]
+      },
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "extractorole_helpers_filetypestrategy_zipfallbackopenstrategy_extractorole_helpers_filetypestrategy_zipfallbackopenstrategy",
+      "community": 0,
+      "community_name": "DTO <-> Strategy Cross-Refs",
+      "norm_label": "zipfallbackopenstrategy"
+    },
+    {
+      "label": "Program",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Program.cs",
+      "source_location": "L6",
+      "metadata": {
+        "namespace": "ExtractorOLE",
+        "scope_chain": [
+          "s100"
+        ]
+      },
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "extractorole_program_extractorole_program",
+      "community": 1,
+      "community_name": "DI Wiring & Entry Point",
+      "norm_label": "program"
+    },
+    {
+      "label": "ServiceRegistration",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/ServiceRegistration.cs",
+      "source_location": "L9",
+      "metadata": {
+        "namespace": "ExtractorOLE",
+        "scope_chain": [
+          "s187"
+        ]
+      },
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "extractorole_serviceregistration_extractorole_serviceregistration",
+      "community": 1,
+      "community_name": "DI Wiring & Entry Point",
+      "norm_label": "serviceregistration"
+    },
+    {
+      "label": "BackupLogic",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Old/BackupLogic.cs",
+      "source_location": "L7",
+      "metadata": {
+        "namespace": "ExtractorOLE.Old",
+        "scope_chain": [
+          "s75"
+        ]
+      },
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "extractorole_old_backuplogic_extractorole_old_backuplogic",
+      "community": 10,
+      "community_name": "Old Backup Logic (dead code)",
+      "norm_label": "backuplogic"
+    },
+    {
+      "label": "OfficeMimeTypeEnum",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/DTOs/OfficeMimeTypeEnum.cs",
+      "source_location": "L7",
+      "metadata": {
+        "namespace": "ExtractorOLE.DTOs",
+        "scope_chain": [
+          "s75"
+        ]
+      },
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "extractorole_dtos_officemimetypeenum_extractorole_dtos_officemimetypeenum",
+      "community": 2,
+      "community_name": "MainExtractor & Mime Contract",
+      "norm_label": "officemimetypeenum"
+    },
+    {
+      "label": "IExtractionHelper",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Helpers/IExtractionHelper.cs",
+      "source_location": "L7",
+      "metadata": {
+        "namespace": "ExtractorOLE.Helpers",
+        "scope_chain": [
+          "s84"
+        ]
+      },
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "extractorole_helpers_iextractionhelper_extractorole_helpers_iextractionhelper",
+      "community": 2,
+      "community_name": "MainExtractor & Mime Contract",
+      "norm_label": "iextractionhelper"
+    },
+    {
+      "label": "ITextExtractor",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/ITextExtractor.cs",
+      "source_location": "L5",
+      "metadata": {
+        "namespace": "ExtractorOLE",
+        "scope_chain": [
+          "s17"
+        ]
+      },
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "extractorole_itextextractor_extractorole_itextextractor",
+      "community": 2,
+      "community_name": "MainExtractor & Mime Contract",
+      "norm_label": "itextextractor"
+    },
+    {
+      "label": "MainExtractor",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/MainExtractor.cs",
+      "source_location": "L14",
+      "metadata": {
+        "namespace": "ExtractorOLE",
+        "scope_chain": [
+          "s291"
+        ]
+      },
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "extractorole_mainextractor_extractorole_mainextractor",
+      "community": 2,
+      "community_name": "MainExtractor & Mime Contract",
+      "norm_label": "mainextractor"
+    },
+    {
+      "label": "ExtractionHelper",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Helpers/ExtractionHelper.cs",
+      "source_location": "L12",
+      "metadata": {
+        "namespace": "ExtractorOLE.Helpers",
+        "scope_chain": [
+          "s220"
+        ]
+      },
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper",
+      "community": 3,
+      "community_name": "ExtractionHelper Implementation",
+      "norm_label": "extractionhelper"
+    },
+    {
+      "label": "DocxTextExtractor",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Handlers/DocxTextExtractor.cs",
+      "source_location": "L7",
+      "metadata": {
+        "namespace": "ExtractorOLE.Handlers",
+        "scope_chain": [
+          "s76"
+        ]
+      },
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "extractorole_handlers_docxtextextractor_extractorole_handlers_docxtextextractor",
+      "community": 4,
+      "community_name": "Text Extractor Handlers",
+      "norm_label": "docxtextextractor"
+    },
+    {
+      "label": "PptxTextExtractor",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Handlers/PptxTextExtractor.cs",
+      "source_location": "L10",
+      "metadata": {
+        "namespace": "ExtractorOLE.Handlers",
+        "scope_chain": [
+          "s155"
+        ]
+      },
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "extractorole_handlers_pptxtextextractor_extractorole_handlers_pptxtextextractor",
+      "community": 4,
+      "community_name": "Text Extractor Handlers",
+      "norm_label": "pptxtextextractor"
+    },
+    {
+      "label": "XlsxTextExtractor",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Handlers/XlsxTextExtractor.cs",
+      "source_location": "L11",
+      "metadata": {
+        "namespace": "ExtractorOLE.Handlers",
+        "scope_chain": [
+          "s194"
+        ]
+      },
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "extractorole_handlers_xlsxtextextractor_extractorole_handlers_xlsxtextextractor",
+      "community": 4,
+      "community_name": "Text Extractor Handlers",
+      "norm_label": "xlsxtextextractor"
+    },
+    {
+      "label": "ExcelExtractor",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Old/Excel/ExcelExtractor.cs",
+      "source_location": "L10",
+      "metadata": {
+        "namespace": "ExtractorOLE.Old.Excel",
+        "scope_chain": [
+          "s185"
+        ]
+      },
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "extractorole_old_excel_excelextractor_extractorole_old_excel_excelextractor",
+      "community": 5,
+      "community_name": "Old Excel Extractor (dead code)",
+      "norm_label": "excelextractor"
+    },
+    {
+      "label": "DocExtractor",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Old/Doc/DocExtractor.cs",
+      "source_location": "L13",
+      "metadata": {
+        "namespace": "ExtractorOLE.Old.Doc",
+        "scope_chain": [
+          "s265"
+        ]
+      },
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "extractorole_old_doc_docextractor_extractorole_old_doc_docextractor",
+      "community": 7,
+      "community_name": "Old Doc Extractor (dead code)",
+      "norm_label": "docextractor"
+    },
+    {
+      "label": "ExtractionUtil",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Old/Util/ExtractionUtil.cs",
+      "source_location": "L9",
+      "metadata": {
+        "namespace": "ExtractorOLE.Old.Util",
+        "scope_chain": [
+          "s142"
+        ]
+      },
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "extractorole_old_util_extractionutil_extractorole_old_util_extractionutil",
+      "community": 8,
+      "community_name": "Old Extraction Util (dead code)",
+      "norm_label": "extractionutil"
+    },
+    {
+      "label": "SlidesExtractor",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Old/PowerPoint/SlidesExtractor.cs",
+      "source_location": "L9",
+      "metadata": {
+        "namespace": "ExtractorOLE.Old.PowerPoint",
+        "scope_chain": [
+          "s142"
+        ]
+      },
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "extractorole_old_powerpoint_slidesextractor_extractorole_old_powerpoint_slidesextractor",
+      "community": 9,
+      "community_name": "Old PowerPoint Extractor (dead code)",
+      "norm_label": "slidesextractor"
+    },
+    {
+      "label": ".Open()",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/ExcelOpenStrategy.cs",
+      "source_location": "L16",
+      "metadata": {
+        "namespace": "ExtractorOLE.Helpers.FileTypeStrategy",
+        "scope_chain": [
+          "s87"
+        ]
+      },
+      "_callable": true,
+      "_origin": "ast",
+      "id": "extractorole_helpers_filetypestrategy_excelopenstrategy_extractorole_helpers_filetypestrategy_excelopenstrategy_open",
+      "community": 0,
+      "community_name": "DTO <-> Strategy Cross-Refs",
+      "norm_label": ".open()"
+    },
+    {
+      "label": ".Open()",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/IOpenStrategy.cs",
+      "source_location": "L7",
+      "metadata": {
+        "namespace": "ExtractorOLE.Helpers.FileTypeStrategy",
+        "scope_chain": [
+          "s28"
+        ]
+      },
+      "_callable": true,
+      "_origin": "ast",
+      "id": "extractorole_helpers_filetypestrategy_iopenstrategy_extractorole_helpers_filetypestrategy_iopenstrategy_open",
+      "community": 0,
+      "community_name": "DTO <-> Strategy Cross-Refs",
+      "norm_label": ".open()"
+    },
+    {
+      "label": ".Open()",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/PowerPointOpenStrategy.cs",
+      "source_location": "L16",
+      "metadata": {
+        "namespace": "ExtractorOLE.Helpers.FileTypeStrategy",
+        "scope_chain": [
+          "s87"
+        ]
+      },
+      "_callable": true,
+      "_origin": "ast",
+      "id": "extractorole_helpers_filetypestrategy_powerpointopenstrategy_extractorole_helpers_filetypestrategy_powerpointopenstrategy_open",
+      "community": 0,
+      "community_name": "DTO <-> Strategy Cross-Refs",
+      "norm_label": ".open()"
+    },
+    {
+      "label": ".Open()",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/WordOpenStrategy.cs",
+      "source_location": "L16",
+      "metadata": {
+        "namespace": "ExtractorOLE.Helpers.FileTypeStrategy",
+        "scope_chain": [
+          "s87"
+        ]
+      },
+      "_callable": true,
+      "_origin": "ast",
+      "id": "extractorole_helpers_filetypestrategy_wordopenstrategy_extractorole_helpers_filetypestrategy_wordopenstrategy_open",
+      "community": 0,
+      "community_name": "DTO <-> Strategy Cross-Refs",
+      "norm_label": ".open()"
+    },
+    {
+      "label": ".Open()",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/ZipFallbackOpenStrategy.cs",
+      "source_location": "L18",
+      "metadata": {
+        "namespace": "ExtractorOLE.Helpers.FileTypeStrategy",
+        "scope_chain": [
+          "s28"
+        ]
+      },
+      "_callable": true,
+      "_origin": "ast",
+      "id": "extractorole_helpers_filetypestrategy_zipfallbackopenstrategy_extractorole_helpers_filetypestrategy_zipfallbackopenstrategy_open",
+      "community": 0,
+      "community_name": "DTO <-> Strategy Cross-Refs",
+      "norm_label": ".open()"
+    },
+    {
+      "label": ".ExtractFirstLayerEmbedded()",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Helpers/IExtractionHelper.cs",
+      "source_location": "L13",
+      "metadata": {
+        "namespace": "ExtractorOLE.Helpers",
+        "scope_chain": [
+          "s84"
+        ]
+      },
+      "_callable": true,
+      "_origin": "ast",
+      "id": "extractorole_helpers_iextractionhelper_extractorole_helpers_iextractionhelper_extractfirstlayerembedded",
+      "community": 0,
+      "community_name": "DTO <-> Strategy Cross-Refs",
+      "norm_label": ".extractfirstlayerembedded()"
+    },
+    {
+      "label": ".ExtractMetadataAndEmbedded()",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Helpers/IExtractionHelper.cs",
+      "source_location": "L12",
+      "metadata": {
+        "namespace": "ExtractorOLE.Helpers",
+        "scope_chain": [
+          "s84"
+        ]
+      },
+      "_callable": true,
+      "_origin": "ast",
+      "id": "extractorole_helpers_iextractionhelper_extractorole_helpers_iextractionhelper_extractmetadataandembedded",
+      "community": 0,
+      "community_name": "DTO <-> Strategy Cross-Refs",
+      "norm_label": ".extractmetadataandembedded()"
+    },
+    {
+      "label": ".Main()",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Program.cs",
+      "source_location": "L8",
+      "metadata": {
+        "namespace": "ExtractorOLE",
+        "scope_chain": [
+          "s100"
+        ]
+      },
+      "_callable": true,
+      "_origin": "ast",
+      "id": "extractorole_program_extractorole_program_main",
+      "community": 1,
+      "community_name": "DI Wiring & Entry Point",
+      "norm_label": ".main()"
+    },
+    {
+      "label": ".Register()",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/ServiceRegistration.cs",
+      "source_location": "L11",
+      "metadata": {
+        "namespace": "ExtractorOLE",
+        "scope_chain": [
+          "s187"
+        ]
+      },
+      "_callable": true,
+      "_origin": "ast",
+      "id": "extractorole_serviceregistration_extractorole_serviceregistration_register",
+      "community": 1,
+      "community_name": "DI Wiring & Entry Point",
+      "norm_label": ".register()"
+    },
+    {
+      "label": ".DetectMimeFromMagicBytes()",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Helpers/IExtractionHelper.cs",
+      "source_location": "L17",
+      "metadata": {
+        "namespace": "ExtractorOLE.Helpers",
+        "scope_chain": [
+          "s84"
+        ]
+      },
+      "_callable": true,
+      "_origin": "ast",
+      "id": "extractorole_helpers_iextractionhelper_extractorole_helpers_iextractionhelper_detectmimefrommagicbytes",
+      "community": 2,
+      "community_name": "MainExtractor & Mime Contract",
+      "norm_label": ".detectmimefrommagicbytes()"
+    },
+    {
+      "label": ".DetectMimeTypeFromBytes()",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Helpers/IExtractionHelper.cs",
+      "source_location": "L15",
+      "metadata": {
+        "namespace": "ExtractorOLE.Helpers",
+        "scope_chain": [
+          "s84"
+        ]
+      },
+      "_callable": true,
+      "_origin": "ast",
+      "id": "extractorole_helpers_iextractionhelper_extractorole_helpers_iextractionhelper_detectmimetypefrombytes",
+      "community": 2,
+      "community_name": "MainExtractor & Mime Contract",
+      "norm_label": ".detectmimetypefrombytes()"
+    },
+    {
+      "label": ".GetExtensionFromContentType()",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Helpers/IExtractionHelper.cs",
+      "source_location": "L16",
+      "metadata": {
+        "namespace": "ExtractorOLE.Helpers",
+        "scope_chain": [
+          "s84"
+        ]
+      },
+      "_callable": true,
+      "_origin": "ast",
+      "id": "extractorole_helpers_iextractionhelper_extractorole_helpers_iextractionhelper_getextensionfromcontenttype",
+      "community": 2,
+      "community_name": "MainExtractor & Mime Contract",
+      "norm_label": ".getextensionfromcontenttype()"
+    },
+    {
+      "label": ".MimeFor()",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Helpers/IExtractionHelper.cs",
+      "source_location": "L9",
+      "metadata": {
+        "namespace": "ExtractorOLE.Helpers",
+        "scope_chain": [
+          "s84"
+        ]
+      },
+      "_callable": true,
+      "_origin": "ast",
+      "id": "extractorole_helpers_iextractionhelper_extractorole_helpers_iextractionhelper_mimefor",
+      "community": 2,
+      "community_name": "MainExtractor & Mime Contract",
+      "norm_label": ".mimefor()"
+    },
+    {
+      "label": ".ParseOfficeMimeType()",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Helpers/IExtractionHelper.cs",
+      "source_location": "L10",
+      "metadata": {
+        "namespace": "ExtractorOLE.Helpers",
+        "scope_chain": [
+          "s84"
+        ]
+      },
+      "_callable": true,
+      "_origin": "ast",
+      "id": "extractorole_helpers_iextractionhelper_extractorole_helpers_iextractionhelper_parseofficemimetype",
+      "community": 2,
+      "community_name": "MainExtractor & Mime Contract",
+      "norm_label": ".parseofficemimetype()"
+    },
+    {
+      "label": ".ExtractText()",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/ITextExtractor.cs",
+      "source_location": "L7",
+      "metadata": {
+        "namespace": "ExtractorOLE",
+        "scope_chain": [
+          "s17"
+        ]
+      },
+      "_callable": true,
+      "_origin": "ast",
+      "id": "extractorole_itextextractor_extractorole_itextextractor_extracttext",
+      "community": 2,
+      "community_name": "MainExtractor & Mime Contract",
+      "norm_label": ".extracttext()"
+    },
+    {
+      "label": ".Extract()",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/MainExtractor.cs",
+      "source_location": "L49",
+      "metadata": {
+        "namespace": "ExtractorOLE",
+        "scope_chain": [
+          "s291"
+        ]
+      },
+      "_callable": true,
+      "_origin": "ast",
+      "id": "extractorole_mainextractor_extractorole_mainextractor_extract",
+      "community": 2,
+      "community_name": "MainExtractor & Mime Contract",
+      "norm_label": ".extract()"
+    },
+    {
+      "label": ".FindHandlerForMime()",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/MainExtractor.cs",
+      "source_location": "L120",
+      "metadata": {
+        "namespace": "ExtractorOLE",
+        "scope_chain": [
+          "s291"
+        ]
+      },
+      "_callable": true,
+      "_origin": "ast",
+      "id": "extractorole_mainextractor_extractorole_mainextractor_findhandlerformime",
+      "community": 2,
+      "community_name": "MainExtractor & Mime Contract",
+      "norm_label": ".findhandlerformime()"
+    },
+    {
+      "label": ".FindOpenStrategyForMime()",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/MainExtractor.cs",
+      "source_location": "L43",
+      "metadata": {
+        "namespace": "ExtractorOLE",
+        "scope_chain": [
+          "s291"
+        ]
+      },
+      "_callable": true,
+      "_origin": "ast",
+      "id": "extractorole_mainextractor_extractorole_mainextractor_findopenstrategyformime",
+      "community": 2,
+      "community_name": "MainExtractor & Mime Contract",
+      "norm_label": ".findopenstrategyformime()"
+    },
+    {
+      "label": ".Register()",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/MainExtractor.cs",
+      "source_location": "L30",
+      "metadata": {
+        "namespace": "ExtractorOLE",
+        "scope_chain": [
+          "s291"
+        ]
+      },
+      "_callable": true,
+      "_origin": "ast",
+      "id": "extractorole_mainextractor_extractorole_mainextractor_register",
+      "community": 2,
+      "community_name": "MainExtractor & Mime Contract",
+      "norm_label": ".register()"
+    },
+    {
+      "label": ".RegisterBuiltInHandlers()",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/MainExtractor.cs",
+      "source_location": "L36",
+      "metadata": {
+        "namespace": "ExtractorOLE",
+        "scope_chain": [
+          "s291"
+        ]
+      },
+      "_callable": true,
+      "_origin": "ast",
+      "id": "extractorole_mainextractor_extractorole_mainextractor_registerbuiltinhandlers",
+      "community": 2,
+      "community_name": "MainExtractor & Mime Contract",
+      "norm_label": ".registerbuiltinhandlers()"
+    },
+    {
+      "label": ".DetectMimeFromMagicBytes()",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Helpers/ExtractionHelper.cs",
+      "source_location": "L196",
+      "metadata": {
+        "namespace": "ExtractorOLE.Helpers",
+        "scope_chain": [
+          "s220"
+        ]
+      },
+      "_callable": true,
+      "_origin": "ast",
+      "id": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper_detectmimefrommagicbytes",
+      "community": 3,
+      "community_name": "ExtractionHelper Implementation",
+      "norm_label": ".detectmimefrommagicbytes()"
+    },
+    {
+      "label": ".DetectMimeTypeFromBytes()",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Helpers/ExtractionHelper.cs",
+      "source_location": "L148",
+      "metadata": {
+        "namespace": "ExtractorOLE.Helpers",
+        "scope_chain": [
+          "s220"
+        ]
+      },
+      "_callable": true,
+      "_origin": "ast",
+      "id": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper_detectmimetypefrombytes",
+      "community": 3,
+      "community_name": "ExtractionHelper Implementation",
+      "norm_label": ".detectmimetypefrombytes()"
+    },
+    {
+      "label": ".ExtractFirstLayerEmbedded()",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Helpers/ExtractionHelper.cs",
+      "source_location": "L73",
+      "metadata": {
+        "namespace": "ExtractorOLE.Helpers",
+        "scope_chain": [
+          "s220"
+        ]
+      },
+      "_callable": true,
+      "_origin": "ast",
+      "id": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper_extractfirstlayerembedded",
+      "community": 3,
+      "community_name": "ExtractionHelper Implementation",
+      "norm_label": ".extractfirstlayerembedded()"
+    },
+    {
+      "label": ".ExtractMetadataAndEmbedded()",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Helpers/ExtractionHelper.cs",
+      "source_location": "L39",
+      "metadata": {
+        "namespace": "ExtractorOLE.Helpers",
+        "scope_chain": [
+          "s220"
+        ]
+      },
+      "_callable": true,
+      "_origin": "ast",
+      "id": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper_extractmetadataandembedded",
+      "community": 3,
+      "community_name": "ExtractionHelper Implementation",
+      "norm_label": ".extractmetadataandembedded()"
+    },
+    {
+      "label": ".ExtractPartData()",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Helpers/ExtractionHelper.cs",
+      "source_location": "L127",
+      "metadata": {
+        "namespace": "ExtractorOLE.Helpers",
+        "scope_chain": [
+          "s220"
+        ]
+      },
+      "_callable": true,
+      "_origin": "ast",
+      "id": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper_extractpartdata",
+      "community": 3,
+      "community_name": "ExtractionHelper Implementation",
+      "norm_label": ".extractpartdata()"
+    },
+    {
+      "label": ".GetExtensionFromContentType()",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Helpers/ExtractionHelper.cs",
+      "source_location": "L183",
+      "metadata": {
+        "namespace": "ExtractorOLE.Helpers",
+        "scope_chain": [
+          "s220"
+        ]
+      },
+      "_callable": true,
+      "_origin": "ast",
+      "id": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper_getextensionfromcontenttype",
+      "community": 3,
+      "community_name": "ExtractionHelper Implementation",
+      "norm_label": ".getextensionfromcontenttype()"
+    },
+    {
+      "label": ".MimeFor()",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Helpers/ExtractionHelper.cs",
+      "source_location": "L15",
+      "metadata": {
+        "namespace": "ExtractorOLE.Helpers",
+        "scope_chain": [
+          "s220"
+        ]
+      },
+      "_callable": true,
+      "_origin": "ast",
+      "id": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper_mimefor",
+      "community": 3,
+      "community_name": "ExtractionHelper Implementation",
+      "norm_label": ".mimefor()"
+    },
+    {
+      "label": ".ParseOfficeMimeType()",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Helpers/ExtractionHelper.cs",
+      "source_location": "L26",
+      "metadata": {
+        "namespace": "ExtractorOLE.Helpers",
+        "scope_chain": [
+          "s220"
+        ]
+      },
+      "_callable": true,
+      "_origin": "ast",
+      "id": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper_parseofficemimetype",
+      "community": 3,
+      "community_name": "ExtractionHelper Implementation",
+      "norm_label": ".parseofficemimetype()"
+    },
+    {
+      "label": ".ExtractText()",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Handlers/DocxTextExtractor.cs",
+      "source_location": "L9",
+      "metadata": {
+        "namespace": "ExtractorOLE.Handlers",
+        "scope_chain": [
+          "s76"
+        ]
+      },
+      "_callable": true,
+      "_origin": "ast",
+      "id": "extractorole_handlers_docxtextextractor_extractorole_handlers_docxtextextractor_extracttext",
+      "community": 4,
+      "community_name": "Text Extractor Handlers",
+      "norm_label": ".extracttext()"
+    },
+    {
+      "label": ".ExtractText()",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Handlers/PptxTextExtractor.cs",
+      "source_location": "L12",
+      "metadata": {
+        "namespace": "ExtractorOLE.Handlers",
+        "scope_chain": [
+          "s155"
+        ]
+      },
+      "_callable": true,
+      "_origin": "ast",
+      "id": "extractorole_handlers_pptxtextextractor_extractorole_handlers_pptxtextextractor_extracttext",
+      "community": 4,
+      "community_name": "Text Extractor Handlers",
+      "norm_label": ".extracttext()"
+    },
+    {
+      "label": ".ExtractText()",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Handlers/XlsxTextExtractor.cs",
+      "source_location": "L13",
+      "metadata": {
+        "namespace": "ExtractorOLE.Handlers",
+        "scope_chain": [
+          "s194"
+        ]
+      },
+      "_callable": true,
+      "_origin": "ast",
+      "id": "extractorole_handlers_xlsxtextextractor_extractorole_handlers_xlsxtextextractor_extracttext",
+      "community": 4,
+      "community_name": "Text Extractor Handlers",
+      "norm_label": ".extracttext()"
+    },
+    {
+      "label": ".ExtractFromXlsxBinary()",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Old/Excel/ExcelExtractor.cs",
+      "source_location": "L12",
+      "metadata": {
+        "namespace": "ExtractorOLE.Old.Excel",
+        "scope_chain": [
+          "s185"
+        ]
+      },
+      "_callable": true,
+      "_origin": "ast",
+      "id": "extractorole_old_excel_excelextractor_extractorole_old_excel_excelextractor_extractfromxlsxbinary",
+      "community": 5,
+      "community_name": "Old Excel Extractor (dead code)",
+      "norm_label": ".extractfromxlsxbinary()"
+    },
+    {
+      "label": ".GetCellText()",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Old/Excel/ExcelExtractor.cs",
+      "source_location": "L117",
+      "metadata": {
+        "namespace": "ExtractorOLE.Old.Excel",
+        "scope_chain": [
+          "s185"
+        ]
+      },
+      "_callable": true,
+      "_origin": "ast",
+      "id": "extractorole_old_excel_excelextractor_extractorole_old_excel_excelextractor_getcelltext",
+      "community": 5,
+      "community_name": "Old Excel Extractor (dead code)",
+      "norm_label": ".getcelltext()"
+    },
+    {
+      "label": ".GetExtensionFromContentType()",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Old/Excel/ExcelExtractor.cs",
+      "source_location": "L134",
+      "metadata": {
+        "namespace": "ExtractorOLE.Old.Excel",
+        "scope_chain": [
+          "s185"
+        ]
+      },
+      "_callable": true,
+      "_origin": "ast",
+      "id": "extractorole_old_excel_excelextractor_extractorole_old_excel_excelextractor_getextensionfromcontenttype",
+      "community": 5,
+      "community_name": "Old Excel Extractor (dead code)",
+      "norm_label": ".getextensionfromcontenttype()"
+    },
+    {
+      "label": ".GetFirstLayerEmbedded()",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Old/Excel/ExcelExtractor.cs",
+      "source_location": "L82",
+      "metadata": {
+        "namespace": "ExtractorOLE.Old.Excel",
+        "scope_chain": [
+          "s185"
+        ]
+      },
+      "_callable": true,
+      "_origin": "ast",
+      "id": "extractorole_old_excel_excelextractor_extractorole_old_excel_excelextractor_getfirstlayerembedded",
+      "community": 5,
+      "community_name": "Old Excel Extractor (dead code)",
+      "norm_label": ".getfirstlayerembedded()"
+    },
+    {
+      "label": ".ExtractFromDocxBinary()",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Old/Doc/DocExtractor.cs",
+      "source_location": "L15",
+      "metadata": {
+        "namespace": "ExtractorOLE.Old.Doc",
+        "scope_chain": [
+          "s265"
+        ]
+      },
+      "_callable": true,
+      "_origin": "ast",
+      "id": "extractorole_old_doc_docextractor_extractorole_old_doc_docextractor_extractfromdocxbinary",
+      "community": 7,
+      "community_name": "Old Doc Extractor (dead code)",
+      "norm_label": ".extractfromdocxbinary()"
+    },
+    {
+      "label": ".ExtractMetadataSafely()",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Old/Doc/DocExtractor.cs",
+      "source_location": "L90",
+      "metadata": {
+        "namespace": "ExtractorOLE.Old.Doc",
+        "scope_chain": [
+          "s265"
+        ]
+      },
+      "_callable": true,
+      "_origin": "ast",
+      "id": "extractorole_old_doc_docextractor_extractorole_old_doc_docextractor_extractmetadatasafely",
+      "community": 7,
+      "community_name": "Old Doc Extractor (dead code)",
+      "norm_label": ".extractmetadatasafely()"
+    },
+    {
+      "label": ".GetExtensionFromContentType()",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Old/Doc/DocExtractor.cs",
+      "source_location": "L78",
+      "metadata": {
+        "namespace": "ExtractorOLE.Old.Doc",
+        "scope_chain": [
+          "s265"
+        ]
+      },
+      "_callable": true,
+      "_origin": "ast",
+      "id": "extractorole_old_doc_docextractor_extractorole_old_doc_docextractor_getextensionfromcontenttype",
+      "community": 7,
+      "community_name": "Old Doc Extractor (dead code)",
+      "norm_label": ".getextensionfromcontenttype()"
+    },
+    {
+      "label": ".ExtractionMain()",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Old/Util/ExtractionUtil.cs",
+      "source_location": "L58",
+      "metadata": {
+        "namespace": "ExtractorOLE.Old.Util",
+        "scope_chain": [
+          "s142"
+        ]
+      },
+      "_callable": true,
+      "_origin": "ast",
+      "id": "extractorole_old_util_extractionutil_extractorole_old_util_extractionutil_extractionmain",
+      "community": 8,
+      "community_name": "Old Extraction Util (dead code)",
+      "norm_label": ".extractionmain()"
+    },
+    {
+      "label": ".GetExtensionFromContentType()",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Old/Util/ExtractionUtil.cs",
+      "source_location": "L45",
+      "metadata": {
+        "namespace": "ExtractorOLE.Old.Util",
+        "scope_chain": [
+          "s142"
+        ]
+      },
+      "_callable": true,
+      "_origin": "ast",
+      "id": "extractorole_old_util_extractionutil_extractorole_old_util_extractionutil_getextensionfromcontenttype",
+      "community": 8,
+      "community_name": "Old Extraction Util (dead code)",
+      "norm_label": ".getextensionfromcontenttype()"
+    },
+    {
+      "label": ".GetFirstLayerEmbedded()",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Old/Util/ExtractionUtil.cs",
+      "source_location": "L11",
+      "metadata": {
+        "namespace": "ExtractorOLE.Old.Util",
+        "scope_chain": [
+          "s142"
+        ]
+      },
+      "_callable": true,
+      "_origin": "ast",
+      "id": "extractorole_old_util_extractionutil_extractorole_old_util_extractionutil_getfirstlayerembedded",
+      "community": 8,
+      "community_name": "Old Extraction Util (dead code)",
+      "norm_label": ".getfirstlayerembedded()"
+    },
+    {
+      "label": ".ExtractFromPptxBinary()",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Old/PowerPoint/SlidesExtractor.cs",
+      "source_location": "L11",
+      "metadata": {
+        "namespace": "ExtractorOLE.Old.PowerPoint",
+        "scope_chain": [
+          "s142"
+        ]
+      },
+      "_callable": true,
+      "_origin": "ast",
+      "id": "extractorole_old_powerpoint_slidesextractor_extractorole_old_powerpoint_slidesextractor_extractfrompptxbinary",
+      "community": 9,
+      "community_name": "Old PowerPoint Extractor (dead code)",
+      "norm_label": ".extractfrompptxbinary()"
+    },
+    {
+      "label": ".GetExtensionFromContentType()",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Old/PowerPoint/SlidesExtractor.cs",
+      "source_location": "L104",
+      "metadata": {
+        "namespace": "ExtractorOLE.Old.PowerPoint",
+        "scope_chain": [
+          "s142"
+        ]
+      },
+      "_callable": true,
+      "_origin": "ast",
+      "id": "extractorole_old_powerpoint_slidesextractor_extractorole_old_powerpoint_slidesextractor_getextensionfromcontenttype",
+      "community": 9,
+      "community_name": "Old PowerPoint Extractor (dead code)",
+      "norm_label": ".getextensionfromcontenttype()"
+    },
+    {
+      "label": "DateTime",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "datetime",
+      "community": 0,
+      "community_name": "DTO <-> Strategy Cross-Refs",
+      "norm_label": "datetime"
+    },
+    {
+      "label": "DocumentExtractionResult.cs",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/DTOs/DocumentExtractionResult.cs",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "extractorole_dtos_documentextractionresult",
+      "community": 0,
+      "community_name": "DTO <-> Strategy Cross-Refs",
+      "norm_label": "documentextractionresult.cs"
+    },
+    {
+      "label": "List",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "extractorole_dtos_documentextractionresult_cs_list",
+      "community": 0,
+      "community_name": "DTO <-> Strategy Cross-Refs",
+      "norm_label": "list"
+    },
+    {
+      "label": "IExtractionHelper",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "extractorole_helpers_filetypestrategy_excelopenstrategy_cs_iextractionhelper",
+      "community": 0,
+      "community_name": "DTO <-> Strategy Cross-Refs",
+      "norm_label": "iextractionhelper"
+    },
+    {
+      "label": "IExtractionHelper",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "extractorole_helpers_filetypestrategy_powerpointopenstrategy_cs_iextractionhelper",
+      "community": 0,
+      "community_name": "DTO <-> Strategy Cross-Refs",
+      "norm_label": "iextractionhelper"
+    },
+    {
+      "label": "IExtractionHelper",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "extractorole_helpers_filetypestrategy_wordopenstrategy_cs_iextractionhelper",
+      "community": 0,
+      "community_name": "DTO <-> Strategy Cross-Refs",
+      "norm_label": "iextractionhelper"
+    },
+    {
+      "label": "OpenXmlPackage",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "extractorole_helpers_iextractionhelper_cs_openxmlpackage",
+      "community": 0,
+      "community_name": "DTO <-> Strategy Cross-Refs",
+      "norm_label": "openxmlpackage"
+    },
+    {
+      "label": "OpenXmlPart",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "extractorole_helpers_iextractionhelper_cs_openxmlpart",
+      "community": 0,
+      "community_name": "DTO <-> Strategy Cross-Refs",
+      "norm_label": "openxmlpart"
+    },
+    {
+      "label": "ExtractorOLE",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/ITextExtractor.cs",
+      "source_location": "L3",
+      "type": "namespace",
+      "metadata": {
+        "kind": "csharp_namespace",
+        "namespace": "ExtractorOLE"
+      },
+      "_origin": "ast",
+      "id": "csharp_namespace:013e45f91b917b68",
+      "community": 1,
+      "community_name": "DI Wiring & Entry Point",
+      "norm_label": "extractorole"
+    },
+    {
+      "label": "ExtractorOLE.DTOs",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/DTOs/DocumentExtractionResult.cs",
+      "source_location": "L5",
+      "type": "namespace",
+      "metadata": {
+        "kind": "csharp_namespace",
+        "namespace": "ExtractorOLE.DTOs"
+      },
+      "_origin": "ast",
+      "id": "csharp_namespace:21c17d0216bee313",
+      "community": 1,
+      "community_name": "DI Wiring & Entry Point",
+      "norm_label": "extractorole.dtos"
+    },
+    {
+      "label": "ExtractorOLE.Helpers.FileTypeStrategy",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/ExcelOpenStrategy.cs",
+      "source_location": "L5",
+      "type": "namespace",
+      "metadata": {
+        "kind": "csharp_namespace",
+        "namespace": "ExtractorOLE.Helpers.FileTypeStrategy"
+      },
+      "_origin": "ast",
+      "id": "csharp_namespace:4a110d7eeb88b3e6",
+      "community": 1,
+      "community_name": "DI Wiring & Entry Point",
+      "norm_label": "extractorole.helpers.filetypestrategy"
+    },
+    {
+      "label": "ExtractorOLE.Helpers",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Helpers/ExtractionHelper.cs",
+      "source_location": "L10",
+      "type": "namespace",
+      "metadata": {
+        "kind": "csharp_namespace",
+        "namespace": "ExtractorOLE.Helpers"
+      },
+      "_origin": "ast",
+      "id": "csharp_namespace:9b55c5ac19b5c8c9",
+      "community": 1,
+      "community_name": "DI Wiring & Entry Point",
+      "norm_label": "extractorole.helpers"
+    },
+    {
+      "label": "OfficeMimeTypeEnum.cs",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/DTOs/OfficeMimeTypeEnum.cs",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "extractorole_dtos_officemimetypeenum",
+      "community": 1,
+      "community_name": "DI Wiring & Entry Point",
+      "norm_label": "officemimetypeenum.cs"
+    },
+    {
+      "label": "ExtractionHelper.cs",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Helpers/ExtractionHelper.cs",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "extractorole_helpers_extractionhelper",
+      "community": 1,
+      "community_name": "DI Wiring & Entry Point",
+      "norm_label": "extractionhelper.cs"
+    },
+    {
+      "label": "ExcelOpenStrategy.cs",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/ExcelOpenStrategy.cs",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "extractorole_helpers_filetypestrategy_excelopenstrategy",
+      "community": 1,
+      "community_name": "DI Wiring & Entry Point",
+      "norm_label": "excelopenstrategy.cs"
+    },
+    {
+      "label": "IOpenStrategy.cs",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/IOpenStrategy.cs",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "extractorole_helpers_filetypestrategy_iopenstrategy",
+      "community": 1,
+      "community_name": "DI Wiring & Entry Point",
+      "norm_label": "iopenstrategy.cs"
+    },
+    {
+      "label": "PowerPointOpenStrategy.cs",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/PowerPointOpenStrategy.cs",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "extractorole_helpers_filetypestrategy_powerpointopenstrategy",
+      "community": 1,
+      "community_name": "DI Wiring & Entry Point",
+      "norm_label": "powerpointopenstrategy.cs"
+    },
+    {
+      "label": "WordOpenStrategy.cs",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/WordOpenStrategy.cs",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "extractorole_helpers_filetypestrategy_wordopenstrategy",
+      "community": 1,
+      "community_name": "DI Wiring & Entry Point",
+      "norm_label": "wordopenstrategy.cs"
+    },
+    {
+      "label": "ZipFallbackOpenStrategy.cs",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/ZipFallbackOpenStrategy.cs",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "extractorole_helpers_filetypestrategy_zipfallbackopenstrategy",
+      "community": 1,
+      "community_name": "DI Wiring & Entry Point",
+      "norm_label": "zipfallbackopenstrategy.cs"
+    },
+    {
+      "label": "IExtractionHelper.cs",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Helpers/IExtractionHelper.cs",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "extractorole_helpers_iextractionhelper",
+      "community": 1,
+      "community_name": "DI Wiring & Entry Point",
+      "norm_label": "iextractionhelper.cs"
+    },
+    {
+      "label": "MainExtractor.cs",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/MainExtractor.cs",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "extractorole_mainextractor",
+      "community": 1,
+      "community_name": "DI Wiring & Entry Point",
+      "norm_label": "mainextractor.cs"
+    },
+    {
+      "label": "Program.cs",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Program.cs",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "extractorole_program",
+      "community": 1,
+      "community_name": "DI Wiring & Entry Point",
+      "norm_label": "program.cs"
+    },
+    {
+      "label": "ServiceRegistration.cs",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/ServiceRegistration.cs",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "extractorole_serviceregistration",
+      "community": 1,
+      "community_name": "DI Wiring & Entry Point",
+      "norm_label": "serviceregistration.cs"
+    },
+    {
+      "label": "IServiceCollection",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "iservicecollection",
+      "community": 1,
+      "community_name": "DI Wiring & Entry Point",
+      "norm_label": "iservicecollection"
+    },
+    {
+      "label": "ExtractorOLE.Old",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Old/BackupLogic.cs",
+      "source_location": "L5",
+      "type": "namespace",
+      "metadata": {
+        "kind": "csharp_namespace",
+        "namespace": "ExtractorOLE.Old"
+      },
+      "_origin": "ast",
+      "id": "csharp_namespace:588a01f1a5bc227d",
+      "community": 10,
+      "community_name": "Old Backup Logic (dead code)",
+      "norm_label": "extractorole.old"
+    },
+    {
+      "label": "BackupLogic.cs",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Old/BackupLogic.cs",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "extractorole_old_backuplogic",
+      "community": 10,
+      "community_name": "Old Backup Logic (dead code)",
+      "norm_label": "backuplogic.cs"
+    },
+    {
+      "label": "ExtractorOLE.AssemblyInfo.cs",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/obj/Debug/net10.0/ExtractorOLE.AssemblyInfo.cs",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "extractorole_obj_debug_net10_0_extractorole_assemblyinfo",
+      "community": 11,
+      "community_name": "Build Artifact: AssemblyInfo",
+      "norm_label": "extractorole.assemblyinfo.cs"
+    },
+    {
+      "label": "ExtractorOLE.GlobalUsings.g.cs",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/obj/Debug/net10.0/ExtractorOLE.GlobalUsings.g.cs",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "extractorole_obj_debug_net10_0_extractorole_globalusings_g",
+      "community": 12,
+      "community_name": "Build Artifact: GlobalUsings",
+      "norm_label": "extractorole.globalusings.g.cs"
+    },
+    {
+      "label": ".NETCoreApp,Version=v10.0.AssemblyAttributes.cs",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/obj/Debug/net10.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.cs",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "extractorole_obj_debug_net10_0_netcoreapp_version_v10_0_assemblyattributes",
+      "community": 13,
+      "community_name": "Build Artifact: AssemblyAttributes",
+      "norm_label": ".netcoreapp,version=v10.0.assemblyattributes.cs"
+    },
+    {
+      "label": "Dictionary",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "dictionary",
+      "community": 2,
+      "community_name": "MainExtractor & Mime Contract",
+      "norm_label": "dictionary"
+    },
+    {
+      "label": "ITextExtractor.cs",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/ITextExtractor.cs",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "extractorole_itextextractor",
+      "community": 2,
+      "community_name": "MainExtractor & Mime Contract",
+      "norm_label": "itextextractor.cs"
+    },
+    {
+      "label": "IDictionary",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "idictionary",
+      "community": 2,
+      "community_name": "MainExtractor & Mime Contract",
+      "norm_label": "idictionary"
+    },
+    {
+      "label": "List",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "extractorole_helpers_extractionhelper_cs_list",
+      "community": 3,
+      "community_name": "ExtractionHelper Implementation",
+      "norm_label": "list"
+    },
+    {
+      "label": "OpenXmlPackage",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "extractorole_helpers_extractionhelper_cs_openxmlpackage",
+      "community": 3,
+      "community_name": "ExtractionHelper Implementation",
+      "norm_label": "openxmlpackage"
+    },
+    {
+      "label": "OpenXmlPart",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "extractorole_helpers_extractionhelper_cs_openxmlpart",
+      "community": 3,
+      "community_name": "ExtractionHelper Implementation",
+      "norm_label": "openxmlpart"
+    },
+    {
+      "label": "ExtractorOLE.Handlers",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Handlers/DocxTextExtractor.cs",
+      "source_location": "L5",
+      "type": "namespace",
+      "metadata": {
+        "kind": "csharp_namespace",
+        "namespace": "ExtractorOLE.Handlers"
+      },
+      "_origin": "ast",
+      "id": "csharp_namespace:1290dacc28d2474d",
+      "community": 4,
+      "community_name": "Text Extractor Handlers",
+      "norm_label": "extractorole.handlers"
+    },
+    {
+      "label": "DocxTextExtractor.cs",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Handlers/DocxTextExtractor.cs",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "extractorole_handlers_docxtextextractor",
+      "community": 4,
+      "community_name": "Text Extractor Handlers",
+      "norm_label": "docxtextextractor.cs"
+    },
+    {
+      "label": "PptxTextExtractor.cs",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Handlers/PptxTextExtractor.cs",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "extractorole_handlers_pptxtextextractor",
+      "community": 4,
+      "community_name": "Text Extractor Handlers",
+      "norm_label": "pptxtextextractor.cs"
+    },
+    {
+      "label": "XlsxTextExtractor.cs",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Handlers/XlsxTextExtractor.cs",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "extractorole_handlers_xlsxtextextractor",
+      "community": 4,
+      "community_name": "Text Extractor Handlers",
+      "norm_label": "xlsxtextextractor.cs"
+    },
+    {
+      "label": "ITextExtractor",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "itextextractor",
+      "community": 4,
+      "community_name": "Text Extractor Handlers",
+      "norm_label": "itextextractor"
+    },
+    {
+      "label": "Cell",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "cell",
+      "community": 5,
+      "community_name": "Old Excel Extractor (dead code)",
+      "norm_label": "cell"
+    },
+    {
+      "label": "ExtractorOLE.Old.Excel",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Old/Excel/ExcelExtractor.cs",
+      "source_location": "L8",
+      "type": "namespace",
+      "metadata": {
+        "kind": "csharp_namespace",
+        "namespace": "ExtractorOLE.Old.Excel"
+      },
+      "_origin": "ast",
+      "id": "csharp_namespace:926d8a6f5988919e",
+      "community": 5,
+      "community_name": "Old Excel Extractor (dead code)",
+      "norm_label": "extractorole.old.excel"
+    },
+    {
+      "label": "ExcelExtractor.cs",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Old/Excel/ExcelExtractor.cs",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "extractorole_old_excel_excelextractor",
+      "community": 5,
+      "community_name": "Old Excel Extractor (dead code)",
+      "norm_label": "excelextractor.cs"
+    },
+    {
+      "label": "List",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "extractorole_old_excel_excelextractor_cs_list",
+      "community": 5,
+      "community_name": "Old Excel Extractor (dead code)",
+      "norm_label": "list"
+    },
+    {
+      "label": "WorkbookPart",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "workbookpart",
+      "community": 5,
+      "community_name": "Old Excel Extractor (dead code)",
+      "norm_label": "workbookpart"
+    },
+    {
+      "label": "ExtractorOle.slnx",
+      "file_type": "code",
+      "source_file": "ExtractorOle.slnx",
+      "source_location": null,
+      "_origin": "ast",
+      "id": "extractorole",
+      "community": 6,
+      "community_name": "Project/Build Metadata",
+      "norm_label": "extractorole.slnx"
+    },
+    {
+      "label": "ExtractorOLE",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/ExtractorOLE.csproj",
+      "source_location": null,
+      "_origin": "ast",
+      "id": "extractorole_extractorole",
+      "community": 6,
+      "community_name": "Project/Build Metadata",
+      "norm_label": "extractorole"
+    },
+    {
+      "label": "DocumentFormat.OpenXml (3.5.1)",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/ExtractorOLE.csproj",
+      "source_location": null,
+      "_origin": "ast",
+      "id": "nuget_documentformat_openxml",
+      "community": 6,
+      "community_name": "Project/Build Metadata",
+      "norm_label": "documentformat.openxml (3.5.1)"
+    },
+    {
+      "label": "DocumentFormat.OpenXml.Features (3.5.1)",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/ExtractorOLE.csproj",
+      "source_location": null,
+      "_origin": "ast",
+      "id": "nuget_documentformat_openxml_features",
+      "community": 6,
+      "community_name": "Project/Build Metadata",
+      "norm_label": "documentformat.openxml.features (3.5.1)"
+    },
+    {
+      "label": "DocumentFormat.OpenXml.Framework (3.5.1)",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/ExtractorOLE.csproj",
+      "source_location": null,
+      "_origin": "ast",
+      "id": "nuget_documentformat_openxml_framework",
+      "community": 6,
+      "community_name": "Project/Build Metadata",
+      "norm_label": "documentformat.openxml.framework (3.5.1)"
+    },
+    {
+      "label": "Microsoft.Extensions.DependencyInjection (8.0.0)",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/ExtractorOLE.csproj",
+      "source_location": null,
+      "_origin": "ast",
+      "id": "nuget_microsoft_extensions_dependencyinjection",
+      "community": 6,
+      "community_name": "Project/Build Metadata",
+      "norm_label": "microsoft.extensions.dependencyinjection (8.0.0)"
+    },
+    {
+      "label": "net10.0",
+      "file_type": "concept",
+      "source_file": "ExtractorOLE/ExtractorOLE.csproj",
+      "source_location": null,
+      "_origin": "ast",
+      "id": "framework_net10_0",
+      "community": 6,
+      "community_name": "Project/Build Metadata",
+      "norm_label": "net10.0"
+    },
+    {
+      "label": "Microsoft.NET.Sdk",
+      "file_type": "concept",
+      "source_file": "ExtractorOLE/ExtractorOLE.csproj",
+      "source_location": null,
+      "_origin": "ast",
+      "id": "sdk_microsoft_net_sdk",
+      "community": 6,
+      "community_name": "Project/Build Metadata",
+      "norm_label": "microsoft.net.sdk"
+    },
+    {
+      "label": "ExtractorOLE.Old.Doc",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Old/Doc/DocExtractor.cs",
+      "source_location": "L11",
+      "type": "namespace",
+      "metadata": {
+        "kind": "csharp_namespace",
+        "namespace": "ExtractorOLE.Old.Doc"
+      },
+      "_origin": "ast",
+      "id": "csharp_namespace:1bc2302e686bbed9",
+      "community": 7,
+      "community_name": "Old Doc Extractor (dead code)",
+      "norm_label": "extractorole.old.doc"
+    },
+    {
+      "label": "DocExtractor.cs",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Old/Doc/DocExtractor.cs",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "extractorole_old_doc_docextractor",
+      "community": 7,
+      "community_name": "Old Doc Extractor (dead code)",
+      "norm_label": "docextractor.cs"
+    },
+    {
+      "label": "WordprocessingDocument",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "wordprocessingdocument",
+      "community": 7,
+      "community_name": "Old Doc Extractor (dead code)",
+      "norm_label": "wordprocessingdocument"
+    },
+    {
+      "label": "ExtractorOLE.Old.Util",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Old/Util/ExtractionUtil.cs",
+      "source_location": "L7",
+      "type": "namespace",
+      "metadata": {
+        "kind": "csharp_namespace",
+        "namespace": "ExtractorOLE.Old.Util"
+      },
+      "_origin": "ast",
+      "id": "csharp_namespace:86c9e16bf0da9ecf",
+      "community": 8,
+      "community_name": "Old Extraction Util (dead code)",
+      "norm_label": "extractorole.old.util"
+    },
+    {
+      "label": "ExtractionUtil.cs",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Old/Util/ExtractionUtil.cs",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "extractorole_old_util_extractionutil",
+      "community": 8,
+      "community_name": "Old Extraction Util (dead code)",
+      "norm_label": "extractionutil.cs"
+    },
+    {
+      "label": "OpenXmlPart",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "extractorole_old_util_extractionutil_cs_openxmlpart",
+      "community": 8,
+      "community_name": "Old Extraction Util (dead code)",
+      "norm_label": "openxmlpart"
+    },
+    {
+      "label": "ExtractorOLE.Old.PowerPoint",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Old/PowerPoint/SlidesExtractor.cs",
+      "source_location": "L7",
+      "type": "namespace",
+      "metadata": {
+        "kind": "csharp_namespace",
+        "namespace": "ExtractorOLE.Old.PowerPoint"
+      },
+      "_origin": "ast",
+      "id": "csharp_namespace:e70091163d734069",
+      "community": 9,
+      "community_name": "Old PowerPoint Extractor (dead code)",
+      "norm_label": "extractorole.old.powerpoint"
+    },
+    {
+      "label": "SlidesExtractor.cs",
+      "file_type": "code",
+      "source_file": "ExtractorOLE/Old/PowerPoint/SlidesExtractor.cs",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "extractorole_old_powerpoint_slidesextractor",
+      "community": 9,
+      "community_name": "Old PowerPoint Extractor (dead code)",
+      "norm_label": "slidesextractor.cs"
+    }
+  ],
+  "links": [
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/ExtractionHelper.cs",
+      "source_location": "L120",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper_extractfirstlayerembedded",
+      "target": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper_extractpartdata",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/ExtractionHelper.cs",
+      "source_location": "L97",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper_extractfirstlayerembedded",
+      "target": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper_getextensionfromcontenttype",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/ExtractionHelper.cs",
+      "source_location": "L69",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper_extractmetadataandembedded",
+      "target": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper_extractfirstlayerembedded",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/ExtractionHelper.cs",
+      "source_location": "L140",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper_extractpartdata",
+      "target": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper_getextensionfromcontenttype",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/MainExtractor.cs",
+      "source_location": "L100",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_mainextractor_extractorole_mainextractor_extract",
+      "target": "extractorole_mainextractor_extractorole_mainextractor_findhandlerformime",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/MainExtractor.cs",
+      "source_location": "L58",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_mainextractor_extractorole_mainextractor_extract",
+      "target": "extractorole_mainextractor_extractorole_mainextractor_findopenstrategyformime",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/MainExtractor.cs",
+      "source_location": "L38",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_mainextractor_extractorole_mainextractor_registerbuiltinhandlers",
+      "target": "extractorole_mainextractor_extractorole_mainextractor_register",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/Doc/DocExtractor.cs",
+      "source_location": "L27",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_old_doc_docextractor_extractorole_old_doc_docextractor_extractfromdocxbinary",
+      "target": "extractorole_old_doc_docextractor_extractorole_old_doc_docextractor_extractmetadatasafely",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/Doc/DocExtractor.cs",
+      "source_location": "L63",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_old_doc_docextractor_extractorole_old_doc_docextractor_extractfromdocxbinary",
+      "target": "extractorole_old_doc_docextractor_extractorole_old_doc_docextractor_getextensionfromcontenttype",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/Excel/ExcelExtractor.cs",
+      "source_location": "L62",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_old_excel_excelextractor_extractorole_old_excel_excelextractor_extractfromxlsxbinary",
+      "target": "extractorole_old_excel_excelextractor_extractorole_old_excel_excelextractor_getcelltext",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/Excel/ExcelExtractor.cs",
+      "source_location": "L75",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_old_excel_excelextractor_extractorole_old_excel_excelextractor_extractfromxlsxbinary",
+      "target": "extractorole_old_excel_excelextractor_extractorole_old_excel_excelextractor_getfirstlayerembedded",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/Excel/ExcelExtractor.cs",
+      "source_location": "L106",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_old_excel_excelextractor_extractorole_old_excel_excelextractor_getfirstlayerembedded",
+      "target": "extractorole_old_excel_excelextractor_extractorole_old_excel_excelextractor_getextensionfromcontenttype",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/PowerPoint/SlidesExtractor.cs",
+      "source_location": "L90",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_old_powerpoint_slidesextractor_extractorole_old_powerpoint_slidesextractor_extractfrompptxbinary",
+      "target": "extractorole_old_powerpoint_slidesextractor_extractorole_old_powerpoint_slidesextractor_getextensionfromcontenttype",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/Util/ExtractionUtil.cs",
+      "source_location": "L35",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_old_util_extractionutil_extractorole_old_util_extractionutil_getfirstlayerembedded",
+      "target": "extractorole_old_util_extractionutil_extractorole_old_util_extractionutil_getextensionfromcontenttype",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "ExtractorOLE/Program.cs",
+      "source_location": "L11",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_program_extractorole_program_main",
+      "target": "extractorole_serviceregistration_extractorole_serviceregistration_register"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/DTOs/DocumentExtractionResult.cs",
+      "source_location": "L27",
+      "weight": 1.0,
+      "context": "field",
+      "metadata": {
+        "ref_token": "DateTime"
+      },
+      "_origin": "ast",
+      "source": "extractorole_dtos_documentextractionresult_extractorole_dtos_filemetadata",
+      "target": "datetime",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/MainExtractor.cs",
+      "source_location": "L16",
+      "weight": 1.0,
+      "context": "field",
+      "metadata": {
+        "ref_token": "Dictionary"
+      },
+      "_origin": "ast",
+      "source": "extractorole_mainextractor_extractorole_mainextractor",
+      "target": "dictionary",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/ZipFallbackOpenStrategy.cs",
+      "source_location": "L8",
+      "weight": 1.0,
+      "context": "field",
+      "metadata": {
+        "ref_token": "ExcelOpenStrategy"
+      },
+      "_origin": "ast",
+      "source": "extractorole_helpers_filetypestrategy_zipfallbackopenstrategy_extractorole_helpers_filetypestrategy_zipfallbackopenstrategy",
+      "target": "extractorole_helpers_filetypestrategy_excelopenstrategy_extractorole_helpers_filetypestrategy_excelopenstrategy",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/DTOs/DocumentExtractionResult.cs",
+      "source_location": "L13",
+      "weight": 1.0,
+      "context": "field",
+      "metadata": {
+        "ref_token": "FileMetadata"
+      },
+      "_origin": "ast",
+      "source": "extractorole_dtos_documentextractionresult_extractorole_dtos_documentextractionresult",
+      "target": "extractorole_dtos_documentextractionresult_extractorole_dtos_filemetadata",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/MainExtractor.cs",
+      "source_location": "L19",
+      "weight": 1.0,
+      "context": "field",
+      "metadata": {
+        "ref_token": "IDictionary"
+      },
+      "_origin": "ast",
+      "source": "extractorole_mainextractor_extractorole_mainextractor",
+      "target": "idictionary",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/ExcelOpenStrategy.cs",
+      "source_location": "L9",
+      "weight": 1.0,
+      "context": "field",
+      "metadata": {
+        "ref_token": "IExtractionHelper"
+      },
+      "_origin": "ast",
+      "source": "extractorole_helpers_filetypestrategy_excelopenstrategy_extractorole_helpers_filetypestrategy_excelopenstrategy",
+      "target": "extractorole_helpers_filetypestrategy_excelopenstrategy_cs_iextractionhelper",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/PowerPointOpenStrategy.cs",
+      "source_location": "L9",
+      "weight": 1.0,
+      "context": "field",
+      "metadata": {
+        "ref_token": "IExtractionHelper"
+      },
+      "_origin": "ast",
+      "source": "extractorole_helpers_filetypestrategy_powerpointopenstrategy_extractorole_helpers_filetypestrategy_powerpointopenstrategy",
+      "target": "extractorole_helpers_filetypestrategy_powerpointopenstrategy_cs_iextractionhelper",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/WordOpenStrategy.cs",
+      "source_location": "L9",
+      "weight": 1.0,
+      "context": "field",
+      "metadata": {
+        "ref_token": "IExtractionHelper"
+      },
+      "_origin": "ast",
+      "source": "extractorole_helpers_filetypestrategy_wordopenstrategy_extractorole_helpers_filetypestrategy_wordopenstrategy",
+      "target": "extractorole_helpers_filetypestrategy_wordopenstrategy_cs_iextractionhelper",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/MainExtractor.cs",
+      "source_location": "L21",
+      "weight": 1.0,
+      "context": "field",
+      "metadata": {
+        "ref_token": "IExtractionHelper"
+      },
+      "_origin": "ast",
+      "source": "extractorole_mainextractor_extractorole_mainextractor",
+      "target": "extractorole_helpers_iextractionhelper_extractorole_helpers_iextractionhelper",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/DTOs/DocumentExtractionResult.cs",
+      "source_location": "L19",
+      "weight": 1.0,
+      "context": "field",
+      "metadata": {
+        "ref_token": "List"
+      },
+      "_origin": "ast",
+      "source": "extractorole_dtos_documentextractionresult_extractorole_dtos_documentextractionresult",
+      "target": "extractorole_dtos_documentextractionresult_cs_list",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/ZipFallbackOpenStrategy.cs",
+      "source_location": "L9",
+      "weight": 1.0,
+      "context": "field",
+      "metadata": {
+        "ref_token": "PowerPointOpenStrategy"
+      },
+      "_origin": "ast",
+      "source": "extractorole_helpers_filetypestrategy_zipfallbackopenstrategy_extractorole_helpers_filetypestrategy_zipfallbackopenstrategy",
+      "target": "extractorole_helpers_filetypestrategy_powerpointopenstrategy_extractorole_helpers_filetypestrategy_powerpointopenstrategy",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/ZipFallbackOpenStrategy.cs",
+      "source_location": "L7",
+      "weight": 1.0,
+      "context": "field",
+      "metadata": {
+        "ref_token": "WordOpenStrategy"
+      },
+      "_origin": "ast",
+      "source": "extractorole_helpers_filetypestrategy_zipfallbackopenstrategy_extractorole_helpers_filetypestrategy_zipfallbackopenstrategy",
+      "target": "extractorole_helpers_filetypestrategy_wordopenstrategy_extractorole_helpers_filetypestrategy_wordopenstrategy",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/DTOs/DocumentExtractionResult.cs",
+      "source_location": "L19",
+      "weight": 1.0,
+      "context": "generic_arg",
+      "metadata": {
+        "ref_token": "EmbeddedFileItem"
+      },
+      "_origin": "ast",
+      "source": "extractorole_dtos_documentextractionresult_extractorole_dtos_documentextractionresult",
+      "target": "extractorole_dtos_documentextractionresult_extractorole_dtos_embeddedfileitem",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/ExtractionHelper.cs",
+      "source_location": "L127",
+      "weight": 1.0,
+      "context": "generic_arg",
+      "metadata": {
+        "ref_token": "EmbeddedFileItem"
+      },
+      "_origin": "ast",
+      "source": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper_extractpartdata",
+      "target": "extractorole_dtos_documentextractionresult_extractorole_dtos_embeddedfileitem",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/ExtractionHelper.cs",
+      "source_location": "L3",
+      "weight": 1.0,
+      "metadata": {
+        "using_kind": "namespace",
+        "target_fqn": "ExtractorOLE.DTOs",
+        "scope_kind": "file"
+      },
+      "_origin": "ast",
+      "source": "extractorole_helpers_extractionhelper",
+      "target": "csharp_namespace:21c17d0216bee313",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/ExcelOpenStrategy.cs",
+      "source_location": "L2",
+      "weight": 1.0,
+      "metadata": {
+        "using_kind": "namespace",
+        "target_fqn": "ExtractorOLE.DTOs",
+        "scope_kind": "file"
+      },
+      "_origin": "ast",
+      "source": "extractorole_helpers_filetypestrategy_excelopenstrategy",
+      "target": "csharp_namespace:21c17d0216bee313",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/IOpenStrategy.cs",
+      "source_location": "L1",
+      "weight": 1.0,
+      "metadata": {
+        "using_kind": "namespace",
+        "target_fqn": "ExtractorOLE.DTOs",
+        "scope_kind": "file"
+      },
+      "_origin": "ast",
+      "source": "extractorole_helpers_filetypestrategy_iopenstrategy",
+      "target": "csharp_namespace:21c17d0216bee313",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/PowerPointOpenStrategy.cs",
+      "source_location": "L2",
+      "weight": 1.0,
+      "metadata": {
+        "using_kind": "namespace",
+        "target_fqn": "ExtractorOLE.DTOs",
+        "scope_kind": "file"
+      },
+      "_origin": "ast",
+      "source": "extractorole_helpers_filetypestrategy_powerpointopenstrategy",
+      "target": "csharp_namespace:21c17d0216bee313",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/WordOpenStrategy.cs",
+      "source_location": "L2",
+      "weight": 1.0,
+      "metadata": {
+        "using_kind": "namespace",
+        "target_fqn": "ExtractorOLE.DTOs",
+        "scope_kind": "file"
+      },
+      "_origin": "ast",
+      "source": "extractorole_helpers_filetypestrategy_wordopenstrategy",
+      "target": "csharp_namespace:21c17d0216bee313",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/ZipFallbackOpenStrategy.cs",
+      "source_location": "L1",
+      "weight": 1.0,
+      "metadata": {
+        "using_kind": "namespace",
+        "target_fqn": "ExtractorOLE.DTOs",
+        "scope_kind": "file"
+      },
+      "_origin": "ast",
+      "source": "extractorole_helpers_filetypestrategy_zipfallbackopenstrategy",
+      "target": "csharp_namespace:21c17d0216bee313",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/IExtractionHelper.cs",
+      "source_location": "L2",
+      "weight": 1.0,
+      "metadata": {
+        "using_kind": "namespace",
+        "target_fqn": "ExtractorOLE.DTOs",
+        "scope_kind": "file"
+      },
+      "_origin": "ast",
+      "source": "extractorole_helpers_iextractionhelper",
+      "target": "csharp_namespace:21c17d0216bee313",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/MainExtractor.cs",
+      "source_location": "L3",
+      "weight": 1.0,
+      "metadata": {
+        "using_kind": "namespace",
+        "target_fqn": "ExtractorOLE.DTOs",
+        "scope_kind": "file"
+      },
+      "_origin": "ast",
+      "source": "extractorole_mainextractor",
+      "target": "csharp_namespace:21c17d0216bee313",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/Doc/DocExtractor.cs",
+      "source_location": "L3",
+      "weight": 1.0,
+      "metadata": {
+        "using_kind": "namespace",
+        "target_fqn": "ExtractorOLE.DTOs",
+        "scope_kind": "file"
+      },
+      "_origin": "ast",
+      "source": "extractorole_old_doc_docextractor",
+      "target": "csharp_namespace:21c17d0216bee313",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/Excel/ExcelExtractor.cs",
+      "source_location": "L3",
+      "weight": 1.0,
+      "metadata": {
+        "using_kind": "namespace",
+        "target_fqn": "ExtractorOLE.DTOs",
+        "scope_kind": "file"
+      },
+      "_origin": "ast",
+      "source": "extractorole_old_excel_excelextractor",
+      "target": "csharp_namespace:21c17d0216bee313",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/PowerPoint/SlidesExtractor.cs",
+      "source_location": "L2",
+      "weight": 1.0,
+      "metadata": {
+        "using_kind": "namespace",
+        "target_fqn": "ExtractorOLE.DTOs",
+        "scope_kind": "file"
+      },
+      "_origin": "ast",
+      "source": "extractorole_old_powerpoint_slidesextractor",
+      "target": "csharp_namespace:21c17d0216bee313",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/Util/ExtractionUtil.cs",
+      "source_location": "L2",
+      "weight": 1.0,
+      "metadata": {
+        "using_kind": "namespace",
+        "target_fqn": "ExtractorOLE.DTOs",
+        "scope_kind": "file"
+      },
+      "_origin": "ast",
+      "source": "extractorole_old_util_extractionutil",
+      "target": "csharp_namespace:21c17d0216bee313",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/ServiceRegistration.cs",
+      "source_location": "L3",
+      "weight": 1.0,
+      "metadata": {
+        "using_kind": "namespace",
+        "target_fqn": "ExtractorOLE.DTOs",
+        "scope_kind": "file"
+      },
+      "_origin": "ast",
+      "source": "extractorole_serviceregistration",
+      "target": "csharp_namespace:21c17d0216bee313",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/MainExtractor.cs",
+      "source_location": "L4",
+      "weight": 1.0,
+      "metadata": {
+        "using_kind": "namespace",
+        "target_fqn": "ExtractorOLE.Helpers",
+        "scope_kind": "file"
+      },
+      "_origin": "ast",
+      "source": "extractorole_mainextractor",
+      "target": "csharp_namespace:9b55c5ac19b5c8c9",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/ServiceRegistration.cs",
+      "source_location": "L4",
+      "weight": 1.0,
+      "metadata": {
+        "using_kind": "namespace",
+        "target_fqn": "ExtractorOLE.Helpers",
+        "scope_kind": "file"
+      },
+      "_origin": "ast",
+      "source": "extractorole_serviceregistration",
+      "target": "csharp_namespace:9b55c5ac19b5c8c9",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/MainExtractor.cs",
+      "source_location": "L5",
+      "weight": 1.0,
+      "metadata": {
+        "using_kind": "namespace",
+        "target_fqn": "ExtractorOLE.Helpers.FileTypeStrategy",
+        "scope_kind": "file"
+      },
+      "_origin": "ast",
+      "source": "extractorole_mainextractor",
+      "target": "csharp_namespace:4a110d7eeb88b3e6",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/ServiceRegistration.cs",
+      "source_location": "L5",
+      "weight": 1.0,
+      "metadata": {
+        "using_kind": "namespace",
+        "target_fqn": "ExtractorOLE.Helpers.FileTypeStrategy",
+        "scope_kind": "file"
+      },
+      "_origin": "ast",
+      "source": "extractorole_serviceregistration",
+      "target": "csharp_namespace:4a110d7eeb88b3e6",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/Excel/ExcelExtractor.cs",
+      "source_location": "L117",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "metadata": {
+        "ref_token": "Cell"
+      },
+      "_origin": "ast",
+      "source": "extractorole_old_excel_excelextractor_extractorole_old_excel_excelextractor_getcelltext",
+      "target": "cell",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/ExtractionHelper.cs",
+      "source_location": "L73",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "metadata": {
+        "ref_token": "DocumentExtractionResult"
+      },
+      "_origin": "ast",
+      "source": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper_extractfirstlayerembedded",
+      "target": "extractorole_dtos_documentextractionresult_extractorole_dtos_documentextractionresult",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/ExtractionHelper.cs",
+      "source_location": "L39",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "metadata": {
+        "ref_token": "DocumentExtractionResult"
+      },
+      "_origin": "ast",
+      "source": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper_extractmetadataandembedded",
+      "target": "extractorole_dtos_documentextractionresult_extractorole_dtos_documentextractionresult",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/IExtractionHelper.cs",
+      "source_location": "L13",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "metadata": {
+        "ref_token": "DocumentExtractionResult"
+      },
+      "_origin": "ast",
+      "source": "extractorole_helpers_iextractionhelper_extractorole_helpers_iextractionhelper_extractfirstlayerembedded",
+      "target": "extractorole_dtos_documentextractionresult_extractorole_dtos_documentextractionresult",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/IExtractionHelper.cs",
+      "source_location": "L12",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "metadata": {
+        "ref_token": "DocumentExtractionResult"
+      },
+      "_origin": "ast",
+      "source": "extractorole_helpers_iextractionhelper_extractorole_helpers_iextractionhelper_extractmetadataandembedded",
+      "target": "extractorole_dtos_documentextractionresult_extractorole_dtos_documentextractionresult",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/Excel/ExcelExtractor.cs",
+      "source_location": "L82",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "metadata": {
+        "ref_token": "DocumentExtractionResult"
+      },
+      "_origin": "ast",
+      "source": "extractorole_old_excel_excelextractor_extractorole_old_excel_excelextractor_getfirstlayerembedded",
+      "target": "extractorole_dtos_documentextractionresult_extractorole_dtos_documentextractionresult",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/Util/ExtractionUtil.cs",
+      "source_location": "L11",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "metadata": {
+        "ref_token": "DocumentExtractionResult"
+      },
+      "_origin": "ast",
+      "source": "extractorole_old_util_extractionutil_extractorole_old_util_extractionutil_getfirstlayerembedded",
+      "target": "extractorole_dtos_documentextractionresult_extractorole_dtos_documentextractionresult",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/ServiceRegistration.cs",
+      "source_location": "L11",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "metadata": {
+        "ref_token": "IServiceCollection"
+      },
+      "_origin": "ast",
+      "source": "extractorole_serviceregistration_extractorole_serviceregistration_register",
+      "target": "iservicecollection",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/MainExtractor.cs",
+      "source_location": "L30",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "metadata": {
+        "ref_token": "ITextExtractor"
+      },
+      "_origin": "ast",
+      "source": "extractorole_mainextractor_extractorole_mainextractor_register",
+      "target": "extractorole_itextextractor_extractorole_itextextractor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/ExtractionHelper.cs",
+      "source_location": "L127",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "metadata": {
+        "ref_token": "List"
+      },
+      "_origin": "ast",
+      "source": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper_extractpartdata",
+      "target": "extractorole_helpers_extractionhelper_cs_list",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/Excel/ExcelExtractor.cs",
+      "source_location": "L117",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "metadata": {
+        "ref_token": "List"
+      },
+      "_origin": "ast",
+      "source": "extractorole_old_excel_excelextractor_extractorole_old_excel_excelextractor_getcelltext",
+      "target": "extractorole_old_excel_excelextractor_cs_list",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/ExtractionHelper.cs",
+      "source_location": "L15",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "metadata": {
+        "ref_token": "OfficeMimeTypeEnum"
+      },
+      "_origin": "ast",
+      "source": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper_mimefor",
+      "target": "extractorole_dtos_officemimetypeenum_extractorole_dtos_officemimetypeenum",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/IExtractionHelper.cs",
+      "source_location": "L9",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "metadata": {
+        "ref_token": "OfficeMimeTypeEnum"
+      },
+      "_origin": "ast",
+      "source": "extractorole_helpers_iextractionhelper_extractorole_helpers_iextractionhelper_mimefor",
+      "target": "extractorole_dtos_officemimetypeenum_extractorole_dtos_officemimetypeenum",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/MainExtractor.cs",
+      "source_location": "L120",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "metadata": {
+        "ref_token": "OfficeMimeTypeEnum"
+      },
+      "_origin": "ast",
+      "source": "extractorole_mainextractor_extractorole_mainextractor_findhandlerformime",
+      "target": "extractorole_dtos_officemimetypeenum_extractorole_dtos_officemimetypeenum",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/MainExtractor.cs",
+      "source_location": "L43",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "metadata": {
+        "ref_token": "OfficeMimeTypeEnum"
+      },
+      "_origin": "ast",
+      "source": "extractorole_mainextractor_extractorole_mainextractor_findopenstrategyformime",
+      "target": "extractorole_dtos_officemimetypeenum_extractorole_dtos_officemimetypeenum",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/MainExtractor.cs",
+      "source_location": "L30",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "metadata": {
+        "ref_token": "OfficeMimeTypeEnum"
+      },
+      "_origin": "ast",
+      "source": "extractorole_mainextractor_extractorole_mainextractor_register",
+      "target": "extractorole_dtos_officemimetypeenum_extractorole_dtos_officemimetypeenum",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/ExtractionHelper.cs",
+      "source_location": "L39",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "metadata": {
+        "ref_token": "OpenXmlPackage"
+      },
+      "_origin": "ast",
+      "source": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper_extractmetadataandembedded",
+      "target": "extractorole_helpers_extractionhelper_cs_openxmlpackage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/IExtractionHelper.cs",
+      "source_location": "L12",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "metadata": {
+        "ref_token": "OpenXmlPackage"
+      },
+      "_origin": "ast",
+      "source": "extractorole_helpers_iextractionhelper_extractorole_helpers_iextractionhelper_extractmetadataandembedded",
+      "target": "extractorole_helpers_iextractionhelper_cs_openxmlpackage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/ExtractionHelper.cs",
+      "source_location": "L73",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "metadata": {
+        "ref_token": "OpenXmlPart"
+      },
+      "_origin": "ast",
+      "source": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper_extractfirstlayerembedded",
+      "target": "extractorole_helpers_extractionhelper_cs_openxmlpart",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/ExtractionHelper.cs",
+      "source_location": "L39",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "metadata": {
+        "ref_token": "OpenXmlPart"
+      },
+      "_origin": "ast",
+      "source": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper_extractmetadataandembedded",
+      "target": "extractorole_helpers_extractionhelper_cs_openxmlpart",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/ExtractionHelper.cs",
+      "source_location": "L127",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "metadata": {
+        "ref_token": "OpenXmlPart"
+      },
+      "_origin": "ast",
+      "source": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper_extractpartdata",
+      "target": "extractorole_helpers_extractionhelper_cs_openxmlpart",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/IExtractionHelper.cs",
+      "source_location": "L13",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "metadata": {
+        "ref_token": "OpenXmlPart"
+      },
+      "_origin": "ast",
+      "source": "extractorole_helpers_iextractionhelper_extractorole_helpers_iextractionhelper_extractfirstlayerembedded",
+      "target": "extractorole_helpers_iextractionhelper_cs_openxmlpart",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/IExtractionHelper.cs",
+      "source_location": "L12",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "metadata": {
+        "ref_token": "OpenXmlPart"
+      },
+      "_origin": "ast",
+      "source": "extractorole_helpers_iextractionhelper_extractorole_helpers_iextractionhelper_extractmetadataandembedded",
+      "target": "extractorole_helpers_iextractionhelper_cs_openxmlpart",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/Util/ExtractionUtil.cs",
+      "source_location": "L58",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "metadata": {
+        "ref_token": "OpenXmlPart"
+      },
+      "_origin": "ast",
+      "source": "extractorole_old_util_extractionutil_extractorole_old_util_extractionutil_extractionmain",
+      "target": "extractorole_old_util_extractionutil_cs_openxmlpart",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/Util/ExtractionUtil.cs",
+      "source_location": "L11",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "metadata": {
+        "ref_token": "OpenXmlPart"
+      },
+      "_origin": "ast",
+      "source": "extractorole_old_util_extractionutil_extractorole_old_util_extractionutil_getfirstlayerembedded",
+      "target": "extractorole_old_util_extractionutil_cs_openxmlpart",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/Doc/DocExtractor.cs",
+      "source_location": "L90",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "metadata": {
+        "ref_token": "WordprocessingDocument"
+      },
+      "_origin": "ast",
+      "source": "extractorole_old_doc_docextractor_extractorole_old_doc_docextractor_extractmetadatasafely",
+      "target": "wordprocessingdocument",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/Excel/ExcelExtractor.cs",
+      "source_location": "L82",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "metadata": {
+        "ref_token": "WorkbookPart"
+      },
+      "_origin": "ast",
+      "source": "extractorole_old_excel_excelextractor_extractorole_old_excel_excelextractor_getfirstlayerembedded",
+      "target": "workbookpart",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/ExcelOpenStrategy.cs",
+      "source_location": "L16",
+      "weight": 1.0,
+      "context": "return_type",
+      "metadata": {
+        "ref_token": "DocumentExtractionResult"
+      },
+      "_origin": "ast",
+      "source": "extractorole_helpers_filetypestrategy_excelopenstrategy_extractorole_helpers_filetypestrategy_excelopenstrategy_open",
+      "target": "extractorole_dtos_documentextractionresult_extractorole_dtos_documentextractionresult",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/IOpenStrategy.cs",
+      "source_location": "L7",
+      "weight": 1.0,
+      "context": "return_type",
+      "metadata": {
+        "ref_token": "DocumentExtractionResult"
+      },
+      "_origin": "ast",
+      "source": "extractorole_helpers_filetypestrategy_iopenstrategy_extractorole_helpers_filetypestrategy_iopenstrategy_open",
+      "target": "extractorole_dtos_documentextractionresult_extractorole_dtos_documentextractionresult",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/PowerPointOpenStrategy.cs",
+      "source_location": "L16",
+      "weight": 1.0,
+      "context": "return_type",
+      "metadata": {
+        "ref_token": "DocumentExtractionResult"
+      },
+      "_origin": "ast",
+      "source": "extractorole_helpers_filetypestrategy_powerpointopenstrategy_extractorole_helpers_filetypestrategy_powerpointopenstrategy_open",
+      "target": "extractorole_dtos_documentextractionresult_extractorole_dtos_documentextractionresult",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/WordOpenStrategy.cs",
+      "source_location": "L16",
+      "weight": 1.0,
+      "context": "return_type",
+      "metadata": {
+        "ref_token": "DocumentExtractionResult"
+      },
+      "_origin": "ast",
+      "source": "extractorole_helpers_filetypestrategy_wordopenstrategy_extractorole_helpers_filetypestrategy_wordopenstrategy_open",
+      "target": "extractorole_dtos_documentextractionresult_extractorole_dtos_documentextractionresult",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/ZipFallbackOpenStrategy.cs",
+      "source_location": "L18",
+      "weight": 1.0,
+      "context": "return_type",
+      "metadata": {
+        "ref_token": "DocumentExtractionResult"
+      },
+      "_origin": "ast",
+      "source": "extractorole_helpers_filetypestrategy_zipfallbackopenstrategy_extractorole_helpers_filetypestrategy_zipfallbackopenstrategy_open",
+      "target": "extractorole_dtos_documentextractionresult_extractorole_dtos_documentextractionresult",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/MainExtractor.cs",
+      "source_location": "L49",
+      "weight": 1.0,
+      "context": "return_type",
+      "metadata": {
+        "ref_token": "DocumentExtractionResult"
+      },
+      "_origin": "ast",
+      "source": "extractorole_mainextractor_extractorole_mainextractor_extract",
+      "target": "extractorole_dtos_documentextractionresult_extractorole_dtos_documentextractionresult",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/Doc/DocExtractor.cs",
+      "source_location": "L15",
+      "weight": 1.0,
+      "context": "return_type",
+      "metadata": {
+        "ref_token": "DocumentExtractionResult"
+      },
+      "_origin": "ast",
+      "source": "extractorole_old_doc_docextractor_extractorole_old_doc_docextractor_extractfromdocxbinary",
+      "target": "extractorole_dtos_documentextractionresult_extractorole_dtos_documentextractionresult",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/Excel/ExcelExtractor.cs",
+      "source_location": "L12",
+      "weight": 1.0,
+      "context": "return_type",
+      "metadata": {
+        "ref_token": "DocumentExtractionResult"
+      },
+      "_origin": "ast",
+      "source": "extractorole_old_excel_excelextractor_extractorole_old_excel_excelextractor_extractfromxlsxbinary",
+      "target": "extractorole_dtos_documentextractionresult_extractorole_dtos_documentextractionresult",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/PowerPoint/SlidesExtractor.cs",
+      "source_location": "L11",
+      "weight": 1.0,
+      "context": "return_type",
+      "metadata": {
+        "ref_token": "DocumentExtractionResult"
+      },
+      "_origin": "ast",
+      "source": "extractorole_old_powerpoint_slidesextractor_extractorole_old_powerpoint_slidesextractor_extractfrompptxbinary",
+      "target": "extractorole_dtos_documentextractionresult_extractorole_dtos_documentextractionresult",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/Util/ExtractionUtil.cs",
+      "source_location": "L58",
+      "weight": 1.0,
+      "context": "return_type",
+      "metadata": {
+        "ref_token": "DocumentExtractionResult"
+      },
+      "_origin": "ast",
+      "source": "extractorole_old_util_extractionutil_extractorole_old_util_extractionutil_extractionmain",
+      "target": "extractorole_dtos_documentextractionresult_extractorole_dtos_documentextractionresult",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/Doc/DocExtractor.cs",
+      "source_location": "L90",
+      "weight": 1.0,
+      "context": "return_type",
+      "metadata": {
+        "ref_token": "FileMetadata"
+      },
+      "_origin": "ast",
+      "source": "extractorole_old_doc_docextractor_extractorole_old_doc_docextractor_extractmetadatasafely",
+      "target": "extractorole_dtos_documentextractionresult_extractorole_dtos_filemetadata",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/MainExtractor.cs",
+      "source_location": "L43",
+      "weight": 1.0,
+      "context": "return_type",
+      "metadata": {
+        "ref_token": "IOpenStrategy"
+      },
+      "_origin": "ast",
+      "source": "extractorole_mainextractor_extractorole_mainextractor_findopenstrategyformime",
+      "target": "extractorole_helpers_filetypestrategy_iopenstrategy_extractorole_helpers_filetypestrategy_iopenstrategy",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/MainExtractor.cs",
+      "source_location": "L120",
+      "weight": 1.0,
+      "context": "return_type",
+      "metadata": {
+        "ref_token": "ITextExtractor"
+      },
+      "_origin": "ast",
+      "source": "extractorole_mainextractor_extractorole_mainextractor_findhandlerformime",
+      "target": "extractorole_itextextractor_extractorole_itextextractor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/ExtractionHelper.cs",
+      "source_location": "L148",
+      "weight": 1.0,
+      "context": "return_type",
+      "metadata": {
+        "ref_token": "OfficeMimeTypeEnum"
+      },
+      "_origin": "ast",
+      "source": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper_detectmimetypefrombytes",
+      "target": "extractorole_dtos_officemimetypeenum_extractorole_dtos_officemimetypeenum",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/ExtractionHelper.cs",
+      "source_location": "L26",
+      "weight": 1.0,
+      "context": "return_type",
+      "metadata": {
+        "ref_token": "OfficeMimeTypeEnum"
+      },
+      "_origin": "ast",
+      "source": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper_parseofficemimetype",
+      "target": "extractorole_dtos_officemimetypeenum_extractorole_dtos_officemimetypeenum",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/IExtractionHelper.cs",
+      "source_location": "L15",
+      "weight": 1.0,
+      "context": "return_type",
+      "metadata": {
+        "ref_token": "OfficeMimeTypeEnum"
+      },
+      "_origin": "ast",
+      "source": "extractorole_helpers_iextractionhelper_extractorole_helpers_iextractionhelper_detectmimetypefrombytes",
+      "target": "extractorole_dtos_officemimetypeenum_extractorole_dtos_officemimetypeenum",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/IExtractionHelper.cs",
+      "source_location": "L10",
+      "weight": 1.0,
+      "context": "return_type",
+      "metadata": {
+        "ref_token": "OfficeMimeTypeEnum"
+      },
+      "_origin": "ast",
+      "source": "extractorole_helpers_iextractionhelper_extractorole_helpers_iextractionhelper_parseofficemimetype",
+      "target": "extractorole_dtos_officemimetypeenum_extractorole_dtos_officemimetypeenum",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/ExtractionHelper.cs",
+      "source_location": "L12",
+      "weight": 1.0,
+      "metadata": {
+        "ref_token": "IExtractionHelper"
+      },
+      "_origin": "ast",
+      "source": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper",
+      "target": "extractorole_helpers_iextractionhelper_extractorole_helpers_iextractionhelper",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/ExcelOpenStrategy.cs",
+      "source_location": "L7",
+      "weight": 1.0,
+      "metadata": {
+        "ref_token": "IOpenStrategy"
+      },
+      "_origin": "ast",
+      "source": "extractorole_helpers_filetypestrategy_excelopenstrategy_extractorole_helpers_filetypestrategy_excelopenstrategy",
+      "target": "extractorole_helpers_filetypestrategy_iopenstrategy_extractorole_helpers_filetypestrategy_iopenstrategy",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/PowerPointOpenStrategy.cs",
+      "source_location": "L7",
+      "weight": 1.0,
+      "metadata": {
+        "ref_token": "IOpenStrategy"
+      },
+      "_origin": "ast",
+      "source": "extractorole_helpers_filetypestrategy_powerpointopenstrategy_extractorole_helpers_filetypestrategy_powerpointopenstrategy",
+      "target": "extractorole_helpers_filetypestrategy_iopenstrategy_extractorole_helpers_filetypestrategy_iopenstrategy",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/WordOpenStrategy.cs",
+      "source_location": "L7",
+      "weight": 1.0,
+      "metadata": {
+        "ref_token": "IOpenStrategy"
+      },
+      "_origin": "ast",
+      "source": "extractorole_helpers_filetypestrategy_wordopenstrategy_extractorole_helpers_filetypestrategy_wordopenstrategy",
+      "target": "extractorole_helpers_filetypestrategy_iopenstrategy_extractorole_helpers_filetypestrategy_iopenstrategy",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/ZipFallbackOpenStrategy.cs",
+      "source_location": "L5",
+      "weight": 1.0,
+      "metadata": {
+        "ref_token": "IOpenStrategy"
+      },
+      "_origin": "ast",
+      "source": "extractorole_helpers_filetypestrategy_zipfallbackopenstrategy_extractorole_helpers_filetypestrategy_zipfallbackopenstrategy",
+      "target": "extractorole_helpers_filetypestrategy_iopenstrategy_extractorole_helpers_filetypestrategy_iopenstrategy",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Handlers/DocxTextExtractor.cs",
+      "source_location": "L7",
+      "weight": 1.0,
+      "metadata": {
+        "ref_token": "ITextExtractor"
+      },
+      "_origin": "ast",
+      "source": "extractorole_handlers_docxtextextractor_extractorole_handlers_docxtextextractor",
+      "target": "itextextractor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Handlers/PptxTextExtractor.cs",
+      "source_location": "L10",
+      "weight": 1.0,
+      "metadata": {
+        "ref_token": "ITextExtractor"
+      },
+      "_origin": "ast",
+      "source": "extractorole_handlers_pptxtextextractor_extractorole_handlers_pptxtextextractor",
+      "target": "itextextractor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Handlers/XlsxTextExtractor.cs",
+      "source_location": "L11",
+      "weight": 1.0,
+      "metadata": {
+        "ref_token": "ITextExtractor"
+      },
+      "_origin": "ast",
+      "source": "extractorole_handlers_xlsxtextextractor_extractorole_handlers_xlsxtextextractor",
+      "target": "itextextractor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOle.slnx",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole",
+      "target": "extractorole_extractorole",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/DTOs/DocumentExtractionResult.cs",
+      "source_location": "L22",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_dtos_documentextractionresult",
+      "target": "extractorole_dtos_documentextractionresult_extractorole_dtos_filemetadata",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/DTOs/DocumentExtractionResult.cs",
+      "source_location": "L31",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_dtos_documentextractionresult",
+      "target": "extractorole_dtos_documentextractionresult_extractorole_dtos_embeddedfileitem",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/DTOs/DocumentExtractionResult.cs",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_dtos_documentextractionresult",
+      "target": "csharp_namespace:21c17d0216bee313",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/DTOs/DocumentExtractionResult.cs",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_dtos_documentextractionresult",
+      "target": "extractorole_dtos_documentextractionresult_extractorole_dtos_documentextractionresult",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/DTOs/OfficeMimeTypeEnum.cs",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_dtos_officemimetypeenum",
+      "target": "csharp_namespace:21c17d0216bee313",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/DTOs/OfficeMimeTypeEnum.cs",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_dtos_officemimetypeenum",
+      "target": "extractorole_dtos_officemimetypeenum_extractorole_dtos_officemimetypeenum",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Handlers/DocxTextExtractor.cs",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_handlers_docxtextextractor",
+      "target": "csharp_namespace:1290dacc28d2474d",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Handlers/DocxTextExtractor.cs",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_handlers_docxtextextractor",
+      "target": "extractorole_handlers_docxtextextractor_extractorole_handlers_docxtextextractor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Handlers/PptxTextExtractor.cs",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_handlers_pptxtextextractor",
+      "target": "extractorole_handlers_pptxtextextractor_extractorole_handlers_pptxtextextractor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Handlers/PptxTextExtractor.cs",
+      "source_location": "L8",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_handlers_pptxtextextractor",
+      "target": "csharp_namespace:1290dacc28d2474d",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Handlers/XlsxTextExtractor.cs",
+      "source_location": "L11",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_handlers_xlsxtextextractor",
+      "target": "extractorole_handlers_xlsxtextextractor_extractorole_handlers_xlsxtextextractor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Handlers/XlsxTextExtractor.cs",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_handlers_xlsxtextextractor",
+      "target": "csharp_namespace:1290dacc28d2474d",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/ExtractionHelper.cs",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_extractionhelper",
+      "target": "csharp_namespace:9b55c5ac19b5c8c9",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/ExtractionHelper.cs",
+      "source_location": "L12",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_extractionhelper",
+      "target": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/ExcelOpenStrategy.cs",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_filetypestrategy_excelopenstrategy",
+      "target": "csharp_namespace:4a110d7eeb88b3e6",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/ExcelOpenStrategy.cs",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_filetypestrategy_excelopenstrategy",
+      "target": "extractorole_helpers_filetypestrategy_excelopenstrategy_extractorole_helpers_filetypestrategy_excelopenstrategy",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/IOpenStrategy.cs",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_filetypestrategy_iopenstrategy",
+      "target": "csharp_namespace:4a110d7eeb88b3e6",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/IOpenStrategy.cs",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_filetypestrategy_iopenstrategy",
+      "target": "extractorole_helpers_filetypestrategy_iopenstrategy_extractorole_helpers_filetypestrategy_iopenstrategy",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/PowerPointOpenStrategy.cs",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_filetypestrategy_powerpointopenstrategy",
+      "target": "csharp_namespace:4a110d7eeb88b3e6",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/PowerPointOpenStrategy.cs",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_filetypestrategy_powerpointopenstrategy",
+      "target": "extractorole_helpers_filetypestrategy_powerpointopenstrategy_extractorole_helpers_filetypestrategy_powerpointopenstrategy",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/WordOpenStrategy.cs",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_filetypestrategy_wordopenstrategy",
+      "target": "csharp_namespace:4a110d7eeb88b3e6",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/WordOpenStrategy.cs",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_filetypestrategy_wordopenstrategy",
+      "target": "extractorole_helpers_filetypestrategy_wordopenstrategy_extractorole_helpers_filetypestrategy_wordopenstrategy",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/ZipFallbackOpenStrategy.cs",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_filetypestrategy_zipfallbackopenstrategy",
+      "target": "csharp_namespace:4a110d7eeb88b3e6",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/ZipFallbackOpenStrategy.cs",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_filetypestrategy_zipfallbackopenstrategy",
+      "target": "extractorole_helpers_filetypestrategy_zipfallbackopenstrategy_extractorole_helpers_filetypestrategy_zipfallbackopenstrategy",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/IExtractionHelper.cs",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_iextractionhelper",
+      "target": "csharp_namespace:9b55c5ac19b5c8c9",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/IExtractionHelper.cs",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_iextractionhelper",
+      "target": "extractorole_helpers_iextractionhelper_extractorole_helpers_iextractionhelper",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/ITextExtractor.cs",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_itextextractor",
+      "target": "csharp_namespace:013e45f91b917b68",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/ITextExtractor.cs",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_itextextractor",
+      "target": "extractorole_itextextractor_extractorole_itextextractor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/MainExtractor.cs",
+      "source_location": "L12",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_mainextractor",
+      "target": "csharp_namespace:013e45f91b917b68",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/MainExtractor.cs",
+      "source_location": "L14",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_mainextractor",
+      "target": "extractorole_mainextractor_extractorole_mainextractor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/BackupLogic.cs",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_old_backuplogic",
+      "target": "csharp_namespace:588a01f1a5bc227d",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/BackupLogic.cs",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_old_backuplogic",
+      "target": "extractorole_old_backuplogic_extractorole_old_backuplogic",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/Doc/DocExtractor.cs",
+      "source_location": "L11",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_old_doc_docextractor",
+      "target": "csharp_namespace:1bc2302e686bbed9",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/Doc/DocExtractor.cs",
+      "source_location": "L13",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_old_doc_docextractor",
+      "target": "extractorole_old_doc_docextractor_extractorole_old_doc_docextractor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/Excel/ExcelExtractor.cs",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_old_excel_excelextractor",
+      "target": "extractorole_old_excel_excelextractor_extractorole_old_excel_excelextractor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/Excel/ExcelExtractor.cs",
+      "source_location": "L8",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_old_excel_excelextractor",
+      "target": "csharp_namespace:926d8a6f5988919e",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/PowerPoint/SlidesExtractor.cs",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_old_powerpoint_slidesextractor",
+      "target": "csharp_namespace:e70091163d734069",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/PowerPoint/SlidesExtractor.cs",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_old_powerpoint_slidesextractor",
+      "target": "extractorole_old_powerpoint_slidesextractor_extractorole_old_powerpoint_slidesextractor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/Util/ExtractionUtil.cs",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_old_util_extractionutil",
+      "target": "csharp_namespace:86c9e16bf0da9ecf",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/Util/ExtractionUtil.cs",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_old_util_extractionutil",
+      "target": "extractorole_old_util_extractionutil_extractorole_old_util_extractionutil",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Program.cs",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_program",
+      "target": "csharp_namespace:013e45f91b917b68",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Program.cs",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_program",
+      "target": "extractorole_program_extractorole_program",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/ServiceRegistration.cs",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_serviceregistration",
+      "target": "csharp_namespace:013e45f91b917b68",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/ServiceRegistration.cs",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_serviceregistration",
+      "target": "extractorole_serviceregistration_extractorole_serviceregistration",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/ExtractorOLE.csproj",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_extractorole",
+      "target": "nuget_documentformat_openxml",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/ExtractorOLE.csproj",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_extractorole",
+      "target": "nuget_documentformat_openxml_features",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/ExtractorOLE.csproj",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_extractorole",
+      "target": "nuget_documentformat_openxml_framework",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/ExtractorOLE.csproj",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_extractorole",
+      "target": "nuget_microsoft_extensions_dependencyinjection",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Handlers/DocxTextExtractor.cs",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_handlers_docxtextextractor_extractorole_handlers_docxtextextractor",
+      "target": "extractorole_handlers_docxtextextractor_extractorole_handlers_docxtextextractor_extracttext",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Handlers/PptxTextExtractor.cs",
+      "source_location": "L12",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_handlers_pptxtextextractor_extractorole_handlers_pptxtextextractor",
+      "target": "extractorole_handlers_pptxtextextractor_extractorole_handlers_pptxtextextractor_extracttext",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Handlers/XlsxTextExtractor.cs",
+      "source_location": "L13",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_handlers_xlsxtextextractor_extractorole_handlers_xlsxtextextractor",
+      "target": "extractorole_handlers_xlsxtextextractor_extractorole_handlers_xlsxtextextractor_extracttext",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/ExtractionHelper.cs",
+      "source_location": "L127",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper",
+      "target": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper_extractpartdata",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/ExtractionHelper.cs",
+      "source_location": "L148",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper",
+      "target": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper_detectmimetypefrombytes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/ExtractionHelper.cs",
+      "source_location": "L15",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper",
+      "target": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper_mimefor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/ExtractionHelper.cs",
+      "source_location": "L183",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper",
+      "target": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper_getextensionfromcontenttype",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/ExtractionHelper.cs",
+      "source_location": "L196",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper",
+      "target": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper_detectmimefrommagicbytes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/ExtractionHelper.cs",
+      "source_location": "L26",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper",
+      "target": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper_parseofficemimetype",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/ExtractionHelper.cs",
+      "source_location": "L39",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper",
+      "target": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper_extractmetadataandembedded",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/ExtractionHelper.cs",
+      "source_location": "L73",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper",
+      "target": "extractorole_helpers_extractionhelper_extractorole_helpers_extractionhelper_extractfirstlayerembedded",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/ExcelOpenStrategy.cs",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_filetypestrategy_excelopenstrategy_extractorole_helpers_filetypestrategy_excelopenstrategy",
+      "target": "extractorole_helpers_filetypestrategy_excelopenstrategy_extractorole_helpers_filetypestrategy_excelopenstrategy_open",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/IOpenStrategy.cs",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_filetypestrategy_iopenstrategy_extractorole_helpers_filetypestrategy_iopenstrategy",
+      "target": "extractorole_helpers_filetypestrategy_iopenstrategy_extractorole_helpers_filetypestrategy_iopenstrategy_open",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/PowerPointOpenStrategy.cs",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_filetypestrategy_powerpointopenstrategy_extractorole_helpers_filetypestrategy_powerpointopenstrategy",
+      "target": "extractorole_helpers_filetypestrategy_powerpointopenstrategy_extractorole_helpers_filetypestrategy_powerpointopenstrategy_open",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/WordOpenStrategy.cs",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_filetypestrategy_wordopenstrategy_extractorole_helpers_filetypestrategy_wordopenstrategy",
+      "target": "extractorole_helpers_filetypestrategy_wordopenstrategy_extractorole_helpers_filetypestrategy_wordopenstrategy_open",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/ZipFallbackOpenStrategy.cs",
+      "source_location": "L18",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_filetypestrategy_zipfallbackopenstrategy_extractorole_helpers_filetypestrategy_zipfallbackopenstrategy",
+      "target": "extractorole_helpers_filetypestrategy_zipfallbackopenstrategy_extractorole_helpers_filetypestrategy_zipfallbackopenstrategy_open",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/IExtractionHelper.cs",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_iextractionhelper_extractorole_helpers_iextractionhelper",
+      "target": "extractorole_helpers_iextractionhelper_extractorole_helpers_iextractionhelper_parseofficemimetype",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/IExtractionHelper.cs",
+      "source_location": "L12",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_iextractionhelper_extractorole_helpers_iextractionhelper",
+      "target": "extractorole_helpers_iextractionhelper_extractorole_helpers_iextractionhelper_extractmetadataandembedded",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/IExtractionHelper.cs",
+      "source_location": "L13",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_iextractionhelper_extractorole_helpers_iextractionhelper",
+      "target": "extractorole_helpers_iextractionhelper_extractorole_helpers_iextractionhelper_extractfirstlayerembedded",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/IExtractionHelper.cs",
+      "source_location": "L15",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_iextractionhelper_extractorole_helpers_iextractionhelper",
+      "target": "extractorole_helpers_iextractionhelper_extractorole_helpers_iextractionhelper_detectmimetypefrombytes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/IExtractionHelper.cs",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_iextractionhelper_extractorole_helpers_iextractionhelper",
+      "target": "extractorole_helpers_iextractionhelper_extractorole_helpers_iextractionhelper_getextensionfromcontenttype",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/IExtractionHelper.cs",
+      "source_location": "L17",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_iextractionhelper_extractorole_helpers_iextractionhelper",
+      "target": "extractorole_helpers_iextractionhelper_extractorole_helpers_iextractionhelper_detectmimefrommagicbytes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Helpers/IExtractionHelper.cs",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_iextractionhelper_extractorole_helpers_iextractionhelper",
+      "target": "extractorole_helpers_iextractionhelper_extractorole_helpers_iextractionhelper_mimefor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/ITextExtractor.cs",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_itextextractor_extractorole_itextextractor",
+      "target": "extractorole_itextextractor_extractorole_itextextractor_extracttext",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/MainExtractor.cs",
+      "source_location": "L120",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_mainextractor_extractorole_mainextractor",
+      "target": "extractorole_mainextractor_extractorole_mainextractor_findhandlerformime",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/MainExtractor.cs",
+      "source_location": "L30",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_mainextractor_extractorole_mainextractor",
+      "target": "extractorole_mainextractor_extractorole_mainextractor_register",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/MainExtractor.cs",
+      "source_location": "L36",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_mainextractor_extractorole_mainextractor",
+      "target": "extractorole_mainextractor_extractorole_mainextractor_registerbuiltinhandlers",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/MainExtractor.cs",
+      "source_location": "L43",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_mainextractor_extractorole_mainextractor",
+      "target": "extractorole_mainextractor_extractorole_mainextractor_findopenstrategyformime",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/MainExtractor.cs",
+      "source_location": "L49",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_mainextractor_extractorole_mainextractor",
+      "target": "extractorole_mainextractor_extractorole_mainextractor_extract",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/Doc/DocExtractor.cs",
+      "source_location": "L15",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_old_doc_docextractor_extractorole_old_doc_docextractor",
+      "target": "extractorole_old_doc_docextractor_extractorole_old_doc_docextractor_extractfromdocxbinary",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/Doc/DocExtractor.cs",
+      "source_location": "L78",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_old_doc_docextractor_extractorole_old_doc_docextractor",
+      "target": "extractorole_old_doc_docextractor_extractorole_old_doc_docextractor_getextensionfromcontenttype",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/Doc/DocExtractor.cs",
+      "source_location": "L90",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_old_doc_docextractor_extractorole_old_doc_docextractor",
+      "target": "extractorole_old_doc_docextractor_extractorole_old_doc_docextractor_extractmetadatasafely",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/Excel/ExcelExtractor.cs",
+      "source_location": "L117",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_old_excel_excelextractor_extractorole_old_excel_excelextractor",
+      "target": "extractorole_old_excel_excelextractor_extractorole_old_excel_excelextractor_getcelltext",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/Excel/ExcelExtractor.cs",
+      "source_location": "L12",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_old_excel_excelextractor_extractorole_old_excel_excelextractor",
+      "target": "extractorole_old_excel_excelextractor_extractorole_old_excel_excelextractor_extractfromxlsxbinary",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/Excel/ExcelExtractor.cs",
+      "source_location": "L134",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_old_excel_excelextractor_extractorole_old_excel_excelextractor",
+      "target": "extractorole_old_excel_excelextractor_extractorole_old_excel_excelextractor_getextensionfromcontenttype",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/Excel/ExcelExtractor.cs",
+      "source_location": "L82",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_old_excel_excelextractor_extractorole_old_excel_excelextractor",
+      "target": "extractorole_old_excel_excelextractor_extractorole_old_excel_excelextractor_getfirstlayerembedded",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/PowerPoint/SlidesExtractor.cs",
+      "source_location": "L104",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_old_powerpoint_slidesextractor_extractorole_old_powerpoint_slidesextractor",
+      "target": "extractorole_old_powerpoint_slidesextractor_extractorole_old_powerpoint_slidesextractor_getextensionfromcontenttype",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/PowerPoint/SlidesExtractor.cs",
+      "source_location": "L11",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_old_powerpoint_slidesextractor_extractorole_old_powerpoint_slidesextractor",
+      "target": "extractorole_old_powerpoint_slidesextractor_extractorole_old_powerpoint_slidesextractor_extractfrompptxbinary",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/Util/ExtractionUtil.cs",
+      "source_location": "L11",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_old_util_extractionutil_extractorole_old_util_extractionutil",
+      "target": "extractorole_old_util_extractionutil_extractorole_old_util_extractionutil_getfirstlayerembedded",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/Util/ExtractionUtil.cs",
+      "source_location": "L45",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_old_util_extractionutil_extractorole_old_util_extractionutil",
+      "target": "extractorole_old_util_extractionutil_extractorole_old_util_extractionutil_getextensionfromcontenttype",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Old/Util/ExtractionUtil.cs",
+      "source_location": "L58",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_old_util_extractionutil_extractorole_old_util_extractionutil",
+      "target": "extractorole_old_util_extractionutil_extractorole_old_util_extractionutil_extractionmain",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/Program.cs",
+      "source_location": "L8",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_program_extractorole_program",
+      "target": "extractorole_program_extractorole_program_main",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/ServiceRegistration.cs",
+      "source_location": "L11",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_serviceregistration_extractorole_serviceregistration",
+      "target": "extractorole_serviceregistration_extractorole_serviceregistration_register",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/ExtractorOLE.csproj",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_extractorole",
+      "target": "framework_net10_0",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "ExtractorOLE/ExtractorOLE.csproj",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_extractorole",
+      "target": "sdk_microsoft_net_sdk",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/ExcelOpenStrategy.cs",
+      "source_location": "L24",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_filetypestrategy_excelopenstrategy_extractorole_helpers_filetypestrategy_excelopenstrategy_open",
+      "target": "extractorole_helpers_iextractionhelper_extractorole_helpers_iextractionhelper_extractmetadataandembedded"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/PowerPointOpenStrategy.cs",
+      "source_location": "L24",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_filetypestrategy_powerpointopenstrategy_extractorole_helpers_filetypestrategy_powerpointopenstrategy_open",
+      "target": "extractorole_helpers_iextractionhelper_extractorole_helpers_iextractionhelper_extractmetadataandembedded"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/WordOpenStrategy.cs",
+      "source_location": "L24",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_filetypestrategy_wordopenstrategy_extractorole_helpers_filetypestrategy_wordopenstrategy_open",
+      "target": "extractorole_helpers_iextractionhelper_extractorole_helpers_iextractionhelper_extractmetadataandembedded"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/ZipFallbackOpenStrategy.cs",
+      "source_location": "L20",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_filetypestrategy_zipfallbackopenstrategy_extractorole_helpers_filetypestrategy_zipfallbackopenstrategy_open",
+      "target": "extractorole_helpers_filetypestrategy_wordopenstrategy_extractorole_helpers_filetypestrategy_wordopenstrategy_open"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/ZipFallbackOpenStrategy.cs",
+      "source_location": "L22",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_filetypestrategy_zipfallbackopenstrategy_extractorole_helpers_filetypestrategy_zipfallbackopenstrategy_open",
+      "target": "extractorole_helpers_filetypestrategy_excelopenstrategy_extractorole_helpers_filetypestrategy_excelopenstrategy_open"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "ExtractorOLE/Helpers/FileTypeStrategy/ZipFallbackOpenStrategy.cs",
+      "source_location": "L24",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_helpers_filetypestrategy_zipfallbackopenstrategy_extractorole_helpers_filetypestrategy_zipfallbackopenstrategy_open",
+      "target": "extractorole_helpers_filetypestrategy_powerpointopenstrategy_extractorole_helpers_filetypestrategy_powerpointopenstrategy_open"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "ExtractorOLE/MainExtractor.cs",
+      "source_location": "L55",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_mainextractor_extractorole_mainextractor_extract",
+      "target": "extractorole_helpers_iextractionhelper_extractorole_helpers_iextractionhelper_detectmimetypefrombytes"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "ExtractorOLE/MainExtractor.cs",
+      "source_location": "L86",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_mainextractor_extractorole_mainextractor_extract",
+      "target": "extractorole_helpers_iextractionhelper_extractorole_helpers_iextractionhelper_parseofficemimetype"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "ExtractorOLE/MainExtractor.cs",
+      "source_location": "L91",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_mainextractor_extractorole_mainextractor_extract",
+      "target": "extractorole_helpers_iextractionhelper_extractorole_helpers_iextractionhelper_detectmimefrommagicbytes"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "ExtractorOLE/MainExtractor.cs",
+      "source_location": "L95",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "extractorole_mainextractor_extractorole_mainextractor_extract",
+      "target": "extractorole_helpers_iextractionhelper_extractorole_helpers_iextractionhelper_mimefor"
+    }
+  ],
+  "hyperedges": []
+}

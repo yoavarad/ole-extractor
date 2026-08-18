@@ -1,0 +1,27 @@
+$schema: ydk:schema:req
+id: ydk:req:extraction/unicode-fidelity
+description: Extracted text and metadata must faithfully preserve exotic scripts and emoji with no corruption, truncation, or silent normalization.
+type: constraint
+priority: critical
+rule: >
+  ExtractedText and every string field on FileMetadata/WordFormatMetadata/
+  ExcelFormatMetadata/PowerPointFormatMetadata MUST round-trip Hebrew,
+  Arabic, Persian, Russian, Latin-script, and CJK (Chinese/Japanese/Korean)
+  text, and emoji (including multi-codepoint sequences such as
+  skin-tone-modified or ZWJ-joined emoji), without mojibake, without
+  truncating mid-codepoint or mid-surrogate-pair, and without applying any
+  Unicode normalization form that would change the character sequence from
+  what the source document stored. This applies to both the OOXML path
+  (already UTF-8 internally) and the legacy OLE path (which may store text
+  as UTF-16LE or a legacy codepage depending on the field — NPOI's decoding
+  behavior for this is UNVERIFIED per the library research spike and must
+  be empirically tested).
+failure_behavior: N/A — this is a correctness rule verified by tests, not a runtime error condition. A detected violation blocks the Legacy OLE extraction / OOXML extraction completeness tasks from being marked done.
+related_components:
+  - ydk:contract:extraction/extract
+  - ydk:entity:extraction/ExtractionResult
+  - ydk:entity:extraction/FileMetadata
+acceptance_criteria:
+  - "Test corpus (Dataset Curation epic) includes at least one sample per format (all 6) with body text and metadata fields containing Hebrew, Arabic, Persian, Russian, Latin, CJK text, and emoji, mixed within the same document."
+  - "Test: extracted text/metadata for each multilingual sample byte-for-byte matches the expected Unicode string in the corpus manifest — not just 'is non-empty'."
+  - "Test: no test asserts on string length or byte length in a way that would pass under truncation (e.g. asserting length ranges is insufficient; assert exact expected content)."

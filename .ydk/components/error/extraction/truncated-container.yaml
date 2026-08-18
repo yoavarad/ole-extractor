@@ -1,0 +1,21 @@
+$schema: ydk:schema:error
+id: ydk:error:extraction/truncated-container
+description: >
+  FileBytes ends before the container format's own structure says it should
+  (e.g. a ZIP end-of-central-directory record pointing past the actual byte
+  array, or a CFB header declaring more sectors than are present). Reported
+  distinctly from corrupt-file because it has a specific, common real-world
+  cause (partial download/upload, truncated copy) worth surfacing separately.
+status_code: 422
+code: TRUNCATED_CONTAINER
+detail_template: "File appears truncated: expected ${expectedBytes} bytes of container structure, got ${actualBytes}."
+response_shape:
+  code: string
+  detail: string
+  expectedBytes: long
+  actualBytes: long
+triggers:
+  - ExtractionRequest.FileBytes.Length is smaller than the container's own declared structure size (ZIP EOCD offset, or CFB sector count * sector size)
+  - ExtractionRequest.FileBytes is zero-length (expectedBytes reported as the minimum header size for the claimed DetectedMimeType; actualBytes is 0) — detection itself never throws this, a zero-length input simply detects as Unknown; this trigger fires only if Extract() is called directly with a zero-length input
+related:
+  - ydk:contract:extraction/extract

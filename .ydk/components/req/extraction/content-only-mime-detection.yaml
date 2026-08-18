@@ -1,0 +1,20 @@
+$schema: ydk:schema:req
+id: ydk:req:extraction/content-only-mime-detection
+description: Mime type detection must be based solely on file content, never on the filename or its extension.
+type: business-rule
+priority: critical
+rule: >
+  DetectMimeType(request) MUST classify DetectedFormat using only
+  request.FileBytes (ZIP/OOXML structural signature or CFB directory
+  entry names). request.FileName MUST NOT be read for any purpose other
+  than pass-through/logging. A file with a misleading or absent extension
+  (e.g. a real .docx renamed to .txt, or with no extension at all) MUST
+  still classify correctly.
+failure_behavior: N/A — this is a correctness rule enforced by code review and tests, not a runtime error condition.
+related_components:
+  - ydk:contract:extraction/detect-mime-type
+  - ydk:entity:extraction/MimeDetectionRequest
+acceptance_criteria:
+  - "Test: a genuine docx file renamed to have a .txt extension (or no extension) is still detected as Docx."
+  - "Test: a genuine .txt file renamed to have a .docx extension is detected as Unknown (or its true type), not Docx."
+  - "Code review: DetectMimeType's implementation never branches on FileName."

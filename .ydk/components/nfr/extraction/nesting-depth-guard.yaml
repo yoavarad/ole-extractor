@@ -1,0 +1,20 @@
+$schema: ydk:schema:nfr
+id: ydk:nfr:extraction/nesting-depth-guard
+description: Bomb-defense caps on declared container size, checked before allocating buffers for decompression/reading — defends against a small malicious file whose declared internal structure implies far more data than is plausible.
+category: reliability
+target: "1,073,741,824 bytes (1 GB) per entry/stream; 2,147,483,648 bytes (2 GB) total per container"
+measurement: >
+  Both figures checked against DECLARED size (ZIP local/central header
+  field, or CFB FAT chain length * sector size) before any decompression or
+  full read is performed — never against actual decompressed bytes, since
+  the whole point is rejecting before that work happens. This is a hard,
+  always-enforced ceiling, independent of ydk:nfr:extraction/memory-ceiling
+  (which is a measured target over realistic files, not a runtime check) —
+  this guard is what actually stands between the library and a memory-
+  exhaustion attack.
+test_method: "Unit tests with synthetic crafted inputs: a small file whose ZIP header declares a single entry with uncompressed size > 1GB is rejected without attempting decompression (verified via allocation spy, not just exception type). Same for a CFB file whose declared FAT chain implies > 2GB total. Both must raise ydk:error:extraction/oversized-nested-content, not OutOfMemoryException or a hang."
+monitoring: "Not applicable in v1 — library, not a hosted service."
+applies_to:
+  - ydk:contract:extraction/detect-mime-type
+  - ydk:contract:extraction/extract
+  - ydk:error:extraction/oversized-nested-content

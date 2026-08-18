@@ -1,0 +1,29 @@
+$schema: ydk:schema:error
+id: ydk:error:extraction/oversized-nested-content
+description: >
+  Defense against zip-bomb / CFB-bomb style inputs — a small file whose
+  declared internal structure (ZIP uncompressed-size fields, CFB sector/FAT
+  counts, or embedded-object nesting) exceeds the hard, always-enforced
+  caps in [ydk:nfr:extraction/nesting-depth-guard]. Detection and extraction
+  both check declared sizes/depth against those caps BEFORE allocating
+  buffers for them. This is the mechanism that actually bounds memory use
+  against malicious input; [ydk:nfr:extraction/memory-ceiling] is a
+  separate, measured performance target over realistic files, not something
+  this check tests against.
+status_code: 422
+code: OVERSIZED_NESTED_CONTENT
+detail_template: "Rejected: declared internal size/nesting (${declaredMetric}) exceeds configured limits."
+response_shape:
+  code: string
+  detail: string
+  declaredMetric: string
+triggers:
+  - A ZIP entry's declared uncompressed size exceeds the configured per-entry cap before decompression begins
+  - Total declared uncompressed size across all entries exceeds the configured total cap
+  - CFB sector/FAT chain length implies a file size wildly larger than FileBytes.Length
+  - Embedded-object nesting exceeds the depth guard (relevant if a future version recurses into subfiles; v1 only extracts first-layer, so this mainly guards against a maliciously deep single-layer directory/FAT structure)
+related:
+  - ydk:contract:extraction/extract
+  - ydk:contract:extraction/detect-mime-type
+  - ydk:nfr:extraction/memory-ceiling
+  - ydk:nfr:extraction/nesting-depth-guard

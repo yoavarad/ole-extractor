@@ -1,0 +1,67 @@
+$schema: ydk:schema:entity
+id: ydk:entity:extraction/FileMetadata
+description: >
+  General file metadata common across all six supported Office formats (doc,
+  xls, ppt, docx, xlsx, pptx). Populated from whichever native property store
+  the format exposes (OLE SummaryInformation/DocumentSummaryInformation for
+  legacy formats, OOXML Core/Extended Properties for OOXML formats). Fields
+  the source format doesn't provide are null, not omitted.
+fields:
+  FileSizeBytes:
+    type: long
+    required: true
+    description: Size of the original file in bytes, as given by the input byte array length.
+  ExactMimeType:
+    type: string
+    required: true
+    description: >
+      The exact IANA mime type string as produced by mime detection, e.g.
+      "application/msword" or
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document".
+  FormatFamily:
+    type: enum
+    values: [LegacyOle, Ooxml]
+    required: true
+    description: Which format family the file belongs to.
+  Title:
+    type: string
+    nullable: true
+    description: Document title from native metadata, if present.
+  Author:
+    type: string
+    nullable: true
+    description: Original document author/creator from native metadata, if present.
+  LastModifiedBy:
+    type: string
+    nullable: true
+    description: Last-modifying-user field from native metadata, if present.
+  Subject:
+    type: string
+    nullable: true
+    description: Document subject field, if present.
+  Keywords:
+    type: string
+    nullable: true
+    description: Document keywords/tags field, if present.
+  Comments:
+    type: string
+    nullable: true
+    description: Document comments field, if present.
+  CreatedAt:
+    type: datetime
+    nullable: true
+    description: Document creation timestamp from native metadata, if present. UTC.
+  ModifiedAt:
+    type: datetime
+    nullable: true
+    description: Document last-modified timestamp from native metadata, if present. UTC.
+  ApplicationName:
+    type: string
+    nullable: true
+    description: Producing application name from native metadata (e.g. "Microsoft Office Word"), if present.
+relationships:
+  - target: ydk:entity:extraction/ExtractionResult
+    kind: embedded-in
+    description: FileMetadata is the GeneralMetadata field on ExtractionResult.
+indexes: []
+crud: []

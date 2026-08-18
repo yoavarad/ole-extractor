@@ -1,0 +1,42 @@
+$schema: ydk:schema:entity
+id: ydk:entity:extraction/ExtractionResult
+description: Output of the extraction function — the full result of processing one Office file.
+fields:
+  GeneralMetadata:
+    type: ref
+    ref_target: ydk:entity:extraction/FileMetadata
+    required: true
+    description: Metadata common across all formats.
+  FormatMetadata:
+    type: ref
+    ref_target: "ydk:entity:extraction/WordFormatMetadata | ydk:entity:extraction/ExcelFormatMetadata | ydk:entity:extraction/PowerPointFormatMetadata"
+    required: true
+    description: >
+      Format-specific metadata. Exactly one of WordFormatMetadata /
+      ExcelFormatMetadata / PowerPointFormatMetadata, selected by the
+      document's format kind (Word for doc/docx, Excel for xls/xlsx,
+      PowerPoint for ppt/pptx) — distinct from format family, which is the
+      container technology (LegacyOle/Ooxml). Represented as a discriminated union at the
+      API level (base type + concrete subtype), not a nullable field per format.
+  ExtractedText:
+    type: string
+    required: true
+    description: >
+      Flattened plain text content of the document body. Empty string (not
+      null) when the document has no extractable text. Must preserve all
+      Unicode content faithfully — see
+      [ydk:req:extraction/unicode-fidelity].
+  Subfiles:
+    type: list<ref>
+    ref_target: ydk:entity:extraction/SubfileItem
+    required: true
+    description: >
+      First-layer embedded objects and inline media found in the document.
+      Empty list (not null) when none are present.
+relationships:
+  - target: ydk:entity:extraction/FileMetadata
+    kind: has-one
+  - target: ydk:entity:extraction/SubfileItem
+    kind: has-many
+indexes: []
+crud: []

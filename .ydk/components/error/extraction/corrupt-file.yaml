@@ -1,0 +1,21 @@
+$schema: ydk:schema:error
+id: ydk:error:extraction/corrupt-file
+description: >
+  The file's container structure (CFB directory or ZIP central directory) is
+  malformed in a way that prevents opening it as the format DetectedMimeType
+  claims — e.g. a truncated CFB FAT chain, an unreadable ZIP central
+  directory, or a part that fails XML well-formedness. This is a data
+  problem, not a bug in the caller.
+status_code: 422
+code: CORRUPT_FILE
+detail_template: "File could not be parsed as ${detectedMimeType}: ${parseFailureReason}"
+response_shape:
+  code: string
+  detail: string
+  detectedMimeType: string
+triggers:
+  - Extract() is called on bytes that pass mime detection's lightweight structural sniff but fail full parsing by the format library (NPOI or DocumentFormat.OpenXml)
+  - A ZIP central directory is present but individual OOXML parts fail to open or are not well-formed XML
+  - A CFB directory chain is present but truncated/inconsistent partway through
+related:
+  - ydk:contract:extraction/extract

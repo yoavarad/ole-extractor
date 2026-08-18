@@ -1,0 +1,26 @@
+$schema: ydk:schema:contract
+id: ydk:contract:extraction/extract
+description: >
+  Extracts general metadata, format-specific metadata, flat text, and
+  first-layer embedded subfiles from an Office file, given its bytes,
+  filename, and a previously-detected mime type.
+methods:
+  Extract:
+    input: ydk:entity:extraction/ExtractionRequest
+    output: ydk:entity:extraction/ExtractionResult
+    description: >
+      Dispatches on DetectedMimeType to the matching open component and
+      text-extraction component (OOXML via DocumentFormat.OpenXml, legacy OLE
+      via NPOI — see [ydk:entity:extraction/WordFormatMetadata] and its
+      siblings for the per-format-kind output shape). Does not re-detect the mime type; a
+      caller passing a DetectedMimeType inconsistent with the actual bytes
+      gets undefined per-format-field behavior, not a guaranteed error — mime
+      detection is a separate, required upstream step
+      ([ydk:contract:extraction/detect-mime-type]).
+    errors:
+      - ydk:error:extraction/file-too-large
+      - ydk:error:extraction/corrupt-file
+      - ydk:error:extraction/password-protected
+      - ydk:error:extraction/unsupported-format
+      - ydk:error:extraction/truncated-container
+      - ydk:error:extraction/oversized-nested-content

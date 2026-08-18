@@ -1,0 +1,26 @@
+$schema: ydk:schema:entity
+id: ydk:entity:extraction/MimeDetectionResult
+description: Output of the mime-detection function.
+fields:
+  DetectedFormat:
+    type: enum
+    values: [Doc, Xls, Ppt, Docx, Xlsx, Pptx, Unknown]
+    required: true
+    description: >
+      Canonical detected format. Unknown means the content did not match any
+      recognized OLE/CFB or OOXML signature/structure for a supported format.
+      This enum is expected to grow as more formats are added
+      (extensibility is a project convention, not a v1-only concern).
+  MimeType:
+    type: string
+    required: true
+    description: >
+      Exact IANA mime type string for DetectedFormat (e.g. "application/msword"),
+      or "application/octet-stream" when DetectedFormat is Unknown.
+  IsSupported:
+    type: bool
+    required: true
+    description: True if DetectedFormat is one of the six supported formats; false for Unknown.
+relationships: []
+indexes: []
+crud: []

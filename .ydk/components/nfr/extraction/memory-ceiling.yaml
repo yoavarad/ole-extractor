@@ -1,0 +1,19 @@
+$schema: ydk:schema:nfr
+id: ydk:nfr:extraction/memory-ceiling
+description: Peak additional managed memory a single Extract() call may allocate, relative to input file size — bounds worst-case behavior on legitimate large files (distinct from the oversized-nested-content guard, which bounds malicious/degenerate inputs).
+category: performance
+target: "10x input file size (peak allocated bytes ≤ 10 * input byte length), for any file at or under the 100MB max-file-size limit"
+measurement: >
+  PROVISIONAL ratio, pending real allocation data from the Time Profiling
+  epic — MUST be revised to an empirically-validated number no later than
+  the end of that epic, and MUST NOT be treated as final before then.
+  Measured via the profiling tool's memory-diagnostic output for an
+  Extract() call, divided by the input file's byte length. This target
+  applies to realistic corpus files only — it is a measured performance
+  characteristic, not a runtime-enforced limit; adversarial/degenerate
+  inputs are bounded instead by ydk:nfr:extraction/nesting-depth-guard,
+  which IS enforced at runtime and takes precedence for those cases.
+test_method: "Time Profiling epic benchmark run reports allocated-bytes-per-input-byte for each of the 6 formats against the curated corpus; flagged if any sample exceeds the target ratio."
+monitoring: "Not applicable in v1 — library, not a hosted service."
+applies_to:
+  - ydk:contract:extraction/extract
