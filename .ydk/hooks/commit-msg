@@ -1,17 +1,2 @@
 #!/bin/sh
-# python3 may be an unbacked Windows Store alias with no real ydk install behind
-# it; fall back through python, then the uv-tool-managed interpreter that
-# actually has the ydk package.
-for candidate in python3 python; do
-  if command -v "$candidate" >/dev/null 2>&1 && "$candidate" -c "import ydk" >/dev/null 2>&1; then
-    exec "$candidate" -m ydk.hooks.commit_msg "$1"
-  fi
-done
-if command -v uv >/dev/null 2>&1; then
-  uv_tool_python="$(uv tool dir 2>/dev/null)/ydk/Scripts/python.exe"
-  if [ -x "$uv_tool_python" ]; then
-    exec "$uv_tool_python" -m ydk.hooks.commit_msg "$1"
-  fi
-fi
-echo "commit-msg hook: no Python interpreter with ydk installed found" >&2
-exit 1
+"$(uv tool dir)/ydk/Scripts/python.exe" -m ydk.hooks.commit_msg "$1"
