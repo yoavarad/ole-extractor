@@ -1,0 +1,24 @@
+$schema: ydk:schema:entity
+id: ydk:entity:extraction/ExtractionRequest
+description: >
+  Input to the extraction function. A class rather than bare parameters so
+  fields can be added later without changing the function signature.
+fields:
+  FileBytes:
+    type: bytes
+    required: true
+    description: Full binary content of the file to extract from.
+  FileName:
+    type: string
+    required: true
+    description: Original filename, passed through for logging/traceability and used verbatim as a fallback source for subfile naming when a container provides none.
+  DetectedMimeType:
+    type: string
+    required: true
+    description: >
+      The exact mime type string previously produced by
+      [ydk:contract:extraction/detect-mime-type]. Extraction trusts this value
+      rather than re-detecting; callers are expected to run detection first.
+relationships: []
+indexes: []
+crud: []

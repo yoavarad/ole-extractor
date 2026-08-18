@@ -1,0 +1,51 @@
+$schema: ydk:schema:entity
+id: ydk:entity:extraction/WordFormatMetadata
+description: >
+  Word-specific metadata (doc and docx). Populated on ExtractionResult when
+  ExactMimeType is application/msword or the wordprocessingml document type.
+  Legacy doc exposes these via OLE SummaryInformation/DocumentSummaryInformation;
+  docx exposes them via OOXML Extended (app.xml) Properties. Fields absent from
+  the source format's property store are null.
+fields:
+  PageCount:
+    type: int
+    nullable: true
+    description: Page count as recorded in native metadata (not recomputed by us).
+  WordCount:
+    type: int
+    nullable: true
+    description: Word count as recorded in native metadata.
+  CharacterCount:
+    type: int
+    nullable: true
+    description: Character count (excluding spaces) as recorded in native metadata.
+  ParagraphCount:
+    type: int
+    nullable: true
+    description: Paragraph count as recorded in native metadata.
+  LineCount:
+    type: int
+    nullable: true
+    description: Line count as recorded in native metadata.
+  Company:
+    type: string
+    nullable: true
+    description: Company field from native metadata, if present.
+  Manager:
+    type: string
+    nullable: true
+    description: Manager field from native metadata, if present.
+  Template:
+    type: string
+    nullable: true
+    description: Name of the template the document was based on, if present.
+  HasMacros:
+    type: bool
+    required: true
+    description: True if the document contains VBA macro content (docm, or legacy doc with a macro storage).
+relationships:
+  - target: ydk:entity:extraction/ExtractionResult
+    kind: embedded-in
+    description: WordFormatMetadata is the FormatMetadata field on ExtractionResult for Word files.
+indexes: []
+crud: []

@@ -13,3 +13,12 @@ obj/
 
 # graphify working files (graph.json/GRAPH_REPORT.md/graph.html are kept)
 graphify-out/*.graphify_*
+ExtractorOle/graphify-out/
+
+# ydk verification cache and stale automated (Bedrock-failed) reports
+# -- see docs/adrs/003-manual-spec-review-in-place-of-bedrock.md;
+# the real record is .ydk/reports/spec-verify-manual-*.md
+.ydk/cache/
+.ydk/reports/spec-verify-2*.json
+.ydk/reports/spec-verify-2*.txt
+.ydk/spec-check-results.json

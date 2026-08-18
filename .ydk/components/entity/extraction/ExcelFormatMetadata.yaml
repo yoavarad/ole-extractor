@@ -1,0 +1,28 @@
+$schema: ydk:schema:entity
+id: ydk:entity:extraction/ExcelFormatMetadata
+description: >
+  Excel-specific metadata (xls and xlsx). Populated on ExtractionResult when
+  ExactMimeType is application/vnd.ms-excel or the spreadsheetml sheet type.
+fields:
+  SheetCount:
+    type: int
+    required: true
+    description: Number of worksheets in the workbook.
+  SheetNames:
+    type: list<string>
+    required: true
+    description: Names of all worksheets, in workbook order.
+  ActiveSheetIndex:
+    type: int
+    nullable: true
+    description: Zero-based index of the sheet marked active/selected, if recorded.
+  HasMacros:
+    type: bool
+    required: true
+    description: True if the workbook contains VBA macro content (xlsm, or legacy xls with a macro storage).
+relationships:
+  - target: ydk:entity:extraction/ExtractionResult
+    kind: embedded-in
+    description: ExcelFormatMetadata is the FormatMetadata field on ExtractionResult for Excel files.
+indexes: []
+crud: []

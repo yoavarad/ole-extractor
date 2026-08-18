@@ -1,0 +1,19 @@
+$schema: ydk:schema:error
+id: ydk:error:extraction/unsupported-format
+description: >
+  Extract() was called with a DetectedMimeType that isn't one of the
+  supported formats (i.e. DetectMimeType returned IsSupported=false, or a
+  caller passed an arbitrary string). Extraction refuses rather than
+  guessing.
+status_code: 415
+code: UNSUPPORTED_FORMAT
+detail_template: "Mime type '${detectedMimeType}' is not a supported format for extraction."
+response_shape:
+  code: string
+  detail: string
+  detectedMimeType: string
+triggers:
+  - Extract() is called with DetectedMimeType equal to "application/octet-stream" (the Unknown sentinel) or any string not among the six supported mime types
+related:
+  - ydk:contract:extraction/extract
+  - ydk:entity:extraction/MimeDetectionResult

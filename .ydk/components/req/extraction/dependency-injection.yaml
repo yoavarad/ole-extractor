@@ -1,0 +1,21 @@
+$schema: ydk:schema:req
+id: ydk:req:extraction/dependency-injection
+description: New components (detection, open, text-extraction) continue the project's existing DI convention rather than static/manual instantiation.
+type: constraint
+priority: critical
+rule: >
+  All new format-handling components (detection components, open
+  components, text-extraction components) MUST be registered and resolved through
+  Microsoft.Extensions.DependencyInjection, consistent with the existing
+  ServiceRegistration.cs pattern in the scaffold, rather than being
+  constructed with `new` inline in orchestration code. The public
+  DetectMimeType/Extract entry points MAY be exposed as a thin
+  non-DI-aware facade for library consumers who don't use DI themselves,
+  but MUST internally resolve their dependencies from the DI container.
+failure_behavior: N/A — architecture constraint verified by code review, not a runtime error.
+related_components:
+  - ydk:contract:extraction/detect-mime-type
+  - ydk:contract:extraction/extract
+acceptance_criteria:
+  - "Code review: no `new SomeOpenComponent()`/`new SomeTextExtractionComponent()` calls in orchestration code (MainExtractor or its successor) — all such dependencies come from constructor injection."
+  - "ServiceRegistration (or its successor) registers every new detection/open/text-extraction component implementation added during Stage 03."

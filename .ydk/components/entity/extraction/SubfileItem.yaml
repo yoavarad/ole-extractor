@@ -1,0 +1,30 @@
+$schema: ydk:schema:entity
+id: ydk:entity:extraction/SubfileItem
+description: >
+  A single first-layer embedded item extracted from the original file — either
+  an OLE-embedded object (e.g. an embedded worksheet inside a Word document) or
+  inline media (image/audio/video referenced by the document body). Only
+  first-layer embeddings are extracted; content nested inside a subfile's own
+  binary is not recursively unpacked in v1.
+fields:
+  Binary:
+    type: bytes
+    required: true
+    description: Raw bytes of the embedded item, exactly as stored in the container.
+  FileName:
+    type: string
+    required: true
+    description: >
+      Best-available name for the item. OOXML containers provide a real part
+      name/extension; legacy OLE storages are named by their CFB storage/stream
+      name, which is used as-is when no better name is recoverable.
+  SizeBytes:
+    type: long
+    required: true
+    description: Length of Binary in bytes (equal to Binary.Length, provided for convenience).
+relationships:
+  - target: ydk:entity:extraction/ExtractionResult
+    kind: list-member-of
+    description: SubfileItem is the element type of ExtractionResult.Subfiles.
+indexes: []
+crud: []

@@ -1,0 +1,11 @@
+$schema: ydk:schema:nfr
+id: ydk:nfr:extraction/max-file-size
+description: Upper bound on input file size that DetectMimeType/Extract will attempt to process.
+category: reliability
+target: "104,857,600 bytes (100 MB)"
+measurement: "Input byte-array length checked against the configured limit, which is runtime-configurable (not a compile-time constant), before any parsing begins."
+test_method: "Unit test: a synthetic 100MB+1byte input is rejected before any format-specific parsing runs (verified via a spy/counter, not just wall-clock timing). Unit test: the limit value is read from configuration, not hardcoded — changing config changes accepted behavior."
+monitoring: "Every rejection due to exceeding the configured limit MUST be logged (file size attempted, filename, configured limit) — this is a required behavior, not optional monitoring."
+applies_to:
+  - ydk:contract:extraction/detect-mime-type
+  - ydk:contract:extraction/extract

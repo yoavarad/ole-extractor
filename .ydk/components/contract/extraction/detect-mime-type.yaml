@@ -1,0 +1,26 @@
+$schema: ydk:schema:contract
+id: ydk:contract:extraction/detect-mime-type
+description: >
+  Detects the exact mime type of an Office file from its content alone.
+  Filename is passed through but MUST NOT influence the result — see
+  [ydk:req:extraction/content-only-mime-detection].
+methods:
+  DetectMimeType:
+    input: ydk:entity:extraction/MimeDetectionRequest
+    output: ydk:entity:extraction/MimeDetectionResult
+    description: >
+      Sniffs FileBytes for a ZIP/OOXML structure (inspects [Content_Types].xml
+      / part-name prefixes to distinguish docx/xlsx/pptx from a generic zip)
+      or a CFB/OLE2 structure (inspects the compound-file directory's root
+      storage/stream names — e.g. "WordDocument", "Workbook"/"Book",
+      "PowerPoint Document" — to distinguish doc/xls/ppt). Returns
+      DetectedFormat=Unknown, MimeType="application/octet-stream",
+      IsSupported=false for anything else, rather than throwing — an
+      unrecognized file is a normal result, not a failure — detection stays
+      lenient and only inspects directory/header structure, never fully
+      parses the document. Throws only per
+      [ydk:error:extraction/oversized-nested-content] (zip/CFB bomb defense
+      during structural sniffing).
+    errors:
+      - ydk:error:extraction/file-too-large
+      - ydk:error:extraction/oversized-nested-content

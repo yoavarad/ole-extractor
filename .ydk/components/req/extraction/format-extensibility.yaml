@@ -1,0 +1,22 @@
+$schema: ydk:schema:req
+id: ydk:req:extraction/format-extensibility
+description: The 6 supported formats are a floor, not a ceiling — architecture must not preclude adding more formats later.
+type: constraint
+priority: medium
+rule: >
+  Format dispatch in both DetectMimeType and Extract MUST go through an
+  extensible registry mechanism keyed by format, rather than a hardcoded
+  switch statement enumerating exactly 6 cases inline in business logic.
+  Adding a 7th format (e.g. rtf, odt) MUST be achievable by adding a new
+  detection component, open component, and text-extraction component for
+  that format plus registry entries for each, without changing
+  MimeDetectionResult.DetectedFormat's existing values' meaning or the
+  public function signatures (DetectMimeType/Extract).
+failure_behavior: N/A — architecture constraint verified by code review, not a runtime error.
+related_components:
+  - ydk:contract:extraction/detect-mime-type
+  - ydk:contract:extraction/extract
+  - ydk:entity:extraction/MimeDetectionResult
+acceptance_criteria:
+  - "Code review: format dispatch uses a registry lookup, not an inline switch/if-chain naming all 6 formats in the core Extract()/DetectMimeType() method bodies."
+  - "Design walkthrough: adding a hypothetical 7th format is describable as 'implement a detection component, an open component, and a text-extraction component for it, and register all three' without touching the public API."

@@ -1,0 +1,10 @@
+$schema: ydk:schema:nfr
+id: ydk:nfr:extraction/extraction-latency
+description: Latency budget for the Extract() call (DetectMimeType is expected to be much cheaper — a lightweight structural sniff, not separately budgeted here).
+category: performance
+target: "P95 < 500ms @ 10MB input; P95 < 5s @ 100MB input (the configured max, per ydk:nfr:extraction/max-file-size)"
+measurement: "Wall-clock time of the Extract() call only (excludes file I/O to load bytes into memory, which happens before the call), on typical CI/dev hardware, single-threaded, warm (JIT-settled) run."
+test_method: "BenchmarkDotNet benchmark project (see the Time Profiling epic) runs Extract() against a fixed 10MB and a fixed ~100MB sample from the curated corpus for each of the 6 formats, reports P50/P95/allocations. CI fails the profiling task if P95 regresses more than 20% against the last committed baseline."
+monitoring: "Not applicable in v1 — this is a library, not a running service; no production monitoring target. Revisit if the library is later wrapped in a hosted service."
+applies_to:
+  - ydk:contract:extraction/extract

@@ -1,0 +1,25 @@
+$schema: ydk:schema:entity
+id: ydk:entity:extraction/PowerPointFormatMetadata
+description: >
+  PowerPoint-specific metadata (ppt and pptx). Populated on ExtractionResult
+  when ExactMimeType is application/vnd.ms-powerpoint or the presentationml
+  presentation type.
+fields:
+  SlideCount:
+    type: int
+    required: true
+    description: Number of slides in the presentation.
+  NotesSlideCount:
+    type: int
+    nullable: true
+    description: Number of slides that have speaker notes content, if determinable.
+  HasMacros:
+    type: bool
+    required: true
+    description: True if the presentation contains VBA macro content (pptm, or legacy ppt with a macro storage).
+relationships:
+  - target: ydk:entity:extraction/ExtractionResult
+    kind: embedded-in
+    description: PowerPointFormatMetadata is the FormatMetadata field on ExtractionResult for PowerPoint files.
+indexes: []
+crud: []

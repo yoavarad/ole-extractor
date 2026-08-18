@@ -1,0 +1,21 @@
+$schema: ydk:schema:entity
+id: ydk:entity:extraction/MimeDetectionRequest
+description: >
+  Input to the mime-detection function. A class rather than bare parameters so
+  fields can be added later (e.g. size hints, partial-read options) without
+  changing the function signature.
+fields:
+  FileBytes:
+    type: bytes
+    required: true
+    description: Full binary content of the file to classify.
+  FileName:
+    type: string
+    required: true
+    description: >
+      Original filename, passed through for logging/traceability only. MUST
+      NOT influence the detected type — detection is content-only per
+      [ydk:req:extraction/content-only-mime-detection].
+relationships: []
+indexes: []
+crud: []
