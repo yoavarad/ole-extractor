@@ -35,13 +35,28 @@ if file_path.startswith(cwd):
 root = Path(cwd)
 
 # --- GUARD: no-manual-pr and no-direct-push ---
-if tool_name == "Bash" and ("gh pr create" in command or "gh pr merge" in command):
+# Before Stage 02, no task exists for 'ydk task done' to attach a PR to --
+# task_id/worktree machinery only exists from Stage 02 onward. Allow direct
+# gh pr create pre-Stage-02; once real tasks exist, force the proof-based flow.
+state_file = root / ".ydk" / "state.json"
+current_stage = "00"
+if state_file.exists():
+    try:
+        current_stage = json.loads(state_file.read_text()).get("stage", "00")
+    except Exception:
+        current_stage = "00"
+
+if (
+    tool_name == "Bash"
+    and ("gh pr create" in command or "gh pr merge" in command)
+    and current_stage not in ("00", "01")
+):
     sys.stderr.write(
         "BLOCKED: Use 'ydk task done' to create PRs -- it captures verification proof.\n"
     )
     sys.exit(2)
 # git push is allowed -- ydk task done needs it internally
-# Only gh pr create is blocked (forces proof-based PRs)
+# Only gh pr create is blocked (forces proof-based PRs), and only from Stage 02 onward
 
 # --- GUARD: no-proof-tamper ---
 if (
