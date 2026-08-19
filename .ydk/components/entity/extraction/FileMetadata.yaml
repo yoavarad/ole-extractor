@@ -59,6 +59,22 @@ fields:
     type: string
     nullable: true
     description: Producing application name from native metadata (e.g. "Microsoft Office Word"), if present.
+  RevisionNumber:
+    type: int
+    nullable: true
+    description: Save-revision counter from native metadata (OLE SummaryInformation RevNumber / OOXML core.xml cp:revision), if present.
+  EditingDurationMinutes:
+    type: int
+    nullable: true
+    description: >
+      Cumulative total editing time in minutes, normalized to the same unit
+      across formats (legacy OLE SummaryInformation EditTime is stored in
+      100-nanosecond units and converted to minutes; OOXML app.xml TotalTime
+      is already minutes), if present.
+  LastPrintedAt:
+    type: datetime
+    nullable: true
+    description: Timestamp the document was last printed, from native metadata, if present. UTC.
 relationships:
   - target: ydk:entity:extraction/ExtractionResult
     kind: embedded-in

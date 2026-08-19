@@ -6,7 +6,7 @@
 
 ## General Metadata
 
-[ydk:entity:extraction/FileMetadata] carries the fields common across all six formats — title, author, last-modified-by, subject, keywords, comments, created/modified timestamps, and application name — sourced from each format's native document-properties store. A field the source format doesn't provide is null, never a placeholder string.
+[ydk:entity:extraction/FileMetadata] carries the fields common across all six formats — title, author, last-modified-by, subject, keywords, comments, created/modified timestamps, application name, revision number, cumulative editing duration, and last-printed timestamp — sourced from each format's native document-properties store. A field the source format doesn't provide is null, never a placeholder string.
 
 ## Format-Specific Metadata
 
