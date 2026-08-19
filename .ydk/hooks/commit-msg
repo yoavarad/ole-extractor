@@ -1,2 +1,2 @@
 #!/bin/sh
-"$(uv tool dir)/ydk/Scripts/python.exe" -m ydk.hooks.commit_msg "$1"
+"$(uv tool dir --color never)/ydk/Scripts/python.exe" -m ydk.hooks.commit_msg "$1"
