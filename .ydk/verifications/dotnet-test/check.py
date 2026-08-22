@@ -44,17 +44,17 @@ def _find_test_target(project_root: str) -> str | None:
     """
     root = Path(project_root)
     for pattern in ("*.sln", "*.slnx"):
-        matches = [
+        matches = sorted(
             p for p in root.rglob(pattern) if not _EXCLUDED_DIR_PARTS & set(p.parts)
-        ]
+        )
         if matches:
             return str(matches[0])
     csprojs = [
         p for p in root.rglob("*.csproj") if not _EXCLUDED_DIR_PARTS & set(p.parts)
     ]
-    test_projects = [
+    test_projects = sorted(
         p for p in csprojs if any(marker in p.stem for marker in _TEST_PROJECT_MARKERS)
-    ]
+    )
     if test_projects:
         return str(test_projects[0])
     return None
