@@ -19,6 +19,24 @@
             "command": "python .claude/hooks/guard.py"
           }
         ]
+      },
+      {
+        "matcher": "Bash|Grep",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "C:/Users/yoava/.local/bin/graphify.EXE hook-guard search"
+          }
+        ]
+      },
+      {
+        "matcher": "Read|Glob",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "C:/Users/yoava/.local/bin/graphify.EXE hook-guard read --strict"
+          }
+        ]
       }
     ],
     "SubagentStop": [
