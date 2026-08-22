@@ -1,0 +1,868 @@
+last_task_id: 0
+last_story_id: 0
+last_epic_id: 0
+epics:
+  E-a2efe648:
+    title: Library Setup & Validation
+    status: open
+    stories:
+    - S-e496f356
+    - S-418e5f1b
+  E-d4ac3268:
+    title: Project Restructure
+    status: open
+    stories:
+    - S-d01346bc
+    - S-43c41d4a
+    - S-fe24ecff
+  E-6728ee81:
+    title: CFB / Legacy Mime Detection
+    status: open
+    stories:
+    - S-3bc6b929
+  E-a7ddf85b:
+    title: Legacy OLE Extraction
+    status: open
+    stories:
+    - S-32677db6
+    - S-0602557d
+    - S-23b8b734
+  E-b54e8704:
+    title: OOXML Mime Detection Hardening
+    status: open
+    stories:
+    - S-7d040ba7
+  E-46875bcf:
+    title: OOXML Extraction Completeness
+    status: open
+    stories:
+    - S-156ec71a
+    - S-8d6146f0
+    - S-37c18545
+  E-bd43bc02:
+    title: Public API Surface
+    status: open
+    stories:
+    - S-072bfdf6
+    - S-51d277f1
+  E-c2846232:
+    title: Dataset Curation
+    status: open
+    stories:
+    - S-41ebb945
+    - S-da936361
+    - S-6bc8566f
+  E-5717c1fe:
+    title: Test Suite
+    status: open
+    stories:
+    - S-f6d7124a
+    - S-814fa928
+  E-3ffdc4d5:
+    title: Time Profiling
+    status: open
+    stories:
+    - S-709fe2de
+  E-c2544f52:
+    title: Stress Test Harness
+    status: open
+    stories:
+    - S-d88f514b
+stories:
+  S-e496f356:
+    title: Wire self-compiled NPOI and OpenMcdf into the build
+    epic: E-a2efe648
+    status: open
+    tasks:
+    - T-d7c81051
+    - T-d6de875f
+    - T-a5f1d074
+  S-418e5f1b:
+    title: Empirically validate NPOI i18n fidelity on the legacy OLE path
+    epic: E-a2efe648
+    status: open
+    tasks:
+    - T-94570c2b
+  S-d01346bc:
+    title: Downgrade to net8.0 and fix enum typo
+    epic: E-d4ac3268
+    status: open
+    tasks:
+    - T-eeb6684b
+    - T-2ac2f140
+    - T-ce2e3cc1
+  S-43c41d4a:
+    title: Generalize embedded-subfile walk and wire DI registry for format dispatch
+    epic: E-d4ac3268
+    status: open
+    tasks:
+    - T-05bd14c7
+    - T-90924b6d
+  S-fe24ecff:
+    title: Wire Program.cs to invoke both public functions on a real file
+    epic: E-d4ac3268
+    status: open
+    tasks:
+    - T-07188baf
+  S-3bc6b929:
+    title: CFB directory-based detection for legacy formats
+    epic: E-6728ee81
+    status: open
+    tasks:
+    - T-fd49ef39
+    - T-f667e540
+    - T-0a81d133
+  S-32677db6:
+    title: doc extraction (Word legacy)
+    epic: E-a7ddf85b
+    status: open
+    tasks:
+    - T-c4123b53
+    - T-3f3dab44
+    - T-a8b6b4ec
+    - T-1df33d6c
+  S-0602557d:
+    title: xls extraction (Excel legacy)
+    epic: E-a7ddf85b
+    status: open
+    tasks:
+    - T-c2a60f06
+    - T-40ac397c
+    - T-a77b2992
+    - T-9e6bfce8
+  S-23b8b734:
+    title: ppt extraction (PowerPoint legacy)
+    epic: E-a7ddf85b
+    status: open
+    tasks:
+    - T-517f89c5
+    - T-2c3440d2
+    - T-40fc15b4
+    - T-12dfd045
+  S-7d040ba7:
+    title: Harden OOXML detection, including macro-enabled variants
+    epic: E-b54e8704
+    status: open
+    tasks:
+    - T-44812a03
+    - T-ef11e30d
+    - T-1653b76b
+    - T-33a58c59
+  S-156ec71a:
+    title: docx extraction completeness
+    epic: E-46875bcf
+    status: open
+    tasks:
+    - T-9fac8963
+    - T-47fea79d
+    - T-29fbb7cf
+  S-8d6146f0:
+    title: xlsx extraction completeness
+    epic: E-46875bcf
+    status: open
+    tasks:
+    - T-30e939fe
+    - T-f653c5fb
+    - T-30f2c1b8
+    - T-02637847
+  S-37c18545:
+    title: pptx extraction completeness
+    epic: E-46875bcf
+    status: open
+    tasks:
+    - T-b792f8e5
+    - T-505f5b14
+    - T-c3f1ec05
+  S-072bfdf6:
+    title: Wire the DetectMimeType public facade to the registry
+    epic: E-bd43bc02
+    status: open
+    tasks:
+    - T-ef73861f
+    - T-fb89c6f3
+  S-51d277f1:
+    title: Wire the Extract public facade with full error handling
+    epic: E-bd43bc02
+    status: open
+    tasks:
+    - T-3b4e70f4
+    - T-3335d397
+    - T-61477563
+    - T-a2b91dc6
+  S-41ebb945:
+    title: Synthetic sample generator (3 per format)
+    epic: E-c2846232
+    status: open
+    tasks:
+    - T-5e9dbd18
+    - T-d657bb2a
+    - T-d91b2a46
+    - T-4b624fef
+    - T-f96fa73d
+  S-da936361:
+    title: Curated real-world samples (2 per format)
+    epic: E-c2846232
+    status: open
+    tasks:
+    - T-6f033869
+    - T-0834290d
+    - T-0c83ff28
+    - T-c573e72e
+  S-6bc8566f:
+    title: Shared adversarial set and corpus manifest
+    epic: E-c2846232
+    status: open
+    tasks:
+    - T-3bddbe75
+    - T-83b4a029
+    - T-7cdaeceb
+    - T-71ab3bc0
+  S-f6d7124a:
+    title: Integration tests against the corpus manifest
+    epic: E-5717c1fe
+    status: open
+    tasks:
+    - T-e0a5bfec
+    - T-7916a198
+    - T-f4ed5c8f
+  S-814fa928:
+    title: Unit tests for unit-test-backed scenarios
+    epic: E-5717c1fe
+    status: open
+    tasks:
+    - T-9a4ff765
+    - T-5e489191
+    - T-09102f84
+  S-709fe2de:
+    title: BenchmarkDotNet profiling project
+    epic: E-3ffdc4d5
+    status: open
+    tasks:
+    - T-fb06300e
+    - T-b62ffe04
+    - T-2e13ee4b
+  S-d88f514b:
+    title: Concurrent-load stress harness
+    epic: E-c2544f52
+    status: open
+    tasks:
+    - T-0055ec7c
+    - T-96b5181b
+    - T-113fe4b2
+tasks:
+  T-eeb6684b:
+    title: Downgrade ExtractorOLE.csproj to net8.0
+    story: S-d01346bc
+    status: done
+    dependencies: []
+    component_refs: []
+  T-2ac2f140:
+    title: Fix OfficeMimeTypeEnum typo (OpenXmlUnkown)
+    story: S-d01346bc
+    status: in-progress
+    dependencies:
+    - T-eeb6684b
+    component_refs:
+    - ydk:entity:extraction/MimeDetectionResult
+  T-d7c81051:
+    title: Add OpenMcdf >=3.1.3 package reference
+    story: S-e496f356
+    status: in-progress
+    dependencies:
+    - T-eeb6684b
+    component_refs: []
+  T-d6de875f:
+    title: Self-compile NPOI from Apache-2.0 source and reference it
+    story: S-e496f356
+    status: in-progress
+    dependencies:
+    - T-eeb6684b
+    component_refs: []
+  T-a5f1d074:
+    title: Verify combined NPOI + OpenMcdf build
+    story: S-e496f356
+    status: open
+    dependencies:
+    - T-d7c81051
+    - T-d6de875f
+    component_refs: []
+  T-94570c2b:
+    title: Empirically validate NPOI Unicode/i18n fidelity on the legacy OLE path
+    story: S-418e5f1b
+    status: open
+    dependencies:
+    - T-a5f1d074
+    component_refs:
+    - ydk:req:extraction/unicode-fidelity
+  T-05bd14c7:
+    title: Generalize embedded-subfile walk beyond PowerPoint special-casing
+    story: S-43c41d4a
+    status: open
+    dependencies:
+    - T-eeb6684b
+    - T-2ac2f140
+    component_refs:
+    - ydk:req:extraction/subfile-scope
+    - ydk:entity:extraction/SubfileItem
+  T-90924b6d:
+    title: Wire DI registry pattern for extensible format dispatch
+    story: S-43c41d4a
+    status: open
+    dependencies:
+    - T-05bd14c7
+    component_refs:
+    - ydk:req:extraction/format-extensibility
+    - ydk:req:extraction/dependency-injection
+  T-07188baf:
+    title: Wire Program.cs to invoke both public functions on a real file
+    story: S-fe24ecff
+    status: open
+    dependencies:
+    - T-90924b6d
+    component_refs:
+    - ydk:contract:extraction/detect-mime-type
+    - ydk:contract:extraction/extract
+  T-fd49ef39:
+    title: Implement CFB directory-entry detection component for doc/xls/ppt
+    story: S-3bc6b929
+    status: done
+    dependencies: []
+    component_refs:
+    - ydk:contract:extraction/detect-mime-type
+    - ydk:entity:extraction/MimeDetectionRequest
+    - ydk:entity:extraction/MimeDetectionResult
+    - ydk:req:extraction/content-only-mime-detection
+  T-f667e540:
+    title: Enforce max-file-size and nesting-depth-guard checks in the CFB detection
+      path
+    story: S-3bc6b929
+    status: open
+    dependencies:
+    - task-cfb-detect-core
+    component_refs:
+    - ydk:nfr:extraction/max-file-size
+    - ydk:nfr:extraction/nesting-depth-guard
+    - ydk:error:extraction/file-too-large
+    - ydk:error:extraction/oversized-nested-content
+  T-0a81d133:
+    title: Register CFB detection component in the DI dispatch registry
+    story: S-3bc6b929
+    status: open
+    dependencies:
+    - task-cfb-detect-core
+    - task-cfb-detect-guardrails
+    component_refs:
+    - ydk:req:extraction/dependency-injection
+    - ydk:req:extraction/format-extensibility
+  T-c4123b53:
+    title: Implement doc open component (NPOI HWPFDocument + FileMetadata)
+    story: S-32677db6
+    status: open
+    dependencies: []
+    component_refs:
+    - ydk:entity:extraction/FileMetadata
+    - ydk:entity:extraction/ExtractionResult
+    - ydk:req:extraction/dependency-injection
+  T-3f3dab44:
+    title: Map WordFormatMetadata for doc
+    story: S-32677db6
+    status: open
+    dependencies:
+    - task-doc-open
+    component_refs:
+    - ydk:entity:extraction/WordFormatMetadata
+  T-a8b6b4ec:
+    title: Implement doc flat-text extraction with unicode fidelity
+    story: S-32677db6
+    status: open
+    dependencies:
+    - task-doc-open
+    component_refs:
+    - ydk:req:extraction/unicode-fidelity
+    - ydk:entity:extraction/ExtractionResult
+  T-1df33d6c:
+    title: Implement doc first-layer embedded-subfile walk
+    story: S-32677db6
+    status: open
+    dependencies:
+    - task-doc-open
+    component_refs:
+    - ydk:entity:extraction/SubfileItem
+    - ydk:req:extraction/subfile-scope
+  T-c2a60f06:
+    title: Implement xls open component (NPOI HSSFWorkbook + FileMetadata)
+    story: S-0602557d
+    status: open
+    dependencies: []
+    component_refs:
+    - ydk:entity:extraction/FileMetadata
+    - ydk:entity:extraction/ExtractionResult
+    - ydk:req:extraction/dependency-injection
+  T-40ac397c:
+    title: Map ExcelFormatMetadata for xls
+    story: S-0602557d
+    status: open
+    dependencies:
+    - task-xls-open
+    component_refs:
+    - ydk:entity:extraction/ExcelFormatMetadata
+  T-a77b2992:
+    title: Implement xls flat-text extraction with unicode fidelity
+    story: S-0602557d
+    status: open
+    dependencies:
+    - task-xls-open
+    component_refs:
+    - ydk:req:extraction/unicode-fidelity
+    - ydk:entity:extraction/ExtractionResult
+  T-9e6bfce8:
+    title: Implement xls first-layer embedded-subfile walk
+    story: S-0602557d
+    status: open
+    dependencies:
+    - task-xls-open
+    component_refs:
+    - ydk:entity:extraction/SubfileItem
+    - ydk:req:extraction/subfile-scope
+  T-517f89c5:
+    title: Implement ppt open component (NPOI HSLFSlideShow + FileMetadata)
+    story: S-23b8b734
+    status: open
+    dependencies: []
+    component_refs:
+    - ydk:entity:extraction/FileMetadata
+    - ydk:entity:extraction/ExtractionResult
+    - ydk:req:extraction/dependency-injection
+  T-2c3440d2:
+    title: Map PowerPointFormatMetadata for ppt
+    story: S-23b8b734
+    status: open
+    dependencies:
+    - task-ppt-open
+    component_refs:
+    - ydk:entity:extraction/PowerPointFormatMetadata
+  T-40fc15b4:
+    title: Implement ppt flat-text extraction with unicode fidelity
+    story: S-23b8b734
+    status: open
+    dependencies:
+    - task-ppt-open
+    component_refs:
+    - ydk:req:extraction/unicode-fidelity
+    - ydk:entity:extraction/ExtractionResult
+  T-12dfd045:
+    title: Implement ppt first-layer embedded-subfile walk
+    story: S-23b8b734
+    status: open
+    dependencies:
+    - task-ppt-open
+    component_refs:
+    - ydk:entity:extraction/SubfileItem
+    - ydk:req:extraction/subfile-scope
+  T-44812a03:
+    title: Harden existing OOXML detection to be strictly content-only
+    story: S-7d040ba7
+    status: open
+    dependencies: []
+    component_refs:
+    - ydk:contract:extraction/detect-mime-type
+    - ydk:req:extraction/content-only-mime-detection
+  T-ef11e30d:
+    title: Classify macro-enabled OOXML variants (docm/xlsm/pptm) as their base format
+    story: S-7d040ba7
+    status: open
+    dependencies:
+    - task-ooxml-detect-harden
+    component_refs:
+    - ydk:entity:extraction/MimeDetectionResult
+  T-1653b76b:
+    title: Handle zero-byte input as Unknown in OOXML detection path
+    story: S-7d040ba7
+    status: open
+    dependencies:
+    - task-ooxml-detect-harden
+    component_refs:
+    - ydk:entity:extraction/MimeDetectionResult
+  T-9fac8963:
+    title: Complete WordFormatMetadata parity for docx
+    story: S-156ec71a
+    status: open
+    dependencies: []
+    component_refs:
+    - ydk:entity:extraction/FileMetadata
+    - ydk:entity:extraction/WordFormatMetadata
+  T-47fea79d:
+    title: Implement docx flat-text extraction with unicode fidelity
+    story: S-156ec71a
+    status: open
+    dependencies: []
+    component_refs:
+    - ydk:req:extraction/unicode-fidelity
+    - ydk:entity:extraction/ExtractionResult
+  T-29fbb7cf:
+    title: Wire docx first-layer embeddings/media walk via the generalized walk
+    story: S-156ec71a
+    status: open
+    dependencies: []
+    component_refs:
+    - ydk:entity:extraction/SubfileItem
+    - ydk:req:extraction/subfile-scope
+  T-30e939fe:
+    title: Complete ExcelFormatMetadata parity for xlsx
+    story: S-8d6146f0
+    status: open
+    dependencies: []
+    component_refs:
+    - ydk:entity:extraction/FileMetadata
+    - ydk:entity:extraction/ExcelFormatMetadata
+  T-f653c5fb:
+    title: Implement xlsx flat-text extraction with unicode fidelity
+    story: S-8d6146f0
+    status: open
+    dependencies: []
+    component_refs:
+    - ydk:req:extraction/unicode-fidelity
+    - ydk:entity:extraction/ExtractionResult
+  T-30f2c1b8:
+    title: Wire xlsx first-layer embeddings/media walk via the generalized walk
+    story: S-8d6146f0
+    status: open
+    dependencies: []
+    component_refs:
+    - ydk:entity:extraction/SubfileItem
+    - ydk:req:extraction/subfile-scope
+  T-b792f8e5:
+    title: Complete PowerPointFormatMetadata parity for pptx
+    story: S-37c18545
+    status: open
+    dependencies: []
+    component_refs:
+    - ydk:entity:extraction/FileMetadata
+    - ydk:entity:extraction/PowerPointFormatMetadata
+  T-505f5b14:
+    title: Implement pptx flat-text extraction with unicode fidelity
+    story: S-37c18545
+    status: open
+    dependencies: []
+    component_refs:
+    - ydk:req:extraction/unicode-fidelity
+    - ydk:entity:extraction/ExtractionResult
+  T-c3f1ec05:
+    title: Wire pptx first-layer embeddings/media walk via the generalized walk
+    story: S-37c18545
+    status: open
+    dependencies: []
+    component_refs:
+    - ydk:entity:extraction/SubfileItem
+    - ydk:req:extraction/subfile-scope
+  T-ef73861f:
+    title: Wire DetectMimeType facade to the OOXML + CFB detection registry
+    story: S-072bfdf6
+    status: open
+    dependencies:
+    - task-cfb-detect-registry
+    - task-ooxml-detect-harden
+    - task-ooxml-detect-macro-variants
+    - task-ooxml-detect-zerobyte
+    component_refs:
+    - ydk:contract:extraction/detect-mime-type
+    - ydk:entity:extraction/MimeDetectionRequest
+    - ydk:entity:extraction/MimeDetectionResult
+  T-fb89c6f3:
+    title: Add null request/field boundary validation to DetectMimeType
+    story: S-072bfdf6
+    status: open
+    dependencies:
+    - task-detect-facade-wire
+    component_refs:
+    - ydk:entity:extraction/MimeDetectionRequest
+  T-3b4e70f4:
+    title: Wire Extract facade to the format-dispatch registry (open + text-extraction)
+    story: S-51d277f1
+    status: open
+    dependencies:
+    - task-doc-subfiles
+    - task-xls-subfiles
+    - task-ppt-subfiles
+    - task-docx-subfiles
+    - task-xlsx-subfiles
+    - task-pptx-subfiles
+    component_refs:
+    - ydk:contract:extraction/extract
+    - ydk:entity:extraction/ExtractionRequest
+    - ydk:entity:extraction/ExtractionResult
+    - ydk:req:extraction/format-extensibility
+  T-3335d397:
+    title: Implement pre-parse guardrail errors in Extract (file-too-large, oversized-nested-content)
+    story: S-51d277f1
+    status: open
+    dependencies:
+    - task-extract-facade-wire
+    component_refs:
+    - ydk:error:extraction/file-too-large
+    - ydk:error:extraction/oversized-nested-content
+    - ydk:nfr:extraction/max-file-size
+    - ydk:nfr:extraction/nesting-depth-guard
+  T-61477563:
+    title: Implement parse-time error handling in Extract (password-protected, corrupt-file,
+      truncated-container)
+    story: S-51d277f1
+    status: open
+    dependencies:
+    - task-extract-facade-wire
+    component_refs:
+    - ydk:error:extraction/password-protected
+    - ydk:error:extraction/corrupt-file
+    - ydk:error:extraction/truncated-container
+  T-a2b91dc6:
+    title: Implement unsupported-format rejection and null-argument validation in
+      Extract
+    story: S-51d277f1
+    status: open
+    dependencies:
+    - task-extract-facade-wire
+    component_refs:
+    - ydk:error:extraction/unsupported-format
+    - ydk:entity:extraction/ExtractionRequest
+  T-33a58c59:
+    title: Enforce max-file-size and nesting-depth-guard checks in the OOXML detection
+      path
+    story: S-7d040ba7
+    status: open
+    dependencies:
+    - T-44812a03
+    component_refs:
+    - ydk:nfr:extraction/max-file-size
+    - ydk:nfr:extraction/nesting-depth-guard
+    - ydk:error:extraction/file-too-large
+    - ydk:error:extraction/oversized-nested-content
+  T-5e9dbd18:
+    title: Build synthetic sample generator scaffolding and shared multilingual/emoji
+      fixture library
+    story: S-41ebb945
+    status: done
+    dependencies: []
+    component_refs:
+    - ydk:req:extraction/unicode-fidelity
+  T-d657bb2a:
+    title: Generate multi-embedding synthetic samples for all 6 formats
+    story: S-41ebb945
+    status: open
+    dependencies:
+    - T-5e9dbd18
+    component_refs:
+    - ydk:req:extraction/subfile-scope
+    - ydk:req:extraction/unicode-fidelity
+  T-d91b2a46:
+    title: Generate 100k+ word body synthetic samples for all 6 formats
+    story: S-41ebb945
+    status: open
+    dependencies:
+    - T-5e9dbd18
+    component_refs:
+    - ydk:req:extraction/unicode-fidelity
+  T-4b624fef:
+    title: Generate macro-enabled-with-embedding synthetic samples for all 6 formats
+    story: S-41ebb945
+    status: open
+    dependencies:
+    - T-5e9dbd18
+    component_refs:
+    - ydk:req:extraction/unicode-fidelity
+    - ydk:req:extraction/subfile-scope
+  T-f96fa73d:
+    title: Record synthetic samples in samples/manifest.json
+    story: S-41ebb945
+    status: open
+    dependencies:
+    - T-d657bb2a
+    - T-d91b2a46
+    - T-4b624fef
+    component_refs: []
+  T-6f033869:
+    title: Source/author 12 curated real-world-style samples (2 per format)
+    story: S-da936361
+    status: in-progress
+    dependencies: []
+    component_refs: []
+  T-0834290d:
+    title: Author/source the 2+-level nested-embedding curated sample
+    story: S-da936361
+    status: open
+    dependencies:
+    - T-6f033869
+    component_refs:
+    - ydk:req:extraction/subfile-scope
+  T-0c83ff28:
+    title: Author/source the real multi-user revision-history curated sample
+    story: S-da936361
+    status: open
+    dependencies:
+    - T-6f033869
+    component_refs:
+    - ydk:entity:extraction/FileMetadata
+  T-c573e72e:
+    title: Record curated samples in samples/manifest.json
+    story: S-da936361
+    status: open
+    dependencies:
+    - T-6f033869
+    - T-0834290d
+    - T-0c83ff28
+    component_refs: []
+  T-3bddbe75:
+    title: Produce corrupt, truncated, and zero-byte adversarial samples
+    story: S-6bc8566f
+    status: open
+    dependencies:
+    - T-f96fa73d
+    component_refs:
+    - ydk:error:extraction/corrupt-file
+    - ydk:error:extraction/truncated-container
+  T-83b4a029:
+    title: Produce oversized-declared-size (bomb) and password-protected adversarial
+      samples
+    story: S-6bc8566f
+    status: open
+    dependencies:
+    - T-f96fa73d
+    component_refs:
+    - ydk:nfr:extraction/nesting-depth-guard
+    - ydk:error:extraction/oversized-nested-content
+    - ydk:error:extraction/password-protected
+  T-7cdaeceb:
+    title: Produce wrong-extension and corrupt-embedded-object adversarial samples
+    story: S-6bc8566f
+    status: open
+    dependencies:
+    - T-f96fa73d
+    component_refs:
+    - ydk:req:extraction/content-only-mime-detection
+    - ydk:req:extraction/subfile-scope
+  T-71ab3bc0:
+    title: Assemble and finalize samples/manifest.json as the ground-truth corpus
+      manifest
+    story: S-6bc8566f
+    status: open
+    dependencies:
+    - T-f96fa73d
+    - T-c573e72e
+    - T-3bddbe75
+    - T-83b4a029
+    - T-7cdaeceb
+    component_refs:
+    - ydk:nfr:extraction/nesting-depth-guard
+  T-e0a5bfec:
+    title: 'Integration tests: DetectMimeType against every corpus manifest sample'
+    story: S-f6d7124a
+    status: open
+    dependencies:
+    - T-71ab3bc0
+    component_refs:
+    - ydk:contract:extraction/detect-mime-type
+  T-7916a198:
+    title: 'Integration tests: Extract against every corpus manifest sample'
+    story: S-f6d7124a
+    status: open
+    dependencies:
+    - T-71ab3bc0
+    component_refs:
+    - ydk:contract:extraction/extract
+  T-f4ed5c8f:
+    title: Integration tests for corpus-sample-backed adversarial scenarios
+    story: S-f6d7124a
+    status: open
+    dependencies:
+    - T-e0a5bfec
+    - T-7916a198
+    component_refs:
+    - ydk:error:extraction/corrupt-file
+    - ydk:error:extraction/truncated-container
+    - ydk:error:extraction/oversized-nested-content
+    - ydk:error:extraction/password-protected
+    - ydk:req:extraction/content-only-mime-detection
+    - ydk:req:extraction/subfile-scope
+  T-9a4ff765:
+    title: Unit tests for null request/field validation on DetectMimeType
+    story: S-814fa928
+    status: open
+    dependencies: []
+    component_refs:
+    - ydk:entity:extraction/MimeDetectionRequest
+  T-5e489191:
+    title: Unit tests for null request/field validation on Extract
+    story: S-814fa928
+    status: open
+    dependencies: []
+    component_refs:
+    - ydk:entity:extraction/ExtractionRequest
+  T-09102f84:
+    title: Unit tests for file-too-large on both public functions
+    story: S-814fa928
+    status: open
+    dependencies: []
+    component_refs:
+    - ydk:nfr:extraction/max-file-size
+    - ydk:error:extraction/file-too-large
+  T-fb06300e:
+    title: Scaffold separate BenchmarkDotNet project
+    story: S-709fe2de
+    status: done
+    dependencies: []
+    component_refs: []
+  T-b62ffe04:
+    title: Implement Extract() latency/allocation benchmarks per format
+    story: S-709fe2de
+    status: open
+    dependencies:
+    - T-fb06300e
+    - T-71ab3bc0
+    component_refs:
+    - ydk:nfr:extraction/extraction-latency
+    - ydk:nfr:extraction/memory-ceiling
+  T-2e13ee4b:
+    title: Establish committed baseline and CI regression documentation
+    story: S-709fe2de
+    status: open
+    dependencies:
+    - T-b62ffe04
+    component_refs:
+    - ydk:nfr:extraction/extraction-latency
+  T-0055ec7c:
+    title: Scaffold hand-rolled concurrent-load console harness
+    story: S-d88f514b
+    status: done
+    dependencies: []
+    component_refs: []
+  T-96b5181b:
+    title: Implement >=50 concurrent-call exercise of both public functions
+    story: S-d88f514b
+    status: open
+    dependencies:
+    - T-0055ec7c
+    - T-71ab3bc0
+    component_refs:
+    - ydk:contract:extraction/detect-mime-type
+    - ydk:contract:extraction/extract
+  T-113fe4b2:
+    title: Report throughput/latency/memory under load and confirm no shared-state
+      issues
+    story: S-d88f514b
+    status: open
+    dependencies:
+    - T-96b5181b
+    component_refs: []
+  T-02637847:
+    title: Fix ExcelExtractor to scan WorksheetPart for embedded objects, not just
+      WorkbookPart
+    story: S-8d6146f0
+    status: in-progress
+    dependencies: []
+    component_refs: []
+  T-ce2e3cc1:
+    title: 'Fix dotnet-build/dotnet-format target discovery: alphabetical-first-csproj
+      is unsafe with multiple sibling projects'
+    story: S-d01346bc
+    status: in-progress
+    dependencies: []
+    component_refs: []
