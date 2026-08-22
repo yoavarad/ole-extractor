@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Verification plugin: dotnet build.
 
-Builds the .NET solution (or the first project file found) via
-``dotnet build``. Skips gracefully when the .NET SDK or a
+Builds the .NET solution (or every non-test/non-bench/non-harness project
+file found) via ``dotnet build``. Skips gracefully when the .NET SDK or a
 solution/project file isn't present, mirroring the fail-open behavior
 of the built-in lint-ruff / tests-pytest plugins for non-matching
 project types.
@@ -16,6 +16,7 @@ import time
 from pathlib import Path
 
 _EXCLUDED_DIR_PARTS = {"bin", "obj", ".git", ".ydk", ".vs", "node_modules"}
+_EXCLUDED_PROJECT_MARKERS = ("Tests", "Benchmarks", "StressHarness")
 
 
 def _has_sdk(dotnet_bin: str) -> bool:
@@ -38,26 +39,34 @@ def _has_sdk(dotnet_bin: str) -> bool:
     return result.returncode == 0 and bool(result.stdout.strip())
 
 
-def _find_build_target(project_root: str) -> str | None:
-    """Find a .sln first, else the first .csproj, skipping build-output dirs.
+def _find_build_targets(project_root: str) -> list[str]:
+    """Find a .sln first, else every real (non-test/bench/harness) .csproj.
 
     Deliberately excludes ``.slnx`` (the newer XML solution format): the
     .NET 8 SDK's ``dotnet build`` CLI doesn't understand it yet and fails
     with "MSB4068: The element <Solution> is unrecognized" even though the
-    file itself is valid. Falling through to a ``.csproj`` avoids that.
+    file itself is valid. Falling through to .csproj discovery avoids that.
+
+    When no .sln exists, picking a single "first alphabetically" .csproj is
+    unsafe: with multiple sibling projects (e.g. ExtractorOLE.Benchmarks.csproj
+    sorting before ExtractorOLE.csproj), that fallback can silently swap in
+    a non-library project as the build target with no visible warning. So
+    every csproj is built (except recognizably-non-production ones), and a
+    new sibling project can never quietly steal the gate's target.
     """
     root = Path(project_root)
     matches = sorted(
         p for p in root.rglob("*.sln") if not _EXCLUDED_DIR_PARTS & set(p.parts)
     )
     if matches:
-        return str(matches[0])
+        return [str(matches[0])]
     matches = sorted(
-        p for p in root.rglob("*.csproj") if not _EXCLUDED_DIR_PARTS & set(p.parts)
+        p
+        for p in root.rglob("*.csproj")
+        if not _EXCLUDED_DIR_PARTS & set(p.parts)
+        and not any(marker in p.stem for marker in _EXCLUDED_PROJECT_MARKERS)
     )
-    if matches:
-        return str(matches[0])
-    return None
+    return [str(p) for p in matches]
 
 
 def main() -> None:
@@ -79,8 +88,8 @@ def main() -> None:
         sys.exit(0)
         return
 
-    target = _find_build_target(project_root)
-    if target is None:
+    targets = _find_build_targets(project_root)
+    if not targets:
         result = {
             "name": "dotnet-build",
             "passed": True,
@@ -92,25 +101,29 @@ def main() -> None:
         sys.exit(0)
         return
 
-    build_result = subprocess.run(
-        [dotnet_bin, "build", target, "--nologo"],
-        capture_output=True,
-        text=True,
-        cwd=project_root,
-        timeout=110,
-        check=False,
-    )
-    output = build_result.stdout + (
-        "\n" + build_result.stderr if build_result.stderr else ""
-    )
-    passed = build_result.returncode == 0
+    outputs = []
+    passed = True
+    for target in targets:
+        build_result = subprocess.run(
+            [dotnet_bin, "build", target, "--nologo"],
+            capture_output=True,
+            text=True,
+            cwd=project_root,
+            timeout=110,
+            check=False,
+        )
+        target_output = build_result.stdout + (
+            "\n" + build_result.stderr if build_result.stderr else ""
+        )
+        outputs.append(f"=== {target} ===\n{target_output.strip()}")
+        passed = passed and build_result.returncode == 0
 
     result = {
         "name": "dotnet-build",
         "passed": passed,
-        "output": output.strip(),
+        "output": "\n\n".join(outputs),
         "duration_seconds": round(time.time() - start, 1),
-        "detail": {"target": target},
+        "detail": {"targets": targets},
     }
     json.dump(result, sys.stdout)
     sys.exit(0 if passed else 1)
