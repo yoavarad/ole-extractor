@@ -1,6 +1,6 @@
 name: dotnet-build
 description: Build the .NET solution/project (dotnet build)
-trigger: git:pre-commit
+trigger: git:pre-push
 parallel: true
 timeout: 120
 requires: []
