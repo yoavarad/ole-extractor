@@ -31,7 +31,7 @@ namespace ExtractorOLE
                     [OfficeMimeTypeEnum.Word] = sp.GetRequiredService<WordOpenStrategy>(),
                     [OfficeMimeTypeEnum.Excel] = sp.GetRequiredService<ExcelOpenStrategy>(),
                     [OfficeMimeTypeEnum.PowerPoint] = sp.GetRequiredService<PowerPointOpenStrategy>(),
-                    [OfficeMimeTypeEnum.OpenXmlUnkown] = sp.GetRequiredService<ZipFallbackOpenStrategy>(),
+                    [OfficeMimeTypeEnum.OpenXmlUnknown] = sp.GetRequiredService<ZipFallbackOpenStrategy>(),
                 };
                 return dict;
             });
