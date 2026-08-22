@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using ExtractorOLE.DTOs;
 using ExtractorOLE.Helpers;
 using ExtractorOLE.Helpers.FileTypeStrategy;
+using ExtractorOLE.Helpers.MimeDetection;
 
 namespace ExtractorOLE
 {
@@ -12,6 +13,9 @@ namespace ExtractorOLE
         {
             // Core helpers
             services.AddSingleton<IExtractionHelper, ExtractionHelper>();
+
+            // Mime detection (legacy CFB family)
+            services.AddSingleton<ICfbMimeDetector, CfbMimeDetector>();
 
             // Open strategies
             services.AddSingleton<WordOpenStrategy>();
