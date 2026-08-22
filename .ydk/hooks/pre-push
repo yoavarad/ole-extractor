@@ -24,18 +24,17 @@ fi
 # Those two are ignored below; every other plugin's result still gates the
 # push.
 #
-# TEMPORARY: dotnet-build and dotnet-format are also ignored below because
-# ExtractorOLE.csproj currently targets net10.0, which the installed .NET 8
-# SDK can't build (NETSDK1045) -- this is the pre-existing, known-broken
-# baseline that task T-eeb6684b ("Downgrade ExtractorOLE.csproj to net8.0")
-# exists to fix. Until that task merges, dotnet-build/dotnet-format fail on
-# every push regardless of what changed (they build the whole solution, not
-# just changed files), which would otherwise block ALL pushes project-wide.
-# Remove these two lines from IGNORE_LIST once T-eeb6684b is merged --
-# leaving them here permanently would silently defeat the point of the gate.
+# TEMPORARY: dotnet-format is also ignored below. It fails unconditionally
+# (whole-solution scan, not scoped to changed files) on pre-existing
+# WHITESPACE errors in ExtractorOle/ExtractorOLE/Helpers/ExtractionHelper.cs
+# and ExtractorOle/ExtractorOLE/Old/Doc/DocExtractor.cs, unrelated to any
+# single task. Remove this line from IGNORE_LIST once a task runs
+# `dotnet format` (or manually fixes those files) and the gate goes green --
+# leaving it here permanently would silently defeat the point of the gate.
+# (dotnet-build was ignored for the same reason but is fixed as of
+# T-eeb6684b merging the net10.0 -> net8.0 downgrade; no longer ignored.)
 IGNORE_LIST="pr-body-validation
 tests
-dotnet-build
 dotnet-format"
 
 OUTPUT="$(PYTHONIOENCODING=utf-8 ydk verify run --trigger pre-push 2>&1)"
