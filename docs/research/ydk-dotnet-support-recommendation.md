@@ -11,9 +11,13 @@ Audience: whoever picks up the upstream work. Skip the preamble, go straight to 
 Mirror `verifications/lint-ruff`, `types-ty`, `python-quality` (bundle = union of the two).
 Do the same for .NET:
 
-- `src/ydk/verifications/dotnet-build/` — `dotnet build`, trigger `git:pre-commit`
-- `src/ydk/verifications/dotnet-format/` — `dotnet format --verify-no-changes`, trigger `git:pre-commit`
+- `src/ydk/verifications/dotnet-build/` — `dotnet build`, trigger `git:pre-push`
+- `src/ydk/verifications/dotnet-format/` — `dotnet format --verify-no-changes`, trigger `git:pre-push`
 - `src/ydk/verifications/dotnet-test/` — `dotnet test`, trigger `git:pre-push`
+
+All three ended up on `git:pre-push`, not `git:pre-commit` — see §7. This was corrected after
+testing against a real SDK install; an earlier draft had build/format on pre-commit, which turned
+out to be actively harmful (see below).
 - `src/ydk/verifications/dotnet-quality/` — thin bundle plugin that runs build+format (test stays
   separate since it's pre-push and slower, matching how `python-quality` excludes `tests-pytest`)
 
@@ -101,12 +105,18 @@ Discovery logic (shared shape across all three plugins): prefer `.sln`/`.slnx`, 
   arbitrary repos should probably also check for a `<IsTestProject>true</IsTestProject>` or
   `Microsoft.NET.Test.Sdk` package reference inside the `.csproj` XML rather than relying purely on
   filename — more robust, moderate extra parsing cost.
-- **`.slnx` (new XML solution format) support depends on SDK version.** ole-extractor already
-  uses a `.slnx` file, and `dotnet build`/`format`/`test` accepted it fine with the checked-in
-  fallback logic — but `.slnx` support was only added to the SDK in .NET 9 previews. A general
-  plugin should not assume `.slnx` works on every installed SDK; consider probing
-  `dotnet --version` and warning (not failing) if `.slnx` is present but the SDK predates support,
-  rather than letting the build fail with a confusing MSBuild error.
+- **`.slnx` (new XML solution format) is NOT supported by the .NET 8 SDK CLI — confirmed, not
+  theoretical.** Original draft of this doc (written before a real SDK was installed) guessed at
+  this and suggested probing `dotnet --version` and warning. After installing the actual .NET 8
+  SDK (8.0.424) and running against ole-extractor's real `ExtractorOle.slnx`, the failure mode is
+  worse than a warning would fix: `dotnet build/format/test <file>.slnx` fails immediately with
+  `MSB4068: The element <Solution> is unrecognized, or not supported in this context` — a raw
+  MSBuild parse error, not a clean "unsupported format" message, and it fires before any real
+  build/format/test work happens. The fix applied: **don't attempt `.slnx` at all** — target
+  discovery now only considers `.sln`, falling through to `.csproj` if no `.sln` exists. No
+  version-probing needed; `.slnx` is simply excluded from every discovery function's glob patterns.
+  Revisit only once a target SDK version with confirmed `.slnx` CLI support is common (not the case
+  as of .NET 8/9 GA at time of writing).
 
 **Effort: moderate.** The sorted-list fix is free (already done, just port it). The
 multi-csproj-without-sln and XML-based test-project detection are each a half-day of real design +
@@ -136,7 +146,51 @@ not a bolt-on.
 **Effort: bigger lift.** Touches the guard's core matching logic and needs a config schema
 decision, not just new constants.
 
-## 6. Priority summary
+## 7. Whole-target build/test checks can permanently block ALL pushes on a pre-existing broken baseline
+
+This is a generalizable structural gap, not a .NET-specific one, but it was discovered here and
+should be flagged upstream regardless of what a `dotnet` stack ships with.
+
+`ydk verify run`'s `context` dict for a `pre-commit`/`pre-push` trigger never includes
+`changed_files` unless a caller (e.g. `ydk task done`, or a `--name`-scoped manual run in some
+paths) explicitly threads it through — see `src/ydk/cli/verify_cmd.py`'s `run()`: the default
+`context` is just `{"project_root": ...}`. Plugins like `lint-ruff`/`tests-pytest` cope by falling
+back to scanning `src/`/`app/`/`tests/` when `changed_files` is absent, which is harmless for a
+per-file linter. It is **not** harmless for a whole-solution build/test check: `dotnet build` (and
+`format`/`test`) always evaluates the *entire* discovered target, regardless of what the current
+commit/push actually touched.
+
+Concretely, in ole-extractor: `ExtractorOLE.csproj` currently targets `net10.0` (pre-existing,
+predates this work — a separate task, `T-eeb6684b`, exists specifically to downgrade it to
+`net8.0`). Once `dotnet-build`/`dotnet-format` were wired to a real SDK, they correctly, and
+*unconditionally*, fail on **every single push**, including ones that touch nothing but this very
+`.ydk/verifications/` plugin work — because the check has no concept of "this failure predates my
+change." Placing the checks on `git:pre-push` instead of `git:pre-commit` (§1) reduces how often
+this bites (local iteration during TDD isn't blocked), but doesn't eliminate it — it still blocks
+every *push* project-wide until the baseline is fixed, unrelated work included. In ole-extractor's
+case this was worked around the same way an earlier, unrelated gap was already worked around in
+this exact repo (`.ydk/hooks/pre-push`'s `IGNORE_LIST`, previously used for `pr-body-validation`
+and `tests`): added `dotnet-build`/`dotnet-format` to that list with a comment to remove once
+`T-eeb6684b` merges. That's a per-project, hand-maintained, easy-to-forget patch — not a real fix.
+
+A real fix belongs in `ydk-core`, and is one of two shapes:
+- **Baseline-diffing**: cache the verification failure output/hash from the last known-good state
+  on the target branch, and only treat a check as newly-failing (blocking) if the failure differs
+  from a failure already present on the branch being pushed *to* (i.e. "you didn't make it worse").
+  This is the more correct fix but nontrivial — needs a notion of "the failure that already existed
+  upstream" per plugin.
+- **`changed_files`-aware plugins for pre-push, not just pre-commit**: thread `changed_files` (diff
+  against the push target) into the `pre-push` trigger context too, and have `dotnet-build`/
+  `dotnet-format`/`dotnet-test` skip (not fail) when no `.cs`/`.csproj`/`.sln` file is among the
+  changed files. Simpler than baseline-diffing, but weaker: it means a push that touches zero C#
+  files sails through even if the solution is currently unbuildable for unrelated reasons — probably
+  an acceptable tradeoff for a fast local gate, less acceptable as the *only* gate before merge (a
+  separate CI-level "always build everything" check would still be needed for that).
+
+**Effort: real design work, not a quick win** — this is a `ydk-core` verifier-contract change, not
+a per-plugin fix. Worth a dedicated ticket; don't bundle into the `dotnet` stack PR.
+
+## 8. Priority summary
 
 | Item | Effort | Priority |
 |---|---|---|
@@ -144,9 +198,10 @@ decision, not just new constants.
 | `dotnet` stack entry (§2) | quick win (~1 hour) | Do with §1 |
 | Keep/port the `sorted()` determinism fix (§4) | free (already written) | Do with §1, don't skip |
 | Document the muxer-vs-SDK gotcha inline (§3) | free | Do with §1 |
+| Exclude `.slnx` from target discovery entirely (§4) | free (already written) | Do with §1, don't skip |
 | Monorepo multi-csproj / XML-based test detection (§4) | moderate (~1 day) | Later, when a real multi-project repo needs it |
-| `.slnx`-vs-SDK-version guard (§4) | moderate (~half day) | Later, low incidence today |
 | `tdd-guard` C# support (§5) | bigger lift (needs config schema work) | Backlog — separate ticket |
+| Baseline-diffing or `changed_files`-on-pre-push for whole-target checks (§7) | real design work | Backlog — affects every compiled-language stack, not just .NET |
 
 ## Source material
 

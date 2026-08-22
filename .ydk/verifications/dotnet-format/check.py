@@ -38,14 +38,19 @@ def _has_sdk(dotnet_bin: str) -> bool:
 
 
 def _find_format_target(project_root: str) -> str | None:
-    """Find a .sln first, else the first .csproj, skipping build-output dirs."""
+    """Find a .sln first, else the first .csproj, skipping build-output dirs.
+
+    Deliberately excludes ``.slnx`` (the newer XML solution format): the
+    .NET 8 SDK's ``dotnet format`` CLI doesn't understand it yet and fails
+    with "MSB4068: The element <Solution> is unrecognized" even though the
+    file itself is valid. Falling through to a ``.csproj`` avoids that.
+    """
     root = Path(project_root)
-    for pattern in ("*.sln", "*.slnx"):
-        matches = sorted(
-            p for p in root.rglob(pattern) if not _EXCLUDED_DIR_PARTS & set(p.parts)
-        )
-        if matches:
-            return str(matches[0])
+    matches = sorted(
+        p for p in root.rglob("*.sln") if not _EXCLUDED_DIR_PARTS & set(p.parts)
+    )
+    if matches:
+        return str(matches[0])
     matches = sorted(
         p for p in root.rglob("*.csproj") if not _EXCLUDED_DIR_PARTS & set(p.parts)
     )

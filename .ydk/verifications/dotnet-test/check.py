@@ -41,14 +41,18 @@ def _has_sdk(dotnet_bin: str) -> bool:
 def _find_test_target(project_root: str) -> str | None:
     """Prefer a .sln (dotnet test filters to test projects automatically);
     else the first .csproj whose name looks like a test project.
+
+    Deliberately excludes ``.slnx`` (the newer XML solution format): the
+    .NET 8 SDK's ``dotnet test`` CLI doesn't understand it yet and fails
+    with "MSB4068: The element <Solution> is unrecognized" even though the
+    file itself is valid. Falling through to a ``.csproj`` avoids that.
     """
     root = Path(project_root)
-    for pattern in ("*.sln", "*.slnx"):
-        matches = sorted(
-            p for p in root.rglob(pattern) if not _EXCLUDED_DIR_PARTS & set(p.parts)
-        )
-        if matches:
-            return str(matches[0])
+    matches = sorted(
+        p for p in root.rglob("*.sln") if not _EXCLUDED_DIR_PARTS & set(p.parts)
+    )
+    if matches:
+        return str(matches[0])
     csprojs = [
         p for p in root.rglob("*.csproj") if not _EXCLUDED_DIR_PARTS & set(p.parts)
     ]

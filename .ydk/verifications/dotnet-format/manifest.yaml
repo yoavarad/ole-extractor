@@ -1,6 +1,6 @@
 name: dotnet-format
 description: Verify .NET code formatting (dotnet format --verify-no-changes)
-trigger: git:pre-commit
+trigger: git:pre-push
 parallel: true
 timeout: 120
 requires: []
