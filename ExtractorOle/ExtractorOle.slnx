@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="ExtractorOLE/ExtractorOLE.csproj" />
   <Project Path="../SampleGenerator/SampleGenerator.csproj" />
+  <Project Path="ExtractorOLE.Tests/ExtractorOLE.Tests.csproj" />
   <Project Path="ExtractorOLE.Benchmarks/ExtractorOLE.Benchmarks.csproj" />
 </Solution>
