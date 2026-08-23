@@ -77,6 +77,7 @@ stories:
     - T-d7c81051
     - T-d6de875f
     - T-a5f1d074
+    - T-bac988f5
   S-418e5f1b:
     title: Empirically validate NPOI i18n fidelity on the legacy OLE path
     epic: E-a2efe648
@@ -91,6 +92,7 @@ stories:
     - T-eeb6684b
     - T-2ac2f140
     - T-ce2e3cc1
+    - T-6ac3f215
   S-43c41d4a:
     title: Generalize embedded-subfile walk and wire DI registry for format dispatch
     epic: E-d4ac3268
@@ -357,7 +359,7 @@ tasks:
   T-c4123b53:
     title: Implement doc open component (NPOI HWPFDocument + FileMetadata)
     story: S-32677db6
-    status: open
+    status: blocked-by-blocked-by-research
     dependencies: []
     component_refs:
     - ydk:entity:extraction/FileMetadata
@@ -427,7 +429,7 @@ tasks:
   T-517f89c5:
     title: Implement ppt open component (NPOI HSLFSlideShow + FileMetadata)
     story: S-23b8b734
-    status: open
+    status: blocked-by-blocked-by-research
     dependencies: []
     component_refs:
     - ydk:entity:extraction/FileMetadata
@@ -647,7 +649,7 @@ tasks:
   T-d657bb2a:
     title: Generate multi-embedding synthetic samples for all 6 formats
     story: S-41ebb945
-    status: open
+    status: in-progress
     dependencies:
     - T-5e9dbd18
     component_refs:
@@ -656,7 +658,7 @@ tasks:
   T-d91b2a46:
     title: Generate 100k+ word body synthetic samples for all 6 formats
     story: S-41ebb945
-    status: open
+    status: in-progress
     dependencies:
     - T-5e9dbd18
     component_refs:
@@ -664,7 +666,7 @@ tasks:
   T-4b624fef:
     title: Generate macro-enabled-with-embedding synthetic samples for all 6 formats
     story: S-41ebb945
-    status: open
+    status: in-progress
     dependencies:
     - T-5e9dbd18
     component_refs:
@@ -862,6 +864,19 @@ tasks:
   T-ce2e3cc1:
     title: 'Fix dotnet-build/dotnet-format target discovery: alphabetical-first-csproj
       is unsafe with multiple sibling projects'
+    story: S-d01346bc
+    status: in-progress
+    dependencies: []
+    component_refs: []
+  T-bac988f5:
+    title: Research legacy .doc/.ppt parsing library (NPOI mainline covers only .xls)
+    story: S-e496f356
+    status: in-progress
+    dependencies: []
+    component_refs: []
+  T-6ac3f215:
+    title: Fix ydk task readiness/status desync (ydk task ready reports false Deps-Met,
+      statuses never sync to done)
     story: S-d01346bc
     status: in-progress
     dependencies: []
