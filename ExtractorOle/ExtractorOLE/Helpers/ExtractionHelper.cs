@@ -25,15 +25,15 @@ namespace ExtractorOLE.Helpers
 
         public OfficeMimeTypeEnum ParseOfficeMimeType(string? mime)
         {
-            if (string.IsNullOrEmpty(mime)) return OfficeMimeTypeEnum.OpenXmlUnkown;
+            if (string.IsNullOrEmpty(mime)) return OfficeMimeTypeEnum.OpenXmlUnknown;
             var m = mime.ToLowerInvariant();
 
             if (m.Contains("word") || m.Contains("wordprocessingml") || m.Contains("/doc")) return OfficeMimeTypeEnum.Word;
             if (m.Contains("sheet") || m.Contains("spreadsheetml") || m.Contains("excel") || m.Contains("/xl")) return OfficeMimeTypeEnum.Excel;
             if (m.Contains("presentation") || m.Contains("presentationml") || m.Contains("ppt")) return OfficeMimeTypeEnum.PowerPoint;
-            if (m.Equals("application/zip") || m.Equals("application/vnd.openxmlformats-package")) return OfficeMimeTypeEnum.OpenXmlUnkown;
+            if (m.Equals("application/zip") || m.Equals("application/vnd.openxmlformats-package")) return OfficeMimeTypeEnum.OpenXmlUnknown;
 
-            return OfficeMimeTypeEnum.OpenXmlUnkown;
+            return OfficeMimeTypeEnum.OpenXmlUnknown;
         }
 
         public void ExtractMetadataAndEmbedded(OpenXmlPackage package, OpenXmlPart? rootPart, DocumentExtractionResult result)
@@ -149,7 +149,7 @@ namespace ExtractorOLE.Helpers
         {
             if (fileBytes == null || fileBytes.Length == 0)
             {
-                return OfficeMimeTypeEnum.OpenXmlUnkown;
+                return OfficeMimeTypeEnum.OpenXmlUnknown;
             }
 
             try
@@ -174,10 +174,10 @@ namespace ExtractorOLE.Helpers
             }
             catch (Exception)
             {
-                return OfficeMimeTypeEnum.OpenXmlUnkown;
+                return OfficeMimeTypeEnum.OpenXmlUnknown;
             }
 
-            return OfficeMimeTypeEnum.OpenXmlUnkown;
+            return OfficeMimeTypeEnum.OpenXmlUnknown;
         }
 
         public string GetExtensionFromContentType(string contentType)
