@@ -57,9 +57,7 @@ namespace SampleGenerator.Generators
 
                 OpenXmlPackagePropertiesHelper.Apply(document.PackageProperties, spec.Metadata);
                 // Embeddings placed on WorksheetPart because WorkbookPart doesn't accept
-                // ImagePart/EmbeddedObjectPart directly. NOTE: ExcelExtractor.GetFirstLayerEmbedded
-                // (ExtractorOle/ExtractorOLE/Old/Excel/ExcelExtractor.cs) currently only scans
-                // workbookPart.Parts, so these won't be found by extraction until that's updated.
+                // ImagePart/EmbeddedObjectPart directly.
                 OpenXmlEmbeddingHelper.AddEmbeddings(worksheetPart, spec.Embeddings);
 
                 workbookPart.Workbook.Save();
