@@ -2,7 +2,7 @@
 id: T-d6de875f
 title: Self-compile NPOI from Apache-2.0 source and reference it
 story: S-e496f356
-status: in-progress
+status: done
 assignee: agent
 labels:
 - in-progress
