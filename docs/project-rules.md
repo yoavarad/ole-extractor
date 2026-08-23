@@ -26,7 +26,8 @@ Repo `ExtractorOle/` has a pre-existing scaffold:
 - NPOI's precompiled NuGet package (2.8.0+) carries a paid maintenance-fee EULA for revenue-generating orgs — we compile NPOI from its Apache-2.0 source instead. See [ADR-001](adrs/001-extraction-library-stack.md).
 - NBomber's license (v3.0+) requires a paid Commercial Subscription for org use — excluded, using a hand-rolled stress harness instead. See [ADR-002](adrs/002-profiling-and-stress-testing.md).
 - OpenMcdf must be pinned to ≥3.1.3 — versions below that have a directory-cycle DoS CVE.
-- NPOI's Unicode/RTL/CJK/emoji fidelity on the legacy (doc/xls/ppt) read path is **unverified** — must be empirically tested against the multilingual/emoji test corpus before the i18n requirement can be considered met for legacy formats.
+- NPOI's Unicode/RTL/CJK/emoji fidelity on the legacy (doc/xls/ppt) read path is **unverified** — must be empirically tested against the multilingual/emoji test corpus before the i18n requirement can be considered met for legacy formats. This risk is scoped to legacy OLE only — OOXML (docx/xlsx/pptx) parses XML text directly via `DocumentFormat.OpenXml` and isn't exposed to NPOI's codepage-decoding path.
+  **Contingency if a script family fails (decided 2026-08-19):** tiered — (1) first attempt a codepage-correction post-process, re-decoding the affected text run using the codepage recorded in the OLE `CodePage`/`\x01CompObj` stream rather than trusting NPOI's default decode; (2) if that doesn't fully resolve it, document the specific script+legacy-format combo as a known v1 limitation, add a test asserting the documented limitation (not a silent pass), and narrow that combo out of the i18n-fidelity acceptance criteria rather than blocking Epic 4 indefinitely. Re-evaluate post-v1 if the limitation matters to a real use case.
 
 ## Library Stack (locked)
 
