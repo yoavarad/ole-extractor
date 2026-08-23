@@ -15,5 +15,13 @@
     <PackageReference Include="OpenMcdf" Version="3.2.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Self-compiled from Apache-2.0 source (submodule at third_party/npoi, tag 2.7.6-rc1),
+         not the precompiled NuGet package (2.8.0+ ships under a paid-maintenance EULA). See
+         docs/adrs/001-extraction-library-stack.md. Only the "main" NPOI project is referenced:
+         it covers legacy .xls (HSSFWorkbook). Legacy .doc/.ppt (HWPF/HSLF) are NOT included —
+         see task report / project-rules.md for why. -->
+    <ProjectReference Include="..\..\third_party\npoi\main\NPOI.Core.csproj" />
+  </ItemGroup>
 
 </Project>

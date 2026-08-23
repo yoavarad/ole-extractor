@@ -1,9 +1,12 @@
-﻿using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using ExtractorOLE.DTOs;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
+
+[assembly: InternalsVisibleTo("ExtractorOLE.Tests")]
 
 namespace ExtractorOLE.Old.Excel
 {
@@ -71,7 +74,8 @@ namespace ExtractorOLE.Old.Excel
                     result.ExtractedText = textBuilder.ToString().Trim();
 
                     // Requirement #4: Extract ONLY 1st Layer Embedded Files
-                    // workbookPart.Parts scans immediate relational components attached to the main workspace container
+                    // OOXML doesn't allow ImagePart/EmbeddedObjectPart directly on WorkbookPart --
+                    // they live on a WorksheetPart, so both must be scanned.
                     GetFirstLayerEmbedded(result, workbookPart);
                 }
             }
@@ -82,7 +86,16 @@ namespace ExtractorOLE.Old.Excel
         private void GetFirstLayerEmbedded(DocumentExtractionResult result, WorkbookPart workbookPart)
         {
             int index = 1;
-            foreach (var partPair in workbookPart.Parts)
+            AddEmbeddedPartsFrom(workbookPart.Parts, result, ref index);
+            foreach (WorksheetPart worksheetPart in workbookPart.WorksheetParts)
+            {
+                AddEmbeddedPartsFrom(worksheetPart.Parts, result, ref index);
+            }
+        }
+
+        private void AddEmbeddedPartsFrom(IEnumerable<IdPartPair> parts, DocumentExtractionResult result, ref int index)
+        {
+            foreach (var partPair in parts)
             {
                 var nestedPart = partPair.OpenXmlPart;
 
