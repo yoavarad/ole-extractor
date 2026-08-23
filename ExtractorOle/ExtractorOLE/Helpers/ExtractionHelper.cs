@@ -110,7 +110,10 @@ namespace ExtractorOLE.Helpers
             {
                 foreach (SlidePart slidePart in slideTest.SlideParts)
                 {
-                    // slidePart.Parts tracks only the top-level images and layouts belonging directly to THIS slide
+                    // slidePart.Parts tracks the top-level images/objects/layouts belonging directly to THIS slide.
+                    // NOTE: PresentationPart cannot hold EmbeddedObjectPart/EmbeddedPackagePart/ImagePart directly
+                    // (the OpenXml SDK rejects them there), so SampleGenerator places every first-layer pptx
+                    // embedding, image or object, on the slide itself; both kinds must be scanned here.
                     foreach (var slidePartPair in slidePart.Parts)
                     {
                         var nestedSlidePart = slidePartPair.OpenXmlPart;
@@ -118,6 +121,10 @@ namespace ExtractorOLE.Helpers
                         if (nestedSlidePart is ImagePart)
                         {
                             ExtractPartData(nestedSlidePart, result.EmbeddedFiles, ref index, "slide_image");
+                        }
+                        else if (nestedSlidePart is EmbeddedObjectPart || nestedSlidePart is EmbeddedPackagePart)
+                        {
+                            ExtractPartData(nestedSlidePart, result.EmbeddedFiles, ref index, "embedded_object");
                         }
                     }
                 }

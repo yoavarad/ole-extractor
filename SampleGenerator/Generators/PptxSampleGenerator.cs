@@ -10,8 +10,10 @@ namespace SampleGenerator.Generators
     /// Authors a minimal, valid .pptx via DocumentFormat.OpenXml directly:
     /// one slide (with the required master/layout/theme chain) carrying the
     /// body text as text-box paragraphs, general metadata, and first-layer
-    /// embeddings on the presentation part (matching the location where
-    /// ExtractorOLE PowerPointOpenStrategy looks for them).
+    /// embeddings on the slide part. PresentationPart cannot hold
+    /// EmbeddedObjectPart/EmbeddedPackagePart/ImagePart directly (the
+    /// OpenXml SDK rejects them there), so both embedding kinds go on the
+    /// slide, matching ExtractorOLE's per-slide embedded-object/image scan.
     /// </summary>
     public sealed class PptxSampleGenerator : ISampleGenerator
     {
@@ -40,7 +42,7 @@ namespace SampleGenerator.Generators
                 presentationPart.Presentation.NotesSize = new NotesSize { Cx = 6858000, Cy = 9144000 };
 
                 OpenXmlPackagePropertiesHelper.Apply(document.PackageProperties, spec.Metadata);
-                OpenXmlEmbeddingHelper.AddEmbeddings(presentationPart, slidePart, spec.Embeddings);
+                OpenXmlEmbeddingHelper.AddEmbeddings(slidePart, spec.Embeddings);
 
                 presentationPart.Presentation.Save();
             }

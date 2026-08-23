@@ -12,24 +12,11 @@ var generators = provider.GetRequiredService<IDictionary<SampleFormat, ISampleGe
 var outputDir = args.Length > 0 ? args[0] : "generated-samples";
 Directory.CreateDirectory(outputDir);
 
-var pixelPng = Convert.FromBase64String(
-    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=");
-
-var spec = new SampleSpec
-{
-    BodyText = MultilingualFixtures.ComposeMixedBody(),
-    Metadata = new Dictionary<string, string>
-    {
-        [MetadataFields.Title] = MultilingualFixtures.Hebrew,
-        [MetadataFields.Author] = MultilingualFixtures.Arabic,
-        [MetadataFields.Subject] = MultilingualFixtures.Cjk,
-        [MetadataFields.Comments] = string.Join(" ", MultilingualFixtures.AllEmoji)
-    },
-    Embeddings = new List<EmbeddedContentSpec>
-    {
-        new() { FileName = "pixel.png", Content = pixelPng, ContentType = "image/png" }
-    }
-};
+// docs/specs/dataset-curation.md composition rule #1 ("multi-embedding"):
+// at least 3 first-layer embedded objects/media of at least 2 different
+// kinds, plus multilingual/mixed-script text and emoji in body text and at
+// least 2 metadata fields.
+var spec = MultiEmbeddingSampleSpecs.Build();
 
 foreach (var (format, generator) in generators)
 {
