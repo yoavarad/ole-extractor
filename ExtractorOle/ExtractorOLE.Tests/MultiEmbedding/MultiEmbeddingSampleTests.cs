@@ -56,9 +56,9 @@ namespace ExtractorOLE.Tests.MultiEmbedding
             Assert.Contains(".png", extensions);
             Assert.Contains(".bin", extensions);
 
-            // 2 non-image embeddings live on the PresentationPart directly,
-            // 2 image embeddings live on the slide (matching how
-            // ExtractionHelper.ExtractFirstLayerEmbedded scans PowerPoint).
+            // All 4 embeddings live on the SlidePart (PresentationPart cannot hold
+            // EmbeddedObjectPart/EmbeddedPackagePart/ImagePart directly, per
+            // ExtractionHelper.ExtractFirstLayerEmbedded's PowerPoint scan).
             Assert.Equal(2, result.EmbeddedFiles.Count(f => f.FileName.StartsWith("embedded_object_")));
             Assert.Equal(2, result.EmbeddedFiles.Count(f => f.FileName.StartsWith("slide_image_")));
         }
