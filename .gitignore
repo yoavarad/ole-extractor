@@ -22,3 +22,12 @@ ExtractorOle/graphify-out/
 .ydk/reports/spec-verify-2*.json
 .ydk/reports/spec-verify-2*.txt
 .ydk/spec-check-results.json
+
+# ydk machine-local / regenerable state -- must not be tracked:
+# worktrees are live git worktrees (nested .git, would corrupt the repo);
+# active-task.json and .verified are transient per-session markers;
+# memory/ is a regenerable ChromaDB index (ydk memory index).
+.ydk/worktrees/
+.ydk/active-task.json
+.ydk/.verified
+.ydk/memory/

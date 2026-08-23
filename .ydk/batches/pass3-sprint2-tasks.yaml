@@ -1,0 +1,714 @@
+tasks:
+  # --- Epic 3: CFB / Legacy Mime Detection (story S-3bc6b929) ---
+  - id: task-cfb-detect-core
+    title: "Implement CFB directory-entry detection component for doc/xls/ppt"
+    story: S-3bc6b929
+    description: >
+      Implement a detection component that opens FileBytes as a compound file
+      via OpenMcdf and inspects root storage/stream names ("WordDocument",
+      "Workbook"/"Book", "PowerPoint Document") to distinguish doc/xls/ppt,
+      without performing a full document parse.
+    spec_refs:
+      - docs/specs/mime-detection.md
+    component_refs:
+      - ydk:contract:extraction/detect-mime-type
+      - ydk:entity:extraction/MimeDetectionRequest
+      - ydk:entity:extraction/MimeDetectionResult
+      - ydk:req:extraction/content-only-mime-detection
+    acceptance:
+      - "A CFB detection component distinguishes doc/xls/ppt by inspecting only root storage/stream names via OpenMcdf, with no full document parse"
+      - "Detection never reads request.FileName to decide the result"
+      - "A CFB-structured file matching none of the three known root-entry signatures returns the Unknown result, never an exception"
+    depends_on: []
+    # cross-sprint (Sprint 1, real IDs, added post-creation): T-d7c81051:blocks, T-2ac2f140:blocks
+    test_strategy: "Unit-test-backed: unit tests feed hand-crafted CFB byte arrays with each of the three known root-entry signatures and assert the correct DetectedFormat, plus one CFB file with an unrecognized root entry asserting Unknown."
+
+  - id: task-cfb-detect-guardrails
+    title: "Enforce max-file-size and nesting-depth-guard checks in the CFB detection path"
+    story: S-3bc6b929
+    description: >
+      Add the max-file-size and nesting-depth-guard checks ahead of CFB
+      directory/FAT-chain inspection in the CFB detection component, so an
+      oversized input or an implausible declared FAT-chain size is rejected
+      before any declared-size inspection proceeds.
+    spec_refs:
+      - docs/specs/mime-detection.md
+    component_refs:
+      - ydk:nfr:extraction/max-file-size
+      - ydk:nfr:extraction/nesting-depth-guard
+      - ydk:error:extraction/file-too-large
+      - ydk:error:extraction/oversized-nested-content
+    acceptance:
+      - "max-file-size and nesting-depth-guard checks run before any CFB declared-size (FAT chain) inspection"
+      - "A byte array over the configured max-file-size limit raises file-too-large before CFB structural inspection begins"
+      - "A structurally-tiny CFB file whose declared FAT chain implies >2GB total raises oversized-nested-content, not an exception or hang"
+    depends_on:
+      - "task-cfb-detect-core:blocks"
+    test_strategy: "Unit-test-backed: synthetic crafted CFB input with an implausible declared FAT-chain length is rejected via an allocation spy, per nesting-depth-guard's test_method; a >100MB synthetic byte array is rejected before any CFB parsing runs."
+
+  - id: task-cfb-detect-registry
+    title: "Register CFB detection component in the DI dispatch registry"
+    story: S-3bc6b929
+    description: >
+      Register the CFB detection component in the DI-registered format
+      registry wired in Sprint 1 (T-90924b6d), alongside the existing OOXML
+      structural check, so both dispatch through the same registry mechanism.
+    spec_refs:
+      - docs/specs/mime-detection.md
+      - docs/specs/overview.md
+    component_refs:
+      - ydk:req:extraction/dependency-injection
+      - ydk:req:extraction/format-extensibility
+    acceptance:
+      - "CFB detection component is resolved via the DI registry, not constructed inline in orchestration code"
+      - "DetectMimeType dispatch tries both the OOXML and CFB structural checks via the registry and returns Unknown only when neither matches"
+    depends_on:
+      - "task-cfb-detect-core:blocks"
+      - "task-cfb-detect-guardrails:blocks"
+    # cross-sprint (Sprint 1, real ID, added post-creation): T-90924b6d:blocks
+    test_strategy: "Unit-test-backed: a unit test confirms the CFB detection component is present in the registered set and is resolved by the dispatch mechanism without a hardcoded reference."
+
+  # --- Epic 4: Legacy OLE Extraction — doc (story S-32677db6) ---
+  - id: task-doc-open
+    title: "Implement doc open component (NPOI HWPFDocument + FileMetadata)"
+    story: S-32677db6
+    description: >
+      Implement the open component for legacy .doc via self-compiled NPOI
+      (HWPFDocument), producing FileMetadata sourced from OLE
+      SummaryInformation/DocumentSummaryInformation, registered through the
+      DI dispatch registry.
+    spec_refs:
+      - docs/specs/extraction.md
+    component_refs:
+      - ydk:entity:extraction/FileMetadata
+      - ydk:entity:extraction/ExtractionResult
+      - ydk:req:extraction/dependency-injection
+    acceptance:
+      - "Extract() on a .doc file opens successfully via NPOI HWPFDocument"
+      - "FileMetadata is populated from OLE SummaryInformation/DocumentSummaryInformation, with fields the format doesn't provide left null (never a placeholder string)"
+      - "The doc open component is resolved via the DI registry, not constructed inline"
+    depends_on: []
+    # cross-sprint (Sprint 1, real IDs, added post-creation): T-a5f1d074:blocks, T-90924b6d:blocks
+    test_strategy: "Unit-test-backed: unit test opens a known .doc fixture and asserts each FileMetadata field against known values, including at least one null-source field."
+
+  - id: task-doc-metadata
+    title: "Map WordFormatMetadata for doc"
+    story: S-32677db6
+    description: >
+      Populate WordFormatMetadata for legacy .doc from NPOI's
+      SummaryInformation/DocumentSummaryInformation: page/word/character/
+      paragraph/line counts, company/manager/template fields, and the
+      macro-presence flag (VBA macro storage detection).
+    spec_refs:
+      - docs/specs/extraction.md
+    component_refs:
+      - ydk:entity:extraction/WordFormatMetadata
+    acceptance:
+      - "WordFormatMetadata's page/word/character/paragraph/line counts are populated from native metadata, not recomputed"
+      - "Company/Manager/Template fields are populated when present, null when absent"
+      - "HasMacros is true for a .doc fixture with a macro storage and false for one without"
+    depends_on:
+      - "task-doc-open:blocks"
+    test_strategy: "Unit-test-backed: unit tests against a macro-enabled and a non-macro .doc fixture assert exact WordFormatMetadata field values including HasMacros."
+
+  - id: task-doc-text
+    title: "Implement doc flat-text extraction with unicode fidelity"
+    story: S-32677db6
+    description: >
+      Extract flattened plain-text body content from .doc via NPOI, ensuring
+      Hebrew/Arabic/Persian/Russian/Latin/CJK text and emoji (including
+      multi-codepoint sequences) round-trip without mojibake, truncation, or
+      unwanted normalization, per unicode-fidelity.
+    spec_refs:
+      - docs/specs/extraction.md
+    component_refs:
+      - ydk:req:extraction/unicode-fidelity
+      - ydk:entity:extraction/ExtractionResult
+    acceptance:
+      - "ExtractedText is empty string (never null) for a .doc with no body text"
+      - "ExtractedText for a multilingual .doc fixture matches the expected Unicode string exactly, byte-for-byte, per the NPOI i18n validation findings from T-94570c2b"
+      - "No Unicode normalization form is applied that changes the source character sequence"
+    depends_on:
+      - "task-doc-open:blocks"
+    # cross-sprint (Sprint 1, real ID, added post-creation): T-94570c2b:blocks
+    test_strategy: "Corpus-sample-backed: unit test against a hand-crafted multilingual .doc fixture asserts ExtractedText exactly equals the known-correct string; formal corpus-manifest assertion lands with Epic 9's integration tests once Epic 8's corpus exists."
+
+  - id: task-doc-subfiles
+    title: "Implement doc first-layer embedded-subfile walk"
+    story: S-32677db6
+    description: >
+      Walk the .doc CFB structure for first-layer OLE-embedded objects and
+      inline media, producing SubfileItem entries per subfile-scope. A
+      corrupt embedded object is omitted and logged without failing the
+      overall extraction call.
+    spec_refs:
+      - docs/specs/extraction.md
+    component_refs:
+      - ydk:entity:extraction/SubfileItem
+      - ydk:req:extraction/subfile-scope
+    acceptance:
+      - "First-layer embedded objects and inline media in a .doc fixture appear as correct SubfileItem entries (Binary, FileName from CFB storage name, SizeBytes)"
+      - "A subfile that is itself a container is returned as one opaque SubfileItem, not recursively unpacked"
+      - "A single corrupt embedded object is omitted from Subfiles and logged; Extract() still returns successfully for the rest of the document"
+    depends_on:
+      - "task-doc-open:blocks"
+    test_strategy: "Unit-test-backed: unit test against a .doc fixture with one valid and one corrupt embedded object asserts the valid one appears in Subfiles, the corrupt one is omitted and logged, and the call does not throw."
+
+  # --- Epic 4: Legacy OLE Extraction — xls (story S-0602557d) ---
+  - id: task-xls-open
+    title: "Implement xls open component (NPOI HSSFWorkbook + FileMetadata)"
+    story: S-0602557d
+    description: >
+      Implement the open component for legacy .xls via self-compiled NPOI
+      (HSSFWorkbook), producing FileMetadata sourced from OLE
+      SummaryInformation/DocumentSummaryInformation, registered through the
+      DI dispatch registry.
+    spec_refs:
+      - docs/specs/extraction.md
+    component_refs:
+      - ydk:entity:extraction/FileMetadata
+      - ydk:entity:extraction/ExtractionResult
+      - ydk:req:extraction/dependency-injection
+    acceptance:
+      - "Extract() on an .xls file opens successfully via NPOI HSSFWorkbook"
+      - "FileMetadata is populated from OLE SummaryInformation/DocumentSummaryInformation, with fields the format doesn't provide left null"
+      - "The xls open component is resolved via the DI registry, not constructed inline"
+    depends_on: []
+    # cross-sprint (Sprint 1, real IDs, added post-creation): T-a5f1d074:blocks, T-90924b6d:blocks
+    test_strategy: "Unit-test-backed: unit test opens a known .xls fixture and asserts each FileMetadata field against known values, including at least one null-source field."
+
+  - id: task-xls-metadata
+    title: "Map ExcelFormatMetadata for xls"
+    story: S-0602557d
+    description: >
+      Populate ExcelFormatMetadata for legacy .xls: sheet count, sheet names
+      in workbook order, active sheet index, and macro-presence flag.
+    spec_refs:
+      - docs/specs/extraction.md
+    component_refs:
+      - ydk:entity:extraction/ExcelFormatMetadata
+    acceptance:
+      - "SheetCount and SheetNames match the workbook's actual sheets and order"
+      - "ActiveSheetIndex reflects the recorded active/selected sheet, null when not recorded"
+      - "HasMacros is true for an .xls fixture with a macro storage and false for one without"
+    depends_on:
+      - "task-xls-open:blocks"
+    test_strategy: "Unit-test-backed: unit tests against a multi-sheet macro-enabled and a non-macro .xls fixture assert exact ExcelFormatMetadata field values including HasMacros."
+
+  - id: task-xls-text
+    title: "Implement xls flat-text extraction with unicode fidelity"
+    story: S-0602557d
+    description: >
+      Extract flattened plain-text body content (cell text) from .xls via
+      NPOI, ensuring Hebrew/Arabic/Persian/Russian/Latin/CJK text and emoji
+      round-trip without mojibake, truncation, or unwanted normalization.
+    spec_refs:
+      - docs/specs/extraction.md
+    component_refs:
+      - ydk:req:extraction/unicode-fidelity
+      - ydk:entity:extraction/ExtractionResult
+    acceptance:
+      - "ExtractedText is empty string (never null) for an .xls with no textual cell content"
+      - "ExtractedText for a multilingual .xls fixture matches the expected Unicode string exactly, per the NPOI i18n validation findings from T-94570c2b"
+      - "No Unicode normalization form is applied that changes the source character sequence"
+    depends_on:
+      - "task-xls-open:blocks"
+    # cross-sprint (Sprint 1, real ID, added post-creation): T-94570c2b:blocks
+    test_strategy: "Corpus-sample-backed: unit test against a hand-crafted multilingual .xls fixture asserts ExtractedText exactly equals the known-correct string; formal corpus-manifest assertion lands with Epic 9's integration tests once Epic 8's corpus exists."
+
+  - id: task-xls-subfiles
+    title: "Implement xls first-layer embedded-subfile walk"
+    story: S-0602557d
+    description: >
+      Walk the .xls CFB structure for first-layer OLE-embedded objects and
+      inline media, producing SubfileItem entries per subfile-scope. A
+      corrupt embedded object is omitted and logged without failing the
+      overall extraction call.
+    spec_refs:
+      - docs/specs/extraction.md
+    component_refs:
+      - ydk:entity:extraction/SubfileItem
+      - ydk:req:extraction/subfile-scope
+    acceptance:
+      - "First-layer embedded objects and inline media in an .xls fixture appear as correct SubfileItem entries"
+      - "A subfile that is itself a container is returned as one opaque SubfileItem, not recursively unpacked"
+      - "A single corrupt embedded object is omitted from Subfiles and logged; Extract() still returns successfully"
+    depends_on:
+      - "task-xls-open:blocks"
+    test_strategy: "Unit-test-backed: unit test against an .xls fixture with one valid and one corrupt embedded object asserts the valid one appears in Subfiles, the corrupt one is omitted and logged, and the call does not throw."
+
+  # --- Epic 4: Legacy OLE Extraction — ppt (story S-23b8b734) ---
+  - id: task-ppt-open
+    title: "Implement ppt open component (NPOI HSLFSlideShow + FileMetadata)"
+    story: S-23b8b734
+    description: >
+      Implement the open component for legacy .ppt via self-compiled NPOI
+      (HSLFSlideShow), producing FileMetadata sourced from OLE
+      SummaryInformation/DocumentSummaryInformation, registered through the
+      DI dispatch registry.
+    spec_refs:
+      - docs/specs/extraction.md
+    component_refs:
+      - ydk:entity:extraction/FileMetadata
+      - ydk:entity:extraction/ExtractionResult
+      - ydk:req:extraction/dependency-injection
+    acceptance:
+      - "Extract() on a .ppt file opens successfully via NPOI HSLFSlideShow"
+      - "FileMetadata is populated from OLE SummaryInformation/DocumentSummaryInformation, with fields the format doesn't provide left null"
+      - "The ppt open component is resolved via the DI registry, not constructed inline"
+    depends_on: []
+    # cross-sprint (Sprint 1, real IDs, added post-creation): T-a5f1d074:blocks, T-90924b6d:blocks
+    test_strategy: "Unit-test-backed: unit test opens a known .ppt fixture and asserts each FileMetadata field against known values, including at least one null-source field."
+
+  - id: task-ppt-metadata
+    title: "Map PowerPointFormatMetadata for ppt"
+    story: S-23b8b734
+    description: >
+      Populate PowerPointFormatMetadata for legacy .ppt: slide count,
+      notes-slide count, and macro-presence flag.
+    spec_refs:
+      - docs/specs/extraction.md
+    component_refs:
+      - ydk:entity:extraction/PowerPointFormatMetadata
+    acceptance:
+      - "SlideCount matches the presentation's actual slide count"
+      - "NotesSlideCount counts slides with speaker-notes content, null when not determinable"
+      - "HasMacros is true for a .ppt fixture with a macro storage and false for one without"
+    depends_on:
+      - "task-ppt-open:blocks"
+    test_strategy: "Unit-test-backed: unit tests against a multi-slide macro-enabled and a non-macro .ppt fixture assert exact PowerPointFormatMetadata field values including HasMacros."
+
+  - id: task-ppt-text
+    title: "Implement ppt flat-text extraction with unicode fidelity"
+    story: S-23b8b734
+    description: >
+      Extract flattened plain-text body content (slide + notes text) from
+      .ppt via NPOI, ensuring Hebrew/Arabic/Persian/Russian/Latin/CJK text
+      and emoji round-trip without mojibake, truncation, or unwanted
+      normalization.
+    spec_refs:
+      - docs/specs/extraction.md
+    component_refs:
+      - ydk:req:extraction/unicode-fidelity
+      - ydk:entity:extraction/ExtractionResult
+    acceptance:
+      - "ExtractedText is empty string (never null) for a .ppt with no textual content"
+      - "ExtractedText for a multilingual .ppt fixture matches the expected Unicode string exactly, per the NPOI i18n validation findings from T-94570c2b"
+      - "No Unicode normalization form is applied that changes the source character sequence"
+    depends_on:
+      - "task-ppt-open:blocks"
+    # cross-sprint (Sprint 1, real ID, added post-creation): T-94570c2b:blocks
+    test_strategy: "Corpus-sample-backed: unit test against a hand-crafted multilingual .ppt fixture asserts ExtractedText exactly equals the known-correct string; formal corpus-manifest assertion lands with Epic 9's integration tests once Epic 8's corpus exists."
+
+  - id: task-ppt-subfiles
+    title: "Implement ppt first-layer embedded-subfile walk"
+    story: S-23b8b734
+    description: >
+      Walk the .ppt CFB structure for first-layer OLE-embedded objects and
+      inline media, producing SubfileItem entries per subfile-scope. A
+      corrupt embedded object is omitted and logged without failing the
+      overall extraction call.
+    spec_refs:
+      - docs/specs/extraction.md
+    component_refs:
+      - ydk:entity:extraction/SubfileItem
+      - ydk:req:extraction/subfile-scope
+    acceptance:
+      - "First-layer embedded objects and inline media in a .ppt fixture appear as correct SubfileItem entries, named by their CFB storage name"
+      - "A subfile that is itself a container is returned as one opaque SubfileItem, not recursively unpacked"
+      - "A single corrupt embedded object is omitted from Subfiles and logged; Extract() still returns successfully"
+    depends_on:
+      - "task-ppt-open:blocks"
+    test_strategy: "Unit-test-backed: unit test against a .ppt fixture with one valid and one corrupt embedded object asserts the valid one appears in Subfiles, the corrupt one is omitted and logged, and the call does not throw."
+
+  # --- Epic 5: OOXML Mime Detection Hardening (story S-7d040ba7) ---
+  - id: task-ooxml-detect-harden
+    title: "Harden existing OOXML detection to be strictly content-only"
+    story: S-7d040ba7
+    description: >
+      Audit and harden the existing ZIP/OOXML relationship-based detection
+      component so it never reads request.FileName for classification
+      decisions, only [Content_Types].xml / part-name structure, correctly
+      handling a wrong- or missing-extension input.
+    spec_refs:
+      - docs/specs/mime-detection.md
+    component_refs:
+      - ydk:contract:extraction/detect-mime-type
+      - ydk:req:extraction/content-only-mime-detection
+    acceptance:
+      - "A genuine .docx renamed to .txt (or with no extension) still detects as Docx"
+      - "A genuine .txt renamed to .docx detects as Unknown, not Docx"
+      - "Code review confirms the OOXML detection implementation never branches on FileName"
+    depends_on: []
+    # cross-sprint (Sprint 1, real ID, added post-creation): T-2ac2f140:blocks
+    test_strategy: "Unit-test-backed: unit tests with a wrong-extension and a no-extension OOXML fixture, and a renamed-non-OOXML fixture, assert correct/Unknown classification independent of FileName."
+
+  - id: task-ooxml-detect-macro-variants
+    title: "Classify macro-enabled OOXML variants (docm/xlsm/pptm) as their base format"
+    story: S-7d040ba7
+    description: >
+      Ensure the OOXML detection component structurally recognizes
+      macro-enabled variants (docm/xlsm/pptm) but classifies DetectedFormat
+      as the base format (Docx/Xlsx/Pptx), without growing the
+      MimeDetectionResult enum with a parallel macro axis.
+    spec_refs:
+      - docs/specs/mime-detection.md
+    component_refs:
+      - ydk:entity:extraction/MimeDetectionResult
+    acceptance:
+      - "A docm file detects as Docx; an xlsm file detects as Xlsx; a pptm file detects as Pptx"
+      - "MimeDetectionResult.DetectedFormat gains no separate macro-variant enum values"
+      - "The macro-presence distinction is not surfaced on MimeDetectionResult (it surfaces later on FormatMetadata via extraction, per Epic 6)"
+    depends_on:
+      - "task-ooxml-detect-harden:blocks"
+    test_strategy: "Unit-test-backed: unit tests against a docm/xlsm/pptm fixture each assert DetectedFormat equals the base format's enum value."
+
+  - id: task-ooxml-detect-zerobyte
+    title: "Handle zero-byte input as Unknown in OOXML detection path"
+    story: S-7d040ba7
+    description: >
+      Ensure a zero-length FileBytes input to the OOXML detection component
+      returns the Unknown result rather than throwing, since there is no ZIP
+      structure to inspect.
+    spec_refs:
+      - docs/specs/mime-detection.md
+    component_refs:
+      - ydk:entity:extraction/MimeDetectionResult
+    acceptance:
+      - "A zero-byte FileBytes input returns DetectedFormat=Unknown, MimeType=application/octet-stream, IsSupported=false"
+      - "No exception is thrown for zero-length input in the OOXML detection path"
+    depends_on:
+      - "task-ooxml-detect-harden:blocks"
+    test_strategy: "Unit-test-backed: unit test with a zero-length byte array asserts the Unknown result, not an exception."
+
+  # --- Epic 6: OOXML Extraction Completeness — docx (story S-156ec71a) ---
+  - id: task-docx-metadata
+    title: "Complete WordFormatMetadata parity for docx"
+    story: S-156ec71a
+    description: >
+      Bring docx's WordFormatMetadata to full parity with doc's shape
+      (page/word/character/paragraph/line counts, company/manager/template,
+      macro-presence flag), sourced from OOXML Extended (app.xml) Properties.
+    spec_refs:
+      - docs/specs/extraction.md
+    component_refs:
+      - ydk:entity:extraction/FileMetadata
+      - ydk:entity:extraction/WordFormatMetadata
+    acceptance:
+      - "Extract() on a docx file returns full FileMetadata and WordFormatMetadata sourced from OOXML Core/Extended Properties"
+      - "HasMacros is true for a docm fixture and false for a non-macro docx fixture"
+      - "Fields absent from app.xml are null, not a placeholder string"
+    depends_on: []
+    # cross-sprint (Sprint 1, real ID, added post-creation): T-90924b6d:blocks
+    test_strategy: "Unit-test-backed: unit tests against a macro-enabled and non-macro docx fixture assert exact FileMetadata/WordFormatMetadata field values."
+
+  - id: task-docx-text
+    title: "Implement docx flat-text extraction with unicode fidelity"
+    story: S-156ec71a
+    description: >
+      Extract flattened plain-text body content from docx via
+      DocumentFormat.OpenXml, ensuring multilingual text and emoji round-trip
+      without mojibake or truncation (OOXML is already UTF-8-native, but text
+      flattening logic itself must not introduce loss).
+    spec_refs:
+      - docs/specs/extraction.md
+    component_refs:
+      - ydk:req:extraction/unicode-fidelity
+      - ydk:entity:extraction/ExtractionResult
+    acceptance:
+      - "ExtractedText is empty string (never null) for a docx with no body text"
+      - "ExtractedText for a multilingual docx fixture matches the expected Unicode string exactly"
+      - "No Unicode normalization form is applied that changes the source character sequence"
+    depends_on: []
+    # cross-sprint (Sprint 1, real ID, added post-creation): T-90924b6d:blocks
+    test_strategy: "Corpus-sample-backed: unit test against a hand-crafted multilingual docx fixture asserts ExtractedText exactly equals the known-correct string; formal corpus-manifest assertion lands with Epic 9's integration tests once Epic 8's corpus exists."
+
+  - id: task-docx-subfiles
+    title: "Wire docx first-layer embeddings/media walk via the generalized walk"
+    story: S-156ec71a
+    description: >
+      Wire docx's first-layer embedded-object and inline-media extraction
+      through the generalized ExtractFirstLayerEmbedded walk from Sprint 1
+      (T-05bd14c7), producing correct SubfileItem entries and excluding
+      internal package XML parts per subfile-scope.
+    spec_refs:
+      - docs/specs/extraction.md
+    component_refs:
+      - ydk:entity:extraction/SubfileItem
+      - ydk:req:extraction/subfile-scope
+    acceptance:
+      - "A docx with an embedded xlsx object and an inline PNG both appear in Subfiles via the generalized walk"
+      - "Internal package XML parts (styles.xml, theme*.xml, numbering.xml, settings.xml, docProps/*.xml, [Content_Types].xml, _rels/*) never appear in Subfiles"
+      - "A single corrupt embedding is omitted from Subfiles and logged without failing the overall extraction call"
+    depends_on: []
+    # cross-sprint (Sprint 1, real ID, added post-creation): T-05bd14c7:blocks
+    test_strategy: "Unit-test-backed: unit test against a docx fixture with an embedded xlsx, an inline image, and one corrupt embedding asserts correct SubfileItem entries and correct exclusions, per subfile-scope's acceptance_criteria."
+
+  # --- Epic 6: OOXML Extraction Completeness — xlsx (story S-8d6146f0) ---
+  - id: task-xlsx-metadata
+    title: "Complete ExcelFormatMetadata parity for xlsx"
+    story: S-8d6146f0
+    description: >
+      Bring xlsx's ExcelFormatMetadata to full parity with xls's shape (sheet
+      count/names, active sheet, macro-presence flag), sourced from OOXML
+      Core/Extended Properties and workbook structure.
+    spec_refs:
+      - docs/specs/extraction.md
+    component_refs:
+      - ydk:entity:extraction/FileMetadata
+      - ydk:entity:extraction/ExcelFormatMetadata
+    acceptance:
+      - "Extract() on an xlsx file returns full FileMetadata and ExcelFormatMetadata (sheet count/names, active sheet, macro-presence flag)"
+      - "HasMacros is true for an xlsm fixture and false for a non-macro xlsx fixture"
+      - "Fields absent from source metadata are null, not a placeholder string"
+    depends_on: []
+    # cross-sprint (Sprint 1, real ID, added post-creation): T-90924b6d:blocks
+    test_strategy: "Unit-test-backed: unit tests against a macro-enabled and non-macro xlsx fixture assert exact FileMetadata/ExcelFormatMetadata field values."
+
+  - id: task-xlsx-text
+    title: "Implement xlsx flat-text extraction with unicode fidelity"
+    story: S-8d6146f0
+    description: >
+      Extract flattened plain-text cell content from xlsx via
+      DocumentFormat.OpenXml, ensuring multilingual text and emoji round-trip
+      without mojibake or truncation.
+    spec_refs:
+      - docs/specs/extraction.md
+    component_refs:
+      - ydk:req:extraction/unicode-fidelity
+      - ydk:entity:extraction/ExtractionResult
+    acceptance:
+      - "ExtractedText is empty string (never null) for an xlsx with no textual cell content"
+      - "ExtractedText for a multilingual xlsx fixture matches the expected Unicode string exactly"
+      - "No Unicode normalization form is applied that changes the source character sequence"
+    depends_on: []
+    # cross-sprint (Sprint 1, real ID, added post-creation): T-90924b6d:blocks
+    test_strategy: "Corpus-sample-backed: unit test against a hand-crafted multilingual xlsx fixture asserts ExtractedText exactly equals the known-correct string; formal corpus-manifest assertion lands with Epic 9's integration tests once Epic 8's corpus exists."
+
+  - id: task-xlsx-subfiles
+    title: "Wire xlsx first-layer embeddings/media walk via the generalized walk"
+    story: S-8d6146f0
+    description: >
+      Wire xlsx's first-layer embedded-object and inline-media extraction
+      through the generalized ExtractFirstLayerEmbedded walk from Sprint 1
+      (T-05bd14c7), producing correct SubfileItem entries and excluding
+      internal package XML parts per subfile-scope.
+    spec_refs:
+      - docs/specs/extraction.md
+    component_refs:
+      - ydk:entity:extraction/SubfileItem
+      - ydk:req:extraction/subfile-scope
+    acceptance:
+      - "An xlsx with an embedded object and an inline image both appear in Subfiles via the generalized walk"
+      - "Internal package XML parts never appear in Subfiles"
+      - "A single corrupt embedding is omitted from Subfiles and logged without failing the overall extraction call"
+    depends_on: []
+    # cross-sprint (Sprint 1, real ID, added post-creation): T-05bd14c7:blocks
+    test_strategy: "Unit-test-backed: unit test against an xlsx fixture with an embedded object, an inline image, and one corrupt embedding asserts correct SubfileItem entries and correct exclusions."
+
+  # --- Epic 6: OOXML Extraction Completeness — pptx (story S-37c18545) ---
+  - id: task-pptx-metadata
+    title: "Complete PowerPointFormatMetadata parity for pptx"
+    story: S-37c18545
+    description: >
+      Bring pptx's PowerPointFormatMetadata to full parity with ppt's shape
+      (slide count, notes-slide count, macro-presence flag), sourced from
+      OOXML Core/Extended Properties and presentation structure.
+    spec_refs:
+      - docs/specs/extraction.md
+    component_refs:
+      - ydk:entity:extraction/FileMetadata
+      - ydk:entity:extraction/PowerPointFormatMetadata
+    acceptance:
+      - "Extract() on a pptx file returns full FileMetadata and PowerPointFormatMetadata (slide count, notes-slide count, macro-presence flag)"
+      - "HasMacros is true for a pptm fixture and false for a non-macro pptx fixture"
+      - "Fields absent from source metadata are null, not a placeholder string"
+    depends_on: []
+    # cross-sprint (Sprint 1, real ID, added post-creation): T-90924b6d:blocks
+    test_strategy: "Unit-test-backed: unit tests against a macro-enabled and non-macro pptx fixture assert exact FileMetadata/PowerPointFormatMetadata field values."
+
+  - id: task-pptx-text
+    title: "Implement pptx flat-text extraction with unicode fidelity"
+    story: S-37c18545
+    description: >
+      Extract flattened plain-text content (slide + notes text) from pptx via
+      DocumentFormat.OpenXml, ensuring multilingual text and emoji round-trip
+      without mojibake or truncation.
+    spec_refs:
+      - docs/specs/extraction.md
+    component_refs:
+      - ydk:req:extraction/unicode-fidelity
+      - ydk:entity:extraction/ExtractionResult
+    acceptance:
+      - "ExtractedText is empty string (never null) for a pptx with no textual content"
+      - "ExtractedText for a multilingual pptx fixture matches the expected Unicode string exactly"
+      - "No Unicode normalization form is applied that changes the source character sequence"
+    depends_on: []
+    # cross-sprint (Sprint 1, real ID, added post-creation): T-90924b6d:blocks
+    test_strategy: "Corpus-sample-backed: unit test against a hand-crafted multilingual pptx fixture asserts ExtractedText exactly equals the known-correct string; formal corpus-manifest assertion lands with Epic 9's integration tests once Epic 8's corpus exists."
+
+  - id: task-pptx-subfiles
+    title: "Wire pptx first-layer embeddings/media walk via the generalized walk"
+    story: S-37c18545
+    description: >
+      Wire pptx's first-layer embedded-object and inline-media extraction
+      through the generalized ExtractFirstLayerEmbedded walk from Sprint 1
+      (T-05bd14c7) — the walk this generalization was originally derived
+      from (PowerPoint special-casing) — producing correct SubfileItem
+      entries with no regression from prior PowerPoint-only behavior.
+    spec_refs:
+      - docs/specs/extraction.md
+    component_refs:
+      - ydk:entity:extraction/SubfileItem
+      - ydk:req:extraction/subfile-scope
+    acceptance:
+      - "A pptx with an embedded object and inline media both appear in Subfiles via the generalized walk, matching prior PowerPoint-only behavior with no regression"
+      - "Internal package XML parts never appear in Subfiles"
+      - "A single corrupt embedding is omitted from Subfiles and logged without failing the overall extraction call"
+    depends_on: []
+    # cross-sprint (Sprint 1, real ID, added post-creation): T-05bd14c7:blocks
+    test_strategy: "Unit-test-backed: unit test against a pptx fixture with an embedded object, inline media, and one corrupt embedding asserts correct SubfileItem entries and correct exclusions, with a regression check against Sprint 1's PowerPoint-only walk behavior."
+
+  # --- Epic 7: Public API Surface — DetectMimeType facade (story S-072bfdf6) ---
+  - id: task-detect-facade-wire
+    title: "Wire DetectMimeType facade to the OOXML + CFB detection registry"
+    story: S-072bfdf6
+    description: >
+      Wire the public DetectMimeType(MimeDetectionRequest) facade to resolve
+      and dispatch to both the OOXML and CFB detection components via the
+      DI registry, returning MimeDetectionResult. The facade contains no
+      format-specific parsing logic itself.
+    spec_refs:
+      - docs/specs/overview.md
+      - docs/specs/mime-detection.md
+    component_refs:
+      - ydk:contract:extraction/detect-mime-type
+      - ydk:entity:extraction/MimeDetectionRequest
+      - ydk:entity:extraction/MimeDetectionResult
+    acceptance:
+      - "DetectMimeType dispatches to the registry-resolved OOXML and CFB detection components, returning Unknown only when neither matches"
+      - "The public facade contains no format-specific parsing logic itself — it only orchestrates dispatch"
+      - "The facade is a thin non-DI-aware entry point that internally resolves dependencies from the DI container"
+    depends_on:
+      - "task-cfb-detect-registry:blocks"
+      - "task-ooxml-detect-harden:blocks"
+      - "task-ooxml-detect-macro-variants:blocks"
+      - "task-ooxml-detect-zerobyte:blocks"
+    # cross-sprint (Sprint 1, real ID, added post-creation): T-90924b6d:blocks
+    test_strategy: "Unit-test-backed: unit tests confirm DetectMimeType correctly dispatches to whichever registered component matches a given fixture (OOXML, CFB, or neither), with no mocking of the format-handling components themselves."
+
+  - id: task-detect-facade-validation
+    title: "Add null request/field boundary validation to DetectMimeType"
+    story: S-072bfdf6
+    description: >
+      Add standard argument validation to the DetectMimeType facade so a null
+      request object, or a null FileBytes, throws immediately before any
+      detection logic runs — boundary validation, not a domain error.
+    spec_refs:
+      - docs/specs/overview.md
+    component_refs:
+      - ydk:entity:extraction/MimeDetectionRequest
+    acceptance:
+      - "A null MimeDetectionRequest throws immediately, before any detection component is invoked"
+      - "A MimeDetectionRequest with a null FileBytes throws immediately, before any detection component is invoked"
+    depends_on:
+      - "task-detect-facade-wire:blocks"
+    test_strategy: "Unit-test-backed: unit tests assert a null request and a null FileBytes each throw before any detection component executes, verified via a spy/counter on the registry."
+
+  # --- Epic 7: Public API Surface — Extract facade + errors (story S-51d277f1) ---
+  - id: task-extract-facade-wire
+    title: "Wire Extract facade to the format-dispatch registry (open + text-extraction)"
+    story: S-51d277f1
+    description: >
+      Wire the public Extract(ExtractionRequest) facade to resolve and
+      dispatch to the open and text-extraction components for all six
+      formats via the DI registry, based on DetectedMimeType, returning
+      ExtractionResult. Extract() trusts the caller-supplied DetectedMimeType
+      rather than re-detecting.
+    spec_refs:
+      - docs/specs/overview.md
+      - docs/specs/extraction.md
+    component_refs:
+      - ydk:contract:extraction/extract
+      - ydk:entity:extraction/ExtractionRequest
+      - ydk:entity:extraction/ExtractionResult
+      - ydk:req:extraction/format-extensibility
+    acceptance:
+      - "Extract() dispatches to the correct open + text-extraction components for each of the six supported formats via the registry"
+      - "Extract() does not re-detect the mime type; it uses DetectedMimeType as-is"
+      - "The public facade contains no format-specific parsing logic itself"
+    depends_on:
+      - "task-doc-subfiles:blocks"
+      - "task-xls-subfiles:blocks"
+      - "task-ppt-subfiles:blocks"
+      - "task-docx-subfiles:blocks"
+      - "task-xlsx-subfiles:blocks"
+      - "task-pptx-subfiles:blocks"
+    # cross-sprint (Sprint 1, real ID, added post-creation): T-90924b6d:blocks
+    test_strategy: "Unit-test-backed: unit tests confirm Extract() dispatches correctly for a fixture of each of the six formats, with no mocking of the format-handling components themselves."
+
+  - id: task-extract-facade-guardrail-errors
+    title: "Implement pre-parse guardrail errors in Extract (file-too-large, oversized-nested-content)"
+    story: S-51d277f1
+    description: >
+      Implement file-too-large and oversized-nested-content error handling in
+      the Extract facade, both checked before any parsing or buffer
+      allocation begins, per max-file-size and nesting-depth-guard.
+    spec_refs:
+      - docs/specs/extraction.md
+    component_refs:
+      - ydk:error:extraction/file-too-large
+      - ydk:error:extraction/oversized-nested-content
+      - ydk:nfr:extraction/max-file-size
+      - ydk:nfr:extraction/nesting-depth-guard
+    acceptance:
+      - "Extract() raises file-too-large before any parsing when FileBytes exceeds the configured max-file-size limit"
+      - "Extract() raises oversized-nested-content when declared internal size/nesting exceeds nesting-depth-guard caps, checked before buffer allocation"
+      - "Both rejections are logged with file size, filename, and configured limit, per max-file-size's monitoring requirement"
+    depends_on:
+      - "task-extract-facade-wire:blocks"
+    test_strategy: "Unit-test-backed: unit test with a synthetic 100MB+1byte input asserts file-too-large before any format-specific parsing runs, verified via a spy/counter; synthetic crafted inputs with implausible declared sizes assert oversized-nested-content, per nesting-depth-guard's test_method."
+
+  - id: task-extract-facade-parse-errors
+    title: "Implement parse-time error handling in Extract (password-protected, corrupt-file, truncated-container)"
+    story: S-51d277f1
+    description: >
+      Implement password-protected, corrupt-file, and truncated-container
+      error handling in the Extract facade: encryption detected before a
+      full parse, unparseable-but-present structure, and declared-vs-actual
+      byte mismatch or zero-length input respectively.
+    spec_refs:
+      - docs/specs/extraction.md
+    component_refs:
+      - ydk:error:extraction/password-protected
+      - ydk:error:extraction/corrupt-file
+      - ydk:error:extraction/truncated-container
+    acceptance:
+      - "Extract() raises password-protected when an EncryptionInfo/EncryptedPackage stream is detected, or the backing library throws an encrypted-document exception, before a full parse completes"
+      - "Extract() raises corrupt-file when the container structure is present but unparseable by NPOI or DocumentFormat.OpenXml"
+      - "Extract() raises truncated-container when declared container size exceeds actual byte length, or when FileBytes is zero-length"
+    depends_on:
+      - "task-extract-facade-wire:blocks"
+    test_strategy: "Unit-test-backed: unit tests with a password-protected fixture, a structurally-corrupt fixture, a byte-truncated fixture, and a zero-length input each assert the correct specific error type is raised, not a generic exception."
+
+  - id: task-extract-facade-unsupported-and-validation
+    title: "Implement unsupported-format rejection and null-argument validation in Extract"
+    story: S-51d277f1
+    description: >
+      Implement unsupported-format error handling for a DetectedMimeType
+      that isn't one of the six supported formats, and standard argument
+      validation so a null request or null required field throws immediately
+      before any detection/extraction logic runs.
+    spec_refs:
+      - docs/specs/extraction.md
+      - docs/specs/overview.md
+    component_refs:
+      - ydk:error:extraction/unsupported-format
+      - ydk:entity:extraction/ExtractionRequest
+    acceptance:
+      - "Extract() raises unsupported-format when DetectedMimeType isn't one of the six supported mime types (including the Unknown sentinel application/octet-stream)"
+      - "A null ExtractionRequest throws immediately, before any of the above logic runs"
+      - "An ExtractionRequest with a null required field (FileBytes, FileName, or DetectedMimeType) throws immediately, before any of the above logic runs"
+    depends_on:
+      - "task-extract-facade-wire:blocks"
+    test_strategy: "Unit-test-backed: unit tests assert unsupported-format for an arbitrary/Unknown mime string, and assert a null request and each null required field throw before any detection/extraction logic executes, verified via a spy/counter."
