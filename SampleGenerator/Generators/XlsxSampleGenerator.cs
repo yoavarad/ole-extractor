@@ -6,10 +6,15 @@ using SampleGenerator.Abstractions;
 namespace SampleGenerator.Generators
 {
     /// <summary>
-    /// Authors a minimal, valid .xlsx via DocumentFormat.OpenXml directly:
-    /// controllable body text (one shared-string row per line), general
-    /// metadata, and first-layer embeddings. Uses the shared-string table
-    /// (rather than inline strings) because that's what
+    /// Authors a minimal, valid .xlsx (or .xlsm, when <see cref="SampleSpec.VbaProject"/>
+    /// is set) via DocumentFormat.OpenXml directly: controllable body text
+    /// (one shared-string row per line), general metadata, first-layer
+    /// embeddings, and - for the macro-enabled variant - a structurally-valid
+    /// VBA project storage (arbitrary placeholder bytes; no functioning macro
+    /// is required). The macro-enabled variant must still be detected as base
+    /// format xlsx, not as a separate format (Epic 5/6's
+    /// macro-variant-misclassification scenario). Uses the shared-string
+    /// table (rather than inline strings) because that's what
     /// ExtractorOLE's XlsxTextExtractor reads back.
     /// </summary>
     public sealed class XlsxSampleGenerator : ISampleGenerator
@@ -20,8 +25,13 @@ namespace SampleGenerator.Generators
         {
             ArgumentNullException.ThrowIfNull(spec);
 
+            var isMacroEnabled = spec.VbaProject is not null;
+            var documentType = isMacroEnabled
+                ? SpreadsheetDocumentType.MacroEnabledWorkbook
+                : SpreadsheetDocumentType.Workbook;
+
             using var stream = new MemoryStream();
-            using (var document = SpreadsheetDocument.Create(stream, SpreadsheetDocumentType.Workbook))
+            using (var document = SpreadsheetDocument.Create(stream, documentType))
             {
                 var workbookPart = document.AddWorkbookPart();
                 workbookPart.Workbook = new Workbook();
@@ -62,12 +72,19 @@ namespace SampleGenerator.Generators
                 // workbookPart.Parts, so these won't be found by extraction until that's updated.
                 OpenXmlEmbeddingHelper.AddEmbeddings(worksheetPart, spec.Embeddings);
 
+                if (spec.VbaProject is { } vbaProject)
+                {
+                    var vbaProjectPart = workbookPart.AddNewPart<VbaProjectPart>();
+                    using var vbaStream = new MemoryStream(vbaProject);
+                    vbaProjectPart.FeedData(vbaStream);
+                }
+
                 workbookPart.Workbook.Save();
             }
 
             return new GeneratedSample
             {
-                FileName = "sample.xlsx",
+                FileName = isMacroEnabled ? "sample.xlsm" : "sample.xlsx",
                 Content = stream.ToArray()
             };
         }

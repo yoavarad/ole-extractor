@@ -7,11 +7,16 @@ using A = DocumentFormat.OpenXml.Drawing;
 namespace SampleGenerator.Generators
 {
     /// <summary>
-    /// Authors a minimal, valid .pptx via DocumentFormat.OpenXml directly:
-    /// one slide (with the required master/layout/theme chain) carrying the
-    /// body text as text-box paragraphs, general metadata, and first-layer
-    /// embeddings on the presentation part (matching the location where
-    /// ExtractorOLE PowerPointOpenStrategy looks for them).
+    /// Authors a minimal, valid .pptx (or .pptm, when SampleSpec.VbaProject
+    /// is set) via DocumentFormat.OpenXml directly: one slide (with the
+    /// required master/layout/theme chain) carrying the body text as
+    /// text-box paragraphs, general metadata, first-layer embeddings on the
+    /// presentation part (matching the location where ExtractorOLE
+    /// PowerPointOpenStrategy looks for them), and, for the macro-enabled
+    /// variant, a structurally-valid VBA project storage (arbitrary
+    /// placeholder bytes; no functioning macro is required). The
+    /// macro-enabled variant must still be detected as base format pptx, not
+    /// as a separate format (macro-variant-misclassification scenario).
     /// </summary>
     public sealed class PptxSampleGenerator : ISampleGenerator
     {
@@ -21,8 +26,13 @@ namespace SampleGenerator.Generators
         {
             ArgumentNullException.ThrowIfNull(spec);
 
+            var isMacroEnabled = spec.VbaProject is not null;
+            var documentType = isMacroEnabled
+                ? PresentationDocumentType.MacroEnabledPresentation
+                : PresentationDocumentType.Presentation;
+
             using var stream = new MemoryStream();
-            using (var document = PresentationDocument.Create(stream, PresentationDocumentType.Presentation))
+            using (var document = PresentationDocument.Create(stream, documentType))
             {
                 var presentationPart = document.AddPresentationPart();
                 presentationPart.Presentation = new Presentation();
@@ -42,12 +52,19 @@ namespace SampleGenerator.Generators
                 OpenXmlPackagePropertiesHelper.Apply(document.PackageProperties, spec.Metadata);
                 OpenXmlEmbeddingHelper.AddEmbeddings(presentationPart, slidePart, spec.Embeddings);
 
+                if (spec.VbaProject is { } vbaProject)
+                {
+                    var vbaProjectPart = presentationPart.AddNewPart<VbaProjectPart>();
+                    using var vbaStream = new MemoryStream(vbaProject);
+                    vbaProjectPart.FeedData(vbaStream);
+                }
+
                 presentationPart.Presentation.Save();
             }
 
             return new GeneratedSample
             {
-                FileName = "sample.pptx",
+                FileName = isMacroEnabled ? "sample.pptm" : "sample.pptx",
                 Content = stream.ToArray()
             };
         }
