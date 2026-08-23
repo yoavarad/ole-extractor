@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ExtractorOLE\ExtractorOLE.csproj" />
+    <ProjectReference Include="..\..\SampleGenerator\SampleGenerator.csproj" />
   </ItemGroup>
 
 </Project>
