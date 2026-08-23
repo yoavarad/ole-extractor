@@ -15,7 +15,15 @@ import sys
 import time
 from pathlib import Path
 
-_EXCLUDED_DIR_PARTS = {"bin", "obj", ".git", ".ydk", ".vs", "node_modules"}
+_EXCLUDED_DIR_PARTS = {
+    "bin",
+    "obj",
+    ".git",
+    ".ydk",
+    ".vs",
+    "node_modules",
+    "third_party",
+}
 _EXCLUDED_PROJECT_MARKERS = ("Tests", "Benchmarks", "StressHarness")
 
 
