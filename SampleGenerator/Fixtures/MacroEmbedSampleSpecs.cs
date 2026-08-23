@@ -4,7 +4,7 @@ namespace SampleGenerator.Fixtures
 {
     /// <summary>
     /// The "macro-enabled-with-embedding" synthetic sample scenario from
-    /// docs/specs/dataset-curation.md's Corpus Composition rule #1: a
+    /// docs/specs/dataset-curation.md's Corpus Composition rule #3: a
     /// macro-enabled variant (docm/xlsm/pptm, or legacy doc/xls/ppt with a
     /// macro storage) carrying at least one macro/VBA storage and at least
     /// one first-layer embedding, plus multilingual/mixed-script text and
