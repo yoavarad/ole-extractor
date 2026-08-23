@@ -17,6 +17,14 @@ Need OSS C# libraries to parse two format families: OOXML (docx/xlsx/pptx, zip-b
 - **Hand-roll legacy binary format parsing via OpenMcdf alone**: rejected — far more implementation work than adopting NPOI, for a harder/older format family with no clear payoff over self-compiling NPOI.
 - **NPOI for OOXML too** (it can do both): rejected — no reason to replace the already-working `DocumentFormat.OpenXml` path.
 
+## Note (2026-08-23)
+Refined by **ADR-004**: this decision's "Legacy OLE (doc/xls/ppt): NPOI" line held only for
+**.xls**. NPOI's `.doc`/`.ppt` body parsers (HWPF/HSLF) turned out to live in a scratchpad tree
+NPOI itself doesn't build or ship (see ADR-004 for the full finding and the resulting decision
+to use `b2xtranslator` for .doc/.ppt body text instead). NPOI (main tree: HSSF/HPSF/POIFS)
+remains the answer for .xls and for cross-format metadata/subfile discovery on all three legacy
+formats.
+
 ## Consequences
 - Build pipeline needs an NPOI-from-source compile step (new CI/build work, tracked in the Library Evaluation / Project restructure epics).
 - Legacy-path Unicode/RTL/CJK/emoji fidelity is **unverified** in NPOI per the research spike — must be empirically tested against real multilingual samples in the Dataset Curation epic before the i18n requirement can be considered met for legacy formats.
