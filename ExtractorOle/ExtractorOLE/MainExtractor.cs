@@ -75,8 +75,8 @@ namespace ExtractorOLE
             }
 
             // Determine final mime: priority to coreMime, then package type, then magic
-            OfficeMimeTypeEnum finalMimeType = OfficeMimeTypeEnum.OpenXmlUnkown;
-            if (packageType != OfficeMimeTypeEnum.OpenXmlUnkown)
+            OfficeMimeTypeEnum finalMimeType = OfficeMimeTypeEnum.OpenXmlUnknown;
+            if (packageType != OfficeMimeTypeEnum.OpenXmlUnknown)
             {
                 finalMimeType = packageType;
 
@@ -122,7 +122,7 @@ namespace ExtractorOLE
             if (_registry.TryGetValue(mimeType, out var exact)) return exact;
 
             // fallback: if unknown openxml package, prefer Word then Excel
-            if (mimeType == OfficeMimeTypeEnum.OpenXmlUnkown)
+            if (mimeType == OfficeMimeTypeEnum.OpenXmlUnknown)
             {
                 if (_registry.TryGetValue(OfficeMimeTypeEnum.Word, out var w)) return w;
                 if (_registry.TryGetValue(OfficeMimeTypeEnum.Excel, out var x)) return x;

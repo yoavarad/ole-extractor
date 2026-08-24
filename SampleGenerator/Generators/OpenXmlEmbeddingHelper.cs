@@ -4,18 +4,18 @@ using SampleGenerator.Abstractions;
 namespace SampleGenerator.Generators
 {
     /// <summary>
-    /// Adds <see cref="EmbeddedContentSpec"/> entries as first-layer embedded
-    /// objects (EmbeddedObjectPart) or inline media (ImagePart, for image/*
-    /// content types) - the same part types
-    /// ExtractorOLE's ExtractionHelper.ExtractFirstLayerEmbedded scans for.
+    /// Adds EmbeddedContentSpec entries as first-layer embedded objects
+    /// (EmbeddedObjectPart) or inline media (ImagePart, for image/* content
+    /// types) - the same part types ExtractorOLE's
+    /// ExtractionHelper.ExtractFirstLayerEmbedded scans for.
     ///
     /// Object and image content can require different target parts, since the
     /// OOXML schema does not allow every part type to hold both directly:
     /// - docx: MainDocumentPart accepts both.
     /// - xlsx: WorkbookPart accepts neither directly - use a WorksheetPart.
-    /// - pptx: PresentationPart accepts EmbeddedObjectPart but not ImagePart;
-    ///   images must go on a SlidePart (matching ExtractionHelper's dedicated
-    ///   slide-image scan).
+    /// - pptx: PresentationPart accepts neither directly (confirmed against
+    ///   DocumentFormat.OpenXml 3.5.1 at runtime) - both kinds must go on a
+    ///   SlidePart, matching ExtractionHelper's slide scan.
     /// </summary>
     internal static class OpenXmlEmbeddingHelper
     {

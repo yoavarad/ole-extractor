@@ -7,6 +7,9 @@ namespace SampleGenerator.Generators
     /// legacy OLE authoring needs NPOI compiled from source
     /// (docs/adrs/001-extraction-library-stack.md), which is not wired into
     /// this build yet.
+    /// This also means the ppt corpus's macro-enabled-with-embedding
+    /// synthetic sample (dataset-curation.md composition rule #3) is a
+    /// known, intentional gap for this format until NPOI is wired in.
     /// </summary>
     public sealed class PptSampleGenerator : ISampleGenerator
     {

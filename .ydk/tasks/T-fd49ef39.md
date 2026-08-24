@@ -2,7 +2,7 @@
 id: T-fd49ef39
 title: Implement CFB directory-entry detection component for doc/xls/ppt
 story: S-3bc6b929
-status: in-progress
+status: done
 assignee: agent
 labels:
 - in-progress

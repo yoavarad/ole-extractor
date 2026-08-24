@@ -9,6 +9,9 @@ namespace SampleGenerator.Generators
     /// "Known Gotchas"). This stub keeps the ISampleGenerator contract
     /// identical across all six formats so swapping in a real NPOI-backed
     /// implementation later is a drop-in change, not an API reshape.
+    /// This also means the doc corpus's macro-enabled-with-embedding
+    /// synthetic sample (dataset-curation.md composition rule #3) is a
+    /// known, intentional gap for this format until NPOI is wired in.
     /// </summary>
     public sealed class DocSampleGenerator : ISampleGenerator
     {

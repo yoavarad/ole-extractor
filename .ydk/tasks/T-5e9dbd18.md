@@ -3,7 +3,7 @@ id: T-5e9dbd18
 title: Build synthetic sample generator scaffolding and shared multilingual/emoji
   fixture library
 story: S-41ebb945
-status: in-progress
+status: done
 assignee: agent
 labels:
 - in-progress

@@ -52,5 +52,46 @@ namespace SampleGenerator.Fixtures
             };
             return string.Join(Environment.NewLine, lines);
         }
+
+        /// <summary>
+        /// Builds a body of exactly <paramref name="wordCount"/> words for
+        /// docs/specs/dataset-curation.md's "text body exceeding 100,000 words"
+        /// synthetic composition rule. Words are drawn by cycling deterministically
+        /// (no RNG) through every <see cref="AllScripts"/> sentence's
+        /// whitespace-delimited tokens plus every <see cref="AllEmoji"/> fixture, so
+        /// multilingual/mixed-script text and emoji recur throughout the whole body
+        /// rather than only at the start or end, and re-running produces the exact
+        /// same text every time. The word stream is wrapped into lines of
+        /// <paramref name="wordsPerLine"/> words each so downstream generators
+        /// (which turn each line into one paragraph/row/shape) get a reasonable
+        /// number of lines instead of one line per word.
+        /// </summary>
+        public static string ComposeLargeBody(int wordCount, int wordsPerLine = 400)
+        {
+            var pool = new List<string>();
+            foreach (var script in AllScripts)
+            {
+                pool.AddRange(script.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries));
+            }
+            pool.AddRange(AllEmoji);
+
+            var lines = new List<string>();
+            var line = new List<string>(wordsPerLine);
+            for (var i = 0; i < wordCount; i++)
+            {
+                line.Add(pool[i % pool.Count]);
+                if (line.Count == wordsPerLine)
+                {
+                    lines.Add(string.Join(" ", line));
+                    line.Clear();
+                }
+            }
+            if (line.Count > 0)
+            {
+                lines.Add(string.Join(" ", line));
+            }
+
+            return string.Join(Environment.NewLine, lines);
+        }
     }
 }
