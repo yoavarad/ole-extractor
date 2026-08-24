@@ -98,3 +98,30 @@ foreach (var (format, generator) in generators)
         Console.WriteLine($"Skipped large-body {format}: {ex.Message}");
     }
 }
+
+// docs/specs/dataset-curation.md's "curated real-world-style samples" composition rule
+// (2 per format: one with 2+ levels of nested embedding, one with a
+// authorship/revision-history property chain). Scoped down to docx/xlsx/pptx here (a
+// product-owner decision) - doc/xls/ppt curated authoring is blocked on the same
+// NPOI-compiled-from-source gap as the legacy generators above. See
+// CuratedSampleSpecs for full rationale.
+var curatedSamples = new (SampleFormat Format, string FileName, SampleSpec Spec)[]
+{
+    (SampleFormat.Docx, "meeting-minutes-boardroom.docx", CuratedSampleSpecs.BuildMeetingMinutesBoardroom()),
+    (SampleFormat.Docx, "invoice-acme-corp.docx", CuratedSampleSpecs.BuildInvoiceAcmeCorp()),
+    (SampleFormat.Xlsx, "project-status-report.xlsx", CuratedSampleSpecs.BuildProjectStatusReport()),
+    (SampleFormat.Xlsx, "budget-quarterly-2026.xlsx", CuratedSampleSpecs.BuildBudgetQuarterly2026()),
+    (SampleFormat.Pptx, "product-launch-deck.pptx", CuratedSampleSpecs.BuildProductLaunchDeck()),
+    (SampleFormat.Pptx, "training-onboarding-slides.pptx", CuratedSampleSpecs.BuildTrainingOnboardingSlides())
+};
+
+foreach (var (format, fileName, spec) in curatedSamples)
+{
+    var curatedFormatDir = Path.Combine("samples", "curated", format.ToString().ToLowerInvariant());
+    Directory.CreateDirectory(curatedFormatDir);
+
+    var sample = generators[format].Generate(spec);
+    var path = Path.Combine(curatedFormatDir, fileName);
+    File.WriteAllBytes(path, sample.Content);
+    Console.WriteLine($"Generated curated {format}: {path} ({sample.Content.Length} bytes)");
+}

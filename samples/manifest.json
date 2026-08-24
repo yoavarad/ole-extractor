@@ -114,6 +114,213 @@
       "detectable": false,
       "verifiedBy": "ExtractorOle/ExtractorOLE.Tests/MultiEmbedding/MultiEmbeddingSampleTests.cs :: Xlsx_MultiEmbeddingSample_PlacesFourEmbeddingsOfTwoKindsOnWorksheetPart (structural check only, not end-to-end detection)",
       "notes": "All 4 embeddings are correctly placed on the WorksheetPart (WorkbookPart cannot hold ImagePart/EmbeddedObjectPart directly). NOT yet detected end-to-end: the production path wired into MainExtractor for xlsx is ExtractorOLE.Helpers.FileTypeStrategy.ExcelOpenStrategy, which calls the shared ExtractionHelper.ExtractFirstLayerEmbedded -- that method only scans WorkbookPart.Parts, not WorksheetPart.Parts, so it currently finds 0 embeddings here. A different, currently-unused code path (ExtractorOLE.Old.Excel.ExcelExtractor) was fixed for this exact gap on the not-yet-merged branch for task T-02637847, but that class is not referenced by ServiceRegistration/MainExtractor, so its fix does not (by itself) make this sample detectable through the real extraction pipeline. expectedSubfiles above use ExtractionHelper's embedded_object_N naming/index scheme (the path that actually needs the WorksheetPart scan added) so this entry is ready to flip to detectable:true once that scan is added there, mirroring the fix already applied to the pptx slide scan in this same task."
+    },
+    {
+      "format": "docx",
+      "status": "generated",
+      "path": "samples/curated/docx/meeting-minutes-boardroom.docx",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator.Fixtures.CuratedSampleSpecs.BuildMeetingMinutesBoardroom() via SampleGenerator/Program.cs (DocxSampleGenerator; inner embedding generated via XlsxSampleGenerator.Generate())",
+      "compositionRule": "docs/specs/dataset-curation.md Corpus Composition curated-samples bullet (2 curated real-world-style samples per format, self-authored or checked-license) -- satisfies the 'at least one with 2+ levels of nested embedding (an embedded object that itself contains an embedded object)' half of that bullet: docx embeds a real inner-generated xlsx (EmbeddedObjectPart), and that inner xlsx itself embeds a PNG chart image, for 2 genuine nesting levels.",
+      "expectedDetectedFormat": {
+        "enum": "Docx",
+        "mimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      },
+      "bodyTextLines": [
+        "Board of Directors Meeting Minutes",
+        "Acme Robotics, Inc.",
+        "Date: March 12, 2026",
+        "Location: Conference Room A, Corporate Headquarters",
+        "Attendees: J. Whitfield (Chair), R. Alvarez, S. Kim, T. Brennan, M. Okafor",
+        "1. Call to Order: The meeting was called to order at 9:02 AM by Chair J. Whitfield.",
+        "2. Approval of Previous Minutes: The minutes of the February 12, 2026 meeting were approved without amendment.",
+        "3. Financial Report: The CFO presented Q1 results, noting revenue of $4.2M against a forecast of $4.0M. The attached budget snippet summarizes departmental spend for the quarter.",
+        "4. Old Business: None.",
+        "5. New Business: The board approved the expansion of the Austin facility, effective Q3 2026.",
+        "6. Adjournment: The meeting was adjourned at 10:15 AM. Next meeting: April 9, 2026."
+      ],
+      "metadata": {},
+      "expectedSubfileCount": 1,
+      "expectedSubfiles": [
+        { "fileName": "embedded_object_1.xlsx", "contentType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "sizeInBytes": 2608, "packagePath": "/word/embeddings/embeddedObject.bin" }
+      ],
+      "detectable": true,
+      "verifiedBy": null,
+      "notes": "A second embedding layer exists inside the first-layer embedded object: the embedded xlsx package (xl/worksheets/embeddings/embeddedObject.bin inside it, once unpacked) itself embeds a PNG chart image and will require recursive extraction to reach -- a future Epic 9 concern, out of scope here."
+    },
+    {
+      "format": "docx",
+      "status": "generated",
+      "path": "samples/curated/docx/invoice-acme-corp.docx",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator.Fixtures.CuratedSampleSpecs.BuildInvoiceAcmeCorp() via SampleGenerator/Program.cs (DocxSampleGenerator)",
+      "compositionRule": "docs/specs/dataset-curation.md Corpus Composition curated-samples bullet (2 curated real-world-style samples per format, self-authored or checked-license) -- satisfies the 'at least one with a real (not scripted) authorship/revision-history property chain from having been edited by multiple real users across multiple real save operations' half of that bullet, relaxed per product-owner decision to a scripted-but-realistic property chain (Office/LibreOffice authoring not yet available). See notes.",
+      "expectedDetectedFormat": {
+        "enum": "Docx",
+        "mimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      },
+      "bodyTextLines": [
+        "INVOICE",
+        "Acme Corp",
+        "1400 Industrial Parkway, Springfield, IL 62704",
+        "Invoice Number: INV-2026-0347",
+        "Invoice Date: March 19, 2026",
+        "Due Date: April 18, 2026",
+        "Bill To: Northgate Manufacturing LLC, 220 Commerce Drive, Columbus, OH 43215",
+        "Industrial Sensor Array Model X200 - Qty 12 - Unit Price $845.00 - Amount $10,140.00",
+        "On-site Calibration Service - Qty 1 - Unit Price $1,250.00 - Amount $1,250.00",
+        "Extended Warranty (3-year) - Qty 1 - Unit Price $960.00 - Amount $960.00",
+        "Subtotal: $12,350.00",
+        "Tax (7.25%): $895.38",
+        "Total Due: $13,245.38",
+        "Payment Terms: Net 30. Please remit payment to Acme Corp, Accounts Receivable."
+      ],
+      "metadata": {
+        "Author": "Dana Cole",
+        "LastModifiedBy": "Marcus Webb",
+        "Created": "2026-02-03T00:00:00.0000000Z",
+        "Modified": "2026-03-19T00:00:00.0000000Z",
+        "RevisionNumber": "14"
+      },
+      "expectedSubfileCount": 1,
+      "expectedSubfiles": [
+        { "fileName": "embedded_object_1.png", "contentType": "image/png", "sizeInBytes": 68, "packagePath": "/media/image.png" }
+      ],
+      "detectable": true,
+      "verifiedBy": null,
+      "notes": "Author/LastModifiedBy/Created/Modified/Revision are scripted-but-realistic, NOT genuine multi-user provenance. See follow-up task under S-da936361 for true human-provenance samples."
+    },
+    {
+      "format": "xlsx",
+      "status": "generated",
+      "path": "samples/curated/xlsx/project-status-report.xlsx",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator.Fixtures.CuratedSampleSpecs.BuildProjectStatusReport() via SampleGenerator/Program.cs (XlsxSampleGenerator; inner embedding generated via DocxSampleGenerator.Generate())",
+      "compositionRule": "docs/specs/dataset-curation.md Corpus Composition curated-samples bullet (2 curated real-world-style samples per format, self-authored or checked-license) -- satisfies the 'at least one with 2+ levels of nested embedding (an embedded object that itself contains an embedded object)' half of that bullet: xlsx embeds a real inner-generated docx (EmbeddedObjectPart on WorksheetPart), and that inner docx itself embeds a PNG chart image, for 2 genuine nesting levels.",
+      "expectedDetectedFormat": {
+        "enum": "Xlsx",
+        "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      },
+      "bodyTextLines": [
+        "Project Status Report - Q1 2026",
+        "Project: Customer Portal Redesign",
+        "Project Manager: Priya Nair",
+        "Status: On Track",
+        "Percent Complete: 68%",
+        "Milestone: Requirements Sign-off - Complete - Jan 15, 2026",
+        "Milestone: UI Design Approval - Complete - Feb 10, 2026",
+        "Milestone: Backend API Complete - In Progress - Due Mar 28, 2026",
+        "Milestone: QA Testing - Not Started - Due Apr 15, 2026",
+        "Milestone: Production Launch - Not Started - Due May 1, 2026",
+        "Risks: Third-party payment gateway integration delayed by vendor; mitigation in progress.",
+        "Notes: See attached one-pager memo for executive summary."
+      ],
+      "metadata": {},
+      "expectedSubfileCount": 1,
+      "expectedSubfiles": [
+        { "fileName": "embedded_object_1.docx", "contentType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "sizeInBytes": 1745, "packagePath": "/xl/worksheets/embeddings/embeddedObject.bin" }
+      ],
+      "detectable": false,
+      "verifiedBy": null,
+      "notes": "A second embedding layer exists inside the first-layer embedded object: the embedded docx package (unpacked) itself embeds a PNG chart image and will require recursive extraction to reach -- a future Epic 9 concern, out of scope here. Separately, this first layer is not yet end-to-end detectable either: same known gap as the xlsx multi-embedding sample above -- ExtractionHelper.ExtractFirstLayerEmbedded, invoked with WorkbookPart as rootPart (ExcelOpenStrategy), only scans WorkbookPart.Parts, not WorksheetPart.Parts, so this WorksheetPart-hosted embedding is not found by the current extraction pipeline."
+    },
+    {
+      "format": "xlsx",
+      "status": "generated",
+      "path": "samples/curated/xlsx/budget-quarterly-2026.xlsx",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator.Fixtures.CuratedSampleSpecs.BuildBudgetQuarterly2026() via SampleGenerator/Program.cs (XlsxSampleGenerator)",
+      "compositionRule": "docs/specs/dataset-curation.md Corpus Composition curated-samples bullet (2 curated real-world-style samples per format, self-authored or checked-license) -- satisfies the 'at least one with a real (not scripted) authorship/revision-history property chain from having been edited by multiple real users across multiple real save operations' half of that bullet, relaxed per product-owner decision to a scripted-but-realistic property chain (Office/LibreOffice authoring not yet available). See notes.",
+      "expectedDetectedFormat": {
+        "enum": "Xlsx",
+        "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      },
+      "bodyTextLines": [
+        "Quarterly Department Budget - FY2026 Q1",
+        "Engineering: Budgeted $1,200,000 - Actual $1,180,000 - Variance -$20,000",
+        "Sales: Budgeted $800,000 - Actual $835,000 - Variance $35,000",
+        "Marketing: Budgeted $300,000 - Actual $290,000 - Variance -$10,000",
+        "Operations: Budgeted $450,000 - Actual $440,000 - Variance -$10,000",
+        "Total: Budgeted $2,750,000 - Actual $2,745,000 - Variance -$5,000"
+      ],
+      "metadata": {
+        "Author": "Elena Ruiz",
+        "LastModifiedBy": "Tom Baker",
+        "Created": "2026-01-10T00:00:00.0000000Z",
+        "Modified": "2026-04-02T00:00:00.0000000Z",
+        "RevisionNumber": "6"
+      },
+      "expectedSubfileCount": 1,
+      "expectedSubfiles": [
+        { "fileName": "embedded_object_1.png", "contentType": "image/png", "sizeInBytes": 68, "packagePath": "/xl/media/image.png" }
+      ],
+      "detectable": false,
+      "verifiedBy": null,
+      "notes": "Author/LastModifiedBy/Created/Modified/Revision are scripted-but-realistic, NOT genuine multi-user provenance. See follow-up task under S-da936361 for true human-provenance samples. Separately, this embedding is not yet end-to-end detectable: same known gap as the xlsx multi-embedding sample above -- ExtractionHelper.ExtractFirstLayerEmbedded, invoked with WorkbookPart as rootPart (ExcelOpenStrategy), only scans WorkbookPart.Parts, not WorksheetPart.Parts, so this WorksheetPart-hosted image is not found by the current extraction pipeline."
+    },
+    {
+      "format": "pptx",
+      "status": "generated",
+      "path": "samples/curated/pptx/product-launch-deck.pptx",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator.Fixtures.CuratedSampleSpecs.BuildProductLaunchDeck() via SampleGenerator/Program.cs (PptxSampleGenerator; inner embedding generated via XlsxSampleGenerator.Generate())",
+      "compositionRule": "docs/specs/dataset-curation.md Corpus Composition curated-samples bullet (2 curated real-world-style samples per format, self-authored or checked-license) -- satisfies the 'at least one with 2+ levels of nested embedding (an embedded object that itself contains an embedded object)' half of that bullet: pptx slide embeds a real inner-generated xlsx (EmbeddedObjectPart on SlidePart), and that inner xlsx itself embeds a PNG chart image, for 2 genuine nesting levels.",
+      "expectedDetectedFormat": {
+        "enum": "Pptx",
+        "mimeType": "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+      },
+      "bodyTextLines": [
+        "Product Launch: Nova X1 Wireless Earbuds",
+        "Launch Date: June 3, 2026",
+        "Target Market: Active lifestyle consumers, 18-34",
+        "Key Features: 30-hour battery life, IPX7 waterproof rating, adaptive noise cancellation",
+        "Go-to-Market Channels: Retail partners, direct-to-consumer site, Amazon",
+        "Pricing: $129.99 MSRP",
+        "See attached data table for regional sales projections."
+      ],
+      "metadata": {},
+      "expectedSubfileCount": 1,
+      "expectedSubfiles": [
+        { "fileName": "embedded_object_1.xlsx", "contentType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "sizeInBytes": 2615, "packagePath": "/ppt/slides/embeddings/embeddedObject.bin" }
+      ],
+      "detectable": true,
+      "verifiedBy": null,
+      "notes": "A second embedding layer exists inside the first-layer embedded object: the embedded xlsx package (unpacked) itself embeds a PNG chart image and will require recursive extraction to reach -- a future Epic 9 concern, out of scope here."
+    },
+    {
+      "format": "pptx",
+      "status": "generated",
+      "path": "samples/curated/pptx/training-onboarding-slides.pptx",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator.Fixtures.CuratedSampleSpecs.BuildTrainingOnboardingSlides() via SampleGenerator/Program.cs (PptxSampleGenerator)",
+      "compositionRule": "docs/specs/dataset-curation.md Corpus Composition curated-samples bullet (2 curated real-world-style samples per format, self-authored or checked-license) -- satisfies the 'at least one with a real (not scripted) authorship/revision-history property chain from having been edited by multiple real users across multiple real save operations' half of that bullet, relaxed per product-owner decision to a scripted-but-realistic property chain (Office/LibreOffice authoring not yet available). See notes.",
+      "expectedDetectedFormat": {
+        "enum": "Pptx",
+        "mimeType": "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+      },
+      "bodyTextLines": [
+        "New Employee Onboarding",
+        "Welcome to Acme Corp",
+        "Week 1 Agenda: HR orientation, IT setup, team introductions",
+        "Week 2 Agenda: Role-specific training, mentor assignment",
+        "Key Contacts: HR - hr@acmecorp.example, IT Help Desk - ithelp@acmecorp.example",
+        "Company Values: Integrity, Collaboration, Innovation, Accountability",
+        "Please complete all required compliance training modules by day 30."
+      ],
+      "metadata": {
+        "Author": "Sam Okafor",
+        "LastModifiedBy": "Nina Patel",
+        "Created": "2026-03-01T00:00:00.0000000Z",
+        "Modified": "2026-05-15T00:00:00.0000000Z",
+        "RevisionNumber": "11"
+      },
+      "expectedSubfileCount": 1,
+      "expectedSubfiles": [
+        { "fileName": "slide_image_1.png", "contentType": "image/png", "sizeInBytes": 68, "packagePath": "/ppt/media/image.png" }
+      ],
+      "detectable": true,
+      "verifiedBy": null,
+      "notes": "Author/LastModifiedBy/Created/Modified/Revision are scripted-but-realistic, NOT genuine multi-user provenance. See follow-up task under S-da936361 for true human-provenance samples."
     }
   ]
 }
