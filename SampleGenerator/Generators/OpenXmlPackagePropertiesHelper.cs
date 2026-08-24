@@ -42,9 +42,23 @@ namespace SampleGenerator.Generators
                     case MetadataFields.LastModifiedBy:
                         properties.LastModifiedBy = pair.Value;
                         break;
+                    case MetadataFields.Created:
+                        properties.Created = ParseUtc(pair.Value);
+                        break;
+                    case MetadataFields.Modified:
+                        properties.Modified = ParseUtc(pair.Value);
+                        break;
+                    case MetadataFields.RevisionNumber:
+                        properties.Revision = pair.Value;
+                        break;
                 }
             }
         }
 #pragma warning restore OOXML0001
+
+        private static DateTime ParseUtc(string value) => DateTime.Parse(
+            value,
+            System.Globalization.CultureInfo.InvariantCulture,
+            System.Globalization.DateTimeStyles.AdjustToUniversal | System.Globalization.DateTimeStyles.AssumeUniversal);
     }
 }

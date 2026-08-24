@@ -210,6 +210,7 @@ stories:
     - T-0834290d
     - T-0c83ff28
     - T-c573e72e
+    - T-270c32fe
   S-6bc8566f:
     title: Shared adversarial set and corpus manifest
     epic: E-c2846232
@@ -684,7 +685,7 @@ tasks:
   T-6f033869:
     title: Source/author 12 curated real-world-style samples (2 per format)
     story: S-da936361
-    status: open
+    status: in-review
     dependencies: []
     component_refs: []
   T-0834290d:
@@ -880,4 +881,13 @@ tasks:
     story: S-d01346bc
     status: in-progress
     dependencies: []
+    component_refs: []
+  T-270c32fe:
+    title: Source genuine human-provenance revision-history samples (2 per format,
+      real Office/LibreOffice edits)
+    story: S-da936361
+    status: open
+    dependencies:
+    - task_id: T-6f033869
+      type: related
     component_refs: []
