@@ -1,6 +1,9 @@
+using ExtractorOLE.Configuration;
 using ExtractorOLE.DTOs;
+using ExtractorOLE.Exceptions;
 using OpenMcdf;
 using System;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,13 +12,29 @@ namespace ExtractorOLE.Helpers.MimeDetection
 {
     // Distinguishes doc/xls/ppt by opening FileBytes as a compound file (OpenMcdf)
     // and inspecting root storage/stream names -- no full document parse.
-    // Detection is content-only: request.FileName is never read.
+    // Detection is content-only: request.FileName is never read to decide the
+    // result -- it is only used inside the diagnostic rejection log message.
     public class CfbMimeDetector : ICfbMimeDetector
     {
         private const string WordDocumentEntryName = "WordDocument";
         private const string ExcelWorkbookEntryName = "Workbook";
         private const string ExcelBookEntryName = "Book";
         private const string PowerPointEntryName = "PowerPoint Document";
+
+        private readonly MimeDetectionLimits _limits;
+        private readonly Action<string>? _logRejection;
+
+        // Test-observability only: proves guards below short-circuit before
+        // OpenMcdf's own FAT/directory walk runs.
+        public static int OpenMcdfParseAttemptCount;
+
+        public CfbMimeDetector() : this(new MimeDetectionLimits()) { }
+
+        public CfbMimeDetector(MimeDetectionLimits limits, Action<string>? logRejection = null)
+        {
+            _limits = limits ?? throw new ArgumentNullException(nameof(limits));
+            _logRejection = logRejection;
+        }
 
         public MimeDetectionResult Detect(MimeDetectionRequest request)
         {
@@ -24,8 +43,26 @@ namespace ExtractorOLE.Helpers.MimeDetection
                 return UnknownResult();
             }
 
+            if (request.FileBytes.Length > _limits.MaxFileSizeBytes)
+            {
+                _logRejection?.Invoke($"[CfbMimeDetector] file-too-large: fileName='{request.FileName}', actualBytes={request.FileBytes.Length}, limitBytes={_limits.MaxFileSizeBytes}");
+                throw new FileTooLargeException(request.FileBytes.Length, _limits.MaxFileSizeBytes);
+            }
+
+            if (TryGetDeclaredCfbTotalSize(request.FileBytes, out var declaredTotalBytes, out var fatSectorCount, out var sectorSize)
+                && declaredTotalBytes > (ulong)_limits.MaxDeclaredNestedContentBytes)
+            {
+                var metric = $"CFB FAT sector count {fatSectorCount} at sector size {sectorSize} bytes implies {declaredTotalBytes} bytes total (limit {_limits.MaxDeclaredNestedContentBytes})";
+                _logRejection?.Invoke($"[CfbMimeDetector] oversized-nested-content: fileName='{request.FileName}', {metric}");
+                throw new OversizedNestedContentException(metric);
+            }
+
             try
             {
+                // Test-observability only: proves guards above short-circuit before
+                // OpenMcdf's own FAT/directory walk runs.
+                OpenMcdfParseAttemptCount++;
+
                 using var stream = new MemoryStream(request.FileBytes);
                 using var root = RootStorage.Open(stream);
 
@@ -55,6 +92,43 @@ namespace ExtractorOLE.Helpers.MimeDetection
                 // Not a CFB file, or a corrupt/unsupported one -- Unknown, never throw.
                 return UnknownResult();
             }
+        }
+
+        // Hand-parses the raw CFB header (MS-CFB section 2.2) to estimate the total
+        // bytes the file's own FAT claims to describe, without letting OpenMcdf walk
+        // the structure first. OpenMcdf's header type is internal, so this reads the
+        // documented fixed-offset fields directly.
+        private static bool TryGetDeclaredCfbTotalSize(byte[] bytes, out ulong declaredTotalBytes, out uint fatSectorCount, out int sectorSize)
+        {
+            declaredTotalBytes = 0;
+            fatSectorCount = 0;
+            sectorSize = 0;
+
+            const int HeaderMinLength = 0x30; // through end of FAT-sector-count field at 0x2C-0x2F
+            if (bytes.Length < HeaderMinLength) return false;
+
+            ReadOnlySpan<byte> cfbSignature = stackalloc byte[] { 0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0x1A, 0xE1 };
+            if (!bytes.AsSpan(0, 8).SequenceEqual(cfbSignature)) return false;
+
+            ushort sectorShift = BinaryPrimitives.ReadUInt16LittleEndian(bytes.AsSpan(0x1E, 2));
+            fatSectorCount = BinaryPrimitives.ReadUInt32LittleEndian(bytes.AsSpan(0x2C, 4));
+
+            // MS-CFB only defines sector shift 9 (512B, v3) or 12 (4096B, v4). Any other
+            // value is forged/invalid -- treat it as maximally oversized rather than let
+            // it flow into the size multiplication below.
+            if (sectorShift != 9 && sectorShift != 12)
+            {
+                declaredTotalBytes = ulong.MaxValue;
+                sectorSize = int.MaxValue;
+                return true;
+            }
+
+            sectorSize = 1 << sectorShift;
+            ulong entriesPerFatSector = (ulong)sectorSize / 4;
+            // checked() as defense-in-depth: sectorShift is now clamped to 9/12 above, so this
+            // can't overflow for any in-range fatSectorCount, but guard against wraparound anyway.
+            declaredTotalBytes = checked((ulong)fatSectorCount * entriesPerFatSector * (ulong)sectorSize);
+            return true;
         }
 
         private static MimeDetectionResult BuildResult(DetectedFormatEnum format, string mimeType) => new()
