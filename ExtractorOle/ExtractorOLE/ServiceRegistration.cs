@@ -1,3 +1,4 @@
+using ExtractorOLE.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
 using ExtractorOLE.DTOs;
@@ -15,6 +16,7 @@ namespace ExtractorOLE
             services.AddSingleton<IExtractionHelper, ExtractionHelper>();
 
             // Mime detection (legacy CFB family)
+            services.AddSingleton(new MimeDetectionLimits());
             services.AddSingleton<ICfbMimeDetector, CfbMimeDetector>();
 
             // Open strategies
