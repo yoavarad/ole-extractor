@@ -10,13 +10,16 @@ namespace SampleGenerator.Generators
     /// Authors a minimal, valid .pptx (or .pptm, when SampleSpec.VbaProject
     /// is set) via DocumentFormat.OpenXml directly: one slide (with the
     /// required master/layout/theme chain) carrying the body text as
-    /// text-box paragraphs, general metadata, first-layer embeddings on the
-    /// presentation part (matching the location where ExtractorOLE
-    /// PowerPointOpenStrategy looks for them), and, for the macro-enabled
-    /// variant, a structurally-valid VBA project storage (arbitrary
-    /// placeholder bytes; no functioning macro is required). The
-    /// macro-enabled variant must still be detected as base format pptx, not
-    /// as a separate format (macro-variant-misclassification scenario).
+    /// text-box paragraphs, general metadata, and first-layer embeddings on
+    /// the slide part. PresentationPart cannot hold
+    /// EmbeddedObjectPart/EmbeddedPackagePart/ImagePart directly (the
+    /// OpenXml SDK rejects them there), so both embedding kinds go on the
+    /// slide, matching ExtractorOLE's per-slide embedded-object/image scan.
+    /// For the macro-enabled variant, a structurally-valid VBA project
+    /// storage is also added (arbitrary placeholder bytes; no functioning
+    /// macro is required). The macro-enabled variant must still be detected
+    /// as base format pptx, not as a separate format
+    /// (macro-variant-misclassification scenario).
     /// </summary>
     public sealed class PptxSampleGenerator : ISampleGenerator
     {
@@ -50,7 +53,7 @@ namespace SampleGenerator.Generators
                 presentationPart.Presentation.NotesSize = new NotesSize { Cx = 6858000, Cy = 9144000 };
 
                 OpenXmlPackagePropertiesHelper.Apply(document.PackageProperties, spec.Metadata);
-                OpenXmlEmbeddingHelper.AddEmbeddings(presentationPart, slidePart, spec.Embeddings);
+                OpenXmlEmbeddingHelper.AddEmbeddings(slidePart, spec.Embeddings);
 
                 if (spec.VbaProject is { } vbaProject)
                 {

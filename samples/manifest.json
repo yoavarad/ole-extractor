@@ -1,0 +1,119 @@
+{
+  "$note": "Corpus manifest per docs/specs/dataset-curation.md 'Corpus Manifest'. Each entry records the exact expected Unicode content and exact expected subfile count/filenames for one generated/curated sample -- this is the ground truth the (future) integration test suite asserts against.",
+  "samples": [
+    {
+      "format": "docx",
+      "status": "generated",
+      "path": "samples/synthetic/multi-embedding/sample.docx",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator.Fixtures.MultiEmbeddingSampleSpecs.Build() via SampleGenerator/Program.cs (DocxSampleGenerator)",
+      "compositionRule": "docs/specs/dataset-curation.md Corpus Composition rule #1 (multi-embedding: 3+ first-layer embedded objects/media of 2+ kinds, multilingual/emoji body text and metadata)",
+      "expectedDetectedFormat": {
+        "enum": "Docx",
+        "mimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      },
+      "bodyTextLines": [
+        "שלום עולם, זהו טקסט לדוגמה בעברית.",
+        "مرحبا بالعالم، هذا نص عربي تجريبي.",
+        "سلام دنیا، این یک متن نمونه فارسی است.",
+        "Привет, мир! Это пример текста на русском языке.",
+        "Hello, world! This is a sample sentence in English.",
+        "你好，世界。こんにちは世界。안녕하세요, 세계.",
+        "😀🎉🚀 👨‍👩‍👧‍👦 👍🏽 🏳️‍🌈"
+      ],
+      "metadata": {
+        "Title": "שלום עולם, זהו טקסט לדוגמה בעברית.",
+        "Author": "مرحبا بالعالم، هذا نص عربي تجريبي.",
+        "Subject": "你好，世界。こんにちは世界。안녕하세요, 세계.",
+        "Comments": "😀🎉🚀 👨‍👩‍👧‍👦 👍🏽 🏳️‍🌈",
+        "LastModifiedBy": "Привет, мир! Это пример текста на русском языке."
+      },
+      "expectedSubfileCount": 4,
+      "expectedSubfiles": [
+        { "fileName": "embedded_object_1.png", "contentType": "image/png", "sizeInBytes": 68, "packagePath": "/media/image.png" },
+        { "fileName": "embedded_object_2.png", "contentType": "image/png", "sizeInBytes": 68, "packagePath": "/media/image2.png" },
+        { "fileName": "embedded_object_3.bin", "contentType": "application/octet-stream", "sizeInBytes": 8, "packagePath": "/word/embeddings/embeddedObject.bin" },
+        { "fileName": "embedded_object_4.bin", "contentType": "application/octet-stream", "sizeInBytes": 9, "packagePath": "/word/embeddings/embeddedObject2.bin" }
+      ],
+      "detectable": true,
+      "verifiedBy": "ExtractorOle/ExtractorOLE.Tests/MultiEmbedding/MultiEmbeddingSampleTests.cs :: Docx_MultiEmbeddingSample_DetectsAtLeastThreeEmbeddingsAcrossTwoKinds",
+      "notes": null
+    },
+    {
+      "format": "pptx",
+      "status": "generated",
+      "path": "samples/synthetic/multi-embedding/sample.pptx",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator.Fixtures.MultiEmbeddingSampleSpecs.Build() via SampleGenerator/Program.cs (PptxSampleGenerator)",
+      "compositionRule": "docs/specs/dataset-curation.md Corpus Composition rule #1 (multi-embedding: 3+ first-layer embedded objects/media of 2+ kinds, multilingual/emoji body text and metadata)",
+      "expectedDetectedFormat": {
+        "enum": "Pptx",
+        "mimeType": "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+      },
+      "bodyTextLines": [
+        "שלום עולם, זהו טקסט לדוגמה בעברית.",
+        "مرحبا بالعالم، هذا نص عربي تجريبي.",
+        "سلام دنیا، این یک متن نمونه فارسی است.",
+        "Привет, мир! Это пример текста на русском языке.",
+        "Hello, world! This is a sample sentence in English.",
+        "你好，世界。こんにちは世界。안녕하세요, 세계.",
+        "😀🎉🚀 👨‍👩‍👧‍👦 👍🏽 🏳️‍🌈"
+      ],
+      "metadata": {
+        "Title": "שלום עולם, זהו טקסט לדוגמה בעברית.",
+        "Author": "مرحبا بالعالم، هذا نص عربي تجريبي.",
+        "Subject": "你好，世界。こんにちは世界。안녕하세요, 세계.",
+        "Comments": "😀🎉🚀 👨‍👩‍👧‍👦 👍🏽 🏳️‍🌈",
+        "LastModifiedBy": "Привет, мир! Это пример текста на русском языке."
+      },
+      "expectedSubfileCount": 4,
+      "expectedSubfiles": [
+        { "fileName": "slide_image_1.png", "contentType": "image/png", "sizeInBytes": 68, "packagePath": "/ppt/media/image.png" },
+        { "fileName": "slide_image_2.png", "contentType": "image/png", "sizeInBytes": 68, "packagePath": "/ppt/media/image2.png" },
+        { "fileName": "embedded_object_3.bin", "contentType": "application/octet-stream", "sizeInBytes": 8, "packagePath": "/ppt/slides/embeddings/embeddedObject.bin" },
+        { "fileName": "embedded_object_4.bin", "contentType": "application/octet-stream", "sizeInBytes": 9, "packagePath": "/ppt/slides/embeddings/embeddedObject2.bin" }
+      ],
+      "detectable": true,
+      "verifiedBy": "ExtractorOle/ExtractorOLE.Tests/MultiEmbedding/MultiEmbeddingSampleTests.cs :: Pptx_MultiEmbeddingSample_DetectsAtLeastThreeEmbeddingsAcrossTwoKinds",
+      "notes": "All 4 embeddings are placed on the slide part (SlidePart), not PresentationPart: the OpenXml SDK rejects EmbeddedObjectPart/EmbeddedPackagePart/ImagePart as direct children of PresentationPart (confirmed at runtime against DocumentFormat.OpenXml 3.5.1), contradicting this generator's original doc comment. Fixed in this task: PptxSampleGenerator now targets SlidePart for both embedding kinds, and ExtractionHelper.ExtractFirstLayerEmbedded's per-slide scan was extended to also recognize EmbeddedObjectPart/EmbeddedPackagePart (previously ImagePart only), so first-layer object embeddings on a slide are now detected too."
+    },
+    {
+      "format": "xlsx",
+      "status": "generated",
+      "path": "samples/synthetic/multi-embedding/sample.xlsx",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator.Fixtures.MultiEmbeddingSampleSpecs.Build() via SampleGenerator/Program.cs (XlsxSampleGenerator)",
+      "compositionRule": "docs/specs/dataset-curation.md Corpus Composition rule #1 (multi-embedding: 3+ first-layer embedded objects/media of 2+ kinds, multilingual/emoji body text and metadata)",
+      "expectedDetectedFormat": {
+        "enum": "Xlsx",
+        "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      },
+      "bodyTextLines": [
+        "שלום עולם, זהו טקסט לדוגמה בעברית.",
+        "مرحبا بالعالم، هذا نص عربي تجريبي.",
+        "سلام دنیا، این یک متن نمونه فارسی است.",
+        "Привет, мир! Это пример текста на русском языке.",
+        "Hello, world! This is a sample sentence in English.",
+        "你好，世界。こんにちは世界。안녕하세요, 세계.",
+        "😀🎉🚀 👨‍👩‍👧‍👦 👍🏽 🏳️‍🌈"
+      ],
+      "metadata": {
+        "Title": "שלום עולם, זהו טקסט לדוגמה בעברית.",
+        "Author": "مرحبا بالعالم، هذا نص عربي تجريبي.",
+        "Subject": "你好，世界。こんにちは世界。안녕하세요, 세계.",
+        "Comments": "😀🎉🚀 👨‍👩‍👧‍👦 👍🏽 🏳️‍🌈",
+        "LastModifiedBy": "Привет, мир! Это пример текста на русском языке."
+      },
+      "expectedSubfileCount": 4,
+      "expectedSubfiles": [
+        { "fileName": "embedded_object_1.png", "contentType": "image/png", "sizeInBytes": 68, "packagePath": "/xl/media/image.png" },
+        { "fileName": "embedded_object_2.png", "contentType": "image/png", "sizeInBytes": 68, "packagePath": "/xl/media/image2.png" },
+        { "fileName": "embedded_object_3.bin", "contentType": "application/octet-stream", "sizeInBytes": 8, "packagePath": "/xl/worksheets/embeddings/embeddedObject.bin" },
+        { "fileName": "embedded_object_4.bin", "contentType": "application/octet-stream", "sizeInBytes": 9, "packagePath": "/xl/worksheets/embeddings/embeddedObject2.bin" }
+      ],
+      "detectable": false,
+      "verifiedBy": "ExtractorOle/ExtractorOLE.Tests/MultiEmbedding/MultiEmbeddingSampleTests.cs :: Xlsx_MultiEmbeddingSample_PlacesFourEmbeddingsOfTwoKindsOnWorksheetPart (structural check only, not end-to-end detection)",
+      "notes": "All 4 embeddings are correctly placed on the WorksheetPart (WorkbookPart cannot hold ImagePart/EmbeddedObjectPart directly). NOT yet detected end-to-end: the production path wired into MainExtractor for xlsx is ExtractorOLE.Helpers.FileTypeStrategy.ExcelOpenStrategy, which calls the shared ExtractionHelper.ExtractFirstLayerEmbedded -- that method only scans WorkbookPart.Parts, not WorksheetPart.Parts, so it currently finds 0 embeddings here. A different, currently-unused code path (ExtractorOLE.Old.Excel.ExcelExtractor) was fixed for this exact gap on the not-yet-merged branch for task T-02637847, but that class is not referenced by ServiceRegistration/MainExtractor, so its fix does not (by itself) make this sample detectable through the real extraction pipeline. expectedSubfiles above use ExtractionHelper's embedded_object_N naming/index scheme (the path that actually needs the WorksheetPart scan added) so this entry is ready to flip to detectable:true once that scan is added there, mirroring the fix already applied to the pptx slide scan in this same task."
+    }
+  ]
+}
