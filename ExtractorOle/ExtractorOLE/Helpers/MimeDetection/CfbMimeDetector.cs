@@ -113,10 +113,10 @@ namespace ExtractorOLE.Helpers.MimeDetection
             ushort sectorShift = BinaryPrimitives.ReadUInt16LittleEndian(bytes.AsSpan(0x1E, 2));
             fatSectorCount = BinaryPrimitives.ReadUInt32LittleEndian(bytes.AsSpan(0x2C, 4));
 
-            // MS-CFB only defines sector shift 9 (512B, v3) or 12 (4096B, v4). A forged/out-of-range
-            // value could otherwise wrap the shift math, so treat anything implausible as maximally
-            // oversized rather than risk a wraparound silently bypassing the guard.
-            if (sectorShift > 20)
+            // MS-CFB only defines sector shift 9 (512B, v3) or 12 (4096B, v4). Any other
+            // value is forged/invalid -- treat it as maximally oversized rather than let
+            // it flow into the size multiplication below.
+            if (sectorShift != 9 && sectorShift != 12)
             {
                 declaredTotalBytes = ulong.MaxValue;
                 sectorSize = int.MaxValue;
@@ -125,7 +125,9 @@ namespace ExtractorOLE.Helpers.MimeDetection
 
             sectorSize = 1 << sectorShift;
             ulong entriesPerFatSector = (ulong)sectorSize / 4;
-            declaredTotalBytes = (ulong)fatSectorCount * entriesPerFatSector * (ulong)sectorSize;
+            // checked() as defense-in-depth: sectorShift is now clamped to 9/12 above, so this
+            // can't overflow for any in-range fatSectorCount, but guard against wraparound anyway.
+            declaredTotalBytes = checked((ulong)fatSectorCount * entriesPerFatSector * (ulong)sectorSize);
             return true;
         }
 

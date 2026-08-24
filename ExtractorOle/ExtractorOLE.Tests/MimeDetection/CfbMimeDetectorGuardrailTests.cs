@@ -141,6 +141,26 @@ namespace ExtractorOLE.Tests.MimeDetection
         }
 
         [Fact]
+        public void Detect_ForgedSectorShiftOutsideValidRange_TreatedAsMaximallyOversized()
+        {
+            CfbMimeDetector.OpenMcdfParseAttemptCount = 0;
+            var bytes = BuildCfbWithRootEntry("SomeStream");
+            BinaryPrimitives.WriteUInt16LittleEndian(bytes.AsSpan(0x1E, 2), 20);
+            BinaryPrimitives.WriteUInt32LittleEndian(bytes.AsSpan(0x2C, 4), 0x04000000);
+            var request = new MimeDetectionRequest
+            {
+                FileBytes = bytes,
+                FileName = "irrelevant.bin"
+            };
+            var detector = new CfbMimeDetector();
+
+            var ex = Assert.Throws<OversizedNestedContentException>(() => detector.Detect(request));
+
+            Assert.False(string.IsNullOrWhiteSpace(ex.DeclaredMetric));
+            Assert.Equal(0, CfbMimeDetector.OpenMcdfParseAttemptCount);
+        }
+
+        [Fact]
         public void Detect_ChangingMaxDeclaredNestedContentBytesLimit_ChangesAcceptedBehavior()
         {
             var bytes = BuildCfbWithRootEntry("SomeStream");
