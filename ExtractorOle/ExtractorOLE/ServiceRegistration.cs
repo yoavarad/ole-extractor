@@ -17,6 +17,9 @@ namespace ExtractorOLE
             // Mime detection (legacy CFB family)
             services.AddSingleton<ICfbMimeDetector, CfbMimeDetector>();
 
+            // Mime detection (OOXML family)
+            services.AddSingleton<IOoxmlMimeDetector, OoxmlMimeDetector>();
+
             // Open strategies
             services.AddSingleton<WordOpenStrategy>();
             services.AddSingleton<ExcelOpenStrategy>();
