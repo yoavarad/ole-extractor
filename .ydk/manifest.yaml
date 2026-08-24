@@ -261,7 +261,7 @@ tasks:
   T-2ac2f140:
     title: Fix OfficeMimeTypeEnum typo (OpenXmlUnkown)
     story: S-d01346bc
-    status: in-progress
+    status: done
     dependencies:
     - T-eeb6684b
     component_refs:
@@ -276,7 +276,7 @@ tasks:
   T-d6de875f:
     title: Self-compile NPOI from Apache-2.0 source and reference it
     story: S-e496f356
-    status: in-progress
+    status: done
     dependencies:
     - T-eeb6684b
     component_refs: []
@@ -340,7 +340,7 @@ tasks:
     story: S-3bc6b929
     status: open
     dependencies:
-    - task-cfb-detect-core
+    - T-fd49ef39
     component_refs:
     - ydk:nfr:extraction/max-file-size
     - ydk:nfr:extraction/nesting-depth-guard
@@ -351,8 +351,8 @@ tasks:
     story: S-3bc6b929
     status: open
     dependencies:
-    - task-cfb-detect-core
-    - task-cfb-detect-guardrails
+    - T-fd49ef39
+    - T-f667e540
     component_refs:
     - ydk:req:extraction/dependency-injection
     - ydk:req:extraction/format-extensibility
@@ -370,7 +370,7 @@ tasks:
     story: S-32677db6
     status: open
     dependencies:
-    - task-doc-open
+    - T-c4123b53
     component_refs:
     - ydk:entity:extraction/WordFormatMetadata
   T-a8b6b4ec:
@@ -378,7 +378,7 @@ tasks:
     story: S-32677db6
     status: open
     dependencies:
-    - task-doc-open
+    - T-c4123b53
     component_refs:
     - ydk:req:extraction/unicode-fidelity
     - ydk:entity:extraction/ExtractionResult
@@ -387,7 +387,7 @@ tasks:
     story: S-32677db6
     status: open
     dependencies:
-    - task-doc-open
+    - T-c4123b53
     component_refs:
     - ydk:entity:extraction/SubfileItem
     - ydk:req:extraction/subfile-scope
@@ -405,7 +405,7 @@ tasks:
     story: S-0602557d
     status: open
     dependencies:
-    - task-xls-open
+    - T-c2a60f06
     component_refs:
     - ydk:entity:extraction/ExcelFormatMetadata
   T-a77b2992:
@@ -413,7 +413,7 @@ tasks:
     story: S-0602557d
     status: open
     dependencies:
-    - task-xls-open
+    - T-c2a60f06
     component_refs:
     - ydk:req:extraction/unicode-fidelity
     - ydk:entity:extraction/ExtractionResult
@@ -422,7 +422,7 @@ tasks:
     story: S-0602557d
     status: open
     dependencies:
-    - task-xls-open
+    - T-c2a60f06
     component_refs:
     - ydk:entity:extraction/SubfileItem
     - ydk:req:extraction/subfile-scope
@@ -440,7 +440,7 @@ tasks:
     story: S-23b8b734
     status: open
     dependencies:
-    - task-ppt-open
+    - T-517f89c5
     component_refs:
     - ydk:entity:extraction/PowerPointFormatMetadata
   T-40fc15b4:
@@ -448,7 +448,7 @@ tasks:
     story: S-23b8b734
     status: open
     dependencies:
-    - task-ppt-open
+    - T-517f89c5
     component_refs:
     - ydk:req:extraction/unicode-fidelity
     - ydk:entity:extraction/ExtractionResult
@@ -457,7 +457,7 @@ tasks:
     story: S-23b8b734
     status: open
     dependencies:
-    - task-ppt-open
+    - T-517f89c5
     component_refs:
     - ydk:entity:extraction/SubfileItem
     - ydk:req:extraction/subfile-scope
@@ -474,7 +474,7 @@ tasks:
     story: S-7d040ba7
     status: open
     dependencies:
-    - task-ooxml-detect-harden
+    - T-44812a03
     component_refs:
     - ydk:entity:extraction/MimeDetectionResult
   T-1653b76b:
@@ -482,7 +482,7 @@ tasks:
     story: S-7d040ba7
     status: open
     dependencies:
-    - task-ooxml-detect-harden
+    - T-44812a03
     component_refs:
     - ydk:entity:extraction/MimeDetectionResult
   T-9fac8963:
@@ -562,10 +562,10 @@ tasks:
     story: S-072bfdf6
     status: open
     dependencies:
-    - task-cfb-detect-registry
-    - task-ooxml-detect-harden
-    - task-ooxml-detect-macro-variants
-    - task-ooxml-detect-zerobyte
+    - T-0a81d133
+    - T-44812a03
+    - T-ef11e30d
+    - T-1653b76b
     component_refs:
     - ydk:contract:extraction/detect-mime-type
     - ydk:entity:extraction/MimeDetectionRequest
@@ -575,7 +575,7 @@ tasks:
     story: S-072bfdf6
     status: open
     dependencies:
-    - task-detect-facade-wire
+    - T-ef73861f
     component_refs:
     - ydk:entity:extraction/MimeDetectionRequest
   T-3b4e70f4:
@@ -583,12 +583,12 @@ tasks:
     story: S-51d277f1
     status: open
     dependencies:
-    - task-doc-subfiles
-    - task-xls-subfiles
-    - task-ppt-subfiles
-    - task-docx-subfiles
-    - task-xlsx-subfiles
-    - task-pptx-subfiles
+    - T-1df33d6c
+    - T-9e6bfce8
+    - T-12dfd045
+    - T-29fbb7cf
+    - T-30f2c1b8
+    - T-c3f1ec05
     component_refs:
     - ydk:contract:extraction/extract
     - ydk:entity:extraction/ExtractionRequest
@@ -599,7 +599,7 @@ tasks:
     story: S-51d277f1
     status: open
     dependencies:
-    - task-extract-facade-wire
+    - T-3b4e70f4
     component_refs:
     - ydk:error:extraction/file-too-large
     - ydk:error:extraction/oversized-nested-content
@@ -611,7 +611,7 @@ tasks:
     story: S-51d277f1
     status: open
     dependencies:
-    - task-extract-facade-wire
+    - T-3b4e70f4
     component_refs:
     - ydk:error:extraction/password-protected
     - ydk:error:extraction/corrupt-file
@@ -622,7 +622,7 @@ tasks:
     story: S-51d277f1
     status: open
     dependencies:
-    - task-extract-facade-wire
+    - T-3b4e70f4
     component_refs:
     - ydk:error:extraction/unsupported-format
     - ydk:entity:extraction/ExtractionRequest
@@ -684,7 +684,7 @@ tasks:
   T-6f033869:
     title: Source/author 12 curated real-world-style samples (2 per format)
     story: S-da936361
-    status: in-progress
+    status: open
     dependencies: []
     component_refs: []
   T-0834290d:
