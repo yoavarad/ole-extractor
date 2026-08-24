@@ -1,6 +1,7 @@
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using ExtractorOLE.DTOs;
+using ExtractorOLE.Helpers.MimeDetection;
 using System;
 using System.IO;
 using System.IO.Packaging;
@@ -11,6 +12,16 @@ namespace ExtractorOLE.Helpers
 {
     public class ExtractionHelper : IExtractionHelper
     {
+        private readonly ICfbMimeDetector _cfbMimeDetector;
+
+        public ExtractionHelper() : this(new CfbMimeDetector())
+        {
+        }
+
+        public ExtractionHelper(ICfbMimeDetector cfbMimeDetector)
+        {
+            _cfbMimeDetector = cfbMimeDetector;
+        }
 
         public string MimeFor(OfficeMimeTypeEnum type)
         {
@@ -19,9 +30,10 @@ namespace ExtractorOLE.Helpers
                 OfficeMimeTypeEnum.Word => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                 OfficeMimeTypeEnum.Excel => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 OfficeMimeTypeEnum.PowerPoint => "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+                OfficeMimeTypeEnum.ExcelLegacy => "application/vnd.ms-excel",
                 _ => "application/vnd.openxmlformats-package",
             };
-        }        
+        }
 
         public OfficeMimeTypeEnum ParseOfficeMimeType(string? mime)
         {
@@ -181,6 +193,11 @@ namespace ExtractorOLE.Helpers
             }
             catch (Exception)
             {
+                var cfbResult = _cfbMimeDetector.Detect(new MimeDetectionRequest { FileBytes = fileBytes });
+                if (cfbResult.DetectedFormat == DetectedFormatEnum.Xls)
+                {
+                    return OfficeMimeTypeEnum.ExcelLegacy;
+                }
                 return OfficeMimeTypeEnum.OpenXmlUnknown;
             }
 

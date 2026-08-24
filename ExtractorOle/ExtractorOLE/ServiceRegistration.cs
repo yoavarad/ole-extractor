@@ -22,6 +22,7 @@ namespace ExtractorOLE
             services.AddSingleton<ExcelOpenStrategy>();
             services.AddSingleton<PowerPointOpenStrategy>();
             services.AddSingleton<ZipFallbackOpenStrategy>();
+            services.AddSingleton<XlsOpenStrategy>();
 
             // Map enum to strategy implementation
             services.AddSingleton<IDictionary<OfficeMimeTypeEnum, IOpenStrategy>>(sp =>
@@ -32,6 +33,7 @@ namespace ExtractorOLE
                     [OfficeMimeTypeEnum.Excel] = sp.GetRequiredService<ExcelOpenStrategy>(),
                     [OfficeMimeTypeEnum.PowerPoint] = sp.GetRequiredService<PowerPointOpenStrategy>(),
                     [OfficeMimeTypeEnum.OpenXmlUnknown] = sp.GetRequiredService<ZipFallbackOpenStrategy>(),
+                    [OfficeMimeTypeEnum.ExcelLegacy] = sp.GetRequiredService<XlsOpenStrategy>(),
                 };
                 return dict;
             });
