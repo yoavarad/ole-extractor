@@ -27,7 +27,7 @@ milestone: null
 complexity: null
 gates: []
 created: '2026-08-19T10:32:30Z'
-updated: '2026-08-22T21:03:43Z'
+updated: '2026-08-23T04:52:36Z'
 ---
 
 ## Description
@@ -36,3 +36,13 @@ Set up a build step that compiles NPOI from its Apache-2.0 source (not the preco
 
 
 ## Activity Log
+
+- 2026-08-23: Wired NPOI as a git submodule (third_party/npoi, pinned to tag 2.7.6-rc1) referenced via ProjectReference from ExtractorOLE.csproj. dotnet build succeeds, 0 errors/warnings. Found ADR-001's assumption only holds for .xls (HSSFWorkbook, in main/NPOI.Core.csproj) -- .doc (HWPFDocument) and .ppt (HSLF) only exist in NPOI's non-SDK-style, .NET-Framework-2.0-only scratchpad/ tree, not shipped in NPOI's own NuGet package. Filed T-bac988f5 to resolve doc/ppt separately; blocked T-c4123b53 and T-517f89c5 on it. Note for future checkouts: `git submodule update --init` is needed after cloning/pulling since submodules only record a gitlink, not file content.
+### 2026-08-23T04:52:05Z (UTC)
+**Verification FAILED:**
+FAIL dotnet-build: Determining projects to restore...
+  Restored C:\Users\yoava\Projects\ole-extractor\.ydk\worktrees\T
+### 2026-08-23T04:52:36Z (UTC)
+**Verification FAILED:**
+FAIL dotnet-build: Determining projects to restore...
+  Restored C:\Users\yoava\Projects\ole-extractor\.ydk\worktrees\T
