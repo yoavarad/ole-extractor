@@ -15,5 +15,14 @@ namespace SampleGenerator.Abstractions
         public IDictionary<string, string> Metadata { get; set; } = new Dictionary<string, string>();
 
         public IList<EmbeddedContentSpec> Embeddings { get; set; } = new List<EmbeddedContentSpec>();
+
+        /// <summary>
+        /// Raw VBA project binary to author as a macro storage (e.g. a
+        /// <c>VbaProjectPart</c> for OOXML formats). Content can be arbitrary
+        /// placeholder bytes - callers only need a structurally-valid macro
+        /// storage present, not a functioning macro. Null means "no macro" -
+        /// generators author the plain (non-macro-enabled) document type.
+        /// </summary>
+        public byte[]? VbaProject { get; set; }
     }
 }
