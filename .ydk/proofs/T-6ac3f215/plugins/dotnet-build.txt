@@ -1,0 +1,11 @@
+PASSED (3.4s)
+
+Determining projects to restore...
+  Restored C:\Users\yoava\Projects\ole-extractor\.ydk\worktrees\T-6ac3f215\ExtractorOle\ExtractorOLE\ExtractorOLE.csproj (in 433 ms).
+  ExtractorOLE -> C:\Users\yoava\Projects\ole-extractor\.ydk\worktrees\T-6ac3f215\ExtractorOle\ExtractorOLE\bin\Debug\net8.0\ExtractorOLE.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:02.94

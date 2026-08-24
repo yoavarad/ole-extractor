@@ -6,8 +6,14 @@ using SampleGenerator.Abstractions;
 namespace SampleGenerator.Generators
 {
     /// <summary>
-    /// Authors a minimal, valid .docx via DocumentFormat.OpenXml directly:
-    /// controllable body text, general metadata, and first-layer embeddings.
+    /// Authors a minimal, valid .docx (or .docm, when <see cref="SampleSpec.VbaProject"/>
+    /// is set) via DocumentFormat.OpenXml directly: controllable body text,
+    /// general metadata, first-layer embeddings, and - for the macro-enabled
+    /// variant - a structurally-valid VBA project storage (arbitrary
+    /// placeholder bytes; no functioning macro is required). The
+    /// macro-enabled variant must still be detected as base format docx, not
+    /// as a separate format (Epic 5/6's macro-variant-misclassification
+    /// scenario).
     /// </summary>
     public sealed class DocxSampleGenerator : ISampleGenerator
     {
@@ -17,8 +23,13 @@ namespace SampleGenerator.Generators
         {
             ArgumentNullException.ThrowIfNull(spec);
 
+            var isMacroEnabled = spec.VbaProject is not null;
+            var documentType = isMacroEnabled
+                ? WordprocessingDocumentType.MacroEnabledDocument
+                : WordprocessingDocumentType.Document;
+
             using var stream = new MemoryStream();
-            using (var document = WordprocessingDocument.Create(stream, WordprocessingDocumentType.Document))
+            using (var document = WordprocessingDocument.Create(stream, documentType))
             {
                 var mainPart = document.AddMainDocumentPart();
                 var body = new Body();
@@ -33,12 +44,19 @@ namespace SampleGenerator.Generators
                 OpenXmlPackagePropertiesHelper.Apply(document.PackageProperties, spec.Metadata);
                 OpenXmlEmbeddingHelper.AddEmbeddings(mainPart, spec.Embeddings);
 
+                if (spec.VbaProject is { } vbaProject)
+                {
+                    var vbaProjectPart = mainPart.AddNewPart<VbaProjectPart>();
+                    using var vbaStream = new MemoryStream(vbaProject);
+                    vbaProjectPart.FeedData(vbaStream);
+                }
+
                 mainPart.Document.Save();
             }
 
             return new GeneratedSample
             {
-                FileName = "sample.docx",
+                FileName = isMacroEnabled ? "sample.docm" : "sample.docx",
                 Content = stream.ToArray()
             };
         }
