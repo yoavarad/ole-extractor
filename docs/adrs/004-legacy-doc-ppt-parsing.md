@@ -1,7 +1,7 @@
 # ADR-004: Legacy .doc/.ppt body-text parsing (b2xtranslator, not NPOI)
 
 ## Status
-Proposed (draft -- requires human sign-off before flipping to Accepted; see commit note)
+Accepted
 
 ## Context
 ADR-001 decided to self-compile NPOI from Apache-2.0 source for legacy OLE format support
