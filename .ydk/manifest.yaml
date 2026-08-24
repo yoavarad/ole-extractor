@@ -685,7 +685,7 @@ tasks:
   T-6f033869:
     title: Source/author 12 curated real-world-style samples (2 per format)
     story: S-da936361
-    status: open
+    status: in-review
     dependencies: []
     component_refs: []
   T-0834290d:
