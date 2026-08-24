@@ -73,59 +73,39 @@ namespace ExtractorOLE.Helpers
         public void ExtractFirstLayerEmbedded(DocumentExtractionResult result, OpenXmlPart rootPart)
         {
             int index = 1;
-            
+            var containersToScan = new List<OpenXmlPart>();
+
+            // Phase 1: direct children of rootPart.
             foreach (var partPair in rootPart.Parts)
             {
-                //change to check for each file type in a more thorough fashion
                 var nestedPart = partPair.OpenXmlPart;
                 if (nestedPart is EmbeddedObjectPart || nestedPart is EmbeddedPackagePart || nestedPart is ImagePart)
                 {
-                    using (var partStream = nestedPart.GetStream())
-                    using (var binaryStream = new MemoryStream())
-                    {
-                        partStream.CopyTo(binaryStream);
-                        byte[] extractedBytes = binaryStream.ToArray();
-
-                        var item = new EmbeddedFileItem
-                        {
-                            //todo: extract extra metadata fields
-                            BinaryData = extractedBytes,
-                            PackagePath = nestedPart.Uri.ToString(),
-                            SizeInBytes = extractedBytes.LongLength
-                        };
-
-                        string extension = GetExtensionFromContentType(nestedPart.ContentType);
-                        // todo: change to be based on extracted base metadata
-                        item.FileName = $"embedded_object_{index}{extension}";
-                        result.EmbeddedFiles.Add(item);
-                        index++;
-                    }
-                }                
+                    ExtractPartData(nestedPart, result.EmbeddedFiles, ref index, "embedded_object");
+                }
+                else
+                {
+                    containersToScan.Add(nestedPart);
+                }
             }
 
-            // todo: needs to be moved to a PowerPoint strategy 
-            // todo: check maybe about extracting background images
-            var slideTest = rootPart as PresentationPart;
-            if (slideTest != null)
+            // Phase 2: children of every non-matching level-1 part. Some formats (e.g. pptx SlidePart,
+            // xlsx WorksheetPart) don't accept embeddings directly on the root part - the OpenXml SDK
+            // rejects EmbeddedObjectPart/EmbeddedPackagePart/ImagePart there - so embeddings live one
+            // hop down. This scan is generic and unconditional across all container parts.
+            foreach (var container in containersToScan)
             {
-                foreach (SlidePart slidePart in slideTest.SlideParts)
+                foreach (var partPair in container.Parts)
                 {
-                    // slidePart.Parts tracks the top-level images/objects/layouts belonging directly to THIS slide.
-                    // NOTE: PresentationPart cannot hold EmbeddedObjectPart/EmbeddedPackagePart/ImagePart directly
-                    // (the OpenXml SDK rejects them there), so SampleGenerator places every first-layer pptx
-                    // embedding, image or object, on the slide itself; both kinds must be scanned here.
-                    foreach (var slidePartPair in slidePart.Parts)
-                    {
-                        var nestedSlidePart = slidePartPair.OpenXmlPart;
+                    var nestedPart = partPair.OpenXmlPart;
 
-                        if (nestedSlidePart is ImagePart)
-                        {
-                            ExtractPartData(nestedSlidePart, result.EmbeddedFiles, ref index, "slide_image");
-                        }
-                        else if (nestedSlidePart is EmbeddedObjectPart || nestedSlidePart is EmbeddedPackagePart)
-                        {
-                            ExtractPartData(nestedSlidePart, result.EmbeddedFiles, ref index, "embedded_object");
-                        }
+                    if (nestedPart is ImagePart)
+                    {
+                        ExtractPartData(nestedPart, result.EmbeddedFiles, ref index, "slide_image");
+                    }
+                    else if (nestedPart is EmbeddedObjectPart || nestedPart is EmbeddedPackagePart)
+                    {
+                        ExtractPartData(nestedPart, result.EmbeddedFiles, ref index, "embedded_object");
                     }
                 }
             }

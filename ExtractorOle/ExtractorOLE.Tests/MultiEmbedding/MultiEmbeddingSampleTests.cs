@@ -1,6 +1,5 @@
 using System.IO;
 using System.Linq;
-using DocumentFormat.OpenXml.Packaging;
 using ExtractorOLE.Helpers;
 using ExtractorOLE.Helpers.FileTypeStrategy;
 using SampleGenerator.Fixtures;
@@ -13,10 +12,7 @@ namespace ExtractorOLE.Tests.MultiEmbedding
     /// Round-trip tests for the "multi-embedding" synthetic sample scenario
     /// (docs/specs/dataset-curation.md Corpus Composition rule #1): generate
     /// via SampleGenerator, then confirm ExtractorOLE actually detects at
-    /// least 3 first-layer embeddings of at least 2 kinds for docx/pptx.
-    /// xlsx is verified structurally instead (see note below), since
-    /// detection there depends on task T-02637847 (teaching the extractor to
-    /// walk WorksheetPart), which is tracked separately and not yet merged.
+    /// least 3 first-layer embeddings of at least 2 kinds for docx/xlsx/pptx.
     /// </summary>
     public class MultiEmbeddingSampleTests
     {
@@ -64,33 +60,27 @@ namespace ExtractorOLE.Tests.MultiEmbedding
         }
 
         [Fact]
-        public void Xlsx_MultiEmbeddingSample_PlacesFourEmbeddingsOfTwoKindsOnWorksheetPart()
+        public void Xlsx_MultiEmbeddingSample_DetectsAtLeastThreeEmbeddingsAcrossTwoKinds()
         {
-            // NOTE: ExtractorOLE's current embedded-object scan for xlsx
-            // (ExtractionHelper.ExtractFirstLayerEmbedded / the legacy
-            // Old/Excel/ExcelExtractor.GetFirstLayerEmbedded) only walks
-            // WorkbookPart, not WorksheetPart -- so it does not yet detect
-            // these embeddings. That fix is tracked separately by task
-            // T-02637847 and is not merged into this branch. This test
-            // verifies the part of the contract SampleGenerator owns: the
-            // embeddings are present, schema-valid OOXML parts, and placed
-            // where the format requires (WorksheetPart, since WorkbookPart
-            // cannot hold ImagePart/EmbeddedObjectPart directly).
             var spec = MultiEmbeddingSampleSpecs.Build();
             var generated = new XlsxSampleGenerator().Generate(spec);
 
-            using var stream = new MemoryStream(generated.Content);
-            using var document = SpreadsheetDocument.Open(stream, false);
-            var worksheetPart = document.WorkbookPart!.WorksheetParts.Single();
+            var strategy = new ExcelOpenStrategy(new ExtractionHelper());
+            var result = strategy.Open(generated.Content);
 
-            var embeddedParts = worksheetPart.Parts
-                .Select(p => p.OpenXmlPart)
-                .Where(p => p is EmbeddedObjectPart || p is ImagePart)
-                .ToList();
+            Assert.NotNull(result);
+            Assert.Equal(4, result!.EmbeddedFiles.Count);
 
-            Assert.Equal(4, embeddedParts.Count);
-            Assert.Equal(2, embeddedParts.OfType<ImagePart>().Count());
-            Assert.Equal(2, embeddedParts.OfType<EmbeddedObjectPart>().Count());
+            var extensions = result.EmbeddedFiles.Select(f => Path.GetExtension(f.FileName)).Distinct().ToList();
+            Assert.True(extensions.Count >= 2, $"Expected >=2 distinct kinds, found: {string.Join(",", extensions)}");
+            Assert.Contains(".png", extensions);
+            Assert.Contains(".bin", extensions);
+
+            // All 4 embeddings live on the WorksheetPart (WorkbookPart cannot hold
+            // EmbeddedObjectPart/EmbeddedPackagePart/ImagePart directly, per
+            // ExtractionHelper.ExtractFirstLayerEmbedded's generic depth-2 scan).
+            Assert.Equal(2, result.EmbeddedFiles.Count(f => f.FileName.StartsWith("embedded_object_")));
+            Assert.Equal(2, result.EmbeddedFiles.Count(f => f.FileName.StartsWith("slide_image_")));
         }
     }
 }
