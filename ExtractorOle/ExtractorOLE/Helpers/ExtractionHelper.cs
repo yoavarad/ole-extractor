@@ -93,7 +93,14 @@ namespace ExtractorOLE.Helpers
                 var nestedPart = partPair.OpenXmlPart;
                 if (nestedPart is EmbeddedObjectPart || nestedPart is EmbeddedPackagePart || nestedPart is ImagePart)
                 {
-                    ExtractPartData(nestedPart, result.EmbeddedFiles, ref index, "embedded_object");
+                    try
+                    {
+                        ExtractPartData(nestedPart, result.EmbeddedFiles, ref index, "embedded_object");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Skipping unreadable embedded part '{nestedPart.Uri}': {ex.Message}");
+                    }
                 }
                 else
                 {
@@ -113,11 +120,25 @@ namespace ExtractorOLE.Helpers
 
                     if (nestedPart is ImagePart)
                     {
-                        ExtractPartData(nestedPart, result.EmbeddedFiles, ref index, "slide_image");
+                        try
+                        {
+                            ExtractPartData(nestedPart, result.EmbeddedFiles, ref index, "slide_image");
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Skipping unreadable embedded part '{nestedPart.Uri}': {ex.Message}");
+                        }
                     }
                     else if (nestedPart is EmbeddedObjectPart || nestedPart is EmbeddedPackagePart)
                     {
-                        ExtractPartData(nestedPart, result.EmbeddedFiles, ref index, "embedded_object");
+                        try
+                        {
+                            ExtractPartData(nestedPart, result.EmbeddedFiles, ref index, "embedded_object");
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Skipping unreadable embedded part '{nestedPart.Uri}': {ex.Message}");
+                        }
                     }
                 }
             }
