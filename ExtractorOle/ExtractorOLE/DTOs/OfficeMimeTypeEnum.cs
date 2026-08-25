@@ -9,6 +9,7 @@ namespace ExtractorOLE.DTOs
         Word,
         Excel,
         PowerPoint,
-        OpenXmlUnknown
+        OpenXmlUnknown,
+        ExcelLegacy
     }
 }

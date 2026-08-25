@@ -1,0 +1,3 @@
+PASSED (0.0s)
+
+WARN: node_modules not installed -- skipping FSD layer check. Run: bun install
