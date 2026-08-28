@@ -145,8 +145,8 @@
         { "fileName": "embedded_object_1.xlsx", "contentType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "sizeInBytes": 2608, "packagePath": "/word/embeddings/embeddedObject.bin" }
       ],
       "detectable": true,
-      "verifiedBy": null,
-      "notes": "A second embedding layer exists inside the first-layer embedded object: the embedded xlsx package (xl/worksheets/embeddings/embeddedObject.bin inside it, once unpacked) itself embeds a PNG chart image and will require recursive extraction to reach -- a future Epic 9 concern, out of scope here."
+      "verifiedBy": "ExtractorOle/ExtractorOLE.Tests/MultiEmbedding/CuratedNestedEmbeddingSampleTests.cs :: Docx_MeetingMinutesBoardroom_NestedXlsxEmbedding_IsOneOpaqueSubfile_InnerPngNotUnpacked",
+      "notes": "A second embedding layer exists inside the first-layer embedded object: the embedded xlsx package (xl/worksheets/embeddings/embeddedObject.bin inside it, once unpacked) itself embeds a PNG chart image and will require recursive extraction to reach -- a future Epic 9 concern, out of scope here. The non-recursive-unpacking rule itself (outer embedding listed as one opaque subfile, inner PNG never separately surfaced) is verified by the test named above."
     },
     {
       "format": "docx",
@@ -284,8 +284,8 @@
         { "fileName": "embedded_object_1.xlsx", "contentType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "sizeInBytes": 2615, "packagePath": "/ppt/slides/embeddings/embeddedObject.bin" }
       ],
       "detectable": true,
-      "verifiedBy": null,
-      "notes": "A second embedding layer exists inside the first-layer embedded object: the embedded xlsx package (unpacked) itself embeds a PNG chart image and will require recursive extraction to reach -- a future Epic 9 concern, out of scope here."
+      "verifiedBy": "ExtractorOle/ExtractorOLE.Tests/MultiEmbedding/CuratedNestedEmbeddingSampleTests.cs :: Pptx_ProductLaunchDeck_NestedXlsxEmbedding_IsOneOpaqueSubfile_InnerPngNotUnpacked",
+      "notes": "A second embedding layer exists inside the first-layer embedded object: the embedded xlsx package (unpacked) itself embeds a PNG chart image and will require recursive extraction to reach -- a future Epic 9 concern, out of scope here. The non-recursive-unpacking rule itself (outer embedding listed as one opaque subfile, inner PNG never separately surfaced) is verified by the test named above."
     },
     {
       "format": "pptx",
