@@ -2,6 +2,8 @@ using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using ExtractorOLE.DTOs;
 using ExtractorOLE.Helpers.MimeDetection;
+using NPOI.HSSF.UserModel;
+using NPOI.POIFS.FileSystem;
 using System;
 using System.IO;
 using System.IO.Packaging;
@@ -141,6 +143,102 @@ namespace ExtractorOLE.Helpers
                         }
                     }
                 }
+            }
+        }
+
+        public void ExtractFirstLayerEmbedded(DocumentExtractionResult result, HSSFWorkbook workbook)
+        {
+            int index = 1;
+
+            foreach (HSSFObjectData obj in workbook.GetAllEmbeddedObjects())
+            {
+                ExtractHssfObjectData(obj, result.EmbeddedFiles, ref index);
+            }
+
+            foreach (HSSFPictureData pic in workbook.GetAllPictures())
+            {
+                ExtractHssfPictureData(pic, result.EmbeddedFiles, ref index);
+            }
+        }
+
+        // Reads one embedded OLE object. Wrapped in its own try/catch so that one corrupt item
+        // (e.g. a POIFS directory entry that doesn't resolve to a real DirectoryEntry) is skipped
+        // and logged without failing the whole extraction.
+        private void ExtractHssfObjectData(HSSFObjectData obj, List<EmbeddedFileItem> fileList, ref int index)
+        {
+            try
+            {
+                byte[] extractedBytes;
+
+                if (obj.HasDirectoryEntry())
+                {
+                    // Copy the container's directory tree into a standalone POIFS filesystem and
+                    // serialize it to bytes. This returns the whole embedded object as one opaque
+                    // blob - its internal streams (e.g. "Ole", "Ole10Native") are never unpacked
+                    // or listed separately.
+                    var target = new NPOIFSFileSystem();
+                    try
+                    {
+                        EntryUtils.CopyNodes(obj.Directory, target.Root);
+                        using (var outStream = new MemoryStream())
+                        {
+                            target.WriteFileSystem(outStream);
+                            extractedBytes = outStream.ToArray();
+                        }
+                    }
+                    finally
+                    {
+                        target.Close();
+                    }
+                }
+                else
+                {
+                    extractedBytes = obj.ObjectData;
+                }
+
+                var item = new EmbeddedFileItem
+                {
+                    BinaryData = extractedBytes,
+                    PackagePath = $"embedded_object_{index}",
+                    SizeInBytes = extractedBytes.LongLength,
+                    FileName = $"embedded_object_{index}.bin"
+                };
+
+                fileList.Add(item);
+                index++;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Skipping corrupt embedded object at index {index}: {ex.Message}");
+            }
+        }
+
+        // Reads one inline picture. Wrapped in its own try/catch to isolate one corrupt item from
+        // the rest of the extraction, matching ExtractHssfObjectData's per-item behavior.
+        private void ExtractHssfPictureData(HSSFPictureData pic, List<EmbeddedFileItem> fileList, ref int index)
+        {
+            try
+            {
+                byte[] extractedBytes = pic.Data;
+                string extension = pic.SuggestFileExtension();
+                string fileName = string.IsNullOrEmpty(extension)
+                    ? $"picture_{index}.bin"
+                    : $"picture_{index}.{extension}";
+
+                var item = new EmbeddedFileItem
+                {
+                    BinaryData = extractedBytes,
+                    PackagePath = $"picture_{index}",
+                    SizeInBytes = extractedBytes.LongLength,
+                    FileName = fileName
+                };
+
+                fileList.Add(item);
+                index++;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Skipping corrupt picture at index {index}: {ex.Message}");
             }
         }
 
