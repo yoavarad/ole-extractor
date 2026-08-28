@@ -30,6 +30,8 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
                         result.Metadata.Modified = summary.LastSaveDateTime;
                         result.Metadata.LastModifiedBy = summary.LastAuthor;
                     }
+
+                    _helper.ExtractFirstLayerEmbedded(result, workbook);
                 }
                 result.MimeType = _helper.MimeFor(OfficeMimeTypeEnum.ExcelLegacy);
                 return result;
