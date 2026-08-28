@@ -300,7 +300,7 @@ tasks:
   T-05bd14c7:
     title: Generalize embedded-subfile walk beyond PowerPoint special-casing
     story: S-43c41d4a
-    status: open
+    status: done
     dependencies:
     - T-eeb6684b
     - T-2ac2f140
@@ -339,7 +339,7 @@ tasks:
     title: Enforce max-file-size and nesting-depth-guard checks in the CFB detection
       path
     story: S-3bc6b929
-    status: open
+    status: done
     dependencies:
     - T-fd49ef39
     component_refs:
@@ -395,7 +395,7 @@ tasks:
   T-c2a60f06:
     title: Implement xls open component (NPOI HSSFWorkbook + FileMetadata)
     story: S-0602557d
-    status: open
+    status: done
     dependencies: []
     component_refs:
     - ydk:entity:extraction/FileMetadata
@@ -465,7 +465,7 @@ tasks:
   T-44812a03:
     title: Harden existing OOXML detection to be strictly content-only
     story: S-7d040ba7
-    status: open
+    status: done
     dependencies: []
     component_refs:
     - ydk:contract:extraction/detect-mime-type
@@ -529,7 +529,7 @@ tasks:
   T-30f2c1b8:
     title: Wire xlsx first-layer embeddings/media walk via the generalized walk
     story: S-8d6146f0
-    status: open
+    status: done
     dependencies: []
     component_refs:
     - ydk:entity:extraction/SubfileItem
@@ -685,7 +685,7 @@ tasks:
   T-6f033869:
     title: Source/author 12 curated real-world-style samples (2 per format)
     story: S-da936361
-    status: in-review
+    status: done
     dependencies: []
     component_refs: []
   T-0834290d:
