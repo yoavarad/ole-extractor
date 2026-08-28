@@ -88,59 +88,87 @@ namespace ExtractorOLE.Helpers
             var containersToScan = new List<OpenXmlPart>();
 
             // Phase 1: direct children of rootPart.
-            foreach (var partPair in rootPart.Parts)
+            // OpenXmlPartContainer.Parts' enumerator eagerly builds the whole
+            // relationship map for this container on the first MoveNext(), and
+            // throws if any relationship in it is dangling (e.g. a physically
+            // deleted zip entry) - so the guard has to wrap the whole foreach,
+            // not just the per-item body; a broken relationship map fails the
+            // container as a unit, not per-item.
+            try
             {
-                var nestedPart = partPair.OpenXmlPart;
-                if (nestedPart is EmbeddedObjectPart || nestedPart is EmbeddedPackagePart || nestedPart is ImagePart)
+                foreach (var partPair in rootPart.Parts)
                 {
-                    ExtractPartData(nestedPart, result.EmbeddedFiles, ref index, "embedded_object");
+                    var nestedPart = partPair.OpenXmlPart;
+                    if (nestedPart is EmbeddedObjectPart || nestedPart is EmbeddedPackagePart || nestedPart is ImagePart)
+                    {
+                        ExtractPartData(nestedPart, result.EmbeddedFiles, ref index, "embedded_object");
+                    }
+                    else
+                    {
+                        containersToScan.Add(nestedPart);
+                    }
                 }
-                else
-                {
-                    containersToScan.Add(nestedPart);
-                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Skipping unreadable parts under root part '{rootPart.Uri}': {e.Message}");
             }
 
             // Phase 2: children of every non-matching level-1 part. Some formats (e.g. pptx SlidePart,
             // xlsx WorksheetPart) don't accept embeddings directly on the root part - the OpenXml SDK
             // rejects EmbeddedObjectPart/EmbeddedPackagePart/ImagePart there - so embeddings live one
-            // hop down. This scan is generic and unconditional across all container parts.
+            // hop down. This scan is generic and unconditional across all container parts. Each
+            // container's Parts enumeration is guarded independently (see Phase 1 comment) so one
+            // container with a dangling relationship doesn't stop the scan of the other containers.
             foreach (var container in containersToScan)
             {
-                foreach (var partPair in container.Parts)
+                try
                 {
-                    var nestedPart = partPair.OpenXmlPart;
-
-                    if (nestedPart is ImagePart)
+                    foreach (var partPair in container.Parts)
                     {
-                        ExtractPartData(nestedPart, result.EmbeddedFiles, ref index, "slide_image");
+                        var nestedPart = partPair.OpenXmlPart;
+                        if (nestedPart is ImagePart)
+                        {
+                            ExtractPartData(nestedPart, result.EmbeddedFiles, ref index, "slide_image");
+                        }
+                        else if (nestedPart is EmbeddedObjectPart || nestedPart is EmbeddedPackagePart)
+                        {
+                            ExtractPartData(nestedPart, result.EmbeddedFiles, ref index, "embedded_object");
+                        }
                     }
-                    else if (nestedPart is EmbeddedObjectPart || nestedPart is EmbeddedPackagePart)
-                    {
-                        ExtractPartData(nestedPart, result.EmbeddedFiles, ref index, "embedded_object");
-                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Skipping unreadable parts under container '{container.Uri}': {e.Message}");
                 }
             }
         }
 
         private void ExtractPartData(OpenXmlPart part, List<EmbeddedFileItem> fileList, ref int index, string prefix)
         {
-            using (Stream partStream = part.GetStream())
-            using (MemoryStream binaryStream = new MemoryStream())
+            try
             {
-                partStream.CopyTo(binaryStream);
-                byte[] extractedBytes = binaryStream.ToArray();
-
-                var item = new EmbeddedFileItem
+                using (Stream partStream = part.GetStream())
+                using (MemoryStream binaryStream = new MemoryStream())
                 {
-                    BinaryData = extractedBytes,
-                    PackagePath = part.Uri.ToString(),
-                    SizeInBytes = extractedBytes.LongLength,
-                    FileName = $"{prefix}_{index}{GetExtensionFromContentType(part.ContentType)}"
-                };
+                    partStream.CopyTo(binaryStream);
+                    byte[] extractedBytes = binaryStream.ToArray();
 
-                fileList.Add(item);
-                index++;
+                    var item = new EmbeddedFileItem
+                    {
+                        BinaryData = extractedBytes,
+                        PackagePath = part.Uri.ToString(),
+                        SizeInBytes = extractedBytes.LongLength,
+                        FileName = $"{prefix}_{index}{GetExtensionFromContentType(part.ContentType)}"
+                    };
+
+                    fileList.Add(item);
+                    index++;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Failed to extract embedded part {part.Uri}: {e.Message}");
             }
         }
 
