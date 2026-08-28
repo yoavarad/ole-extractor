@@ -125,22 +125,29 @@ namespace ExtractorOLE.Helpers
 
         private void ExtractPartData(OpenXmlPart part, List<EmbeddedFileItem> fileList, ref int index, string prefix)
         {
-            using (Stream partStream = part.GetStream())
-            using (MemoryStream binaryStream = new MemoryStream())
+            try
             {
-                partStream.CopyTo(binaryStream);
-                byte[] extractedBytes = binaryStream.ToArray();
-
-                var item = new EmbeddedFileItem
+                using (Stream partStream = part.GetStream())
+                using (MemoryStream binaryStream = new MemoryStream())
                 {
-                    BinaryData = extractedBytes,
-                    PackagePath = part.Uri.ToString(),
-                    SizeInBytes = extractedBytes.LongLength,
-                    FileName = $"{prefix}_{index}{GetExtensionFromContentType(part.ContentType)}"
-                };
+                    partStream.CopyTo(binaryStream);
+                    byte[] extractedBytes = binaryStream.ToArray();
 
-                fileList.Add(item);
-                index++;
+                    var item = new EmbeddedFileItem
+                    {
+                        BinaryData = extractedBytes,
+                        PackagePath = part.Uri.ToString(),
+                        SizeInBytes = extractedBytes.LongLength,
+                        FileName = $"{prefix}_{index}{GetExtensionFromContentType(part.ContentType)}"
+                    };
+
+                    fileList.Add(item);
+                    index++;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Skipping unreadable embedded part '{part.Uri}': {ex.Message}");
             }
         }
 
