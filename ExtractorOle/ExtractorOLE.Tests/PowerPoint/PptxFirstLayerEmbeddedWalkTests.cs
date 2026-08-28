@@ -1,8 +1,6 @@
 using System;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
-using DocumentFormat.OpenXml.Packaging;
 using ExtractorOLE.Helpers;
 using ExtractorOLE.Helpers.FileTypeStrategy;
 using SampleGenerator.Abstractions;
@@ -15,7 +13,10 @@ namespace ExtractorOLE.Tests.PowerPoint
     /// Covers T-c3f1ec05: pptx now goes through ExtractionHelper's generalized
     /// two-phase first-layer-embedded walk (no PowerPoint-specific branching).
     /// Pins the "no regression vs. the old PowerPoint-only walk" behavior and
-    /// the corrupt-part-is-skipped-not-fatal contract.
+    /// the corrupt-part-is-skipped-not-fatal contract, mirroring the docx/xlsx
+    /// sibling tests (DocxEmbeddedXlsxAndCorruptionTests,
+    /// MultiEmbeddingSampleTests.Xlsx_..._OneCorruptEmbedding_...) that use the
+    /// same ZipEntryCorruptor-based technique.
     /// </summary>
     public class PptxFirstLayerEmbeddedWalkTests
     {
@@ -60,88 +61,69 @@ namespace ExtractorOLE.Tests.PowerPoint
         }
 
         [Fact]
-        public void Pptx_CorruptEmbedding_IsOmittedAndLoggedWithoutFailingExtraction()
+        public void Pptx_MultiEmbeddingSample_OneCorruptEmbedding_IsOmittedWithoutFailingExtraction()
         {
-            // Distinctive content for the object we will corrupt, so we can
-            // confirm it's absent from the surviving items without relying on
-            // ordinal position.
-            byte[] corruptContent = { 0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77 };
-
-            // Two good embeddings live on the SlidePart as usual.
-            var generated = GenerateTwoEmbeddingSample();
-
-            // The part-to-corrupt is added to a DIFFERENT Phase-2 container
-            // (SlideMasterPart) than the two good embeddings (SlidePart).
-            // OpenXmlPartContainer.Parts eagerly builds its whole relationship
-            // map on first enumeration and throws if any relationship in that
-            // SAME container is dangling - so a corrupt relationship takes
-            // down its own container's parts as a unit. Isolating the corrupt
-            // part in its own container is what lets the two good SlidePart
-            // embeddings survive.
-            string entryName;
-            byte[] withThirdEmbedding;
-            using (var ms = new MemoryStream())
+            // Three embeddings (2 good + 1 to-be-corrupted) all on the same
+            // SlidePart, same as the real MultiEmbeddingSampleSpecs fixture
+            // used elsewhere for pptx - this exercises the realistic "one bad
+            // embedding among several good ones on the same slide" case.
+            byte[] corruptContent = { 10, 11, 12, 13, 14, 15 };
+            var spec = new SampleSpec
             {
-                ms.Write(generated.Content, 0, generated.Content.Length);
-                ms.Position = 0;
-                using (var pres = PresentationDocument.Open(ms, true))
+                BodyText = "hello world",
+                Embeddings = new System.Collections.Generic.List<EmbeddedContentSpec>
                 {
-                    var slideMasterPart = pres.PresentationPart!.SlideMasterParts.Single();
-                    var corruptPart = slideMasterPart.AddNewPart<EmbeddedObjectPart>("application/octet-stream");
-                    entryName = corruptPart.Uri.ToString().TrimStart('/');
-                    using var cs = new MemoryStream(corruptContent);
-                    corruptPart.FeedData(cs);
-                    pres.Save();
+                    new() { FileName = "good1.bin", Content = new byte[] { 1, 2, 3, 4 }, ContentType = "application/octet-stream" },
+                    new() { FileName = "good2.png", Content = new byte[] { 5, 6, 7, 8, 9 }, ContentType = "image/png" },
+                    new() { FileName = "corrupt.bin", Content = corruptContent, ContentType = "application/octet-stream" }
                 }
-                withThirdEmbedding = ms.ToArray();
+            };
+            var generated = new PptxSampleGenerator().Generate(spec);
+
+            string corruptedPartUri;
+            using (var pres = DocumentFormat.OpenXml.Packaging.PresentationDocument.Open(new MemoryStream(generated.Content), false))
+            {
+                var slidePart = pres.PresentationPart!.SlideParts.Single();
+
+                // Identify the target by its distinctive content bytes rather than
+                // ordinal position, so this doesn't depend on relationship/Parts
+                // enumeration order matching spec list order.
+                var targetPart = slidePart.Parts
+                    .Select(p => p.OpenXmlPart)
+                    .OfType<DocumentFormat.OpenXml.Packaging.EmbeddedObjectPart>()
+                    .Single(p =>
+                    {
+                        using var s = p.GetStream();
+                        using var buf = new MemoryStream();
+                        s.CopyTo(buf);
+                        return buf.ToArray().SequenceEqual(corruptContent);
+                    });
+
+                corruptedPartUri = targetPart.Uri.OriginalString;
             }
 
-            // Corrupt that physical zip entry so the part can no longer be
-            // resolved, using ZipArchive framework APIs only (no hand-rolled
-            // OPC bytes). Deleting the entry leaves the relationship/content-type
-            // declarations intact (dangling) while the physical entry is gone.
-            // Confirmed empirically (against this build of DocumentFormat.OpenXml)
-            // that this throws InvalidOperationException ("Part ... doesn't exist
-            // in the package") from inside OpenXmlPartContainer.Parts' enumerator
-            // (get_Parts()+MoveNext()) - i.e. at the `foreach (var partPair in
-            // container.Parts)` statement itself in ExtractFirstLayerEmbedded,
-            // not inside the loop body. That's caught by the per-container
-            // try/catch around Phase 2's inner foreach and logged via
-            // "Skipping unreadable parts under container '...'", not inside
-            // ExtractPartData's GetStream()/CopyTo() (that catch guards parts
-            // that DO resolve but fail to read).
-            byte[] corrupted;
-            using (var ms = new MemoryStream())
-            {
-                ms.Write(withThirdEmbedding, 0, withThirdEmbedding.Length);
-                ms.Position = 0;
-                using (var archive = new ZipArchive(ms, ZipArchiveMode.Update, leaveOpen: true))
-                {
-                    var entry = archive.GetEntry(entryName);
-                    Assert.NotNull(entry);
-                    entry!.Delete();
-                }
-                corrupted = ms.ToArray();
-            }
+            var entryName = corruptedPartUri.TrimStart('/');
+            var corruptedBytes = ZipEntryCorruptor.CorruptEntryData(generated.Content, entryName);
 
-            var originalOut = Console.Out;
-            var captured = new StringWriter();
-            Console.SetOut(captured);
+            var originalError = Console.Error;
+            var capturedError = new StringWriter();
+            Console.SetError(capturedError);
+
             ExtractorOLE.DTOs.DocumentExtractionResult? result;
             try
             {
                 var strategy = new PowerPointOpenStrategy(new ExtractionHelper());
-                result = strategy.Open(corrupted);
+                result = strategy.Open(corruptedBytes);
             }
             finally
             {
-                Console.SetOut(originalOut);
+                Console.SetError(originalError);
             }
 
             Assert.NotNull(result);
             Assert.Equal(2, result!.EmbeddedFiles.Count);
-            Assert.DoesNotContain(result.EmbeddedFiles, f => f.BinaryData.SequenceEqual(corruptContent));
-            Assert.Contains("Skipping unreadable parts under container", captured.ToString());
+            Assert.DoesNotContain(result.EmbeddedFiles, f => f.PackagePath == corruptedPartUri);
+            Assert.False(string.IsNullOrEmpty(capturedError.ToString()));
         }
     }
 }

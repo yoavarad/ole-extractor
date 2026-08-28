@@ -1,6 +1,8 @@
 using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Wordprocessing;
 using System;
 using System.IO;
+using System.Linq;
 
 namespace ExtractorOLE.Handlers
 {
@@ -13,9 +15,10 @@ namespace ExtractorOLE.Handlers
                 using (var ms = new MemoryStream(fileBytes))
                 using (var word = WordprocessingDocument.Open(ms, false))
                 {
-                    if (word.MainDocumentPart?.Document?.Body != null)
+                    var body = word.MainDocumentPart?.Document?.Body;
+                    if (body != null)
                     {
-                        return word.MainDocumentPart.Document.Body.InnerText ?? string.Empty;
+                        return string.Join(Environment.NewLine, body.Descendants<Paragraph>().Select(p => p.InnerText));
                     }
                 }
             }
