@@ -1,0 +1,4 @@
+PASSED (0.2s)
+
+[dotnet-build] No .cs/.csproj/.sln files changed — skipped
+[dotnet-format] No .cs/.csproj/.sln files changed — skipped

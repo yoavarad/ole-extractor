@@ -1,0 +1,11 @@
+PASSED (1.4s)
+
+Determining projects to restore...
+  All projects are up-to-date for restore.
+  ExtractorOLE -> C:\Users\yoava\Projects\ole-extractor\.claude\worktrees\fix-pre-push-ignorelist\ExtractorOle\ExtractorOLE\bin\Debug\net8.0\ExtractorOLE.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.99

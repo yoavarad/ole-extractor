@@ -1,0 +1,289 @@
+{
+  "task_id": null,
+  "timestamp": "2026-08-24T15:23:16Z",
+  "checks": [
+    {
+      "name": "dotnet-build",
+      "passed": true,
+      "output": "No .sln/.csproj found — skipped (non-.NET project?)",
+      "duration_seconds": 0.1,
+      "detail": null
+    },
+    {
+      "name": "dotnet-format",
+      "passed": true,
+      "output": "No .sln/.csproj found — skipped (non-.NET project?)",
+      "duration_seconds": 0.1,
+      "detail": null
+    },
+    {
+      "name": "ai-code-review",
+      "passed": true,
+      "output": "SKIPPED: ANTHROPIC_API_KEY not configured",
+      "duration_seconds": 0.0,
+      "detail": {
+        "skipped": true
+      }
+    },
+    {
+      "name": "cli-error-handling",
+      "passed": true,
+      "output": "PASS: no src/commands/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "cli-output-format",
+      "passed": true,
+      "output": "PASS: no src/commands/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "fastapi-adapter-isolation",
+      "passed": true,
+      "output": "PASS: no app/adapters/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "fastapi-core-purity",
+      "passed": true,
+      "output": "PASS: no app/core/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "fastapi-no-mocks-e2e",
+      "passed": true,
+      "output": "PASS: no tests/e2e/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "fastapi-no-mocks-integration",
+      "passed": true,
+      "output": "PASS: no tests/integration/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "fastapi-route-delegation",
+      "passed": true,
+      "output": "PASS: no app/api/routes/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "fastapi-route-splitting",
+      "passed": true,
+      "output": "PASS: no app/api/routes/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "fastapi-service-sync",
+      "passed": true,
+      "output": "PASS: no app/core/services/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-file-sizes",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-fsd-imports",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-fsd-layers",
+      "passed": true,
+      "output": "WARN: node_modules not installed -- skipping FSD layer check. Run: bun install",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-module-density",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-no-direct-env",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-no-direct-fetch",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-no-direct-ui-imports",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-no-query-key-strings",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-no-useeffect-fetch",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-no-zustand-module-level",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-page-purity",
+      "passed": true,
+      "output": "PASS: no src/app/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-server-client-boundary",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-sse-abort-controller",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "python-file-length",
+      "passed": true,
+      "output": "PASS: no app/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "python-no-future-annotations",
+      "passed": true,
+      "output": "PASS: no app/api/routes/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "react-fsd-imports",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "spec-alignment",
+      "passed": true,
+      "output": "SKIPPED: ANTHROPIC_API_KEY not configured",
+      "duration_seconds": 0.0,
+      "detail": {
+        "skipped": true
+      }
+    },
+    {
+      "name": "terraform-dangling-resources",
+      "passed": true,
+      "output": "PASS: No dangling resource references detected.",
+      "duration_seconds": 0.0,
+      "detail": {
+        "errors": 0
+      }
+    },
+    {
+      "name": "terraform-external-iam",
+      "passed": true,
+      "output": "PASS: No wildcard IAM principals found.",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "terraform-format",
+      "passed": true,
+      "output": "SKIP: No infra/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "terraform-glacier-public",
+      "passed": true,
+      "output": "PASS: No public Glacier vault access detected.",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "terraform-paravirt-ec2",
+      "passed": true,
+      "output": "PASS: No paravirtualized instance types found.",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "terraform-public-ami",
+      "passed": true,
+      "output": "PASS: AMI usage checks passed.",
+      "duration_seconds": 0.0,
+      "detail": {
+        "errors": 0
+      }
+    },
+    {
+      "name": "terraform-security",
+      "passed": true,
+      "output": "SKIP: No infra/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "terraform-tagging",
+      "passed": true,
+      "output": "SKIP: No infra/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "dotnet-test",
+      "passed": true,
+      "output": "No test project (*Test*.csproj) or .sln found — skipped",
+      "duration_seconds": 0.1,
+      "detail": null
+    },
+    {
+      "name": "tests-pytest",
+      "passed": true,
+      "output": "No 'tests/' directory found — skipped (non-Python project?)",
+      "duration_seconds": 0.0,
+      "detail": null
+    }
+  ],
+  "all_passed": true,
+  "total_duration_seconds": 14.5
+}

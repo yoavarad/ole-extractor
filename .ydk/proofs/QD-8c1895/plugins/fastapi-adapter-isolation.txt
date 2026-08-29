@@ -1,0 +1,3 @@
+PASSED (0.0s)
+
+PASS: no app/adapters/ directory found
