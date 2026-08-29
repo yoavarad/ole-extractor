@@ -26,7 +26,7 @@ milestone: null
 complexity: null
 gates: []
 created: '2026-08-19T12:42:57Z'
-updated: '2026-08-19T12:43:00Z'
+updated: '2026-08-29T15:47:20Z'
 ---
 
 ## Description
@@ -35,3 +35,9 @@ Ensure the OOXML detection component structurally recognizes macro-enabled varia
 
 
 ## Activity Log
+### 2026-08-29T15:47:20Z (UTC)
+**Verification FAILED:**
+FAIL dotnet-format: === ExtractorOle\ExtractorOLE\ExtractorOLE.csproj ===
+C:\Users\yoava\Projects\ole-extractor\.ydk\wor
+FAIL dotnet-quality: [dotnet-build] Determining projects to restore...
+  Restored C:\Users\yoava\Projects\ole-extractor\.

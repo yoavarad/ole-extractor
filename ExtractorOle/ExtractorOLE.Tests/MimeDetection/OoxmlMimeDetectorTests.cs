@@ -2,6 +2,7 @@ using System;
 using ExtractorOLE.DTOs;
 using ExtractorOLE.Helpers.MimeDetection;
 using SampleGenerator.Abstractions;
+using SampleGenerator.Fixtures;
 using SampleGenerator.Generators;
 using Xunit;
 
@@ -9,6 +10,66 @@ namespace ExtractorOLE.Tests.MimeDetection
 {
     public class OoxmlMimeDetectorTests
     {
+        [Fact]
+        public void Detect_DocmContent_ReturnsDocx()
+        {
+            // Macro-enabled docm is structurally distinguishable (VbaProjectPart)
+            // but must classify as the base format -- no separate macro-variant
+            // enum value on DetectedFormat (docs/specs/mime-detection.md).
+            var sample = new DocxSampleGenerator().Generate(MacroEmbedSampleSpecs.Build());
+            Assert.Equal("sample.docm", sample.FileName);
+            var request = new MimeDetectionRequest
+            {
+                FileBytes = sample.Content,
+                FileName = sample.FileName
+            };
+            var detector = new OoxmlMimeDetector();
+
+            var result = detector.Detect(request);
+
+            Assert.Equal(DetectedFormatEnum.Docx, result.DetectedFormat);
+            Assert.Equal("application/vnd.openxmlformats-officedocument.wordprocessingml.document", result.MimeType);
+            Assert.True(result.IsSupported);
+        }
+
+        [Fact]
+        public void Detect_XlsmContent_ReturnsXlsx()
+        {
+            var sample = new XlsxSampleGenerator().Generate(MacroEmbedSampleSpecs.Build());
+            Assert.Equal("sample.xlsm", sample.FileName);
+            var request = new MimeDetectionRequest
+            {
+                FileBytes = sample.Content,
+                FileName = sample.FileName
+            };
+            var detector = new OoxmlMimeDetector();
+
+            var result = detector.Detect(request);
+
+            Assert.Equal(DetectedFormatEnum.Xlsx, result.DetectedFormat);
+            Assert.Equal("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", result.MimeType);
+            Assert.True(result.IsSupported);
+        }
+
+        [Fact]
+        public void Detect_PptmContent_ReturnsPptx()
+        {
+            var sample = new PptxSampleGenerator().Generate(MacroEmbedSampleSpecs.Build());
+            Assert.Equal("sample.pptm", sample.FileName);
+            var request = new MimeDetectionRequest
+            {
+                FileBytes = sample.Content,
+                FileName = sample.FileName
+            };
+            var detector = new OoxmlMimeDetector();
+
+            var result = detector.Detect(request);
+
+            Assert.Equal(DetectedFormatEnum.Pptx, result.DetectedFormat);
+            Assert.Equal("application/vnd.openxmlformats-officedocument.presentationml.presentation", result.MimeType);
+            Assert.True(result.IsSupported);
+        }
+
         [Fact]
         public void Detect_DocxContent_ReturnsDocx()
         {
