@@ -107,7 +107,7 @@ namespace ExtractorOLE.Old.Doc
 
 
             if (corePropertiesPart?.CoreFileProperties != null)
-            {                
+            {
                 var props = corePropertiesPart.CoreFileProperties;
 
                 // Grab standard strongly typed metadata nodes natively
@@ -115,7 +115,7 @@ namespace ExtractorOLE.Old.Doc
                 metadata.Creator = props.Creator;
                 metadata.Created = props.Created;
                 metadata.Modified = props.Modified;
-                metadata.LastModifiedBy = props.LastModifiedBy;                
+                metadata.LastModifiedBy = props.LastModifiedBy;
             }
 
             return metadata;

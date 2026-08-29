@@ -12,7 +12,7 @@ namespace ExtractorOLE
 
             using var provider = services.BuildServiceProvider();
 
-            var OfficeExtractor = provider.GetRequiredService<MainExtractor>();            
+            var OfficeExtractor = provider.GetRequiredService<MainExtractor>();
 
             Console.WriteLine("Hello, World!");
         }
