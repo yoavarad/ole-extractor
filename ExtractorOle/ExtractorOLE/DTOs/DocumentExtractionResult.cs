@@ -12,6 +12,11 @@ namespace ExtractorOLE.DTOs
         // Requirement #1: The metadata of the file
         public FileMetadata Metadata { get; set; } = new();
 
+        // Format-specific metadata (discriminated union - see FormatMetadata / ExcelFormatMetadata
+        // in ExcelFormatMetadata.cs). Null when the open strategy for this format doesn't yet
+        // populate it.
+        public FormatMetadata? FormatMetadata { get; set; }
+
         // Requirement #3: The flat text in the file
         public string ExtractedText { get; set; } = string.Empty;
 
