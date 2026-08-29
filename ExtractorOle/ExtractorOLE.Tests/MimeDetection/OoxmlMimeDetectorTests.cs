@@ -144,6 +144,8 @@ namespace ExtractorOLE.Tests.MimeDetection
             var result = detector.Detect(request);
 
             Assert.Equal(DetectedFormatEnum.Unknown, result.DetectedFormat);
+            Assert.Equal("application/octet-stream", result.MimeType);
+            Assert.False(result.IsSupported);
         }
 
         [Fact]
