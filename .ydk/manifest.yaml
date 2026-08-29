@@ -329,7 +329,9 @@ tasks:
     title: Implement CFB directory-entry detection component for doc/xls/ppt
     story: S-3bc6b929
     status: done
-    dependencies: []
+    dependencies:
+    - T-2ac2f140
+    - T-d7c81051
     component_refs:
     - ydk:contract:extraction/detect-mime-type
     - ydk:entity:extraction/MimeDetectionRequest
@@ -352,8 +354,9 @@ tasks:
     story: S-3bc6b929
     status: open
     dependencies:
-    - T-fd49ef39
+    - T-90924b6d
     - T-f667e540
+    - T-fd49ef39
     component_refs:
     - ydk:req:extraction/dependency-injection
     - ydk:req:extraction/format-extensibility
@@ -361,7 +364,9 @@ tasks:
     title: Implement doc open component (NPOI HWPFDocument + FileMetadata)
     story: S-32677db6
     status: blocked-by-blocked-by-research
-    dependencies: []
+    dependencies:
+    - T-90924b6d
+    - T-a5f1d074
     component_refs:
     - ydk:entity:extraction/FileMetadata
     - ydk:entity:extraction/ExtractionResult
@@ -379,6 +384,7 @@ tasks:
     story: S-32677db6
     status: open
     dependencies:
+    - T-94570c2b
     - T-c4123b53
     component_refs:
     - ydk:req:extraction/unicode-fidelity
@@ -396,7 +402,9 @@ tasks:
     title: Implement xls open component (NPOI HSSFWorkbook + FileMetadata)
     story: S-0602557d
     status: done
-    dependencies: []
+    dependencies:
+    - T-90924b6d
+    - T-a5f1d074
     component_refs:
     - ydk:entity:extraction/FileMetadata
     - ydk:entity:extraction/ExtractionResult
@@ -412,8 +420,9 @@ tasks:
   T-a77b2992:
     title: Implement xls flat-text extraction with unicode fidelity
     story: S-0602557d
-    status: open
+    status: in-progress
     dependencies:
+    - T-94570c2b
     - T-c2a60f06
     component_refs:
     - ydk:req:extraction/unicode-fidelity
@@ -431,7 +440,9 @@ tasks:
     title: Implement ppt open component (NPOI HSLFSlideShow + FileMetadata)
     story: S-23b8b734
     status: blocked-by-blocked-by-research
-    dependencies: []
+    dependencies:
+    - T-90924b6d
+    - T-a5f1d074
     component_refs:
     - ydk:entity:extraction/FileMetadata
     - ydk:entity:extraction/ExtractionResult
@@ -450,6 +461,7 @@ tasks:
     status: open
     dependencies:
     - T-517f89c5
+    - T-94570c2b
     component_refs:
     - ydk:req:extraction/unicode-fidelity
     - ydk:entity:extraction/ExtractionResult
@@ -466,14 +478,15 @@ tasks:
     title: Harden existing OOXML detection to be strictly content-only
     story: S-7d040ba7
     status: done
-    dependencies: []
+    dependencies:
+    - T-2ac2f140
     component_refs:
     - ydk:contract:extraction/detect-mime-type
     - ydk:req:extraction/content-only-mime-detection
   T-ef11e30d:
     title: Classify macro-enabled OOXML variants (docm/xlsm/pptm) as their base format
     story: S-7d040ba7
-    status: open
+    status: in-progress
     dependencies:
     - T-44812a03
     component_refs:
@@ -490,7 +503,8 @@ tasks:
     title: Complete WordFormatMetadata parity for docx
     story: S-156ec71a
     status: open
-    dependencies: []
+    dependencies:
+    - T-90924b6d
     component_refs:
     - ydk:entity:extraction/FileMetadata
     - ydk:entity:extraction/WordFormatMetadata
@@ -498,7 +512,8 @@ tasks:
     title: Implement docx flat-text extraction with unicode fidelity
     story: S-156ec71a
     status: open
-    dependencies: []
+    dependencies:
+    - T-90924b6d
     component_refs:
     - ydk:req:extraction/unicode-fidelity
     - ydk:entity:extraction/ExtractionResult
@@ -506,7 +521,8 @@ tasks:
     title: Wire docx first-layer embeddings/media walk via the generalized walk
     story: S-156ec71a
     status: open
-    dependencies: []
+    dependencies:
+    - T-05bd14c7
     component_refs:
     - ydk:entity:extraction/SubfileItem
     - ydk:req:extraction/subfile-scope
@@ -514,7 +530,8 @@ tasks:
     title: Complete ExcelFormatMetadata parity for xlsx
     story: S-8d6146f0
     status: open
-    dependencies: []
+    dependencies:
+    - T-90924b6d
     component_refs:
     - ydk:entity:extraction/FileMetadata
     - ydk:entity:extraction/ExcelFormatMetadata
@@ -522,7 +539,8 @@ tasks:
     title: Implement xlsx flat-text extraction with unicode fidelity
     story: S-8d6146f0
     status: open
-    dependencies: []
+    dependencies:
+    - T-90924b6d
     component_refs:
     - ydk:req:extraction/unicode-fidelity
     - ydk:entity:extraction/ExtractionResult
@@ -530,7 +548,8 @@ tasks:
     title: Wire xlsx first-layer embeddings/media walk via the generalized walk
     story: S-8d6146f0
     status: done
-    dependencies: []
+    dependencies:
+    - T-05bd14c7
     component_refs:
     - ydk:entity:extraction/SubfileItem
     - ydk:req:extraction/subfile-scope
@@ -538,7 +557,8 @@ tasks:
     title: Complete PowerPointFormatMetadata parity for pptx
     story: S-37c18545
     status: open
-    dependencies: []
+    dependencies:
+    - T-90924b6d
     component_refs:
     - ydk:entity:extraction/FileMetadata
     - ydk:entity:extraction/PowerPointFormatMetadata
@@ -546,7 +566,8 @@ tasks:
     title: Implement pptx flat-text extraction with unicode fidelity
     story: S-37c18545
     status: open
-    dependencies: []
+    dependencies:
+    - T-90924b6d
     component_refs:
     - ydk:req:extraction/unicode-fidelity
     - ydk:entity:extraction/ExtractionResult
@@ -554,7 +575,8 @@ tasks:
     title: Wire pptx first-layer embeddings/media walk via the generalized walk
     story: S-37c18545
     status: open
-    dependencies: []
+    dependencies:
+    - T-05bd14c7
     component_refs:
     - ydk:entity:extraction/SubfileItem
     - ydk:req:extraction/subfile-scope
@@ -564,9 +586,11 @@ tasks:
     status: open
     dependencies:
     - T-0a81d133
-    - T-44812a03
-    - T-ef11e30d
     - T-1653b76b
+    - T-33a58c59
+    - T-44812a03
+    - T-90924b6d
+    - T-ef11e30d
     component_refs:
     - ydk:contract:extraction/detect-mime-type
     - ydk:entity:extraction/MimeDetectionRequest
@@ -584,11 +608,12 @@ tasks:
     story: S-51d277f1
     status: open
     dependencies:
-    - T-1df33d6c
-    - T-9e6bfce8
     - T-12dfd045
+    - T-1df33d6c
     - T-29fbb7cf
     - T-30f2c1b8
+    - T-90924b6d
+    - T-9e6bfce8
     - T-c3f1ec05
     component_refs:
     - ydk:contract:extraction/extract
@@ -644,7 +669,8 @@ tasks:
       fixture library
     story: S-41ebb945
     status: done
-    dependencies: []
+    dependencies:
+    - T-a5f1d074
     component_refs:
     - ydk:req:extraction/unicode-fidelity
   T-d657bb2a:
@@ -761,6 +787,7 @@ tasks:
     status: open
     dependencies:
     - T-71ab3bc0
+    - T-fb89c6f3
     component_refs:
     - ydk:contract:extraction/detect-mime-type
   T-7916a198:
@@ -768,7 +795,10 @@ tasks:
     story: S-f6d7124a
     status: open
     dependencies:
+    - T-3335d397
+    - T-61477563
     - T-71ab3bc0
+    - T-a2b91dc6
     component_refs:
     - ydk:contract:extraction/extract
   T-f4ed5c8f:
@@ -789,21 +819,25 @@ tasks:
     title: Unit tests for null request/field validation on DetectMimeType
     story: S-814fa928
     status: open
-    dependencies: []
+    dependencies:
+    - T-fb89c6f3
     component_refs:
     - ydk:entity:extraction/MimeDetectionRequest
   T-5e489191:
     title: Unit tests for null request/field validation on Extract
     story: S-814fa928
     status: open
-    dependencies: []
+    dependencies:
+    - T-a2b91dc6
     component_refs:
     - ydk:entity:extraction/ExtractionRequest
   T-09102f84:
     title: Unit tests for file-too-large on both public functions
     story: S-814fa928
     status: open
-    dependencies: []
+    dependencies:
+    - T-3335d397
+    - T-fb89c6f3
     component_refs:
     - ydk:nfr:extraction/max-file-size
     - ydk:error:extraction/file-too-large
@@ -811,7 +845,11 @@ tasks:
     title: Scaffold separate BenchmarkDotNet project
     story: S-709fe2de
     status: done
-    dependencies: []
+    dependencies:
+    - T-3335d397
+    - T-61477563
+    - T-a2b91dc6
+    - T-fb89c6f3
     component_refs: []
   T-b62ffe04:
     title: Implement Extract() latency/allocation benchmarks per format
@@ -835,7 +873,11 @@ tasks:
     title: Scaffold hand-rolled concurrent-load console harness
     story: S-d88f514b
     status: done
-    dependencies: []
+    dependencies:
+    - T-3335d397
+    - T-61477563
+    - T-a2b91dc6
+    - T-fb89c6f3
     component_refs: []
   T-96b5181b:
     title: Implement >=50 concurrent-call exercise of both public functions
