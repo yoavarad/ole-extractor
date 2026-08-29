@@ -901,14 +901,14 @@ tasks:
     title: Fix ExcelExtractor to scan WorksheetPart for embedded objects, not just
       WorkbookPart
     story: S-8d6146f0
-    status: in-progress
+    status: done
     dependencies: []
     component_refs: []
   T-ce2e3cc1:
     title: 'Fix dotnet-build/dotnet-format target discovery: alphabetical-first-csproj
       is unsafe with multiple sibling projects'
     story: S-d01346bc
-    status: in-progress
+    status: done
     dependencies: []
     component_refs: []
   T-bac988f5:
@@ -921,7 +921,7 @@ tasks:
     title: Fix ydk task readiness/status desync (ydk task ready reports false Deps-Met,
       statuses never sync to done)
     story: S-d01346bc
-    status: in-progress
+    status: done
     dependencies: []
     component_refs: []
   T-270c32fe:
