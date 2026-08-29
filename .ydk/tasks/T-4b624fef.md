@@ -2,7 +2,7 @@
 id: T-4b624fef
 title: Generate macro-enabled-with-embedding synthetic samples for all 6 formats
 story: S-41ebb945
-status: in-progress
+status: done
 assignee: agent
 labels:
 - in-progress

@@ -78,6 +78,7 @@ stories:
     - T-d6de875f
     - T-a5f1d074
     - T-bac988f5
+    - T-b70522d2
   S-418e5f1b:
     title: Empirically validate NPOI i18n fidelity on the legacy OLE path
     epic: E-a2efe648
@@ -270,7 +271,7 @@ tasks:
   T-d7c81051:
     title: Add OpenMcdf >=3.1.3 package reference
     story: S-e496f356
-    status: in-progress
+    status: done
     dependencies:
     - T-eeb6684b
     component_refs: []
@@ -310,7 +311,7 @@ tasks:
   T-90924b6d:
     title: Wire DI registry pattern for extensible format dispatch
     story: S-43c41d4a
-    status: open
+    status: done
     dependencies:
     - T-05bd14c7
     component_refs:
@@ -412,7 +413,7 @@ tasks:
   T-40ac397c:
     title: Map ExcelFormatMetadata for xls
     story: S-0602557d
-    status: open
+    status: done
     dependencies:
     - T-c2a60f06
     component_refs:
@@ -420,7 +421,7 @@ tasks:
   T-a77b2992:
     title: Implement xls flat-text extraction with unicode fidelity
     story: S-0602557d
-    status: in-progress
+    status: done
     dependencies:
     - T-94570c2b
     - T-c2a60f06
@@ -486,7 +487,7 @@ tasks:
   T-ef11e30d:
     title: Classify macro-enabled OOXML variants (docm/xlsm/pptm) as their base format
     story: S-7d040ba7
-    status: in-progress
+    status: done
     dependencies:
     - T-44812a03
     component_refs:
@@ -494,7 +495,7 @@ tasks:
   T-1653b76b:
     title: Handle zero-byte input as Unknown in OOXML detection path
     story: S-7d040ba7
-    status: open
+    status: done
     dependencies:
     - T-44812a03
     component_refs:
@@ -656,7 +657,7 @@ tasks:
     title: Enforce max-file-size and nesting-depth-guard checks in the OOXML detection
       path
     story: S-7d040ba7
-    status: open
+    status: in-progress
     dependencies:
     - T-44812a03
     component_refs:
@@ -676,7 +677,7 @@ tasks:
   T-d657bb2a:
     title: Generate multi-embedding synthetic samples for all 6 formats
     story: S-41ebb945
-    status: in-progress
+    status: done
     dependencies:
     - T-5e9dbd18
     component_refs:
@@ -685,7 +686,7 @@ tasks:
   T-d91b2a46:
     title: Generate 100k+ word body synthetic samples for all 6 formats
     story: S-41ebb945
-    status: in-progress
+    status: done
     dependencies:
     - T-5e9dbd18
     component_refs:
@@ -693,7 +694,7 @@ tasks:
   T-4b624fef:
     title: Generate macro-enabled-with-embedding synthetic samples for all 6 formats
     story: S-41ebb945
-    status: in-progress
+    status: done
     dependencies:
     - T-5e9dbd18
     component_refs:
@@ -717,7 +718,7 @@ tasks:
   T-0834290d:
     title: Author/source the 2+-level nested-embedding curated sample
     story: S-da936361
-    status: open
+    status: done
     dependencies:
     - T-6f033869
     component_refs:
@@ -901,27 +902,27 @@ tasks:
     title: Fix ExcelExtractor to scan WorksheetPart for embedded objects, not just
       WorkbookPart
     story: S-8d6146f0
-    status: in-progress
+    status: done
     dependencies: []
     component_refs: []
   T-ce2e3cc1:
     title: 'Fix dotnet-build/dotnet-format target discovery: alphabetical-first-csproj
       is unsafe with multiple sibling projects'
     story: S-d01346bc
-    status: in-progress
+    status: done
     dependencies: []
     component_refs: []
   T-bac988f5:
     title: Research legacy .doc/.ppt parsing library (NPOI mainline covers only .xls)
     story: S-e496f356
-    status: in-progress
+    status: done
     dependencies: []
     component_refs: []
   T-6ac3f215:
     title: Fix ydk task readiness/status desync (ydk task ready reports false Deps-Met,
       statuses never sync to done)
     story: S-d01346bc
-    status: in-progress
+    status: done
     dependencies: []
     component_refs: []
   T-270c32fe:
@@ -933,3 +934,10 @@ tasks:
     - task_id: T-6f033869
       type: related
     component_refs: []
+  T-b70522d2:
+    title: Research full NPOI retirement (b2xtranslator for .xls too)
+    story: S-e496f356
+    status: open
+    dependencies: []
+    component_refs:
+    - ydk:entity:extraction/FileMetadata

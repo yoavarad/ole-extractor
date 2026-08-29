@@ -3,7 +3,7 @@ id: T-ce2e3cc1
 title: 'Fix dotnet-build/dotnet-format target discovery: alphabetical-first-csproj
   is unsafe with multiple sibling projects'
 story: S-d01346bc
-status: in-progress
+status: done
 assignee: agent
 labels:
 - in-review

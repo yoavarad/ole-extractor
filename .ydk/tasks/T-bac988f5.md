@@ -2,7 +2,7 @@
 id: T-bac988f5
 title: Research legacy .doc/.ppt parsing library (NPOI mainline covers only .xls)
 story: S-e496f356
-status: in-review
+status: done
 assignee: agent
 labels:
 - in-review

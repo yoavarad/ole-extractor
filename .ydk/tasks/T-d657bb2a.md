@@ -2,7 +2,7 @@
 id: T-d657bb2a
 title: Generate multi-embedding synthetic samples for all 6 formats
 story: S-41ebb945
-status: in-progress
+status: done
 assignee: agent
 labels:
 - in-review

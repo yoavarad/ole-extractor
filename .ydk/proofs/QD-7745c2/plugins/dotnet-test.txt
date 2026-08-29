@@ -1,0 +1,12 @@
+PASSED (14.9s)
+
+Determining projects to restore...
+  All projects are up-to-date for restore.
+  NPOI.Core -> C:\Users\yoava\Projects\ole-extractor\third_party\npoi\solution\Debug\net8.0\NPOI.Core.dll
+  SampleGenerator -> C:\Users\yoava\Projects\ole-extractor\SampleGenerator\bin\Debug\net8.0\SampleGenerator.dll
+  ExtractorOLE -> C:\Users\yoava\Projects\ole-extractor\ExtractorOle\ExtractorOLE\bin\Debug\net8.0\ExtractorOLE.dll
+  ExtractorOLE.Tests -> C:\Users\yoava\Projects\ole-extractor\ExtractorOle\ExtractorOLE.Tests\bin\Debug\net8.0\ExtractorOLE.Tests.dll
+Test run for C:\Users\yoava\Projects\ole-extractor\ExtractorOle\ExtractorOLE.Tests\bin\Debug\net8.0\ExtractorOLE.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:    84, Skipped:     0, Total:    84, Duration: 1 s - ExtractorOLE.Tests.dll (net8.0)
