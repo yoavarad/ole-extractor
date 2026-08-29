@@ -2,11 +2,11 @@ using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using ExtractorOLE.DTOs;
 using ExtractorOLE.Helpers.MimeDetection;
+using ExtractorOLE.Registry;
 using NPOI.HSSF.UserModel;
 using NPOI.POIFS.FileSystem;
 using System;
 using System.IO;
-using System.IO.Packaging;
 using System.Linq;
 using System.Runtime.InteropServices;
 
@@ -14,15 +14,22 @@ namespace ExtractorOLE.Helpers
 {
     public class ExtractionHelper : IExtractionHelper
     {
-        private readonly ICfbMimeDetector _cfbMimeDetector;
+        private readonly IMimeDetectionRegistry _detectionRegistry;
 
-        public ExtractionHelper() : this(new CfbMimeDetector())
+        public ExtractionHelper() : this(new MimeDetectionRegistry(new IMimeTypeDetector[]
+        {
+            new OoxmlMimeDetector(),
+            new CfbMimeDetector(),
+        }))
         {
         }
 
-        public ExtractionHelper(ICfbMimeDetector cfbMimeDetector)
+        // DetectMimeTypeFromBytes resolves its structural checks entirely through this
+        // DI-registered registry ([ydk:req:extraction/dependency-injection]) - it never
+        // constructs a detection component inline.
+        public ExtractionHelper(IMimeDetectionRegistry detectionRegistry)
         {
-            _cfbMimeDetector = cfbMimeDetector;
+            _detectionRegistry = detectionRegistry ?? throw new ArgumentNullException(nameof(detectionRegistry));
         }
 
         public string MimeFor(OfficeMimeTypeEnum type)
@@ -270,6 +277,10 @@ namespace ExtractorOLE.Helpers
             }
         }
 
+        // Dispatches through the DI-registered detection set (IMimeDetectionRegistry):
+        // tries every registered structural check (OOXML, then CFB) in order and
+        // returns Unknown only when none of them match
+        // ([ydk:req:extraction/format-extensibility]).
         public OfficeMimeTypeEnum DetectMimeTypeFromBytes(byte[] fileBytes)
         {
             if (fileBytes == null || fileBytes.Length == 0)
@@ -277,38 +288,32 @@ namespace ExtractorOLE.Helpers
                 return OfficeMimeTypeEnum.OpenXmlUnknown;
             }
 
-            try
-            {
-                using (MemoryStream stream = new MemoryStream(fileBytes))
-                {
-                    using (Package package = Package.Open(stream, FileMode.Open, FileAccess.Read))
-                    {
-                        foreach (PackageRelationship rel in package.GetRelationships())
-                        {
-                            string targetUri = rel.TargetUri.ToString();
+            var request = new MimeDetectionRequest { FileBytes = fileBytes };
 
-                            if (targetUri.Contains("word/"))
-                                return OfficeMimeTypeEnum.Word;
-                            if (targetUri.Contains("xl/"))
-                                return OfficeMimeTypeEnum.Excel;
-                            if (targetUri.Contains("ppt/"))
-                                return OfficeMimeTypeEnum.PowerPoint;
-                        }
-                    }
-                }
-            }
-            catch (Exception)
+            foreach (var detector in _detectionRegistry.Detectors)
             {
-                var cfbResult = _cfbMimeDetector.Detect(new MimeDetectionRequest { FileBytes = fileBytes });
-                if (cfbResult.DetectedFormat == DetectedFormatEnum.Xls)
+                var result = detector.Detect(request);
+                var mapped = MapDetectedFormat(result.DetectedFormat);
+                if (mapped.HasValue)
                 {
-                    return OfficeMimeTypeEnum.ExcelLegacy;
+                    return mapped.Value;
                 }
-                return OfficeMimeTypeEnum.OpenXmlUnknown;
             }
 
             return OfficeMimeTypeEnum.OpenXmlUnknown;
         }
+
+        // OfficeMimeTypeEnum only has one legacy value (ExcelLegacy) - Doc/Ppt CFB
+        // detections and Unknown all fall through to OpenXmlUnknown here, matching
+        // pre-existing dispatch behavior.
+        private static OfficeMimeTypeEnum? MapDetectedFormat(DetectedFormatEnum format) => format switch
+        {
+            DetectedFormatEnum.Docx => OfficeMimeTypeEnum.Word,
+            DetectedFormatEnum.Xlsx => OfficeMimeTypeEnum.Excel,
+            DetectedFormatEnum.Pptx => OfficeMimeTypeEnum.PowerPoint,
+            DetectedFormatEnum.Xls => OfficeMimeTypeEnum.ExcelLegacy,
+            _ => null,
+        };
 
         public string GetExtensionFromContentType(string contentType)
         {

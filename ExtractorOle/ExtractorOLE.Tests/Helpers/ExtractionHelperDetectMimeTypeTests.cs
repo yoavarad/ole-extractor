@@ -23,7 +23,7 @@ namespace ExtractorOLE.Tests.Helpers
         {
             var xlsBytes = BuildMinimalXlsBytes();
 
-            var result = new ExtractionHelper(new CfbMimeDetector()).DetectMimeTypeFromBytes(xlsBytes);
+            var result = new ExtractionHelper().DetectMimeTypeFromBytes(xlsBytes);
 
             Assert.Equal(OfficeMimeTypeEnum.ExcelLegacy, result);
         }
@@ -33,7 +33,7 @@ namespace ExtractorOLE.Tests.Helpers
         {
             var garbageBytes = new byte[] { 1, 2, 3, 4, 5 };
 
-            var result = new ExtractionHelper(new CfbMimeDetector()).DetectMimeTypeFromBytes(garbageBytes);
+            var result = new ExtractionHelper().DetectMimeTypeFromBytes(garbageBytes);
 
             Assert.Equal(OfficeMimeTypeEnum.OpenXmlUnknown, result);
         }

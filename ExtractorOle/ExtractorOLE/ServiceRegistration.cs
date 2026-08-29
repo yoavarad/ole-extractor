@@ -24,6 +24,17 @@ namespace ExtractorOLE
             // Mime detection (OOXML family)
             services.AddSingleton<IOoxmlMimeDetector, OoxmlMimeDetector>();
 
+            // Mime detection registry (ydk:req:extraction/format-extensibility,
+            // ydk:req:extraction/dependency-injection): DetectMimeType dispatch
+            // (ExtractionHelper.DetectMimeTypeFromBytes) tries each of these
+            // structural checks in order via this DI-registered seam, instead of
+            // constructing a detector inline in orchestration code.
+            services.AddSingleton<IMimeDetectionRegistry>(sp => new MimeDetectionRegistry(new IMimeTypeDetector[]
+            {
+                (IMimeTypeDetector)sp.GetRequiredService<IOoxmlMimeDetector>(),
+                (IMimeTypeDetector)sp.GetRequiredService<ICfbMimeDetector>(),
+            }));
+
             // Open strategies
             services.AddSingleton<WordOpenStrategy>();
             services.AddSingleton<ExcelOpenStrategy>();
