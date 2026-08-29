@@ -1,49 +1,30 @@
-using DocumentFormat.OpenXml;
-using DocumentFormat.OpenXml.Packaging;
 using ExtractorOLE.DTOs;
 using ExtractorOLE.Helpers;
 using ExtractorOLE.Helpers.FileTypeStrategy;
+using ExtractorOLE.Registry;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.IO.Packaging;
-using System.Linq;
 
 namespace ExtractorOLE
 {
     public class MainExtractor
     {
-        private readonly Dictionary<OfficeMimeTypeEnum, ITextExtractor> _registry = new();
-
-        // Strategy map injected (enum-keyed)
-        private readonly IDictionary<OfficeMimeTypeEnum, IOpenStrategy> _openStrategies;
-
         private readonly IExtractionHelper _helper;
 
-        public MainExtractor(IExtractionHelper helper, IDictionary<OfficeMimeTypeEnum, IOpenStrategy> openStrategies)
+        // Format dispatch is resolved entirely through this registry
+        // (ydk:req:extraction/format-extensibility) - MainExtractor never
+        // instantiates or references a specific IOpenStrategy/ITextExtractor
+        // implementation, or its backing library, directly.
+        private readonly IFormatDispatchRegistry _registry;
+
+        public MainExtractor(IExtractionHelper helper, IFormatDispatchRegistry registry)
         {
             _helper = helper ?? throw new ArgumentNullException(nameof(helper));
-            _openStrategies = openStrategies ?? new Dictionary<OfficeMimeTypeEnum, IOpenStrategy>();
-            RegisterBuiltInHandlers();
-        }
-
-        public void Register(OfficeMimeTypeEnum mimeType, ITextExtractor handler)
-        {
-            if (handler == null) return;
-            _registry[mimeType] = handler;
-        }
-
-        private void RegisterBuiltInHandlers()
-        {
-            Register(OfficeMimeTypeEnum.Word, new Handlers.DocxTextExtractor());
-            Register(OfficeMimeTypeEnum.Excel, new Handlers.XlsxTextExtractor());
-            Register(OfficeMimeTypeEnum.PowerPoint, new Handlers.PptxTextExtractor());
+            _registry = registry ?? throw new ArgumentNullException(nameof(registry));
         }
 
         private IOpenStrategy? FindOpenStrategyForMime(OfficeMimeTypeEnum mimeType)
         {
-            if (_openStrategies != null && _openStrategies.TryGetValue(mimeType, out var strat)) return strat;
-            return null;
+            return _registry.GetOpenStrategy(mimeType);
         }
 
         public DocumentExtractionResult Extract(byte[] fileBytes)
@@ -119,14 +100,18 @@ namespace ExtractorOLE
 
         private ITextExtractor? FindHandlerForMime(OfficeMimeTypeEnum mimeType)
         {
-            if (_registry.TryGetValue(mimeType, out var exact)) return exact;
+            var exact = _registry.GetTextExtractor(mimeType);
+            if (exact != null) return exact;
 
             // fallback: if unknown openxml package, prefer Word then Excel
             if (mimeType == OfficeMimeTypeEnum.OpenXmlUnknown)
             {
-                if (_registry.TryGetValue(OfficeMimeTypeEnum.Word, out var w)) return w;
-                if (_registry.TryGetValue(OfficeMimeTypeEnum.Excel, out var x)) return x;
-                if (_registry.TryGetValue(OfficeMimeTypeEnum.PowerPoint, out var y)) return y;
+                var w = _registry.GetTextExtractor(OfficeMimeTypeEnum.Word);
+                if (w != null) return w;
+                var x = _registry.GetTextExtractor(OfficeMimeTypeEnum.Excel);
+                if (x != null) return x;
+                var y = _registry.GetTextExtractor(OfficeMimeTypeEnum.PowerPoint);
+                if (y != null) return y;
             }
 
             return null;

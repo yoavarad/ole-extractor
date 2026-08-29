@@ -2,9 +2,11 @@ using ExtractorOLE.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
 using ExtractorOLE.DTOs;
+using ExtractorOLE.Handlers;
 using ExtractorOLE.Helpers;
 using ExtractorOLE.Helpers.FileTypeStrategy;
 using ExtractorOLE.Helpers.MimeDetection;
+using ExtractorOLE.Registry;
 
 namespace ExtractorOLE
 {
@@ -42,6 +44,29 @@ namespace ExtractorOLE
                 };
                 return dict;
             });
+
+            // Text-extraction components (one per format, stateless singletons)
+            services.AddSingleton<DocxTextExtractor>();
+            services.AddSingleton<XlsxTextExtractor>();
+            services.AddSingleton<PptxTextExtractor>();
+
+            services.AddSingleton<IDictionary<OfficeMimeTypeEnum, ITextExtractor>>(sp =>
+            {
+                var dict = new Dictionary<OfficeMimeTypeEnum, ITextExtractor>
+                {
+                    [OfficeMimeTypeEnum.Word] = sp.GetRequiredService<DocxTextExtractor>(),
+                    [OfficeMimeTypeEnum.Excel] = sp.GetRequiredService<XlsxTextExtractor>(),
+                    [OfficeMimeTypeEnum.PowerPoint] = sp.GetRequiredService<PptxTextExtractor>(),
+                };
+                return dict;
+            });
+
+            // Format dispatch registry (ydk:req:extraction/format-extensibility):
+            // the single DI-registered seam MainExtractor resolves open/text-extraction
+            // components through, keyed by format.
+            services.AddSingleton<IFormatDispatchRegistry>(sp => new FormatDispatchRegistry(
+                sp.GetRequiredService<IDictionary<OfficeMimeTypeEnum, IOpenStrategy>>(),
+                sp.GetRequiredService<IDictionary<OfficeMimeTypeEnum, ITextExtractor>>()));
 
             // Main extractor
             services.AddSingleton<MainExtractor>();
