@@ -2,7 +2,7 @@
 id: T-ef11e30d
 title: Classify macro-enabled OOXML variants (docm/xlsm/pptm) as their base format
 story: S-7d040ba7
-status: open
+status: done
 assignee: null
 labels: []
 dependencies:
