@@ -2,7 +2,7 @@
 id: T-9e6bfce8
 title: Implement xls first-layer embedded-subfile walk
 story: S-0602557d
-status: open
+status: done
 assignee: null
 labels: []
 dependencies:

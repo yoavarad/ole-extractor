@@ -2,7 +2,7 @@
 id: T-47fea79d
 title: Implement docx flat-text extraction with unicode fidelity
 story: S-156ec71a
-status: open
+status: done
 assignee: null
 labels: []
 dependencies:

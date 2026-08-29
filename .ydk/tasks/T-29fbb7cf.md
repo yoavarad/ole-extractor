@@ -2,7 +2,7 @@
 id: T-29fbb7cf
 title: Wire docx first-layer embeddings/media walk via the generalized walk
 story: S-156ec71a
-status: open
+status: done
 assignee: null
 labels: []
 dependencies:

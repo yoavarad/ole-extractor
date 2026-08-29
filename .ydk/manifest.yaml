@@ -421,7 +421,7 @@ tasks:
   T-9e6bfce8:
     title: Implement xls first-layer embedded-subfile walk
     story: S-0602557d
-    status: open
+    status: done
     dependencies:
     - T-c2a60f06
     component_refs:
@@ -497,7 +497,7 @@ tasks:
   T-47fea79d:
     title: Implement docx flat-text extraction with unicode fidelity
     story: S-156ec71a
-    status: open
+    status: done
     dependencies: []
     component_refs:
     - ydk:req:extraction/unicode-fidelity
@@ -505,7 +505,7 @@ tasks:
   T-29fbb7cf:
     title: Wire docx first-layer embeddings/media walk via the generalized walk
     story: S-156ec71a
-    status: open
+    status: done
     dependencies: []
     component_refs:
     - ydk:entity:extraction/SubfileItem
@@ -553,7 +553,7 @@ tasks:
   T-c3f1ec05:
     title: Wire pptx first-layer embeddings/media walk via the generalized walk
     story: S-37c18545
-    status: open
+    status: done
     dependencies: []
     component_refs:
     - ydk:entity:extraction/SubfileItem
