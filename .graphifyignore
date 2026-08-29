@@ -1,0 +1,5 @@
+# Vendored NPOI submodule (third_party/npoi): huge legacy .NET Framework
+# 2.0/4.0 scratchpad tree that is not this project's own code. Once the
+# submodule is checked out, a full graphify scan of it never terminates in
+# practice. Keep it out of the corpus entirely.
+third_party/
