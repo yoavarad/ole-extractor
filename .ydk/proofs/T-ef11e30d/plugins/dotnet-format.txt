@@ -1,0 +1,10 @@
+FAILED (54.1s)
+
+=== ExtractorOle\ExtractorOLE\ExtractorOLE.csproj ===
+C:\Users\yoava\Projects\ole-extractor\.ydk\worktrees\T-ef11e30d\ExtractorOle\ExtractorOLE\Old\Doc\DocExtractor.cs(110,14): error WHITESPACE: Fix whitespace formatting. Replace 34 characters with '\r\n\s\s\s\s\s\s\s\s\s\s\s\s\s\s\s\s'. [C:\Users\yoava\Projects\ole-extractor\.ydk\worktrees\T-ef11e30d\ExtractorOle\ExtractorOLE\ExtractorOLE.csproj]
+C:\Users\yoava\Projects\ole-extractor\.ydk\worktrees\T-ef11e30d\ExtractorOle\ExtractorOLE\Old\Doc\DocExtractor.cs(118,64): error WHITESPACE: Fix whitespace formatting. Replace 30 characters with '\r\n\s\s\s\s\s\s\s\s\s\s\s\s'. [C:\Users\yoava\Projects\ole-extractor\.ydk\worktrees\T-ef11e30d\ExtractorOle\ExtractorOLE\ExtractorOLE.csproj]
+C:\Users\yoava\Projects\ole-extractor\.ydk\worktrees\T-ef11e30d\ExtractorOle\ExtractorOLE\Old\Doc\DocExtractor.cs(124,2): error WHITESPACE: Fix whitespace formatting. Replace 4 characters with '\r\n\r\n'. [C:\Users\yoava\Projects\ole-extractor\.ydk\worktrees\T-ef11e30d\ExtractorOle\ExtractorOLE\ExtractorOLE.csproj]
+C:\Users\yoava\Projects\ole-extractor\.ydk\worktrees\T-ef11e30d\ExtractorOle\ExtractorOLE\Old\Doc\DocExtractor.cs(132,65): error WHITESPACE: Fix whitespace formatting. Replace 16 characters with '\s\s\s\s\s\s\s\s\s\s\s\s\s\s\s\s'. [C:\Users\yoava\Projects\ole-extractor\.ydk\worktrees\T-ef11e30d\ExtractorOle\ExtractorOLE\ExtractorOLE.csproj]
+C:\Users\yoava\Projects\ole-extractor\.ydk\worktrees\T-ef11e30d\ExtractorOle\ExtractorOLE\Program.cs(15,80): error WHITESPACE: Fix whitespace formatting. Replace 28 characters with '\r\n\r\n\s\s\s\s\s\s\s\s\s\s\s\s'. [C:\Users\yoava\Projects\ole-extractor\.ydk\worktrees\T-ef11e30d\ExtractorOle\ExtractorOLE\ExtractorOLE.csproj]
+
+=== SampleGenerator\SampleGenerator.csproj ===
