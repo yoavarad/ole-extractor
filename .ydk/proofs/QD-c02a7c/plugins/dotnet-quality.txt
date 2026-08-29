@@ -1,0 +1,4 @@
+PASSED (0.4s)
+
+[dotnet-build] No .sln/.csproj found — skipped (non-.NET project?)
+[dotnet-format] No .sln/.csproj found — skipped (non-.NET project?)
