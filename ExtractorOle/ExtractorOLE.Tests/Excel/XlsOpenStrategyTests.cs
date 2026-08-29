@@ -121,6 +121,88 @@ namespace ExtractorOLE.Tests.Excel
             return data;
         }
 
+        // Builds a multi-sheet workbook, explicitly marks one sheet active (writes a
+        // WindowOneRecord), then post-processes the raw CFB to add a "_VBA_PROJECT_CUR"
+        // storage entry at the root - the standard marker NPOI/Excel use for an embedded
+        // VBA project in a legacy .xls compound file.
+        private static byte[] BuildMacroEnabledMultiSheetXlsFixtureBytes(string[] sheetNames, int activeSheetIndex)
+        {
+            var wb = new HSSFWorkbook();
+            foreach (var name in sheetNames)
+            {
+                wb.CreateSheet(name);
+            }
+            wb.SetActiveSheet(activeSheetIndex);
+
+            byte[] wbBytes;
+            using (var ms = new MemoryStream())
+            {
+                wb.Write(ms);
+                wbBytes = ms.ToArray();
+            }
+
+            var raw = new NPOIFSFileSystem(new MemoryStream(wbBytes));
+            raw.Root.CreateDirectory("_VBA_PROJECT_CUR");
+            using var outStream = new MemoryStream();
+            raw.WriteFileSystem(outStream);
+            raw.Close();
+            return outStream.ToArray();
+        }
+
+        // Builds a multi-sheet workbook with no macro storage, then removes the
+        // WindowOneRecord (the BIFF record that carries the active-sheet index) from the
+        // in-memory record list before serializing - simulating a workbook that never had
+        // an active sheet recorded, per NPOI's own read-side fallback (InternalWorkbook
+        // synthesizes a default WindowOneRecord, distinct from the file, when none is found).
+        private static byte[] BuildNonMacroMultiSheetXlsFixtureBytesWithoutActiveSheetRecord(string[] sheetNames)
+        {
+            var wb = new HSSFWorkbook();
+            foreach (var name in sheetNames)
+            {
+                wb.CreateSheet(name);
+            }
+
+            var internalWorkbook = wb.InternalWorkbook;
+            var windowOneRecord = internalWorkbook.FindFirstRecordBySid(NPOI.HSSF.Record.WindowOneRecord.sid);
+            internalWorkbook.Records.Remove(windowOneRecord);
+
+            using var ms = new MemoryStream();
+            wb.Write(ms);
+            return ms.ToArray();
+        }
+
+        [Fact]
+        public void Open_MacroEnabledMultiSheetXlsFixture_PopulatesExcelFormatMetadata()
+        {
+            var sheetNames = new[] { "Sheet1", "Data", "Summary" };
+            var bytes = BuildMacroEnabledMultiSheetXlsFixtureBytes(sheetNames, activeSheetIndex: 1);
+
+            var result = new XlsOpenStrategy(new ExtractionHelper()).Open(bytes);
+
+            Assert.NotNull(result);
+            var formatMetadata = Assert.IsType<ExcelFormatMetadata>(result!.FormatMetadata);
+            Assert.Equal(3, formatMetadata.SheetCount);
+            Assert.Equal(sheetNames, formatMetadata.SheetNames);
+            Assert.Equal(1, formatMetadata.ActiveSheetIndex);
+            Assert.True(formatMetadata.HasMacros);
+        }
+
+        [Fact]
+        public void Open_NonMacroMultiSheetXlsFixtureWithoutActiveSheetRecord_PopulatesExcelFormatMetadataWithNullActiveSheetAndNoMacros()
+        {
+            var sheetNames = new[] { "Sheet1", "Data", "Summary" };
+            var bytes = BuildNonMacroMultiSheetXlsFixtureBytesWithoutActiveSheetRecord(sheetNames);
+
+            var result = new XlsOpenStrategy(new ExtractionHelper()).Open(bytes);
+
+            Assert.NotNull(result);
+            var formatMetadata = Assert.IsType<ExcelFormatMetadata>(result!.FormatMetadata);
+            Assert.Equal(3, formatMetadata.SheetCount);
+            Assert.Equal(sheetNames, formatMetadata.SheetNames);
+            Assert.Null(formatMetadata.ActiveSheetIndex);
+            Assert.False(formatMetadata.HasMacros);
+        }
+
         [Fact]
         public void Open_KnownXlsFixture_PopulatesFileMetadataFromSummaryInformation()
         {
