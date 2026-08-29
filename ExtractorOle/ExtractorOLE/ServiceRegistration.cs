@@ -49,6 +49,7 @@ namespace ExtractorOLE
             services.AddSingleton<DocxTextExtractor>();
             services.AddSingleton<XlsxTextExtractor>();
             services.AddSingleton<PptxTextExtractor>();
+            services.AddSingleton<XlsTextExtractor>();
 
             services.AddSingleton<IDictionary<OfficeMimeTypeEnum, ITextExtractor>>(sp =>
             {
@@ -57,6 +58,7 @@ namespace ExtractorOLE
                     [OfficeMimeTypeEnum.Word] = sp.GetRequiredService<DocxTextExtractor>(),
                     [OfficeMimeTypeEnum.Excel] = sp.GetRequiredService<XlsxTextExtractor>(),
                     [OfficeMimeTypeEnum.PowerPoint] = sp.GetRequiredService<PptxTextExtractor>(),
+                    [OfficeMimeTypeEnum.ExcelLegacy] = sp.GetRequiredService<XlsTextExtractor>(),
                 };
                 return dict;
             });
