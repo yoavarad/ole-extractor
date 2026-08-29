@@ -1,3 +1,6 @@
+# local secrets, never tracked
+.env
+
 # .NET build output
 bin/
 obj/
