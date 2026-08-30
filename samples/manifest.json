@@ -118,6 +118,105 @@
     {
       "format": "docx",
       "status": "generated",
+      "path": "samples/synthetic/large-body/large-body.docx",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator/Program.cs large-body block (DocxSampleGenerator), body text from SampleGenerator.Fixtures.MultilingualFixtures.ComposeLargeBody(105_000)",
+      "compositionRule": "docs/specs/dataset-curation.md Corpus Composition rule #1 (large-body: a text body exceeding 100,000 words, multilingual/mixed-script body text and metadata)",
+      "expectedDetectedFormat": {
+        "enum": "Docx",
+        "mimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      },
+      "bodyText": {
+        "wordCount": 105000,
+        "wordsPerLine": 400,
+        "lineCount": 263,
+        "deterministic": true,
+        "generatedBy": "SampleGenerator.Fixtures.MultilingualFixtures.ComposeLargeBody(105_000) -- no RNG; stable across regenerations",
+        "algorithm": "word[i] = wordPool[i % 43] for i in [0, 105000). wordPool is, in order, every whitespace-split token of the 6 AllScripts sentences (Hebrew, Arabic, Persian, Russian, Latin, Cjk, in that order) followed by the 4 AllEmoji fixtures (EmojiSimple, EmojiFamilyZwj, EmojiSkinTone, EmojiFlagZwj). Words are grouped into lines of 400 (final line has 200), each line is words joined with a single space, and lines are joined with Environment.NewLine.",
+        "wordPool": ["שלום", "עולם,", "זהו", "טקסט", "לדוגמה", "בעברית.", "مرحبا", "بالعالم،", "هذا", "نص", "عربي", "تجريبي.", "سلام", "دنیا،", "این", "یک", "متن", "نمونه", "فارسی", "است.", "Привет,", "мир!", "Это", "пример", "текста", "на", "русском", "языке.", "Hello,", "world!", "This", "is", "a", "sample", "sentence", "in", "English.", "你好，世界。こんにちは世界。안녕하세요,", "세계.", "😀🎉🚀", "👨‍👩‍👧‍👦", "👍🏽", "🏳️‍🌈"],
+        "notes": "Full 105,000-word text is not pasted verbatim here (impractical size); it is exactly and deterministically reconstructible from wordPool + this algorithm, or simply by calling MultilingualFixtures.ComposeLargeBody(105_000) directly -- the same shared, checked-in method both the generator and any verifying test must use."
+      },
+      "metadata": {
+        "Title": "שלום עולם, זהו טקסט לדוגמה בעברית.",
+        "Author": "مرحبا بالعالم، هذا نص عربي تجريبي.",
+        "Subject": "你好，世界。こんにちは世界。안녕하세요, 세계.",
+        "Comments": "😀🎉🚀 👨‍👩‍👧‍👦 👍🏽 🏳️‍🌈"
+      },
+      "expectedSubfileCount": 0,
+      "expectedSubfiles": [],
+      "detectable": true,
+      "verifiedBy": null,
+      "notes": "No first-layer embeddings in this spec -- the large-body rule exercises body-text/word-count handling, not embedding extraction. Body text is recorded as a deterministic generator spec (see bodyText) rather than a literal string, since the full text is 105,000 words."
+    },
+    {
+      "format": "pptx",
+      "status": "generated",
+      "path": "samples/synthetic/large-body/large-body.pptx",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator/Program.cs large-body block (PptxSampleGenerator), body text from SampleGenerator.Fixtures.MultilingualFixtures.ComposeLargeBody(105_000)",
+      "compositionRule": "docs/specs/dataset-curation.md Corpus Composition rule #1 (large-body: a text body exceeding 100,000 words, multilingual/mixed-script body text and metadata)",
+      "expectedDetectedFormat": {
+        "enum": "Pptx",
+        "mimeType": "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+      },
+      "bodyText": {
+        "wordCount": 105000,
+        "wordsPerLine": 400,
+        "lineCount": 263,
+        "deterministic": true,
+        "generatedBy": "SampleGenerator.Fixtures.MultilingualFixtures.ComposeLargeBody(105_000) -- no RNG; stable across regenerations",
+        "algorithm": "word[i] = wordPool[i % 43] for i in [0, 105000). wordPool is, in order, every whitespace-split token of the 6 AllScripts sentences (Hebrew, Arabic, Persian, Russian, Latin, Cjk, in that order) followed by the 4 AllEmoji fixtures (EmojiSimple, EmojiFamilyZwj, EmojiSkinTone, EmojiFlagZwj). Words are grouped into lines of 400 (final line has 200), each line is words joined with a single space, and lines are joined with Environment.NewLine.",
+        "wordPool": ["שלום", "עולם,", "זהו", "טקסט", "לדוגמה", "בעברית.", "مرحبا", "بالعالم،", "هذا", "نص", "عربي", "تجريبي.", "سلام", "دنیا،", "این", "یک", "متن", "نمونه", "فارسی", "است.", "Привет,", "мир!", "Это", "пример", "текста", "на", "русском", "языке.", "Hello,", "world!", "This", "is", "a", "sample", "sentence", "in", "English.", "你好，世界。こんにちは世界。안녕하세요,", "세계.", "😀🎉🚀", "👨‍👩‍👧‍👦", "👍🏽", "🏳️‍🌈"],
+        "notes": "Full 105,000-word text is not pasted verbatim here (impractical size); it is exactly and deterministically reconstructible from wordPool + this algorithm, or simply by calling MultilingualFixtures.ComposeLargeBody(105_000) directly -- the same shared, checked-in method both the generator and any verifying test must use."
+      },
+      "metadata": {
+        "Title": "שלום עולם, זהו טקסט לדוגמה בעברית.",
+        "Author": "مرحبا بالعالم، هذا نص عربي تجريبي.",
+        "Subject": "你好，世界。こんにちは世界。안녕하세요, 세계.",
+        "Comments": "😀🎉🚀 👨‍👩‍👧‍👦 👍🏽 🏳️‍🌈"
+      },
+      "expectedSubfileCount": 0,
+      "expectedSubfiles": [],
+      "detectable": true,
+      "verifiedBy": null,
+      "notes": "No first-layer embeddings in this spec -- the large-body rule exercises body-text/word-count handling, not embedding extraction. Body text is recorded as a deterministic generator spec (see bodyText) rather than a literal string, since the full text is 105,000 words."
+    },
+    {
+      "format": "xlsx",
+      "status": "generated",
+      "path": "samples/synthetic/large-body/large-body.xlsx",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator/Program.cs large-body block (XlsxSampleGenerator), body text from SampleGenerator.Fixtures.MultilingualFixtures.ComposeLargeBody(105_000)",
+      "compositionRule": "docs/specs/dataset-curation.md Corpus Composition rule #1 (large-body: a text body exceeding 100,000 words, multilingual/mixed-script body text and metadata)",
+      "expectedDetectedFormat": {
+        "enum": "Xlsx",
+        "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      },
+      "bodyText": {
+        "wordCount": 105000,
+        "wordsPerLine": 400,
+        "lineCount": 263,
+        "deterministic": true,
+        "generatedBy": "SampleGenerator.Fixtures.MultilingualFixtures.ComposeLargeBody(105_000) -- no RNG; stable across regenerations",
+        "algorithm": "word[i] = wordPool[i % 43] for i in [0, 105000). wordPool is, in order, every whitespace-split token of the 6 AllScripts sentences (Hebrew, Arabic, Persian, Russian, Latin, Cjk, in that order) followed by the 4 AllEmoji fixtures (EmojiSimple, EmojiFamilyZwj, EmojiSkinTone, EmojiFlagZwj). Words are grouped into lines of 400 (final line has 200), each line is words joined with a single space, and lines are joined with Environment.NewLine.",
+        "wordPool": ["שלום", "עולם,", "זהו", "טקסט", "לדוגמה", "בעברית.", "مرحبا", "بالعالم،", "هذا", "نص", "عربي", "تجريبي.", "سلام", "دنیا،", "این", "یک", "متن", "نمونه", "فارسی", "است.", "Привет,", "мир!", "Это", "пример", "текста", "на", "русском", "языке.", "Hello,", "world!", "This", "is", "a", "sample", "sentence", "in", "English.", "你好，世界。こんにちは世界。안녕하세요,", "세계.", "😀🎉🚀", "👨‍👩‍👧‍👦", "👍🏽", "🏳️‍🌈"],
+        "notes": "Full 105,000-word text is not pasted verbatim here (impractical size); it is exactly and deterministically reconstructible from wordPool + this algorithm, or simply by calling MultilingualFixtures.ComposeLargeBody(105_000) directly -- the same shared, checked-in method both the generator and any verifying test must use."
+      },
+      "metadata": {
+        "Title": "שלום עולם, זהו טקסט לדוגמה בעברית.",
+        "Author": "مرحبا بالعالم، هذا نص عربي تجريبي.",
+        "Subject": "你好，世界。こんにちは世界。안녕하세요, 세계.",
+        "Comments": "😀🎉🚀 👨‍👩‍👧‍👦 👍🏽 🏳️‍🌈"
+      },
+      "expectedSubfileCount": 0,
+      "expectedSubfiles": [],
+      "detectable": true,
+      "verifiedBy": null,
+      "notes": "No first-layer embeddings in this spec -- the large-body rule exercises body-text/word-count handling, not embedding extraction. Body text is recorded as a deterministic generator spec (see bodyText) rather than a literal string, since the full text is 105,000 words."
+    },
+    {
+      "format": "docx",
+      "status": "generated",
       "path": "samples/curated/docx/meeting-minutes-boardroom.docx",
       "provenance": "self-generated",
       "generatedBy": "SampleGenerator.Fixtures.CuratedSampleSpecs.BuildMeetingMinutesBoardroom() via SampleGenerator/Program.cs (DocxSampleGenerator; inner embedding generated via XlsxSampleGenerator.Generate())",
