@@ -14,7 +14,7 @@ namespace ExtractorOLE.Helpers.MimeDetection
     // and inspecting root storage/stream names -- no full document parse.
     // Detection is content-only: request.FileName is never read to decide the
     // result -- it is only used inside the diagnostic rejection log message.
-    public class CfbMimeDetector : ICfbMimeDetector
+    public class CfbMimeDetector : ICfbMimeDetector, IMimeTypeDetector
     {
         private const string WordDocumentEntryName = "WordDocument";
         private const string ExcelWorkbookEntryName = "Workbook";

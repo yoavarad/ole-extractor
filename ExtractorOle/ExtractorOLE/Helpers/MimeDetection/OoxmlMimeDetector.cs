@@ -12,7 +12,7 @@ namespace ExtractorOLE.Helpers.MimeDetection
     // Word/Excel/PowerPoint OOXML packages by declared part-name structure
     // ([Content_Types].xml via Package.PartExists), not a full document parse.
     // Detection is content-only: request.FileName is never read.
-    public class OoxmlMimeDetector : IOoxmlMimeDetector
+    public class OoxmlMimeDetector : IOoxmlMimeDetector, IMimeTypeDetector
     {
         private static readonly Uri WordDocumentPartUri = new("/word/document.xml", UriKind.Relative);
         private static readonly Uri ExcelWorkbookPartUri = new("/xl/workbook.xml", UriKind.Relative);
