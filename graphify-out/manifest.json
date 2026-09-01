@@ -432,88 +432,88 @@
     "semantic_hash": ""
   },
   ".claude/CLAUDE.md": {
-    "mtime": 1788025607.9128835,
-    "seen": 1788026027.357871,
-    "ast_hash": "c232166e6492ba1ed955030b16979b05",
-    "semantic_hash": ""
+    "mtime": 1787399704.2145567,
+    "seen": 1788296089.21689,
+    "ast_hash": "",
+    "semantic_hash": "c232166e6492ba1ed955030b16979b05"
   },
   ".claude/skills/graphify/SKILL.md": {
-    "mtime": 1788025607.9148955,
-    "seen": 1788026027.3578742,
-    "ast_hash": "27332bcad618129dbd265b54d42b6ad7",
-    "semantic_hash": ""
+    "mtime": 1787399704.2061684,
+    "seen": 1788296089.2168927,
+    "ast_hash": "",
+    "semantic_hash": "1656a8a8e4a05bbe69f32cd15de81e87"
   },
   ".claude/skills/graphify/references/add-watch.md": {
-    "mtime": 1788025607.9148955,
-    "seen": 1788026027.3578775,
-    "ast_hash": "58c888b5ec0689a886543dd765c1acc9",
-    "semantic_hash": ""
+    "mtime": 1787322588.3442073,
+    "seen": 1788296089.2168946,
+    "ast_hash": "",
+    "semantic_hash": "d59d027fe449f06aa03905a01184e779"
   },
   ".claude/skills/graphify/references/exports.md": {
-    "mtime": 1788025607.9169092,
-    "seen": 1788026027.3578806,
-    "ast_hash": "ecc0c36852fee4ba6280cdf2b9149039",
-    "semantic_hash": ""
+    "mtime": 1787322588.3459406,
+    "seen": 1788296089.2168965,
+    "ast_hash": "",
+    "semantic_hash": "9da2a2152e60a22f07f05fed5158f287"
   },
   ".claude/skills/graphify/references/extraction-spec.md": {
-    "mtime": 1788025607.9169092,
-    "seen": 1788026027.357884,
-    "ast_hash": "024c6f2a3c146b03c72cc871dc56ed3c",
-    "semantic_hash": ""
+    "mtime": 1787322588.3459406,
+    "seen": 1788296089.2168984,
+    "ast_hash": "",
+    "semantic_hash": "42fef56a01698118f7fd722acdadea34"
   },
   ".claude/skills/graphify/references/github-and-merge.md": {
-    "mtime": 1788025607.9199326,
-    "seen": 1788026027.3578868,
-    "ast_hash": "aa0e7ef186392cad062e60483ca7dbbf",
-    "semantic_hash": ""
+    "mtime": 1787322588.348378,
+    "seen": 1788296089.2169006,
+    "ast_hash": "",
+    "semantic_hash": "cde13df085e4c492aeb7ba298a996d0d"
   },
   ".claude/skills/graphify/references/hooks.md": {
-    "mtime": 1788025607.9199326,
-    "seen": 1788026027.3578901,
-    "ast_hash": "0045c2f12c69bff3a641a8908a1ac057",
-    "semantic_hash": ""
+    "mtime": 1787322588.348378,
+    "seen": 1788296089.2169025,
+    "ast_hash": "",
+    "semantic_hash": "3f545db6ce646650bb9de588f5512a27"
   },
   ".claude/skills/graphify/references/query.md": {
-    "mtime": 1788025607.9199326,
-    "seen": 1788026027.3578923,
-    "ast_hash": "852ef14334d60a75ae666ea103d4c4f0",
-    "semantic_hash": ""
+    "mtime": 1787322588.348378,
+    "seen": 1788296089.2169042,
+    "ast_hash": "",
+    "semantic_hash": "3c46f8ad006874260614ed8657d02307"
   },
   ".claude/skills/graphify/references/transcribe.md": {
-    "mtime": 1788025607.921945,
-    "seen": 1788026027.357895,
-    "ast_hash": "5c6a9af05d12b5797b2fa8b9493dcc37",
-    "semantic_hash": ""
+    "mtime": 1787322588.3506577,
+    "seen": 1788296089.2169063,
+    "ast_hash": "",
+    "semantic_hash": "67b6a5fa6c0974e18f60db9f8932fbd8"
   },
   ".claude/skills/graphify/references/update.md": {
-    "mtime": 1788025607.921945,
-    "seen": 1788026027.3578982,
-    "ast_hash": "07bf4293ea21b4e00a9655dd4e7f0af5",
-    "semantic_hash": ""
+    "mtime": 1787322588.3506577,
+    "seen": 1788296089.2169085,
+    "ast_hash": "",
+    "semantic_hash": "9378bd03d56baaf78bd738ab3848f142"
   },
   ".github/ISSUE_TEMPLATE/epic.md": {
-    "mtime": 1788025607.9239545,
-    "seen": 1788026027.3579006,
-    "ast_hash": "b0f708d030acc1f44b13d858b50c9490",
-    "semantic_hash": ""
+    "mtime": 1787129036.227152,
+    "seen": 1788296089.2169147,
+    "ast_hash": "",
+    "semantic_hash": "b0f708d030acc1f44b13d858b50c9490"
   },
   ".github/ISSUE_TEMPLATE/story.md": {
-    "mtime": 1788025607.9239545,
-    "seen": 1788026027.357904,
-    "ast_hash": "3af0830df2a86353f1a76cd7bebcf6bd",
-    "semantic_hash": ""
+    "mtime": 1787129036.227152,
+    "seen": 1788296089.2169163,
+    "ast_hash": "",
+    "semantic_hash": "3af0830df2a86353f1a76cd7bebcf6bd"
   },
   ".github/ISSUE_TEMPLATE/task.md": {
-    "mtime": 1788025607.9239545,
-    "seen": 1788026027.3579073,
-    "ast_hash": "ea4e3cc673eee93b1080f042d2a1683f",
-    "semantic_hash": ""
+    "mtime": 1787129036.2286117,
+    "seen": 1788296089.216918,
+    "ast_hash": "",
+    "semantic_hash": "ea4e3cc673eee93b1080f042d2a1683f"
   },
   ".github/PULL_REQUEST_TEMPLATE.md": {
-    "mtime": 1788025607.9239545,
-    "seen": 1788026027.3579097,
-    "ast_hash": "a71b5741789f37387be31977bf638282",
-    "semantic_hash": ""
+    "mtime": 1787129036.2296257,
+    "seen": 1788296089.216912,
+    "ast_hash": "",
+    "semantic_hash": "a71b5741789f37387be31977bf638282"
   },
   ".ydk/batches/pass1-epics-stories.yaml": {
     "mtime": 1788025607.927977,
@@ -540,124 +540,124 @@
     "semantic_hash": ""
   },
   ".ydk/components/contract/extraction/detect-mime-type.yaml": {
-    "mtime": 1788025607.9304957,
-    "seen": 1788026027.3579235,
-    "ast_hash": "5802564a0da8b90cb64c9b6beaab85b7",
-    "semantic_hash": ""
+    "mtime": 1787129036.2311692,
+    "seen": 1788296089.216927,
+    "ast_hash": "",
+    "semantic_hash": "5802564a0da8b90cb64c9b6beaab85b7"
   },
   ".ydk/components/contract/extraction/extract.yaml": {
-    "mtime": 1788025607.9304957,
-    "seen": 1788026027.3579266,
-    "ast_hash": "668cb36b5978738221ed51bd0527c09d",
-    "semantic_hash": ""
+    "mtime": 1787129036.2332017,
+    "seen": 1788296089.2169287,
+    "ast_hash": "",
+    "semantic_hash": "668cb36b5978738221ed51bd0527c09d"
   },
   ".ydk/components/entity/extraction/ExcelFormatMetadata.yaml": {
-    "mtime": 1788025607.931398,
-    "seen": 1788026027.3579295,
-    "ast_hash": "6cba574823d72d96f80e49e2fc90c0b9",
-    "semantic_hash": ""
+    "mtime": 1787129036.2347689,
+    "seen": 1788296089.2169304,
+    "ast_hash": "",
+    "semantic_hash": "6cba574823d72d96f80e49e2fc90c0b9"
   },
   ".ydk/components/entity/extraction/ExtractionRequest.yaml": {
-    "mtime": 1788025607.931398,
-    "seen": 1788026027.357932,
-    "ast_hash": "9577d7545237ebc2b71c633c8f8085b9",
-    "semantic_hash": ""
+    "mtime": 1787129036.2347689,
+    "seen": 1788296089.216932,
+    "ast_hash": "",
+    "semantic_hash": "9577d7545237ebc2b71c633c8f8085b9"
   },
   ".ydk/components/entity/extraction/ExtractionResult.yaml": {
-    "mtime": 1788025607.9323502,
-    "seen": 1788026027.3579352,
-    "ast_hash": "54358677737a8deb35400635036de52d",
-    "semantic_hash": ""
+    "mtime": 1787129036.2363682,
+    "seen": 1788296089.2169337,
+    "ast_hash": "",
+    "semantic_hash": "54358677737a8deb35400635036de52d"
   },
   ".ydk/components/entity/extraction/FileMetadata.yaml": {
-    "mtime": 1788025607.9323502,
-    "seen": 1788026027.3579383,
-    "ast_hash": "a008e11a125fad8d9fa46293dd4d93b6",
-    "semantic_hash": ""
+    "mtime": 1787129036.2363682,
+    "seen": 1788296089.2169356,
+    "ast_hash": "",
+    "semantic_hash": "a008e11a125fad8d9fa46293dd4d93b6"
   },
   ".ydk/components/entity/extraction/MimeDetectionRequest.yaml": {
-    "mtime": 1788025607.9332874,
-    "seen": 1788026027.357941,
-    "ast_hash": "07e6e3d40dd3040e21cc9ad828201e27",
-    "semantic_hash": ""
+    "mtime": 1787129036.2363682,
+    "seen": 1788296089.2169375,
+    "ast_hash": "",
+    "semantic_hash": "07e6e3d40dd3040e21cc9ad828201e27"
   },
   ".ydk/components/entity/extraction/MimeDetectionResult.yaml": {
-    "mtime": 1788025607.9332874,
-    "seen": 1788026027.3579438,
-    "ast_hash": "2aa3f55ada2a00bbefaf4fec1cf6f92d",
-    "semantic_hash": ""
+    "mtime": 1787129036.238398,
+    "seen": 1788296089.2169392,
+    "ast_hash": "",
+    "semantic_hash": "2aa3f55ada2a00bbefaf4fec1cf6f92d"
   },
   ".ydk/components/entity/extraction/PowerPointFormatMetadata.yaml": {
-    "mtime": 1788025607.9332874,
-    "seen": 1788026027.3579466,
-    "ast_hash": "8753e6045846b96a94891d7c373f7ddd",
-    "semantic_hash": ""
+    "mtime": 1787129036.2394404,
+    "seen": 1788296089.2169409,
+    "ast_hash": "",
+    "semantic_hash": "8753e6045846b96a94891d7c373f7ddd"
   },
   ".ydk/components/entity/extraction/SubfileItem.yaml": {
-    "mtime": 1788025607.9332874,
-    "seen": 1788026027.3579497,
-    "ast_hash": "0d86bf758c18af7fb5286fa0b815c3d4",
-    "semantic_hash": ""
+    "mtime": 1787129036.2394404,
+    "seen": 1788296089.2169423,
+    "ast_hash": "",
+    "semantic_hash": "0d86bf758c18af7fb5286fa0b815c3d4"
   },
   ".ydk/components/entity/extraction/WordFormatMetadata.yaml": {
-    "mtime": 1788025607.9343011,
-    "seen": 1788026027.3579533,
-    "ast_hash": "06103fcecdbce55ef5be6c0c45177bcb",
-    "semantic_hash": ""
+    "mtime": 1787129036.2394404,
+    "seen": 1788296089.2169442,
+    "ast_hash": "",
+    "semantic_hash": "06103fcecdbce55ef5be6c0c45177bcb"
   },
   ".ydk/components/error/extraction/corrupt-file.yaml": {
-    "mtime": 1788025607.9343011,
-    "seen": 1788026027.357956,
-    "ast_hash": "d376ffeeda8f5cef323cd8f4712d9c7a",
-    "semantic_hash": ""
+    "mtime": 1787129036.241461,
+    "seen": 1788296089.216946,
+    "ast_hash": "",
+    "semantic_hash": "d376ffeeda8f5cef323cd8f4712d9c7a"
   },
   ".ydk/components/error/extraction/file-too-large.yaml": {
-    "mtime": 1788025607.9343011,
-    "seen": 1788026027.3579588,
-    "ast_hash": "db1021c878faa6cc2e360dc564d93de2",
-    "semantic_hash": ""
+    "mtime": 1787129036.241461,
+    "seen": 1788296089.2169476,
+    "ast_hash": "",
+    "semantic_hash": "db1021c878faa6cc2e360dc564d93de2"
   },
   ".ydk/components/error/extraction/oversized-nested-content.yaml": {
-    "mtime": 1788025607.9343011,
-    "seen": 1788026027.3579705,
-    "ast_hash": "b25f167fcd5baddbf46ac2cd9ee4d470",
-    "semantic_hash": ""
+    "mtime": 1787129036.2434742,
+    "seen": 1788296089.216949,
+    "ast_hash": "",
+    "semantic_hash": "b25f167fcd5baddbf46ac2cd9ee4d470"
   },
   ".ydk/components/error/extraction/truncated-container.yaml": {
-    "mtime": 1788025607.9360554,
-    "seen": 1788026027.3579736,
-    "ast_hash": "30ff6e8d978f8d0c68072d01b2438b21",
-    "semantic_hash": ""
+    "mtime": 1787129036.2434742,
+    "seen": 1788296089.216951,
+    "ast_hash": "",
+    "semantic_hash": "30ff6e8d978f8d0c68072d01b2438b21"
   },
   ".ydk/components/error/extraction/unsupported-format.yaml": {
-    "mtime": 1788025607.9360554,
-    "seen": 1788026027.3579774,
-    "ast_hash": "d30b165f3468492778fd326ffcfb323d",
-    "semantic_hash": ""
+    "mtime": 1787129036.2454882,
+    "seen": 1788296089.2169528,
+    "ast_hash": "",
+    "semantic_hash": "d30b165f3468492778fd326ffcfb323d"
   },
   ".ydk/components/nfr/extraction/extraction-latency.yaml": {
-    "mtime": 1788025607.9360554,
-    "seen": 1788026027.3579812,
-    "ast_hash": "1805e05be1dfcc17f526ee05b7a5bef1",
-    "semantic_hash": ""
+    "mtime": 1787129036.2469995,
+    "seen": 1788296089.2169547,
+    "ast_hash": "",
+    "semantic_hash": "1805e05be1dfcc17f526ee05b7a5bef1"
   },
   ".ydk/components/nfr/extraction/max-file-size.yaml": {
-    "mtime": 1788025607.9360554,
-    "seen": 1788026027.3579855,
-    "ast_hash": "24b17eea9db2decf610652fb16bde6cd",
-    "semantic_hash": ""
+    "mtime": 1787129036.2469995,
+    "seen": 1788296089.216956,
+    "ast_hash": "",
+    "semantic_hash": "24b17eea9db2decf610652fb16bde6cd"
   },
   ".ydk/components/nfr/extraction/memory-ceiling.yaml": {
-    "mtime": 1788025607.9380713,
-    "seen": 1788026027.35799,
-    "ast_hash": "735ba47bb4e29763c3e7d4ff3b732783",
-    "semantic_hash": ""
+    "mtime": 1787129036.2469995,
+    "seen": 1788296089.216963,
+    "ast_hash": "",
+    "semantic_hash": "735ba47bb4e29763c3e7d4ff3b732783"
   },
   ".ydk/components/nfr/extraction/nesting-depth-guard.yaml": {
-    "mtime": 1788025607.9380713,
-    "seen": 1788026027.357994,
-    "ast_hash": "084e40699df752985a6debbf17923a44",
-    "semantic_hash": ""
+    "mtime": 1787129036.248557,
+    "seen": 1788296089.216965,
+    "ast_hash": "",
+    "semantic_hash": "084e40699df752985a6debbf17923a44"
   },
   ".ydk/components/req/extraction/content-only-mime-detection.yaml": {
     "mtime": 1788025607.9391532,
@@ -690,10 +690,10 @@
     "semantic_hash": ""
   },
   ".ydk/config.yaml": {
-    "mtime": 1788025607.9411645,
-    "seen": 1788026027.358016,
-    "ast_hash": "44cf94b3a0d0a3223a66a22400b0b8cb",
-    "semantic_hash": ""
+    "mtime": 1787397509.3778386,
+    "seen": 1788296089.2169192,
+    "ast_hash": "",
+    "semantic_hash": "44cf94b3a0d0a3223a66a22400b0b8cb"
   },
   ".ydk/epics/E-3ffdc4d5.md": {
     "mtime": 1788025607.9411645,
@@ -762,10 +762,10 @@
     "semantic_hash": ""
   },
   ".ydk/manifest.yaml": {
-    "mtime": 1788025607.9437747,
-    "seen": 1788026027.3580594,
-    "ast_hash": "d312c6470f4b3d16a26d3c9d703301a1",
-    "semantic_hash": ""
+    "mtime": 1788119374.6054513,
+    "seen": 1788296089.2169237,
+    "ast_hash": "",
+    "semantic_hash": "afbfa22e987973a1b5d2f0c5e861f5c1"
   },
   ".ydk/proofs/T-6ac3f215/plugins/ai-code-review.txt": {
     "mtime": 1788025608.0367308,
@@ -1740,10 +1740,10 @@
     "semantic_hash": ""
   },
   ".ydk/todos.yaml": {
-    "mtime": 1788025608.1201262,
-    "seen": 1788026027.3598027,
-    "ast_hash": "fdd5fcf14e81e1c18d72e9edb049fc76",
-    "semantic_hash": ""
+    "mtime": 1787566687.7914155,
+    "seen": 1788296089.2169251,
+    "ast_hash": "",
+    "semantic_hash": "fdd5fcf14e81e1c18d72e9edb049fc76"
   },
   ".ydk/verifications/dotnet-build/manifest.yaml": {
     "mtime": 1788025608.1212199,
@@ -1764,16 +1764,16 @@
     "semantic_hash": ""
   },
   "CLAUDE.md": {
-    "mtime": 1788025608.1232307,
-    "seen": 1788026027.3598168,
-    "ast_hash": "e8de4af46eb3e73b76d1b2bbf84de9ea",
-    "semantic_hash": ""
+    "mtime": 1787399704.2174723,
+    "seen": 1788296089.2168677,
+    "ast_hash": "",
+    "semantic_hash": "e8de4af46eb3e73b76d1b2bbf84de9ea"
   },
   "activity.md": {
-    "mtime": 1788025608.1561744,
-    "seen": 1788026027.3598218,
-    "ast_hash": "4c067dca4efbdf3b36967b74c6ccde8a",
-    "semantic_hash": ""
+    "mtime": 1787421435.5706532,
+    "seen": 1788296089.216885,
+    "ast_hash": "",
+    "semantic_hash": "4c067dca4efbdf3b36967b74c6ccde8a"
   },
   "docs/adrs/001-extraction-library-stack.md": {
     "mtime": 1788025608.1561744,
@@ -4554,9 +4554,9 @@
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1788025608.1480725,
-    "seen": 1788026027.359819,
-    "ast_hash": "7fc846ec6ff445c50620c3568ea6474d",
-    "semantic_hash": ""
+    "mtime": 1788024902.0313184,
+    "seen": 1788296089.21688,
+    "ast_hash": "",
+    "semantic_hash": "7fc846ec6ff445c50620c3568ea6474d"
   }
 }
