@@ -1,0 +1,28 @@
+PASSED (47.9s)
+
+[dotnet-build] === C:\Users\yoava\Projects\ole-extractor\ExtractorOle\ExtractorOLE\ExtractorOLE.csproj ===
+Determining projects to restore...
+  All projects are up-to-date for restore.
+  NPOI.Core -> C:\Users\yoava\Projects\ole-extractor\third_party\npoi\solution\Debug\net8.0\NPOI.Core.dll
+  ExtractorOLE -> C:\Users\yoava\Projects\ole-extractor\ExtractorOle\ExtractorOLE\bin\Debug\net8.0\ExtractorOLE.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:02.69
+
+=== C:\Users\yoava\Projects\ole-extractor\SampleGenerator\SampleGenerator.csproj ===
+Determining projects to restore...
+  All projects are up-to-date for restore.
+  SampleGenerator -> C:\Users\yoava\Projects\ole-extractor\SampleGenerator\bin\Debug\net8.0\SampleGenerator.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.92
+[dotnet-format] === C:\Users\yoava\Projects\ole-extractor\ExtractorOle\ExtractorOLE\ExtractorOLE.csproj ===
+
+
+=== C:\Users\yoava\Projects\ole-extractor\SampleGenerator\SampleGenerator.csproj ===
