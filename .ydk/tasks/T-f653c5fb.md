@@ -2,7 +2,7 @@
 id: T-f653c5fb
 title: Implement xlsx flat-text extraction with unicode fidelity
 story: S-8d6146f0
-status: open
+status: done
 assignee: null
 labels: []
 dependencies:
@@ -19,13 +19,13 @@ test_strategy: 'Corpus-sample-backed: unit test against a hand-crafted multiling
 acceptance_criteria:
 - text: ExtractedText is empty string (never null) for an xlsx with no textual cell
     content
-  done: false
+  done: true
 - text: ExtractedText for a multilingual xlsx fixture matches the expected Unicode
     string exactly
-  done: false
+  done: true
 - text: No Unicode normalization form is applied that changes the source character
     sequence
-  done: false
+  done: true
 milestone: null
 complexity: null
 gates: []
@@ -39,3 +39,12 @@ Extract flattened plain-text cell content from xlsx via DocumentFormat.OpenXml, 
 
 
 ## Activity Log
+
+### 2026-08-31 - Status-sync correction
+
+Implementation (XlsxTextExtractor rewritten to only extract text-typed cells,
+merged via PR #55) was already complete and merged; acceptance criteria and status
+were left unset by the executing agent's `ydk task done` run. Verified against
+current main: SharedString/InlineString-only extraction present in
+XlsxTextExtractor.cs, full suite 129/129 passing. Flipping status/criteria to
+reflect actual state, no code changes made.
