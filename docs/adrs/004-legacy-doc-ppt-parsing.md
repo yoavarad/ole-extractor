@@ -90,3 +90,24 @@ immediately regardless of this ADR's outcome.
   testing, the documented fallback order is: (1) port NPOI scratchpad HWPF for .doc specifically
   using IllidanS4/npoi's retarget as a recipe, (2) LibreOffice headless subprocess conversion for
   whichever format still fails.
+
+## Note (2026-09-02)
+
+T-b70522d2 researched extending b2xtranslator to .xls, to answer whether NPOI can be fully
+retired from this project. Finding: b2x's `Xls` module is structurally comparable to `Doc`/`Ppt`
+(same retarget-to-`net8.0` need, full BIFF8 record/formula support) but has weaker adoption
+evidence and, critically, its `SpreadsheetMLMapping` has no `OleObjectMapping.cs` equivalent --
+unlike `Doc`, it does not appear to preserve embedded OLE objects into `xl/embeddings` on
+conversion. Combined with the repo's own POIFS-based .xls subfile discovery being Excel-specific
+(not truly format-agnostic despite this ADR's earlier framing), the decision is:
+**NPOI is not fully retired** -- POIFS-equivalent subfile/embedded-object discovery must stay for
+.xls regardless of which library handles .xls body text, at least until either b2x's `Xls`
+embedded-object handling is proven otherwise or replaced with OpenMcdf-based discovery.
+
+Whether .xls body-text specifically moves to b2xtranslator (vs. staying on NPOI HSSF) remains
+undecided pending an empirical fidelity spike, which is blocked on: sourcing real .xls fixtures
+(none exist in the repo) and forking b2xtranslator to an org-controlled repo (attempted, blocked
+by this session's tool-permission classifier -- needs explicit user approval to
+`gh repo fork EvolutionJobs/b2xtranslator`).
+
+Full findings: `docs/research/legacy-xls-parsing.md`. Tracking task: T-b70522d2.
