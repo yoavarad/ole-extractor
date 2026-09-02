@@ -93,21 +93,30 @@ immediately regardless of this ADR's outcome.
 
 ## Note (2026-09-02)
 
-T-b70522d2 researched extending b2xtranslator to .xls, to answer whether NPOI can be fully
-retired from this project. Finding: b2x's `Xls` module is structurally comparable to `Doc`/`Ppt`
-(same retarget-to-`net8.0` need, full BIFF8 record/formula support) but has weaker adoption
-evidence and, critically, its `SpreadsheetMLMapping` has no `OleObjectMapping.cs` equivalent --
-unlike `Doc`, it does not appear to preserve embedded OLE objects into `xl/embeddings` on
-conversion. Combined with the repo's own POIFS-based .xls subfile discovery being Excel-specific
-(not truly format-agnostic despite this ADR's earlier framing), the decision is:
-**NPOI is not fully retired** -- POIFS-equivalent subfile/embedded-object discovery must stay for
-.xls regardless of which library handles .xls body text, at least until either b2x's `Xls`
-embedded-object handling is proven otherwise or replaced with OpenMcdf-based discovery.
+T-b70522d2 researched extending b2xtranslator to .xls, then ran an empirical spike, to answer
+whether NPOI can be fully retired from this project.
 
-Whether .xls body-text specifically moves to b2xtranslator (vs. staying on NPOI HSSF) remains
-undecided pending an empirical fidelity spike, which is blocked on: sourcing real .xls fixtures
-(none exist in the repo) and forking b2xtranslator to an org-controlled repo (attempted, blocked
-by this session's tool-permission classifier -- needs explicit user approval to
-`gh repo fork EvolutionJobs/b2xtranslator`).
+**Decision: .xls stays on NPOI HSSF. Full NPOI retirement is not adopted.**
 
-Full findings: `docs/research/legacy-xls-parsing.md`. Tracking task: T-b70522d2.
+Reasoning: b2xtranslator's `Xls` module is mechanically viable for sheet/cell-text conversion
+(real fixtures converted cleanly, one real bug found and fixed in the org fork at
+github.com/yoavarad/b2xtranslator, net8 retarget was low-risk as expected) -- but it writes NO
+document metadata (`docProps`) at all for Xls output, so HPSF-based metadata reading against the
+original .xls (currently via NPOI) would still be required regardless of which library handles
+body text. Additionally, per the earlier desk research, b2x's `Xls` mapping has no embedded-object
+preservation code path (no `OleObjectMapping.cs` equivalent, unconfirmed by direct empirical test
+since neither available fixture contained embeds), so POIFS-based subfile discovery on the raw
+.xls would also still be required. Since both of NPOI's non-body-text roles (HPSF metadata, POIFS
+subfile discovery) must stay for .xls either way, switching .xls body-text specifically to
+b2xtranslator would add a second legacy-format dependency (with its own now-demonstrated real bugs
+to patch) without letting NPOI be dropped -- no net simplification. NPOI (main tree: HSSF + HPSF +
+POIFS) remains the answer for .xls, unchanged from ADR-004's original scope and from ADR-001.
+b2xtranslator's role stays exactly as ADR-004 already decided: .doc and .ppt only.
+
+Full findings: `docs/research/legacy-xls-parsing.md` (now includes empirical spike results).
+Tracking task: T-b70522d2.
+
+If someone later wants to revisit full NPOI retirement, the concrete remaining path is: replace
+NPOI's HPSF/POIFS roles for .xls with OpenMcdf-based equivalents (OpenMcdf is already a project
+dependency, format-agnostic CFB introspection per ADR-001) -- that is a distinct, not-yet-scoped
+engineering effort, independent of the body-text library question this task answered.

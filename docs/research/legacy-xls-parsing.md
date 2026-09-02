@@ -4,8 +4,9 @@ Follow-up to `docs/research/legacy-doc-ppt-parsing.md` and ADR-004, which moved 
 body-text parsing off NPOI onto b2xtranslator but left .xls on NPOI's `HSSF` (the one legacy
 format NPOI's `main/` tree handles cleanly). This spike asks whether b2xtranslator's `Xls`
 module can do the same job for .xls that `Doc`/`Ppt` already do -- and, if so, whether NPOI can
-be retired from this project entirely. This is a desk-research pass only; no code was retargeted
-or run (see "Open Questions / Next Steps").
+be retired from this project entirely. The first pass was desk research only (no code retargeted
+or run); a follow-up empirical spike (fork + net8.0 retarget + real fixtures) was then run and is
+recorded in "Empirical spike results" below, which supersedes the desk-research-only framing.
 
 ## Module overview
 
@@ -120,17 +121,68 @@ as a possible replacement for NPOI's POIFS specifically, for embedded-object dis
 POIFS-equivalent functionality needs to stay regardless of what happens to .xls body text (see
 "Critical gap" above). Not evaluated in depth in this pass -- flagged for follow-up.
 
+## Empirical spike results (2026-09-02)
+
+- b2xtranslator was forked to https://github.com/yoavarad/b2xtranslator (org-controlled, per
+  this task's requirement).
+- Two real, verified public-domain .xls fixtures were sourced from the govdocs1 corpus
+  (digitalcorpora.org): `000383.xls` (415744 bytes, 2 sheets "Cover"/"Deposits", Author "MOLP",
+  LastSavedBy "Carolyn Donlin", created 1999) and `000399.xls` (223744 bytes, 1 sheet "Sheet1",
+  Author "trenise.chin", LastSavedBy "sangeeta.saraf", Company "DOT/NHTSA", created 2006/modified
+  2007) -- both confirmed genuine via `olefile` metadata reads (distinct real author/editor names,
+  non-round timestamps, real government agency name), not synthetic/templated files.
+- The `Xls` module (`Xls/b2xtranslator.xls.csproj` + its `Common/` dependency) was retargeted from
+  `netcoreapp2.0` to `net8.0` and built clean on first try (0 errors) -- confirms the same
+  low-risk retarget already found for `Doc`/`Ppt` in ADR-004 extends to `Xls`.
+- A REAL BUG was found and fixed in the fork (commit `d0f013a` on branch `net8-xls-retarget`):
+  `Common/StructuredStorage/Common/InternalBitConverter.cs`'s `ToString()` located the NUL
+  terminator in decoded OLE directory-entry names via the culture-aware `string.IndexOf("\0")`
+  overload, which under .NET Core/.NET 8's ICU globalization treats NUL as an "ignorable"
+  character and matches at index 0 for any input -- silently truncating every stream/storage name
+  (e.g. "Workbook") to empty string, breaking all stream lookups (`ExtractorException: Workbook
+  stream not found`). Fixed by switching to the ordinal `IndexOf('\0')` char overload. This is
+  exactly the "any bug we hit is ours to patch, fork makes it easy to track" risk ADR-004 already
+  accepted, now concretely realized.
+- A second .NET-migration issue was found and worked around at the consumer/harness level (not
+  inside the library): `Encoding.GetEncoding(1252)` throws `NotSupportedException` on .NET Core
+  without `CodePagesEncodingProvider` registered; fixed via
+  `Encoding.RegisterProvider(CodePagesEncodingProvider.Instance)` + the
+  `System.Text.Encoding.CodePages` package in the consuming harness.
+- A standalone console harness (`spike-xls/XlsConvertSpike/`, modeled on b2xtranslator's own
+  `Shell/xls2x/Program.cs` pattern) converted both fixtures to .xlsx successfully (`000383.xlsx`
+  91132 bytes, `000399.xlsx` 105036 bytes).
+- **Fidelity results, per fixture:**
+  - Sheets: exact match both files (Cover/Deposits for 000383; Sheet1 for 000399).
+  - Cell text/data: real, sane data came through (mining/geology terms and 325 data rows in
+    000383's Deposits sheet; names/phone numbers and 748 rows in 000399's Sheet1) -- not empty or
+    garbled. Minor cosmetic issue: some formatting-only blank cells serialize as self-closing
+    `<v />` with no value (unusual OOXML but likely harmless, renders blank/0 in Excel).
+  - **Metadata: BROKEN.** Neither output .xlsx contains a `docProps/` folder at all -- no
+    `core.xml`, no `app.xml`. Title/Creator/Created/Modified/LastModifiedBy are entirely absent,
+    not just incorrect. b2xtranslator's `Xls` conversion path has no code writing `docProps` for
+    Xls output. This means the desk-research finding that "HPSF maps cleanly onto OOXML core/app
+    properties" is a THEORETICAL mapping only -- b2x does not implement it for `Xls`, so metadata
+    would have to be sourced another way (see decision in ADR-004).
+  - Embeddings: neither source .xls fixture contained embedded OLE objects (confirmed via OLE
+    stream listing -- only standard bookkeeping streams: Workbook/CompObj/SummaryInformation/
+    DocumentSummaryInformation, no embedding storages), so this spike could not empirically test
+    embedded-object preservation through conversion. The desk-research conclusion (b2x's `Xls`
+    `SpreadsheetMLMapping` has no `OleObjectMapping.cs` equivalent, so embeds likely don't survive)
+    remains unverified by direct test -- flag this as a residual gap, not resolved.
+
 ## Open Questions / Next Steps
 
-1. Source or synthesize real-world-representative .xls fixtures.
-2. Get explicit approval and execute the b2xtranslator fork (blocked this pass by the
-   tool-permission classifier).
-3. Retarget `Xls/b2xtranslator.xls.csproj` to `net8.0` and run the empirical fidelity spike
-   (b2x-converted .xlsx vs. current HSSF extraction) before any decision to swap .xls body text.
-4. Evaluate OpenMcdf (already a project dependency per ADR-001, MPL-2.0, format-agnostic CFB
-   introspection) as a possible NPOI-POIFS replacement for .xls embedded-object discovery
-   specifically, as a path to still fully retire NPOI-the-library even though POIFS-equivalent
-   functionality must stay.
+Resolved by the empirical spike above: fork done (github.com/yoavarad/b2xtranslator); net8
+retarget done (clean build); fidelity spike done for sheets/cell text/metadata (sheets and text
+pass, metadata fails outright -- no docProps written).
+
+Still open:
+
+1. Source or test a fixture that actually contains embedded OLE objects, to directly verify the
+   OLE-object-preservation gap (unconfirmed either way by this spike -- neither fixture had
+   embeds).
+2. Broader cost/benefit: is switching .xls body text to b2xtranslator worth it, given metadata
+   still needs a separate source (HPSF via NPOI) regardless? See decision in ADR-004.
 
 ## Sources
 
