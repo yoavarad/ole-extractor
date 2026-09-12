@@ -287,7 +287,91 @@
       ],
       "detectable": true,
       "verifiedBy": null,
-      "notes": "Author/LastModifiedBy/Created/Modified/Revision are scripted-but-realistic, NOT genuine multi-user provenance. See follow-up task under S-da936361 for true human-provenance samples."
+      "notes": "Author/LastModifiedBy/Created/Modified/Revision are scripted-but-realistic, NOT genuine multi-user provenance. Genuine multi-user-provenance alternatives for this format now exist at samples/curated/docx/national-park-service-forest-vegetation-monitoring-protocol-2008.docx and samples/curated/docx/blm-interagency-hotshot-crew-peer-review-standards.docx (task T-270c32fe)."
+    },
+    {
+      "format": "docx",
+      "status": "curated",
+      "path": "samples/curated/docx/national-park-service-forest-vegetation-monitoring-protocol-2008.docx",
+      "provenance": "third-party",
+      "generatedBy": "Downloaded verbatim (unmodified) from the govdocs1 corpus hosted by digitalcorpora.org -- a forensics-research corpus of ~1 million real files harvested from the U.S. .gov TLD circa 2009-2010. Retrieved the zip entry '448/448024.docx' from the corpus's S3-hosted archive https://digitalcorpora.s3.amazonaws.com/corpora/files/govdocs1/by_type/docx.zip via a full download of the archive (~29MB) followed by direct zip-entry extraction. File sha256: 856dd03f69609179f0906ff8c1ae3dadb3fa7c0f3f539b3fd2fdb6866fcf846c.",
+      "compositionRule": "docs/specs/dataset-curation.md Corpus Composition curated-samples bullet (2 curated real-world-style samples per format, self-authored or checked-license) -- satisfies the 'at least one with a real (not scripted) authorship/revision-history property chain from having been edited by multiple real users across multiple real save operations' half of that bullet GENUINELY (not the scripted-but-realistic relaxation used for invoice-acme-corp.docx). See notes.",
+      "expectedDetectedFormat": {
+        "enum": "Docx",
+        "mimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      },
+      "bodyText": {
+        "note": "This is a real, unmodified third-party document (a 102-page National Park Service natural resource report), not an authored fixture -- a literal bodyTextLines array is deliberately NOT asserted here given its size (~25,000 words / 933KB of word/document.xml). The substrings below are confirmed present verbatim via direct extraction of word/document.xml <w:t> runs, as a spot-check.",
+        "titleFromCoreProperties": "National Park Service",
+        "confirmedSubstrings": [
+          "Long-Term Forest Vegetation Monitoring Protocol",
+          "National Capital Region Network",
+          "Prince William Forest Park",
+          "Thomas Paradis, NPS.",
+          "U.S. Department of the Interior"
+        ]
+      },
+      "metadata": {
+        "Author": "Geoff Sanders",
+        "LastModifiedBy": "John Paul Schmit",
+        "Created": "2008-06-05T18:24:00.0000000Z",
+        "Modified": "2008-12-11T16:19:00.0000000Z",
+        "RevisionNumber": "820",
+        "LastPrinted": "2008-12-11T16:19:00.0000000Z",
+        "EditingDurationMinutes": 9417
+      },
+      "expectedSubfileCount": 11,
+      "expectedSubfiles": [
+        { "fileName": "image1.png", "contentType": "image/png", "sizeInBytes": 41170, "packagePath": "/word/media/image1.png" },
+        { "fileName": "image2.jpeg", "contentType": "image/jpeg", "sizeInBytes": 1812417, "packagePath": "/word/media/image2.jpeg" },
+        { "fileName": "image3.emf", "contentType": "image/x-emf", "sizeInBytes": 31948, "packagePath": "/word/media/image3.emf" },
+        { "fileName": "image4.wmf", "contentType": "image/x-wmf", "sizeInBytes": 336, "packagePath": "/word/media/image4.wmf" },
+        { "fileName": "image5.png", "contentType": "image/png", "sizeInBytes": 48562, "packagePath": "/word/media/image5.png" },
+        { "fileName": "image6.png", "contentType": "image/png", "sizeInBytes": 59528, "packagePath": "/word/media/image6.png" },
+        { "fileName": "image7.wmf", "contentType": "image/x-wmf", "sizeInBytes": 64892, "packagePath": "/word/media/image7.wmf" },
+        { "fileName": "image8.emf", "contentType": "image/x-emf", "sizeInBytes": 184888, "packagePath": "/word/media/image8.emf" },
+        { "fileName": "image9.wmf", "contentType": "image/x-wmf", "sizeInBytes": 60290, "packagePath": "/word/media/image9.wmf" },
+        { "fileName": "oleObject1.bin", "contentType": "application/octet-stream", "sizeInBytes": 44544, "packagePath": "/word/embeddings/oleObject1.bin" },
+        { "fileName": "oleObject2.bin", "contentType": "application/octet-stream", "sizeInBytes": 3072, "packagePath": "/word/embeddings/oleObject2.bin" }
+      ],
+      "detectable": false,
+      "verifiedBy": null,
+      "notes": "GENUINE (not scripted) multi-user, multi-save revision-history provenance, verified directly against the file's OOXML docProps/core.xml and docProps/app.xml on 2026-09-12: Author='Geoff Sanders' != LastModifiedBy='John Paul Schmit', RevisionNumber=820 (>>1, a very high real save count), TotalTime=9417 minutes (~157 hours) of real cumulative editing spread across a 6-month span (Created 2008-06-05 to Modified/LastPrinted 2008-12-11) -- these are the exact, unrounded values stored in the file, not idealized. app.xml Company property is 'National Park Service' and the document body itself is a real 102-page National Capital Region Network Long-Term Forest Vegetation Monitoring Protocol (Natural Resource Report NPS/NCR/NCRN/NRR-2008), co-authored by John Paul Schmit, Geoff Sanders, Mark Lehman, and Thomas Paradis of the NPS Center for Urban Ecology, confirming genuine U.S. Department of the Interior work product. License basis: work of the United States federal government, public domain under 17 U.S.C. Sec. 105; separately confirmed as within govdocs1's stated .gov-TLD harvest scope (https://digitalcorpora.org/corpora/file-corpora/files/). Candidate selection: scanned all 163 real .docx entries in govdocs1's by_type/docx.zip; 88 had a non-empty Author distinct from LastModifiedBy with RevisionNumber>1; this file was selected as the strongest genuine multi-save signal found (RevisionNumber=820, the highest in the qualifying set) with a substantial, clearly-real, multi-author government work product. expectedSubfiles above lists the 11 real first-layer media/embedded parts exactly as they exist inside the package (original OOXML part filenames, real uncompressed sizes, real package paths verified directly from the zip) -- detectable=false because the extractor's exact first-layer enumeration order and renamed-fileName convention (e.g. 'embedded_object_N') used by ExtractionHelper.ExtractFirstLayerEmbedded has NOT been run/verified against this specific third-party file, so asserting a matching expectedSubfiles fileName/order here would risk poisoning ground-truth tests; a future task can wire and verify this."
+    },
+    {
+      "format": "docx",
+      "status": "curated",
+      "path": "samples/curated/docx/blm-interagency-hotshot-crew-peer-review-standards.docx",
+      "provenance": "third-party",
+      "generatedBy": "Downloaded verbatim (unmodified) from the govdocs1 corpus hosted by digitalcorpora.org -- a forensics-research corpus of ~1 million real files harvested from the U.S. .gov TLD circa 2009-2010. Retrieved the zip entry '635/635707.docx' from the corpus's S3-hosted archive https://digitalcorpora.s3.amazonaws.com/corpora/files/govdocs1/by_type/docx.zip via a full download of the archive (~29MB) followed by direct zip-entry extraction. File sha256: 2443be0274b29cc00ceba2c36193402546dc1b5fb878b4b452d40494ddfd69af.",
+      "compositionRule": "docs/specs/dataset-curation.md Corpus Composition curated-samples bullet (2 curated real-world-style samples per format, self-authored or checked-license) -- satisfies the 'at least one with a real (not scripted) authorship/revision-history property chain from having been edited by multiple real users across multiple real save operations' half of that bullet GENUINELY (not the scripted-but-realistic relaxation used for invoice-acme-corp.docx); this is the second genuine docx sample, distinct from national-park-service-forest-vegetation-monitoring-protocol-2008.docx. See notes.",
+      "expectedDetectedFormat": {
+        "enum": "Docx",
+        "mimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      },
+      "bodyText": {
+        "note": "This is a real, unmodified third-party document (a BLM/wildland-fire interagency hotshot crew peer-review standards appendix), not an authored fixture -- a literal bodyTextLines array is deliberately NOT asserted here since real Word paragraph/table-cell boundaries were not independently re-verified against this repo's extraction logic. The substrings below are confirmed present verbatim via direct extraction of word/document.xml <w:t> runs, as a spot-check.",
+        "titleFromCoreProperties": "Appendix E",
+        "confirmedSubstrings": [
+          "STANDARDS FOR INTERAGENCY HOTSHOT CREW OPERATIONS",
+          "PEER REVIEW FOR INTIAL CERTIFICATION OF INTERAGENCY HOTSHOT CREWS",
+          "CORPORATE KNOWLEDGE",
+          "Crew clearly understands and demonstrates the knowledge expected of Type 1 crews."
+        ]
+      },
+      "metadata": {
+        "Author": "Kurt P La Rue",
+        "LastModifiedBy": "Sheri L Ascherfeld",
+        "Created": "2008-12-03T14:58:00.0000000Z",
+        "Modified": "2009-02-23T18:57:00.0000000Z",
+        "RevisionNumber": "13",
+        "EditingDurationMinutes": 71
+      },
+      "expectedSubfileCount": 0,
+      "expectedSubfiles": [],
+      "detectable": true,
+      "verifiedBy": null,
+      "notes": "GENUINE (not scripted) multi-user, multi-save revision-history provenance, verified directly against the file's OOXML docProps/core.xml and docProps/app.xml on 2026-09-12: Author='Kurt P La Rue' != LastModifiedBy='Sheri L Ascherfeld', RevisionNumber=13 (>1), TotalTime=71 minutes of real cumulative editing spread across a ~2.5-month span (Created 2008-12-03 to Modified 2009-02-23) -- these are the exact, unrounded values stored in the file, not idealized. app.xml Company property is 'Bureau of Land Management' and the document body itself is a real Appendix E: Standards for Interagency Hotshot Crew Operations peer-review certification form (wildland fire crew evaluation criteria: Corporate Knowledge, Strategy and Tactics, Mobilization, etc.), confirming genuine U.S. Department of the Interior / interagency wildland-fire work product. No cp:lastPrinted element is present in this file's core.xml (omitted here rather than fabricated). License basis: work of the United States federal government, public domain under 17 U.S.C. Sec. 105; separately confirmed as within govdocs1's stated .gov-TLD harvest scope (https://digitalcorpora.org/corpora/file-corpora/files/). Candidate selection: from the same 88-candidate qualifying set described in the national-park-service-forest-vegetation-monitoring-protocol-2008.docx entry above, this file was selected as a second, independent genuine candidate with full distinct human names for Author/LastModifiedBy (not usernames/roles) and a real multi-month elapsed-editing span, verified via direct zip inspection to contain no embedded objects or media (expectedSubfileCount=0, confirmed by enumerating the package's parts -- no word/media or word/embeddings entries present)."
     },
     {
       "format": "xlsx",
@@ -355,7 +439,7 @@
       ],
       "detectable": false,
       "verifiedBy": null,
-      "notes": "Author/LastModifiedBy/Created/Modified/Revision are scripted-but-realistic, NOT genuine multi-user provenance. See follow-up task under S-da936361 for true human-provenance samples. Separately, this embedding is not yet end-to-end detectable: same known gap as the xlsx multi-embedding sample above -- ExtractionHelper.ExtractFirstLayerEmbedded, invoked with WorkbookPart as rootPart (ExcelOpenStrategy), only scans WorkbookPart.Parts, not WorksheetPart.Parts, so this WorksheetPart-hosted image is not found by the current extraction pipeline."
+      "notes": "Author/LastModifiedBy/Created/Modified/Revision are scripted-but-realistic, NOT genuine multi-user provenance. Task T-270c32fe investigated genuine xlsx alternatives from the govdocs1 corpus (all 37 real .xlsx files in digitalcorpora.org's govdocs1 by_type/xlsx.zip) but found none met the genuine-multi-user-provenance bar: real Microsoft Excel does not populate the cp:revision core property the way Word/PowerPoint do -- 0 of the 37 real files had any cp:revision element at all (confirmed by direct XML inspection), so RevisionNumber>1 could not be verified for any candidate, even though several had distinct Author/LastModifiedBy names and multi-month Created/Modified gaps. No genuine xlsx sample was added as a result (see task T-270c32fe activity log for the full candidate scan). Separately, this embedding is not yet end-to-end detectable: same known gap as the xlsx multi-embedding sample above -- ExtractionHelper.ExtractFirstLayerEmbedded, invoked with WorkbookPart as rootPart (ExcelOpenStrategy), only scans WorkbookPart.Parts, not WorksheetPart.Parts, so this WorksheetPart-hosted image is not found by the current extraction pipeline."
     },
     {
       "format": "pptx",

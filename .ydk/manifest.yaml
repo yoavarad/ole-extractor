@@ -929,7 +929,7 @@ tasks:
     title: Source genuine human-provenance revision-history samples (2 per format,
       real Office/LibreOffice edits)
     story: S-da936361
-    status: open
+    status: in-progress
     dependencies:
     - task_id: T-6f033869
       type: related
