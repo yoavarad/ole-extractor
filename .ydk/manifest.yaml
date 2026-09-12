@@ -937,7 +937,7 @@ tasks:
   T-b70522d2:
     title: Research full NPOI retirement (b2xtranslator for .xls too)
     story: S-e496f356
-    status: open
+    status: in-review
     dependencies: []
     component_refs:
     - ydk:entity:extraction/FileMetadata
