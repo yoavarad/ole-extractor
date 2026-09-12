@@ -503,7 +503,7 @@
       ],
       "detectable": true,
       "verifiedBy": null,
-      "notes": "Author/LastModifiedBy/Created/Modified/Revision are scripted-but-realistic, NOT genuine multi-user provenance. See follow-up task under S-da936361 for true human-provenance samples."
+      "notes": "Author/LastModifiedBy/Created/Modified/Revision are scripted-but-realistic, NOT genuine multi-user provenance. Genuine multi-user-provenance alternatives for this format now exist at samples/curated/pptx/noaa-transition-team-briefing-2008.pptx and samples/curated/pptx/ornl-quasi-elastic-neutron-scattering-introduction.pptx (task T-270c32fe)."
     },
     {
       "format": "docx",
@@ -651,6 +651,78 @@
       "detectable": false,
       "verifiedBy": null,
       "notes": "GENUINE (not scripted) multi-user, multi-save revision-history provenance, verified directly against the file's OLE SummaryInformation stream with Python's olefile library on 2026-09-02: Author='Sharon Easterling' (sharon.easterling@ed.gov) != LastModifiedBy='Philip.Schulz', RevisionNumber=20 (>1), TotalEditTime=7560 seconds (126 minutes) of real cumulative editing spread across a 17-month span (Created 2003-02-26 to last saved 2004-07-23) -- these are the exact, unrounded values stored in the file, not idealized. Company property is 'Department of Education' and the document body itself contains ed.gov staff contact emails (sharon.easterling@ed.gov, kathy.price@ed.gov), confirming this is a genuine U.S. Department of Education work product (Higher Education Act Title II Teacher Quality Enhancement grant program grantee directory). License basis: work of the United States federal government, public domain under 17 U.S.C. Sec. 105; separately confirmed as within govdocs1's stated .gov-TLD harvest scope, which digitalcorpora.org describes as 'freely available for research and may be (to the best of our knowledge) freely redistributed' (https://digitalcorpora.org/corpora/file-corpora/files/). Candidate selection note: govdocs1 has one documented caveat -- 'approximately 13,722 files [were] removed from the original corpus' due to 'accidental over-collection involving files from the State of California' -- so a separate strong candidate authored by a California state agency (company='SJVUAPCD') was deliberately rejected in favor of this unambiguously-federal one to avoid that exact concern. detectable=false because, unlike the docx/xlsx/pptx curated samples, legacy .doc metadata extraction (OLE SummaryInformation Author/LastModifiedBy/RevisionNumber) and body text extraction are not yet wired into the production pipeline for the Doc format -- MimeDetection (CfbMimeDetector) does correctly sniff this file as Doc/application/msword (verified: its WordDocument stream is present), but WordOpenStrategy.Open only handles OOXML via WordprocessingDocument.Open and will fail/return null for this CFB file. No embedded objects (no ObjectPool storage) and no VBA macros (no Macros storage) are present in this file. Note: LastPrinted (2003-02-20) predates Created (2003-02-26) by 6 days -- left as-is (not corrected) since this is real third-party data being reported verbatim; consistent with the file having originated as a Save-As/copy of an earlier draft that was printed before this copy's Created timestamp was set, which is a plausible artifact of genuine real-world editing rather than an idealized/scripted timeline."
+    },
+    {
+      "format": "pptx",
+      "status": "curated",
+      "path": "samples/curated/pptx/noaa-transition-team-briefing-2008.pptx",
+      "provenance": "third-party",
+      "generatedBy": "Downloaded verbatim (unmodified) from the govdocs1 corpus hosted by digitalcorpora.org -- a forensics-research corpus of ~1 million real files harvested from the U.S. .gov TLD circa 2009-2010. Retrieved the single zip entry '036/036275.pptx' from the corpus's S3-hosted archive https://digitalcorpora.s3.amazonaws.com/corpora/files/govdocs1/by_type/pptx.zip via HTTP range-requests against the zip's central directory (no need to download the full ~534MB archive). File sha256: 57ac27b2c44917373038f8b2379361ee119fdd5bf10f76d4b06bcc70379e6f59.",
+      "compositionRule": "docs/specs/dataset-curation.md Corpus Composition curated-samples bullet (2 curated real-world-style samples per format, self-authored or checked-license) -- satisfies the 'at least one with a real (not scripted) authorship/revision-history property chain from having been edited by multiple real users across multiple real save operations' half of that bullet GENUINELY (not the scripted-but-realistic relaxation used for training-onboarding-slides.pptx). See notes.",
+      "expectedDetectedFormat": {
+        "enum": "Pptx",
+        "mimeType": "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+      },
+      "bodyText": {
+        "note": "This is a real, unmodified third-party document (a 15-slide NOAA internal transition-team briefing deck), not an authored fixture -- a literal bodyTextLines array is deliberately NOT asserted here. The substrings below are confirmed present verbatim via direct extraction of <a:t> runs from ppt/slides/slide1.xml through slide5.xml, as a spot-check.",
+        "titleFromCoreProperties": "NEC Standard Presentation Format",
+        "confirmedSubstrings": [
+          "NOAA Transition Team Briefing",
+          "NOAA Organization",
+          "Staff Offices Program Analysis & Evaluation",
+          "Develops evaluations and assessments of NOAA's plans, programs, and requirements."
+        ]
+      },
+      "metadata": {
+        "Author": "kamos",
+        "LastModifiedBy": "Bradley Akamine",
+        "Created": "2003-08-07T18:06:43.0000000Z",
+        "Modified": "2008-11-04T23:06:47.0000000Z",
+        "RevisionNumber": "1154",
+        "EditingDurationMinutes": 11229
+      },
+      "expectedSubfileCount": 58,
+      "expectedSubfiles": [],
+      "detectable": false,
+      "verifiedBy": null,
+      "notes": "GENUINE (not scripted) multi-user, multi-save revision-history provenance, verified directly against the file's OOXML docProps/core.xml and docProps/app.xml on 2026-09-12: Author='kamos' != LastModifiedBy='Bradley Akamine', RevisionNumber=1154 (a very high real save count), TotalTime=11229 minutes (~187 hours) of real cumulative editing spread across a 5-year, 3-month span (Created 2003-08-07 to Modified 2008-11-04) -- these are the exact, unrounded values stored in the file, not idealized (the long span is consistent with this being a reused/evolving briefing template re-purposed for the November 2008 presidential-transition briefing, per its 'NOAA Transition Team Briefing... November 4, 2008' slide content and app.xml TitlesOfParts). app.xml reports 15 slides / 12 notes pages / 3412 words / Microsoft PowerPoint. The deck body itself is a real internal NOAA (National Oceanic and Atmospheric Administration, part of the U.S. Department of Commerce) organizational/transition briefing covering NOAA Staff Offices (International Affairs, General Counsel, Legislative Affairs, Communications, Program Analysis & Evaluation, etc.), confirming genuine U.S. federal government work product. License basis: work of the United States federal government, public domain under 17 U.S.C. Sec. 105; separately confirmed as within govdocs1's stated .gov-TLD harvest scope (https://digitalcorpora.org/corpora/file-corpora/files/). Candidate selection: scanned real .pptx entries in govdocs1's by_type/pptx.zip via HTTP range-requests against the central directory (215 total real pptx entries present; a scan pass covering the first 10 in file order already surfaced this as the strongest multi-save signal found, RevisionNumber=1154, the highest seen); the remaining entries were not exhaustively scanned once 2 sufficiently strong, independently-authored, distinct genuine candidates (this file and ornl-quasi-elastic-neutron-scattering-introduction.pptx below) were confirmed, since the task only requires 2 per format. expectedSubfileCount=58 is the real, verified count of first-layer parts under ppt/media/ in the package (enumerated directly from the zip); a full per-object expectedSubfiles breakdown (fileName/contentType/packagePath for all 58) was intentionally not enumerated here given the volume and because the extractor's exact first-layer naming/ordering convention has not been run/verified against this specific third-party file -- detectable=false pending that verification, same caution as applied to the docx curated samples above with real embedded content."
+    },
+    {
+      "format": "pptx",
+      "status": "curated",
+      "path": "samples/curated/pptx/ornl-quasi-elastic-neutron-scattering-introduction.pptx",
+      "provenance": "third-party",
+      "generatedBy": "Downloaded verbatim (unmodified) from the govdocs1 corpus hosted by digitalcorpora.org -- a forensics-research corpus of ~1 million real files harvested from the U.S. .gov TLD circa 2009-2010. Retrieved the single zip entry '036/036276.pptx' from the corpus's S3-hosted archive https://digitalcorpora.s3.amazonaws.com/corpora/files/govdocs1/by_type/pptx.zip via HTTP range-requests against the zip's central directory (no need to download the full ~534MB archive). File sha256: 4b99b11baee222bfd3c018328dacc6079d6ef2e833c2ba22c0c2d5ab897f410e.",
+      "compositionRule": "docs/specs/dataset-curation.md Corpus Composition curated-samples bullet (2 curated real-world-style samples per format, self-authored or checked-license) -- satisfies the 'at least one with a real (not scripted) authorship/revision-history property chain from having been edited by multiple real users across multiple real save operations' half of that bullet GENUINELY (not the scripted-but-realistic relaxation used for training-onboarding-slides.pptx); this is the second genuine pptx sample, distinct from noaa-transition-team-briefing-2008.pptx. See notes.",
+      "expectedDetectedFormat": {
+        "enum": "Pptx",
+        "mimeType": "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+      },
+      "bodyText": {
+        "note": "This is a real, unmodified third-party document (a 37-slide Oak Ridge National Laboratory neutron-scattering science lecture), not an authored fixture -- a literal bodyTextLines array is deliberately NOT asserted here. The substrings below are confirmed present verbatim via direct extraction of <a:t> runs from ppt/slides/slide1.xml through slide5.xml, as a spot-check.",
+        "titleFromCoreProperties": "Slide 1",
+        "confirmedSubstrings": [
+          "Introduction to Quasi-Elastic Neutron Scattering (QENS)",
+          "National School on Neutron and X-ray Scattering",
+          "Ken Herwig",
+          "Neutron Scattering Science Division, Oak Ridge National Laboratory",
+          "The Elastic Incoherent Structure Factor (EISF)"
+        ]
+      },
+      "metadata": {
+        "Author": "xnv",
+        "LastModifiedBy": "Robbie DeJarnette",
+        "Created": "2007-06-20T17:29:26.0000000Z",
+        "Modified": "2008-09-29T13:57:28.0000000Z",
+        "RevisionNumber": "436",
+        "LastPrinted": "2009-04-22T19:24:48.0000000Z",
+        "EditingDurationMinutes": 10583
+      },
+      "expectedSubfileCount": 83,
+      "expectedSubfiles": [],
+      "detectable": false,
+      "verifiedBy": null,
+      "notes": "GENUINE (not scripted) multi-user, multi-save revision-history provenance, verified directly against the file's OOXML docProps/core.xml and docProps/app.xml on 2026-09-12: Author='xnv' != LastModifiedBy='Robbie DeJarnette', RevisionNumber=436 (>>1), TotalTime=10583 minutes (~176 hours) of real cumulative editing spread across a ~15-month span (Created 2007-06-20 to Modified 2008-09-29) -- these are the exact, unrounded values stored in the file, not idealized. Note: cp:lastPrinted (2009-04-22) is after Modified (2008-09-29) -- left as-is (not corrected) since this is real third-party data reported verbatim; plausible if the file was reopened and printed without a subsequent content save. app.xml reports 37 slides / 3 notes pages / 1659 words / 2 Embedded OLE Servers / Microsoft PowerPoint, Template 'ORNL template_0704'. The deck body itself is a real Oak Ridge National Laboratory (operated by UT-Battelle, LLC for the U.S. Department of Energy) lecture on Quasi-Elastic Neutron Scattering presented by Ken Herwig, Deputy Director of ORNL's Neutron Scattering Science Division, to the National School on Neutron and X-ray Scattering (Sept 29, 2008), confirming genuine DOE national-laboratory scientific work product. License basis note: unlike the docx samples and noaa-transition-team-briefing-2008.pptx above (direct federal-employee work, cleanly public domain under 17 U.S.C. Sec. 105), ORNL is DOE-owned but contractor-operated (UT-Battelle, LLC); the author may be a contractor employee rather than a federal employee, so the clean federal-public-domain basis is not asserted for this specific file's authorship. Instead, this file's redistribution basis rests on govdocs1's general .gov-TLD harvest scope and digitalcorpora.org's stated redistribution permission (https://digitalcorpora.org/corpora/file-corpora/files/: 'freely available for research and may be (to the best of our knowledge) freely redistributed'); content is an unclassified public educational science lecture with no apparent distribution restriction markings. Candidate selection: from the same initial-scan pass described in the noaa-transition-team-briefing-2008.pptx entry above, this file was selected as a second, independent genuine candidate (distinct author/agency, RevisionNumber=436, ~176 hours of real edit time). expectedSubfileCount=83 is the real, verified count of first-layer parts under ppt/media/ and ppt/embeddings/ in the package (enumerated directly from the zip, including several oleObjectN.bin embedded OLE objects); a full per-object expectedSubfiles breakdown was intentionally not enumerated here given the volume and unverified extractor naming/ordering -- detectable=false pending that verification, same caution as applied elsewhere in this manifest for real third-party files with embedded content."
     }
   ]
 }
