@@ -25,6 +25,19 @@ to use `b2xtranslator` for .doc/.ppt body text instead). NPOI (main tree: HSSF/H
 remains the answer for .xls and for cross-format metadata/subfile discovery on all three legacy
 formats.
 
+## Note (2026-09-02)
+The Consequences section below flagged legacy-path Unicode/RTL/CJK/emoji fidelity as
+**unverified**. That is now resolved for **.xls**: task T-94570c2b ran the empirical test
+harness added in commit `8b6ae55` (`ExtractorOLE.Tests/Excel/XlsTextExtractorTests.cs`), which
+round-trips NPOI-written `.xls` fixtures through `XlsTextExtractor.ExtractText` against the
+multilingual/emoji corpus in `SampleGenerator/Fixtures/MultilingualFixtures.cs`. Result: **15/15
+tests passed** — Hebrew, Arabic, Persian, Russian, Latin, and Cjk script fixtures, plus all 4
+emoji fixtures (simple, ZWJ family, skin-tone modifier, ZWJ flag), round-trip with exact string
+equality; no mojibake, truncation, or silent normalization observed. **.doc/.ppt remain
+unverified** — per ADR-004, those formats use `b2xtranslator` rather than NPOI's HWPF/HSLF, so
+this result does not extend to them; their i18n fidelity needs its own empirical pass once that
+path is implemented. See `docs/project-rules.md` (Known Gotchas) for the full detail.
+
 ## Consequences
 - Build pipeline needs an NPOI-from-source compile step (new CI/build work, tracked in the Library Evaluation / Project restructure epics).
 - Legacy-path Unicode/RTL/CJK/emoji fidelity is **unverified** in NPOI per the research spike — must be empirically tested against real multilingual samples in the Dataset Curation epic before the i18n requirement can be considered met for legacy formats.
