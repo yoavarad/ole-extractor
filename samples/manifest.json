@@ -287,7 +287,91 @@
       ],
       "detectable": true,
       "verifiedBy": null,
-      "notes": "Author/LastModifiedBy/Created/Modified/Revision are scripted-but-realistic, NOT genuine multi-user provenance. See follow-up task under S-da936361 for true human-provenance samples."
+      "notes": "Author/LastModifiedBy/Created/Modified/Revision are scripted-but-realistic, NOT genuine multi-user provenance. Genuine multi-user-provenance alternatives for this format now exist at samples/curated/docx/national-park-service-forest-vegetation-monitoring-protocol-2008.docx and samples/curated/docx/blm-interagency-hotshot-crew-peer-review-standards.docx (task T-270c32fe)."
+    },
+    {
+      "format": "docx",
+      "status": "curated",
+      "path": "samples/curated/docx/national-park-service-forest-vegetation-monitoring-protocol-2008.docx",
+      "provenance": "third-party",
+      "generatedBy": "Downloaded verbatim (unmodified) from the govdocs1 corpus hosted by digitalcorpora.org -- a forensics-research corpus of ~1 million real files harvested from the U.S. .gov TLD circa 2009-2010. Retrieved the zip entry '448/448024.docx' from the corpus's S3-hosted archive https://digitalcorpora.s3.amazonaws.com/corpora/files/govdocs1/by_type/docx.zip via a full download of the archive (~29MB) followed by direct zip-entry extraction. File sha256: 856dd03f69609179f0906ff8c1ae3dadb3fa7c0f3f539b3fd2fdb6866fcf846c.",
+      "compositionRule": "docs/specs/dataset-curation.md Corpus Composition curated-samples bullet (2 curated real-world-style samples per format, self-authored or checked-license) -- satisfies the 'at least one with a real (not scripted) authorship/revision-history property chain from having been edited by multiple real users across multiple real save operations' half of that bullet GENUINELY (not the scripted-but-realistic relaxation used for invoice-acme-corp.docx). See notes.",
+      "expectedDetectedFormat": {
+        "enum": "Docx",
+        "mimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      },
+      "bodyText": {
+        "note": "This is a real, unmodified third-party document (a 102-page National Park Service natural resource report), not an authored fixture -- a literal bodyTextLines array is deliberately NOT asserted here given its size (~25,000 words / 933KB of word/document.xml). The substrings below are confirmed present verbatim via direct extraction of word/document.xml <w:t> runs, as a spot-check.",
+        "titleFromCoreProperties": "National Park Service",
+        "confirmedSubstrings": [
+          "Long-Term Forest Vegetation Monitoring Protocol",
+          "National Capital Region Network",
+          "Prince William Forest Park",
+          "Thomas Paradis, NPS.",
+          "U.S. Department of the Interior"
+        ]
+      },
+      "metadata": {
+        "Author": "Geoff Sanders",
+        "LastModifiedBy": "John Paul Schmit",
+        "Created": "2008-06-05T18:24:00.0000000Z",
+        "Modified": "2008-12-11T16:19:00.0000000Z",
+        "RevisionNumber": "820",
+        "LastPrinted": "2008-12-11T16:19:00.0000000Z",
+        "EditingDurationMinutes": 9417
+      },
+      "expectedSubfileCount": 11,
+      "expectedSubfiles": [
+        { "fileName": "image1.png", "contentType": "image/png", "sizeInBytes": 41170, "packagePath": "/word/media/image1.png" },
+        { "fileName": "image2.jpeg", "contentType": "image/jpeg", "sizeInBytes": 1812417, "packagePath": "/word/media/image2.jpeg" },
+        { "fileName": "image3.emf", "contentType": "image/x-emf", "sizeInBytes": 31948, "packagePath": "/word/media/image3.emf" },
+        { "fileName": "image4.wmf", "contentType": "image/x-wmf", "sizeInBytes": 336, "packagePath": "/word/media/image4.wmf" },
+        { "fileName": "image5.png", "contentType": "image/png", "sizeInBytes": 48562, "packagePath": "/word/media/image5.png" },
+        { "fileName": "image6.png", "contentType": "image/png", "sizeInBytes": 59528, "packagePath": "/word/media/image6.png" },
+        { "fileName": "image7.wmf", "contentType": "image/x-wmf", "sizeInBytes": 64892, "packagePath": "/word/media/image7.wmf" },
+        { "fileName": "image8.emf", "contentType": "image/x-emf", "sizeInBytes": 184888, "packagePath": "/word/media/image8.emf" },
+        { "fileName": "image9.wmf", "contentType": "image/x-wmf", "sizeInBytes": 60290, "packagePath": "/word/media/image9.wmf" },
+        { "fileName": "oleObject1.bin", "contentType": "application/octet-stream", "sizeInBytes": 44544, "packagePath": "/word/embeddings/oleObject1.bin" },
+        { "fileName": "oleObject2.bin", "contentType": "application/octet-stream", "sizeInBytes": 3072, "packagePath": "/word/embeddings/oleObject2.bin" }
+      ],
+      "detectable": false,
+      "verifiedBy": null,
+      "notes": "GENUINE (not scripted) multi-user, multi-save revision-history provenance, verified directly against the file's OOXML docProps/core.xml and docProps/app.xml on 2026-09-12: Author='Geoff Sanders' != LastModifiedBy='John Paul Schmit', RevisionNumber=820 (>>1, a very high real save count), TotalTime=9417 minutes (~157 hours) of real cumulative editing spread across a 6-month span (Created 2008-06-05 to Modified/LastPrinted 2008-12-11) -- these are the exact, unrounded values stored in the file, not idealized. app.xml Company property is 'National Park Service' and the document body itself is a real 102-page National Capital Region Network Long-Term Forest Vegetation Monitoring Protocol (Natural Resource Report NPS/NCR/NCRN/NRR-2008), co-authored by John Paul Schmit, Geoff Sanders, Mark Lehman, and Thomas Paradis of the NPS Center for Urban Ecology, confirming genuine U.S. Department of the Interior work product. License basis: work of the United States federal government, public domain under 17 U.S.C. Sec. 105; separately confirmed as within govdocs1's stated .gov-TLD harvest scope (https://digitalcorpora.org/corpora/file-corpora/files/). Candidate selection: scanned all 163 real .docx entries in govdocs1's by_type/docx.zip; 88 had a non-empty Author distinct from LastModifiedBy with RevisionNumber>1; this file was selected as the strongest genuine multi-save signal found (RevisionNumber=820, the highest in the qualifying set) with a substantial, clearly-real, multi-author government work product. expectedSubfiles above lists the 11 real first-layer media/embedded parts exactly as they exist inside the package (original OOXML part filenames, real uncompressed sizes, real package paths verified directly from the zip) -- detectable=false because the extractor's exact first-layer enumeration order and renamed-fileName convention (e.g. 'embedded_object_N') used by ExtractionHelper.ExtractFirstLayerEmbedded has NOT been run/verified against this specific third-party file, so asserting a matching expectedSubfiles fileName/order here would risk poisoning ground-truth tests; a future task can wire and verify this."
+    },
+    {
+      "format": "docx",
+      "status": "curated",
+      "path": "samples/curated/docx/blm-interagency-hotshot-crew-peer-review-standards.docx",
+      "provenance": "third-party",
+      "generatedBy": "Downloaded verbatim (unmodified) from the govdocs1 corpus hosted by digitalcorpora.org -- a forensics-research corpus of ~1 million real files harvested from the U.S. .gov TLD circa 2009-2010. Retrieved the zip entry '635/635707.docx' from the corpus's S3-hosted archive https://digitalcorpora.s3.amazonaws.com/corpora/files/govdocs1/by_type/docx.zip via a full download of the archive (~29MB) followed by direct zip-entry extraction. File sha256: 2443be0274b29cc00ceba2c36193402546dc1b5fb878b4b452d40494ddfd69af.",
+      "compositionRule": "docs/specs/dataset-curation.md Corpus Composition curated-samples bullet (2 curated real-world-style samples per format, self-authored or checked-license) -- satisfies the 'at least one with a real (not scripted) authorship/revision-history property chain from having been edited by multiple real users across multiple real save operations' half of that bullet GENUINELY (not the scripted-but-realistic relaxation used for invoice-acme-corp.docx); this is the second genuine docx sample, distinct from national-park-service-forest-vegetation-monitoring-protocol-2008.docx. See notes.",
+      "expectedDetectedFormat": {
+        "enum": "Docx",
+        "mimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      },
+      "bodyText": {
+        "note": "This is a real, unmodified third-party document (a BLM/wildland-fire interagency hotshot crew peer-review standards appendix), not an authored fixture -- a literal bodyTextLines array is deliberately NOT asserted here since real Word paragraph/table-cell boundaries were not independently re-verified against this repo's extraction logic. The substrings below are confirmed present verbatim via direct extraction of word/document.xml <w:t> runs, as a spot-check.",
+        "titleFromCoreProperties": "Appendix E",
+        "confirmedSubstrings": [
+          "STANDARDS FOR INTERAGENCY HOTSHOT CREW OPERATIONS",
+          "PEER REVIEW FOR INTIAL CERTIFICATION OF INTERAGENCY HOTSHOT CREWS",
+          "CORPORATE KNOWLEDGE",
+          "Crew clearly understands and demonstrates the knowledge expected of Type 1 crews."
+        ]
+      },
+      "metadata": {
+        "Author": "Kurt P La Rue",
+        "LastModifiedBy": "Sheri L Ascherfeld",
+        "Created": "2008-12-03T14:58:00.0000000Z",
+        "Modified": "2009-02-23T18:57:00.0000000Z",
+        "RevisionNumber": "13",
+        "EditingDurationMinutes": 71
+      },
+      "expectedSubfileCount": 0,
+      "expectedSubfiles": [],
+      "detectable": true,
+      "verifiedBy": null,
+      "notes": "GENUINE (not scripted) multi-user, multi-save revision-history provenance, verified directly against the file's OOXML docProps/core.xml and docProps/app.xml on 2026-09-12: Author='Kurt P La Rue' != LastModifiedBy='Sheri L Ascherfeld', RevisionNumber=13 (>1), TotalTime=71 minutes of real cumulative editing spread across a ~2.5-month span (Created 2008-12-03 to Modified 2009-02-23) -- these are the exact, unrounded values stored in the file, not idealized. app.xml Company property is 'Bureau of Land Management' and the document body itself is a real Appendix E: Standards for Interagency Hotshot Crew Operations peer-review certification form (wildland fire crew evaluation criteria: Corporate Knowledge, Strategy and Tactics, Mobilization, etc.), confirming genuine U.S. Department of the Interior / interagency wildland-fire work product. No cp:lastPrinted element is present in this file's core.xml (omitted here rather than fabricated). License basis: work of the United States federal government, public domain under 17 U.S.C. Sec. 105; separately confirmed as within govdocs1's stated .gov-TLD harvest scope (https://digitalcorpora.org/corpora/file-corpora/files/). Candidate selection: from the same 88-candidate qualifying set described in the national-park-service-forest-vegetation-monitoring-protocol-2008.docx entry above, this file was selected as a second, independent genuine candidate with full distinct human names for Author/LastModifiedBy (not usernames/roles) and a real multi-month elapsed-editing span, verified via direct zip inspection to contain no embedded objects or media (expectedSubfileCount=0, confirmed by enumerating the package's parts -- no word/media or word/embeddings entries present)."
     },
     {
       "format": "xlsx",
@@ -355,7 +439,7 @@
       ],
       "detectable": false,
       "verifiedBy": null,
-      "notes": "Author/LastModifiedBy/Created/Modified/Revision are scripted-but-realistic, NOT genuine multi-user provenance. See follow-up task under S-da936361 for true human-provenance samples. Separately, this embedding is not yet end-to-end detectable: same known gap as the xlsx multi-embedding sample above -- ExtractionHelper.ExtractFirstLayerEmbedded, invoked with WorkbookPart as rootPart (ExcelOpenStrategy), only scans WorkbookPart.Parts, not WorksheetPart.Parts, so this WorksheetPart-hosted image is not found by the current extraction pipeline."
+      "notes": "Author/LastModifiedBy/Created/Modified/Revision are scripted-but-realistic, NOT genuine multi-user provenance. Task T-270c32fe investigated genuine xlsx alternatives from the govdocs1 corpus (all 37 real .xlsx files in digitalcorpora.org's govdocs1 by_type/xlsx.zip) but found none met the genuine-multi-user-provenance bar: real Microsoft Excel does not populate the cp:revision core property the way Word/PowerPoint do -- 0 of the 37 real files had any cp:revision element at all (confirmed by direct XML inspection), so RevisionNumber>1 could not be verified for any candidate, even though several had distinct Author/LastModifiedBy names and multi-month Created/Modified gaps. No genuine xlsx sample was added as a result (see task T-270c32fe activity log for the full candidate scan). Separately, this embedding is not yet end-to-end detectable: same known gap as the xlsx multi-embedding sample above -- ExtractionHelper.ExtractFirstLayerEmbedded, invoked with WorkbookPart as rootPart (ExcelOpenStrategy), only scans WorkbookPart.Parts, not WorksheetPart.Parts, so this WorksheetPart-hosted image is not found by the current extraction pipeline."
     },
     {
       "format": "pptx",
@@ -419,7 +503,7 @@
       ],
       "detectable": true,
       "verifiedBy": null,
-      "notes": "Author/LastModifiedBy/Created/Modified/Revision are scripted-but-realistic, NOT genuine multi-user provenance. See follow-up task under S-da936361 for true human-provenance samples."
+      "notes": "Author/LastModifiedBy/Created/Modified/Revision are scripted-but-realistic, NOT genuine multi-user provenance. Genuine multi-user-provenance alternatives for this format now exist at samples/curated/pptx/noaa-transition-team-briefing-2008.pptx and samples/curated/pptx/ornl-quasi-elastic-neutron-scattering-introduction.pptx (task T-270c32fe)."
     },
     {
       "format": "docx",
@@ -567,6 +651,78 @@
       "detectable": false,
       "verifiedBy": null,
       "notes": "GENUINE (not scripted) multi-user, multi-save revision-history provenance, verified directly against the file's OLE SummaryInformation stream with Python's olefile library on 2026-09-02: Author='Sharon Easterling' (sharon.easterling@ed.gov) != LastModifiedBy='Philip.Schulz', RevisionNumber=20 (>1), TotalEditTime=7560 seconds (126 minutes) of real cumulative editing spread across a 17-month span (Created 2003-02-26 to last saved 2004-07-23) -- these are the exact, unrounded values stored in the file, not idealized. Company property is 'Department of Education' and the document body itself contains ed.gov staff contact emails (sharon.easterling@ed.gov, kathy.price@ed.gov), confirming this is a genuine U.S. Department of Education work product (Higher Education Act Title II Teacher Quality Enhancement grant program grantee directory). License basis: work of the United States federal government, public domain under 17 U.S.C. Sec. 105; separately confirmed as within govdocs1's stated .gov-TLD harvest scope, which digitalcorpora.org describes as 'freely available for research and may be (to the best of our knowledge) freely redistributed' (https://digitalcorpora.org/corpora/file-corpora/files/). Candidate selection note: govdocs1 has one documented caveat -- 'approximately 13,722 files [were] removed from the original corpus' due to 'accidental over-collection involving files from the State of California' -- so a separate strong candidate authored by a California state agency (company='SJVUAPCD') was deliberately rejected in favor of this unambiguously-federal one to avoid that exact concern. detectable=false because, unlike the docx/xlsx/pptx curated samples, legacy .doc metadata extraction (OLE SummaryInformation Author/LastModifiedBy/RevisionNumber) and body text extraction are not yet wired into the production pipeline for the Doc format -- MimeDetection (CfbMimeDetector) does correctly sniff this file as Doc/application/msword (verified: its WordDocument stream is present), but WordOpenStrategy.Open only handles OOXML via WordprocessingDocument.Open and will fail/return null for this CFB file. No embedded objects (no ObjectPool storage) and no VBA macros (no Macros storage) are present in this file. Note: LastPrinted (2003-02-20) predates Created (2003-02-26) by 6 days -- left as-is (not corrected) since this is real third-party data being reported verbatim; consistent with the file having originated as a Save-As/copy of an earlier draft that was printed before this copy's Created timestamp was set, which is a plausible artifact of genuine real-world editing rather than an idealized/scripted timeline."
+    },
+    {
+      "format": "pptx",
+      "status": "curated",
+      "path": "samples/curated/pptx/noaa-transition-team-briefing-2008.pptx",
+      "provenance": "third-party",
+      "generatedBy": "Downloaded verbatim (unmodified) from the govdocs1 corpus hosted by digitalcorpora.org -- a forensics-research corpus of ~1 million real files harvested from the U.S. .gov TLD circa 2009-2010. Retrieved the single zip entry '036/036275.pptx' from the corpus's S3-hosted archive https://digitalcorpora.s3.amazonaws.com/corpora/files/govdocs1/by_type/pptx.zip via HTTP range-requests against the zip's central directory (no need to download the full ~534MB archive). File sha256: 57ac27b2c44917373038f8b2379361ee119fdd5bf10f76d4b06bcc70379e6f59.",
+      "compositionRule": "docs/specs/dataset-curation.md Corpus Composition curated-samples bullet (2 curated real-world-style samples per format, self-authored or checked-license) -- satisfies the 'at least one with a real (not scripted) authorship/revision-history property chain from having been edited by multiple real users across multiple real save operations' half of that bullet GENUINELY (not the scripted-but-realistic relaxation used for training-onboarding-slides.pptx). See notes.",
+      "expectedDetectedFormat": {
+        "enum": "Pptx",
+        "mimeType": "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+      },
+      "bodyText": {
+        "note": "This is a real, unmodified third-party document (a 15-slide NOAA internal transition-team briefing deck), not an authored fixture -- a literal bodyTextLines array is deliberately NOT asserted here. The substrings below are confirmed present verbatim via direct extraction of <a:t> runs from ppt/slides/slide1.xml through slide5.xml, as a spot-check.",
+        "titleFromCoreProperties": "NEC Standard Presentation Format",
+        "confirmedSubstrings": [
+          "NOAA Transition Team Briefing",
+          "NOAA Organization",
+          "Staff Offices Program Analysis & Evaluation",
+          "Develops evaluations and assessments of NOAA's plans, programs, and requirements."
+        ]
+      },
+      "metadata": {
+        "Author": "kamos",
+        "LastModifiedBy": "Bradley Akamine",
+        "Created": "2003-08-07T18:06:43.0000000Z",
+        "Modified": "2008-11-04T23:06:47.0000000Z",
+        "RevisionNumber": "1154",
+        "EditingDurationMinutes": 11229
+      },
+      "expectedSubfileCount": 58,
+      "expectedSubfiles": [],
+      "detectable": false,
+      "verifiedBy": null,
+      "notes": "GENUINE (not scripted) multi-user, multi-save revision-history provenance, verified directly against the file's OOXML docProps/core.xml and docProps/app.xml on 2026-09-12: Author='kamos' != LastModifiedBy='Bradley Akamine', RevisionNumber=1154 (a very high real save count), TotalTime=11229 minutes (~187 hours) of real cumulative editing spread across a 5-year, 3-month span (Created 2003-08-07 to Modified 2008-11-04) -- these are the exact, unrounded values stored in the file, not idealized (the long span is consistent with this being a reused/evolving briefing template re-purposed for the November 2008 presidential-transition briefing, per its 'NOAA Transition Team Briefing... November 4, 2008' slide content and app.xml TitlesOfParts). app.xml reports 15 slides / 12 notes pages / 3412 words / Microsoft PowerPoint. The deck body itself is a real internal NOAA (National Oceanic and Atmospheric Administration, part of the U.S. Department of Commerce) organizational/transition briefing covering NOAA Staff Offices (International Affairs, General Counsel, Legislative Affairs, Communications, Program Analysis & Evaluation, etc.), confirming genuine U.S. federal government work product. License basis: work of the United States federal government, public domain under 17 U.S.C. Sec. 105; separately confirmed as within govdocs1's stated .gov-TLD harvest scope (https://digitalcorpora.org/corpora/file-corpora/files/). Candidate selection: scanned real .pptx entries in govdocs1's by_type/pptx.zip via HTTP range-requests against the central directory (215 total real pptx entries present; a scan pass covering the first 10 in file order already surfaced this as the strongest multi-save signal found, RevisionNumber=1154, the highest seen); the remaining entries were not exhaustively scanned once 2 sufficiently strong, independently-authored, distinct genuine candidates (this file and ornl-quasi-elastic-neutron-scattering-introduction.pptx below) were confirmed, since the task only requires 2 per format. expectedSubfileCount=58 is the real, verified count of first-layer parts under ppt/media/ in the package (enumerated directly from the zip); a full per-object expectedSubfiles breakdown (fileName/contentType/packagePath for all 58) was intentionally not enumerated here given the volume and because the extractor's exact first-layer naming/ordering convention has not been run/verified against this specific third-party file -- detectable=false pending that verification, same caution as applied to the docx curated samples above with real embedded content."
+    },
+    {
+      "format": "pptx",
+      "status": "curated",
+      "path": "samples/curated/pptx/ornl-quasi-elastic-neutron-scattering-introduction.pptx",
+      "provenance": "third-party",
+      "generatedBy": "Downloaded verbatim (unmodified) from the govdocs1 corpus hosted by digitalcorpora.org -- a forensics-research corpus of ~1 million real files harvested from the U.S. .gov TLD circa 2009-2010. Retrieved the single zip entry '036/036276.pptx' from the corpus's S3-hosted archive https://digitalcorpora.s3.amazonaws.com/corpora/files/govdocs1/by_type/pptx.zip via HTTP range-requests against the zip's central directory (no need to download the full ~534MB archive). File sha256: 4b99b11baee222bfd3c018328dacc6079d6ef2e833c2ba22c0c2d5ab897f410e.",
+      "compositionRule": "docs/specs/dataset-curation.md Corpus Composition curated-samples bullet (2 curated real-world-style samples per format, self-authored or checked-license) -- satisfies the 'at least one with a real (not scripted) authorship/revision-history property chain from having been edited by multiple real users across multiple real save operations' half of that bullet GENUINELY (not the scripted-but-realistic relaxation used for training-onboarding-slides.pptx); this is the second genuine pptx sample, distinct from noaa-transition-team-briefing-2008.pptx. See notes.",
+      "expectedDetectedFormat": {
+        "enum": "Pptx",
+        "mimeType": "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+      },
+      "bodyText": {
+        "note": "This is a real, unmodified third-party document (a 37-slide Oak Ridge National Laboratory neutron-scattering science lecture), not an authored fixture -- a literal bodyTextLines array is deliberately NOT asserted here. The substrings below are confirmed present verbatim via direct extraction of <a:t> runs from ppt/slides/slide1.xml through slide5.xml, as a spot-check.",
+        "titleFromCoreProperties": "Slide 1",
+        "confirmedSubstrings": [
+          "Introduction to Quasi-Elastic Neutron Scattering (QENS)",
+          "National School on Neutron and X-ray Scattering",
+          "Ken Herwig",
+          "Neutron Scattering Science Division, Oak Ridge National Laboratory",
+          "The Elastic Incoherent Structure Factor (EISF)"
+        ]
+      },
+      "metadata": {
+        "Author": "xnv",
+        "LastModifiedBy": "Robbie DeJarnette",
+        "Created": "2007-06-20T17:29:26.0000000Z",
+        "Modified": "2008-09-29T13:57:28.0000000Z",
+        "RevisionNumber": "436",
+        "LastPrinted": "2009-04-22T19:24:48.0000000Z",
+        "EditingDurationMinutes": 10583
+      },
+      "expectedSubfileCount": 83,
+      "expectedSubfiles": [],
+      "detectable": false,
+      "verifiedBy": null,
+      "notes": "GENUINE (not scripted) multi-user, multi-save revision-history provenance, verified directly against the file's OOXML docProps/core.xml and docProps/app.xml on 2026-09-12: Author='xnv' != LastModifiedBy='Robbie DeJarnette', RevisionNumber=436 (>>1), TotalTime=10583 minutes (~176 hours) of real cumulative editing spread across a ~15-month span (Created 2007-06-20 to Modified 2008-09-29) -- these are the exact, unrounded values stored in the file, not idealized. Note: cp:lastPrinted (2009-04-22) is after Modified (2008-09-29) -- left as-is (not corrected) since this is real third-party data reported verbatim; plausible if the file was reopened and printed without a subsequent content save. app.xml reports 37 slides / 3 notes pages / 1659 words / 2 Embedded OLE Servers / Microsoft PowerPoint, Template 'ORNL template_0704'. The deck body itself is a real Oak Ridge National Laboratory (operated by UT-Battelle, LLC for the U.S. Department of Energy) lecture on Quasi-Elastic Neutron Scattering presented by Ken Herwig, Deputy Director of ORNL's Neutron Scattering Science Division, to the National School on Neutron and X-ray Scattering (Sept 29, 2008), confirming genuine DOE national-laboratory scientific work product. License basis note: unlike the docx samples and noaa-transition-team-briefing-2008.pptx above (direct federal-employee work, cleanly public domain under 17 U.S.C. Sec. 105), ORNL is DOE-owned but contractor-operated (UT-Battelle, LLC); the author may be a contractor employee rather than a federal employee, so the clean federal-public-domain basis is not asserted for this specific file's authorship. Instead, this file's redistribution basis rests on govdocs1's general .gov-TLD harvest scope and digitalcorpora.org's stated redistribution permission (https://digitalcorpora.org/corpora/file-corpora/files/: 'freely available for research and may be (to the best of our knowledge) freely redistributed'); content is an unclassified public educational science lecture with no apparent distribution restriction markings. Candidate selection: from the same initial-scan pass described in the noaa-transition-team-briefing-2008.pptx entry above, this file was selected as a second, independent genuine candidate (distinct author/agency, RevisionNumber=436, ~176 hours of real edit time). expectedSubfileCount=83 is the real, verified count of first-layer parts under ppt/media/ and ppt/embeddings/ in the package (enumerated directly from the zip, including several oleObjectN.bin embedded OLE objects); a full per-object expectedSubfiles breakdown was intentionally not enumerated here given the volume and unverified extractor naming/ordering -- detectable=false pending that verification, same caution as applied elsewhere in this manifest for real third-party files with embedded content."
     }
   ]
 }
