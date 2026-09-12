@@ -90,3 +90,33 @@ immediately regardless of this ADR's outcome.
   testing, the documented fallback order is: (1) port NPOI scratchpad HWPF for .doc specifically
   using IllidanS4/npoi's retarget as a recipe, (2) LibreOffice headless subprocess conversion for
   whichever format still fails.
+
+## Note (2026-09-02)
+
+T-b70522d2 researched extending b2xtranslator to .xls, then ran an empirical spike, to answer
+whether NPOI can be fully retired from this project.
+
+**Decision: .xls stays on NPOI HSSF. Full NPOI retirement is not adopted.**
+
+Reasoning: b2xtranslator's `Xls` module is mechanically viable for sheet/cell-text conversion
+(real fixtures converted cleanly, one real bug found and fixed in the org fork at
+github.com/yoavarad/b2xtranslator, net8 retarget was low-risk as expected) -- but it writes NO
+document metadata (`docProps`) at all for Xls output, so HPSF-based metadata reading against the
+original .xls (currently via NPOI) would still be required regardless of which library handles
+body text. Additionally, per the earlier desk research, b2x's `Xls` mapping has no embedded-object
+preservation code path (no `OleObjectMapping.cs` equivalent, unconfirmed by direct empirical test
+since neither available fixture contained embeds), so POIFS-based subfile discovery on the raw
+.xls would also still be required. Since both of NPOI's non-body-text roles (HPSF metadata, POIFS
+subfile discovery) must stay for .xls either way, switching .xls body-text specifically to
+b2xtranslator would add a second legacy-format dependency (with its own now-demonstrated real bugs
+to patch) without letting NPOI be dropped -- no net simplification. NPOI (main tree: HSSF + HPSF +
+POIFS) remains the answer for .xls, unchanged from ADR-004's original scope and from ADR-001.
+b2xtranslator's role stays exactly as ADR-004 already decided: .doc and .ppt only.
+
+Full findings: `docs/research/legacy-xls-parsing.md` (now includes empirical spike results).
+Tracking task: T-b70522d2.
+
+If someone later wants to revisit full NPOI retirement, the concrete remaining path is: replace
+NPOI's HPSF/POIFS roles for .xls with OpenMcdf-based equivalents (OpenMcdf is already a project
+dependency, format-agnostic CFB introspection per ADR-001) -- that is a distinct, not-yet-scoped
+engineering effort, independent of the body-text library question this task answered.
