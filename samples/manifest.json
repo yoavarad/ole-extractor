@@ -528,6 +528,45 @@
       "detectable": true,
       "verifiedBy": "ExtractorOle/ExtractorOLE.Tests/SampleGeneration/MacroEmbedSampleGeneratorTests.cs :: Pptx_MacroEnabled_HasVbaProjectAndEmbedding (generator-structure check); end-to-end detection/extraction independently confirmed by running the ExtractorOLE CLI against samples/synthetic/macro-embed/sample.pptm (output: Detected format: Pptx; Embedded files: 1 - slide_image_1.png (68 bytes) [/ppt/media/image.png])",
       "notes": "Macro-enabled variant (pptm) carries a 63-byte placeholder VbaProjectPart (ppt/vbaProject.bin) -- not counted as an extracted subfile (see the docm entry's note for rationale). The embedding lives on a SlidePart, found via ExtractionHelper's Phase 2 container scan with fileName prefix 'slide_image', matching the existing multi-embedding pptx entry's convention."
+    },
+    {
+      "format": "doc",
+      "status": "curated",
+      "path": "samples/curated/doc/us-dept-of-education-teacher-quality-grantees-1999-2000.doc",
+      "provenance": "third-party",
+      "generatedBy": "Downloaded verbatim (unmodified) from the govdocs1 corpus hosted by digitalcorpora.org -- a forensics-research corpus of ~1 million real files harvested from the U.S. .gov TLD circa 2009-2010. Retrieved the single zip entry '051/051396.doc' from the corpus's S3-hosted archive https://digitalcorpora.s3.amazonaws.com/corpora/files/govdocs1/by_type/doc.zip via HTTP range-requests against the zip's central directory (no need to download the full 17.6GB archive). File sha256: 20f9ffedeede719cd5f70dc8e633a2f54dce3d83d5b777e75cf104384d43386c.",
+      "compositionRule": "docs/specs/dataset-curation.md Corpus Composition curated-samples bullet (2 curated real-world-style samples per format, self-authored or checked-license) -- satisfies the 'at least one with a real (not scripted) authorship/revision-history property chain from having been edited by multiple real users across multiple real save operations' half of that bullet GENUINELY (not the scripted-but-realistic relaxation used for the docx/xlsx/pptx curated samples). See notes.",
+      "expectedDetectedFormat": {
+        "enum": "Doc",
+        "mimeType": "application/msword"
+      },
+      "bodyText": {
+        "note": "This is a real, unmodified third-party document (a legacy OLE-CFB .doc), not an authored fixture -- exact paragraph-by-paragraph bodyTextLines are deliberately NOT asserted here because this repo has no verified full-fidelity legacy Word Binary Format (piece-table) text parser yet (WordOpenStrategy only opens OOXML via DocumentFormat.OpenXml.WordprocessingDocument.Open, which cannot read this CFB file; see docs/adrs/004-legacy-doc-ppt-parsing.md). Asserting a guessed bodyTextLines array here would risk poisoning future ground-truth tests. Instead, the substrings below are confirmed present verbatim via a raw UTF-16LE scan of the WordDocument stream, as a spot-check.",
+        "titleFromSummaryInformation": "Teacher Quality Enhancement Program Grantees - 1999-2000 (Word)",
+        "confirmedSubstrings": [
+          "HEA Teacher Quality Enhancement Grantees",
+          "Sharon Easterling",
+          "sharon.easterling@ed.gov",
+          "kathy.price@ed.gov",
+          "Arizona State University",
+          "State of California",
+          "State of Alabama Office of the Governor"
+        ]
+      },
+      "metadata": {
+        "Author": "Sharon Easterling",
+        "LastModifiedBy": "Philip.Schulz",
+        "Created": "2003-02-26T17:44:00.0000000Z",
+        "Modified": "2004-07-23T18:32:00.0000000Z",
+        "RevisionNumber": "20",
+        "LastPrinted": "2003-02-20T15:28:00.0000000Z",
+        "EditingDurationMinutes": 126
+      },
+      "expectedSubfileCount": 0,
+      "expectedSubfiles": [],
+      "detectable": false,
+      "verifiedBy": null,
+      "notes": "GENUINE (not scripted) multi-user, multi-save revision-history provenance, verified directly against the file's OLE SummaryInformation stream with Python's olefile library on 2026-09-02: Author='Sharon Easterling' (sharon.easterling@ed.gov) != LastModifiedBy='Philip.Schulz', RevisionNumber=20 (>1), TotalEditTime=7560 seconds (126 minutes) of real cumulative editing spread across a 17-month span (Created 2003-02-26 to last saved 2004-07-23) -- these are the exact, unrounded values stored in the file, not idealized. Company property is 'Department of Education' and the document body itself contains ed.gov staff contact emails (sharon.easterling@ed.gov, kathy.price@ed.gov), confirming this is a genuine U.S. Department of Education work product (Higher Education Act Title II Teacher Quality Enhancement grant program grantee directory). License basis: work of the United States federal government, public domain under 17 U.S.C. Sec. 105; separately confirmed as within govdocs1's stated .gov-TLD harvest scope, which digitalcorpora.org describes as 'freely available for research and may be (to the best of our knowledge) freely redistributed' (https://digitalcorpora.org/corpora/file-corpora/files/). Candidate selection note: govdocs1 has one documented caveat -- 'approximately 13,722 files [were] removed from the original corpus' due to 'accidental over-collection involving files from the State of California' -- so a separate strong candidate authored by a California state agency (company='SJVUAPCD') was deliberately rejected in favor of this unambiguously-federal one to avoid that exact concern. detectable=false because, unlike the docx/xlsx/pptx curated samples, legacy .doc metadata extraction (OLE SummaryInformation Author/LastModifiedBy/RevisionNumber) and body text extraction are not yet wired into the production pipeline for the Doc format -- MimeDetection (CfbMimeDetector) does correctly sniff this file as Doc/application/msword (verified: its WordDocument stream is present), but WordOpenStrategy.Open only handles OOXML via WordprocessingDocument.Open and will fail/return null for this CFB file. No embedded objects (no ObjectPool storage) and no VBA macros (no Macros storage) are present in this file. Note: LastPrinted (2003-02-20) predates Created (2003-02-26) by 6 days -- left as-is (not corrected) since this is real third-party data being reported verbatim; consistent with the file having originated as a Save-As/copy of an earlier draft that was printed before this copy's Created timestamp was set, which is a plausible artifact of genuine real-world editing rather than an idealized/scripted timeline."
     }
   ]
 }
