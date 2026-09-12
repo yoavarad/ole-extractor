@@ -293,7 +293,7 @@ tasks:
   T-94570c2b:
     title: Empirically validate NPOI Unicode/i18n fidelity on the legacy OLE path
     story: S-418e5f1b
-    status: open
+    status: done
     dependencies:
     - T-a5f1d074
     component_refs:
@@ -320,7 +320,7 @@ tasks:
   T-07188baf:
     title: Wire Program.cs to invoke both public functions on a real file
     story: S-fe24ecff
-    status: open
+    status: done
     dependencies:
     - T-90924b6d
     component_refs:
@@ -703,7 +703,7 @@ tasks:
   T-f96fa73d:
     title: Record synthetic samples in samples/manifest.json
     story: S-41ebb945
-    status: open
+    status: done
     dependencies:
     - T-d657bb2a
     - T-d91b2a46
@@ -726,7 +726,7 @@ tasks:
   T-0c83ff28:
     title: Author/source the real multi-user revision-history curated sample
     story: S-da936361
-    status: open
+    status: done
     dependencies:
     - T-6f033869
     component_refs:
@@ -929,7 +929,7 @@ tasks:
     title: Source genuine human-provenance revision-history samples (2 per format,
       real Office/LibreOffice edits)
     story: S-da936361
-    status: in-progress
+    status: done
     dependencies:
     - task_id: T-6f033869
       type: related
@@ -937,7 +937,7 @@ tasks:
   T-b70522d2:
     title: Research full NPOI retirement (b2xtranslator for .xls too)
     story: S-e496f356
-    status: in-review
+    status: done
     dependencies: []
     component_refs:
     - ydk:entity:extraction/FileMetadata
