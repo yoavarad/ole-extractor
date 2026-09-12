@@ -420,6 +420,114 @@
       "detectable": true,
       "verifiedBy": null,
       "notes": "Author/LastModifiedBy/Created/Modified/Revision are scripted-but-realistic, NOT genuine multi-user provenance. See follow-up task under S-da936361 for true human-provenance samples."
+    },
+    {
+      "format": "docx",
+      "status": "generated",
+      "path": "samples/synthetic/macro-embed/sample.docm",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator.Fixtures.MacroEmbedSampleSpecs.Build() via SampleGenerator/Program.cs (DocxSampleGenerator)",
+      "compositionRule": "docs/specs/dataset-curation.md Corpus Composition rule #1 (macro-embed: a macro-enabled variant with at least one first-layer embedding, multilingual/mixed-script body text and metadata)",
+      "expectedDetectedFormat": {
+        "enum": "Docx",
+        "mimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      },
+      "bodyTextLines": [
+        "שלום עולם, זהו טקסט לדוגמה בעברית.",
+        "مرحبا بالعالم، هذا نص عربي تجريبي.",
+        "سلام دنیا، این یک متن نمونه فارسی است.",
+        "Привет, мир! Это пример текста на русском языке.",
+        "Hello, world! This is a sample sentence in English.",
+        "你好，世界。こんにちは世界。안녕하세요, 세계.",
+        "😀🎉🚀 👨‍👩‍👧‍👦 👍🏽 🏳️‍🌈"
+      ],
+      "metadata": {
+        "Title": "שלום עולם, זהו טקסט לדוגמה בעברית.",
+        "Author": "مرحبا بالعالم، هذا نص عربي تجريبي.",
+        "Subject": "你好，世界。こんにちは世界。안녕하세요, 세계.",
+        "Comments": "😀🎉🚀 👨‍👩‍👧‍👦 👍🏽 🏳️‍🌈",
+        "LastModifiedBy": "Привет, мир! Это пример текста на русском языке."
+      },
+      "expectedFormatMetadata": { "hasMacros": true },
+      "expectedSubfileCount": 1,
+      "expectedSubfiles": [
+        { "fileName": "embedded_object_1.png", "contentType": "image/png", "sizeInBytes": 68, "packagePath": "/media/image.png" }
+      ],
+      "detectable": true,
+      "verifiedBy": "ExtractorOle/ExtractorOLE.Tests/SampleGeneration/MacroEmbedSampleGeneratorTests.cs :: Docx_MacroEnabled_HasVbaProjectAndEmbedding (generator-structure check); end-to-end detection/extraction independently confirmed by running the ExtractorOLE CLI against samples/synthetic/macro-embed/sample.docm (output: Detected format: Docx; Embedded files: 1 - embedded_object_1.png (68 bytes) [/media/image.png])",
+      "notes": "Macro-enabled variant (docm) carries a 63-byte placeholder VbaProjectPart (word/vbaProject.bin) -- not counted as an extracted subfile, since ExtractorOLE surfaces macro presence as a metadata flag rather than as a first-layer embedded object (see README's Supported formats section). Detects as its base format (Docx) per the macro-variant-misclassification handling in docs/specs/mime-detection.md."
+    },
+    {
+      "format": "xlsx",
+      "status": "generated",
+      "path": "samples/synthetic/macro-embed/sample.xlsm",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator.Fixtures.MacroEmbedSampleSpecs.Build() via SampleGenerator/Program.cs (XlsxSampleGenerator)",
+      "compositionRule": "docs/specs/dataset-curation.md Corpus Composition rule #1 (macro-embed: a macro-enabled variant with at least one first-layer embedding, multilingual/mixed-script body text and metadata)",
+      "expectedDetectedFormat": {
+        "enum": "Xlsx",
+        "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      },
+      "bodyTextLines": [
+        "שלום עולם, זהו טקסט לדוגמה בעברית.",
+        "مرحبا بالعالم، هذا نص عربي تجريبي.",
+        "سلام دنیا، این یک متن نمونه فارسی است.",
+        "Привет, мир! Это пример текста на русском языке.",
+        "Hello, world! This is a sample sentence in English.",
+        "你好，世界。こんにちは世界。안녕하세요, 세계.",
+        "😀🎉🚀 👨‍👩‍👧‍👦 👍🏽 🏳️‍🌈"
+      ],
+      "metadata": {
+        "Title": "שלום עולם, זהו טקסט לדוגמה בעברית.",
+        "Author": "مرحبا بالعالم، هذا نص عربي تجريبي.",
+        "Subject": "你好，世界。こんにちは世界。안녕하세요, 세계.",
+        "Comments": "😀🎉🚀 👨‍👩‍👧‍👦 👍🏽 🏳️‍🌈",
+        "LastModifiedBy": "Привет, мир! Это пример текста на русском языке."
+      },
+      "expectedFormatMetadata": { "hasMacros": true },
+      "expectedSubfileCount": 1,
+      "expectedSubfiles": [
+        { "fileName": "slide_image_1.png", "contentType": "image/png", "sizeInBytes": 68, "packagePath": "/xl/media/image.png" }
+      ],
+      "detectable": true,
+      "verifiedBy": "ExtractorOle/ExtractorOLE.Tests/SampleGeneration/MacroEmbedSampleGeneratorTests.cs :: Xlsx_MacroEnabled_HasVbaProjectAndEmbedding (generator-structure check); end-to-end detection/extraction independently confirmed by running the ExtractorOLE CLI against samples/synthetic/macro-embed/sample.xlsm (output: Detected format: Xlsx; Embedded files: 1 - slide_image_1.png (68 bytes) [/xl/media/image.png])",
+      "notes": "Macro-enabled variant (xlsm) carries a 63-byte placeholder VbaProjectPart (xl/vbaProject.bin) -- not counted as an extracted subfile (see the docm entry's note for rationale). The embedding lives on a WorksheetPart (xlsx WorkbookPart cannot hold ImagePart directly); ExtractionHelper's Phase 2 scan (ExtractorOle/ExtractorOLE/Helpers/ExtractionHelper.cs) is generic across any non-matching level-1 container, so it is found there with fileName prefix 'slide_image' (not 'embedded_object', since that prefix is assigned by which scan phase finds the part, not by container type). Note: this differs from the pre-existing multi-embedding xlsx entry earlier in this file, which still records detectable:false and an 'embedded_object_N' naming guess for its WorksheetPart images -- that entry appears to predate this generic Phase 2 fix and looks stale, but correcting it is out of scope for this task (T-f96fa73d covers macro-embed samples only)."
+    },
+    {
+      "format": "pptx",
+      "status": "generated",
+      "path": "samples/synthetic/macro-embed/sample.pptm",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator.Fixtures.MacroEmbedSampleSpecs.Build() via SampleGenerator/Program.cs (PptxSampleGenerator)",
+      "compositionRule": "docs/specs/dataset-curation.md Corpus Composition rule #1 (macro-embed: a macro-enabled variant with at least one first-layer embedding, multilingual/mixed-script body text and metadata)",
+      "expectedDetectedFormat": {
+        "enum": "Pptx",
+        "mimeType": "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+      },
+      "bodyTextLines": [
+        "שלום עולם, זהו טקסט לדוגמה בעברית.",
+        "مرحبا بالعالم، هذا نص عربي تجريبي.",
+        "سلام دنیا، این یک متن نمونه فارسی است.",
+        "Привет, мир! Это пример текста на русском языке.",
+        "Hello, world! This is a sample sentence in English.",
+        "你好，世界。こんにちは世界。안녕하세요, 세계.",
+        "😀🎉🚀 👨‍👩‍👧‍👦 👍🏽 🏳️‍🌈"
+      ],
+      "metadata": {
+        "Title": "שלום עולם, זהו טקסט לדוגמה בעברית.",
+        "Author": "مرحبا بالعالم، هذا نص عربي تجريبي.",
+        "Subject": "你好，世界。こんにちは世界。안녕하세요, 세계.",
+        "Comments": "😀🎉🚀 👨‍👩‍👧‍👦 👍🏽 🏳️‍🌈",
+        "LastModifiedBy": "Привет, мир! Это пример текста на русском языке."
+      },
+      "expectedFormatMetadata": { "hasMacros": true },
+      "expectedSubfileCount": 1,
+      "expectedSubfiles": [
+        { "fileName": "slide_image_1.png", "contentType": "image/png", "sizeInBytes": 68, "packagePath": "/ppt/media/image.png" }
+      ],
+      "detectable": true,
+      "verifiedBy": "ExtractorOle/ExtractorOLE.Tests/SampleGeneration/MacroEmbedSampleGeneratorTests.cs :: Pptx_MacroEnabled_HasVbaProjectAndEmbedding (generator-structure check); end-to-end detection/extraction independently confirmed by running the ExtractorOLE CLI against samples/synthetic/macro-embed/sample.pptm (output: Detected format: Pptx; Embedded files: 1 - slide_image_1.png (68 bytes) [/ppt/media/image.png])",
+      "notes": "Macro-enabled variant (pptm) carries a 63-byte placeholder VbaProjectPart (ppt/vbaProject.bin) -- not counted as an extracted subfile (see the docm entry's note for rationale). The embedding lives on a SlidePart, found via ExtractionHelper's Phase 2 container scan with fileName prefix 'slide_image', matching the existing multi-embedding pptx entry's convention."
     }
   ]
 }
