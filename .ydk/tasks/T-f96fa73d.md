@@ -2,7 +2,7 @@
 id: T-f96fa73d
 title: Record synthetic samples in samples/manifest.json
 story: S-41ebb945
-status: in-review
+status: done
 assignee: null
 labels:
 - in-review
@@ -16,9 +16,9 @@ component_refs: []
 test_strategy: "No test \u2014 infra/tooling task; this manifest is the ground truth\
   \ Epic 9's integration tests assert against."
 acceptance_criteria:
-- text: 9 synthetic samples exist (3 rules x 3 achievable formats — docx/xlsx/pptx) per
-    dataset-curation.md's Corpus Composition rule 1; legacy formats (doc/xls/ppt)
-    are out of scope pending resolution of the NPOI/legacy-format gap (ADR-001)
+- text: "9 synthetic samples exist (3 rules x 3 achievable formats \u2014 docx/xlsx/pptx)\
+    \ per dataset-curation.md's Corpus Composition rule 1; legacy formats (doc/xls/ppt)\
+    \ are out of scope pending resolution of the NPOI/legacy-format gap (ADR-001)"
   done: true
 - text: Every synthetic sample's manifest entry records format, composition rule satisfied,
     expected detected format, and exact expected text/metadata/subfile-count+filenames
@@ -30,7 +30,7 @@ milestone: null
 complexity: null
 gates: []
 created: '2026-08-19T12:47:20Z'
-updated: '2026-09-02T05:48:35Z'
+updated: '2026-09-12T21:10:06Z'
 ---
 
 ## Description
