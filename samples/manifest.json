@@ -762,6 +762,51 @@
       "detectable": false,
       "verifiedBy": null,
       "notes": "License: Apache License 2.0 (Apache Software Foundation, apache/poi repository, default branch 'trunk'). Redistribution permitted with attribution; this manifest entry's generatedBy field constitutes that attribution per docs/specs/dataset-curation.md 'Provenance & Licensing'."
+    },
+    {
+      "format": "docx",
+      "status": "generated",
+      "path": "samples/adversarial/wrong-extension-sample.txt",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator/Program.cs GenerateAdversarialSamples() (DocxSampleGenerator, SampleSpec with a literal single-sentence BodyText and no embeddings), run via `dotnet run --project SampleGenerator -- --adversarial`. The resulting docx/zip bytes are written verbatim to a file named with a .txt extension instead of .docx.",
+      "compositionRule": "docs/specs/dataset-curation.md Corpus Composition rule #3 (the shared adversarial set): 'one wrong-extension sample (correct content, misleading or missing filename extension) ... each tagged with which format(s) it targets.' This is the shared (not per-format) wrong-extension sample, tagged to docx.",
+      "expectedDetectedFormat": {
+        "enum": "Docx",
+        "mimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      },
+      "bodyTextLines": [
+        "This is a valid Word document that has been saved with a misleading .txt file extension."
+      ],
+      "metadata": {},
+      "expectedSubfileCount": 0,
+      "expectedSubfiles": [],
+      "detectable": true,
+      "verifiedBy": "ExtractorOle/ExtractorOLE/Program.cs CLI run via `dotnet run --project ExtractorOle/ExtractorOLE -- samples/adversarial/wrong-extension-sample.txt` on 2026-09-13 (output: 'Detected format: Word (application/vnd.openxmlformats-officedocument.wordprocessingml.document)'; 'Extracted text preview: This is a valid Word document that has been saved with a misleading .txt file extension.'; 'Embedded files: 0'). Also covered at the unit level by ExtractorOle/ExtractorOLE.Tests/MimeDetection/OoxmlMimeDetectorTests.cs :: Detect_WrongExtension_StillDetectsCorrectFormat.",
+      "notes": "Proves ExtractorOLE's format detection is extension-agnostic by construction: IExtractionHelper.DetectMimeTypeFromBytes(byte[] fileBytes) (ExtractorOle/ExtractorOLE/Helpers/ExtractionHelper.cs) takes only the raw file bytes, never a filename or extension, so it cannot be misled by the .txt extension on this file -- it correctly reports Word/docx regardless. This corpus fixture is the checked-in file-level counterpart to the unit-level assertion already made in OoxmlMimeDetectorTests.Detect_WrongExtension_StillDetectsCorrectFormat."
+    },
+    {
+      "format": "docx",
+      "status": "generated",
+      "path": "samples/adversarial/corrupt-embedded-object.docx",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator/Program.cs GenerateAdversarialSamples(): DocxEmbeddedXlsxSampleSpecs.BuildWithCorruptTarget() (embedded.xlsx + image.png + a distinctively-content-typed corrupt-target.bin) generated via DocxSampleGenerator with a literal single-sentence BodyText override, then the corrupt-target part's zip entry (located by its distinctive ContentType via DocumentFormat.OpenXml.Packaging.WordprocessingDocument.Open) is bitwise-corrupted in place with SampleGenerator.Generators.ZipEntryCorruptor.CorruptEntryData, leaving the Central Directory and the other two embeddings byte-identical. Run via `dotnet run --project SampleGenerator -- --adversarial`.",
+      "compositionRule": "docs/specs/dataset-curation.md Corpus Composition rule #3 (the shared adversarial set): 'one sample with a single corrupt embedded object alongside otherwise-valid content (exercises the per-subfile-failure rule in extraction.md) ... each tagged with which format(s) it targets.' This is the shared (not per-format) corrupt-embedded-object sample, tagged to docx.",
+      "expectedDetectedFormat": {
+        "enum": "Docx",
+        "mimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      },
+      "bodyTextLines": [
+        "This document is otherwise valid but contains one embedded object that has been deliberately corrupted."
+      ],
+      "metadata": {},
+      "expectedSubfileCount": 2,
+      "expectedSubfiles": [
+        { "fileName": "embedded_object_1.xlsx", "contentType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "sizeInBytes": 1949, "packagePath": "/word/embeddings/embeddedObject.bin" },
+        { "fileName": "embedded_object_2.png", "contentType": "image/png", "sizeInBytes": 68, "packagePath": "/media/image.png" }
+      ],
+      "detectable": true,
+      "verifiedBy": "ExtractorOle/ExtractorOLE/Program.cs CLI run via `dotnet run --project ExtractorOle/ExtractorOLE -- samples/adversarial/corrupt-embedded-object.docx` on 2026-09-13 (output: 'Detected format: Word (application/vnd.openxmlformats-officedocument.wordprocessingml.document)'; stderr 'Skipping unreadable embedded part '/word/embeddings/embeddedObject2.bin': The archive entry was compressed using an unsupported compression method.'; 'Embedded files: 2' listing exactly 'embedded_object_1.xlsx (1949 bytes) [/word/embeddings/embeddedObject.bin]' and 'embedded_object_2.png (68 bytes) [/media/image.png]'). Also covered at the unit level by ExtractorOle/ExtractorOLE.Tests/MultiEmbedding/DocxEmbeddedXlsxAndCorruptionTests.cs :: Docx_CorruptedEmbeddedPart_IsOmittedAndLogged_WithoutFailingExtraction, using the identical ZipEntryCorruptor technique.",
+      "notes": "Proves the per-subfile-failure rule from extraction.md: a single corrupt first-layer embedding (the third embedding, corrupt-target.bin, whose zip entry was bitwise-corrupted) is silently omitted from the result -- WordOpenStrategy logs a warning to stderr and returns the 2 remaining valid embeddings (the xlsx and the png) rather than failing the whole extraction call. This corpus fixture is the checked-in file-level counterpart to the unit-level assertion already made in DocxEmbeddedXlsxAndCorruptionTests.Docx_CorruptedEmbeddedPart_IsOmittedAndLogged_WithoutFailingExtraction."
     }
   ]
 }
