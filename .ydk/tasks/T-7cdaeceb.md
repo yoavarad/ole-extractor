@@ -18,13 +18,13 @@ test_strategy: "No test \u2014 infra/tooling task; these samples are asserted ag
 acceptance_criteria:
 - text: One wrong-extension sample exists with valid content and a misleading or missing
     filename extension, tagged with its target format
-  done: false
+  done: true
 - text: One corrupt-embedded-object sample exists with otherwise-valid content and
     exactly one corrupt first-layer embedding, tagged with its target format
-  done: false
+  done: true
 - text: Both samples' correct expected outcome (correct detected format regardless
     of extension; successful extraction omitting only the corrupt embedding) is recorded
-  done: false
+  done: true
 milestone: null
 complexity: null
 gates: []

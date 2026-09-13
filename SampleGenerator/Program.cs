@@ -1,3 +1,4 @@
+using DocumentFormat.OpenXml.Packaging;
 using Microsoft.Extensions.DependencyInjection;
 using SampleGenerator;
 using SampleGenerator.Abstractions;
@@ -11,6 +12,13 @@ var provider = services.BuildServiceProvider();
 var generators = provider.GetRequiredService<IDictionary<SampleFormat, ISampleGenerator>>();
 
 var outputDir = args.Length > 0 ? args[0] : "generated-samples";
+
+if (args.Length > 0 && args[0] == "--adversarial")
+{
+    GenerateAdversarialSamples();
+    return;
+}
+
 Directory.CreateDirectory(outputDir);
 
 // docs/specs/dataset-curation.md composition rule #1 ("multi-embedding"):
@@ -138,3 +146,52 @@ var sizeBombPath = Path.Combine(adversarialOutputDir, "oversized-declared-size-b
 var sizeBombBytes = AdversarialSampleGenerator.BuildCfbSizeBomb();
 File.WriteAllBytes(sizeBombPath, sizeBombBytes);
 Console.WriteLine($"Generated adversarial oversized-declared-size-bomb: {sizeBombPath} ({sizeBombBytes.Length} bytes)");
+
+// docs/specs/dataset-curation.md Corpus Composition's shared adversarial set
+// (not per-format): one wrong-extension sample (correct content, misleading
+// filename extension) and one sample with a single corrupt embedded object
+// alongside otherwise-valid content (exercises the per-subfile-failure rule
+// in extraction.md). Both are tagged to docx as their target format. Gated
+// behind the --adversarial CLI flag so running this generator normally
+// doesn't touch these files.
+void GenerateAdversarialSamples()
+{
+    var adversarialDir = Path.Combine("samples", "adversarial");
+    Directory.CreateDirectory(adversarialDir);
+
+    // Wrong-extension sample: a real docx package saved with a misleading
+    // .txt extension. Content-based MIME detection must still identify it
+    // as docx regardless of the filename.
+    var wrongExtensionSpec = new SampleSpec
+    {
+        BodyText = "This is a valid Word document that has been saved with a misleading .txt file extension."
+    };
+    var wrongExtensionSample = new DocxSampleGenerator().Generate(wrongExtensionSpec);
+    var wrongExtensionPath = Path.Combine(adversarialDir, "wrong-extension-sample.txt");
+    File.WriteAllBytes(wrongExtensionPath, wrongExtensionSample.Content);
+    Console.WriteLine($"Generated adversarial wrong-extension docx: {wrongExtensionPath} ({wrongExtensionSample.Content.Length} bytes)");
+
+    // Corrupt-embedded-object sample: a docx with 3 first-layer embeddings
+    // (xlsx, png, and a corrupt-target blob) whose corrupt-target zip entry
+    // is bitwise-corrupted after generation. Extraction must succeed and
+    // return the xlsx and png, silently omitting the corrupt embedding.
+    var corruptSpec = DocxEmbeddedXlsxSampleSpecs.BuildWithCorruptTarget();
+    corruptSpec.BodyText = "This document is otherwise valid but contains one embedded object that has been deliberately corrupted.";
+    var goodBytes = new DocxSampleGenerator().Generate(corruptSpec).Content;
+
+    string corruptTargetUri;
+    using (var ms = new MemoryStream(goodBytes))
+    using (var word = WordprocessingDocument.Open(ms, false))
+    {
+        var corruptPart = word.MainDocumentPart!.Parts
+            .Select(p => p.OpenXmlPart)
+            .Single(p => p.ContentType == DocxEmbeddedXlsxSampleSpecs.CorruptTargetContentType);
+        corruptTargetUri = corruptPart.Uri.ToString();
+    }
+
+    var entryName = corruptTargetUri.TrimStart('/');
+    var corruptedBytes = ZipEntryCorruptor.CorruptEntryData(goodBytes, entryName);
+    var corruptedPath = Path.Combine(adversarialDir, "corrupt-embedded-object.docx");
+    File.WriteAllBytes(corruptedPath, corruptedBytes);
+    Console.WriteLine($"Generated adversarial corrupt-embedded-object docx: {corruptedPath} ({corruptedBytes.Length} bytes)");
+}
