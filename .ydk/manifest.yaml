@@ -657,7 +657,7 @@ tasks:
     title: Enforce max-file-size and nesting-depth-guard checks in the OOXML detection
       path
     story: S-7d040ba7
-    status: in-progress
+    status: done
     dependencies:
     - T-44812a03
     component_refs:
@@ -944,6 +944,6 @@ tasks:
   T-36b41128:
     title: Rebuild graphify knowledge graph after code/doc changes
     story: ''
-    status: in-review
+    status: done
     dependencies: []
     component_refs: []
