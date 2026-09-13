@@ -221,6 +221,8 @@ stories:
     - T-83b4a029
     - T-7cdaeceb
     - T-71ab3bc0
+    - T-07571b32
+    - T-48110fcb
   S-f6d7124a:
     title: Integration tests against the corpus manifest
     epic: E-5717c1fe
@@ -773,7 +775,7 @@ tasks:
     title: Assemble and finalize samples/manifest.json as the ground-truth corpus
       manifest
     story: S-6bc8566f
-    status: open
+    status: in-review
     dependencies:
     - T-f96fa73d
     - T-c573e72e
@@ -947,3 +949,18 @@ tasks:
     status: done
     dependencies: []
     component_refs: []
+  T-07571b32:
+    title: Generate remaining 10 legacy-format samples once ADR-001 lands
+    story: S-6bc8566f
+    status: blocked-by-ADR-001
+    dependencies: []
+    component_refs:
+    - ydk:nfr:extraction/nesting-depth-guard
+  T-48110fcb:
+    title: Fix stale expectedBehavior/errorId on corrupt-container.docx and truncated-container.docx
+      manifest entries
+    story: S-6bc8566f
+    status: open
+    dependencies: []
+    component_refs:
+    - ydk:nfr:extraction/nesting-depth-guard
