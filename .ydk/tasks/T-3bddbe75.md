@@ -2,7 +2,7 @@
 id: T-3bddbe75
 title: Produce corrupt, truncated, and zero-byte adversarial samples
 story: S-6bc8566f
-status: open
+status: done
 assignee: null
 labels: []
 dependencies:
@@ -28,7 +28,7 @@ milestone: null
 complexity: null
 gates: []
 created: '2026-08-19T12:47:21Z'
-updated: '2026-08-19T12:47:24Z'
+updated: '2026-09-13T19:30:42Z'
 ---
 
 ## Description
