@@ -2,7 +2,7 @@
 id: T-71ab3bc0
 title: Assemble and finalize samples/manifest.json as the ground-truth corpus manifest
 story: S-6bc8566f
-status: in-review
+status: done
 assignee: null
 labels:
 - in-review
@@ -36,7 +36,7 @@ milestone: null
 complexity: null
 gates: []
 created: '2026-08-19T12:47:21Z'
-updated: '2026-09-13T20:29:01Z'
+updated: '2026-09-13T20:51:38Z'
 ---
 
 ## Description
