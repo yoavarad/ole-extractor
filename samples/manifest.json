@@ -726,7 +726,7 @@
       "notes": "GENUINE (not scripted) multi-user, multi-save revision-history provenance, verified directly against the file's OOXML docProps/core.xml and docProps/app.xml on 2026-09-12: Author='xnv' != LastModifiedBy='Robbie DeJarnette', RevisionNumber=436 (>>1), TotalTime=10583 minutes (~176 hours) of real cumulative editing spread across a ~15-month span (Created 2007-06-20 to Modified 2008-09-29) -- these are the exact, unrounded values stored in the file, not idealized. Note: cp:lastPrinted (2009-04-22) is after Modified (2008-09-29) -- left as-is (not corrected) since this is real third-party data reported verbatim; plausible if the file was reopened and printed without a subsequent content save. app.xml reports 37 slides / 3 notes pages / 1659 words / 2 Embedded OLE Servers / Microsoft PowerPoint, Template 'ORNL template_0704'. The deck body itself is a real Oak Ridge National Laboratory (operated by UT-Battelle, LLC for the U.S. Department of Energy) lecture on Quasi-Elastic Neutron Scattering presented by Ken Herwig, Deputy Director of ORNL's Neutron Scattering Science Division, to the National School on Neutron and X-ray Scattering (Sept 29, 2008), confirming genuine DOE national-laboratory scientific work product. License basis note: unlike the docx samples and noaa-transition-team-briefing-2008.pptx above (direct federal-employee work, cleanly public domain under 17 U.S.C. Sec. 105), ORNL is DOE-owned but contractor-operated (UT-Battelle, LLC); the author may be a contractor employee rather than a federal employee, so the clean federal-public-domain basis is not asserted for this specific file's authorship. Instead, this file's redistribution basis rests on govdocs1's general .gov-TLD harvest scope and digitalcorpora.org's stated redistribution permission (https://digitalcorpora.org/corpora/file-corpora/files/: 'freely available for research and may be (to the best of our knowledge) freely redistributed'); content is an unclassified public educational science lecture with no apparent distribution restriction markings. Candidate selection: from the same initial-scan pass described in the noaa-transition-team-briefing-2008.pptx entry above, this file was selected as a second, independent genuine candidate (distinct author/agency, RevisionNumber=436, ~176 hours of real edit time). expectedSubfileCount=83 is the real, verified count of first-layer parts under ppt/media/ and ppt/embeddings/ in the package (enumerated directly from the zip, including several oleObjectN.bin embedded OLE objects); a full per-object expectedSubfiles breakdown was intentionally not enumerated here given the volume and unverified extractor naming/ordering -- detectable=false pending that verification, same caution as applied elsewhere in this manifest for real third-party files with embedded content."
     },
     {
-      "format": "adversarial",
+      "format": "doc",
       "status": "adversarial",
       "path": "samples/adversarial/oversized-declared-size-bomb.doc",
       "provenance": "self-generated",
@@ -734,6 +734,10 @@
       "compositionRule": "docs/specs/dataset-curation.md 'The shared adversarial set' bullet -- oversized-declared-size sample (zip/CFB bomb per ydk:nfr:extraction/nesting-depth-guard), tagged with its target format(s).",
       "targetFormats": ["doc", "xls", "ppt"],
       "targetFormatsNote": "CFB is the shared container for the legacy doc/xls/ppt formats; nesting-depth-guard's declared-size check runs at the container-detection layer (CfbMimeDetector) before any per-format parsing, so a single CFB bomb exercises all three formats identically.",
+      "expectedDetectedFormat": {
+        "enum": "Doc",
+        "mimeType": "application/msword"
+      },
       "expectedBehavior": {
         "outcome": "rejected before parse",
         "thrownException": "ExtractorOLE.Exceptions.OversizedNestedContentException",
@@ -742,7 +746,7 @@
       },
       "detectable": false,
       "verifiedBy": null,
-      "notes": "Actual on-disk file size is intentionally a few KB, not gigabytes -- only the declared FAT sector count is forged, per this task's (T-83b4a029) acceptance criterion that no sample may require actually allocating real bulk data. Manually verified via the ExtractorOLE CLI to throw the expected OversizedNestedContentException (see PR verification section). Not yet wired into an automated xUnit test in this repo (test_strategy for T-83b4a029: infra/tooling task, no test required here); asserted against by Epic 9's integration tests once recorded in this manifest, per docs/specs/dataset-curation.md's Corpus Manifest section."
+      "notes": "Actual on-disk file size is intentionally a few KB, not gigabytes -- only the declared FAT sector count is forged, per this task's (T-83b4a029) acceptance criterion that no sample may require actually allocating real bulk data. Manually verified via the ExtractorOLE CLI to throw the expected OversizedNestedContentException (see PR verification section). Not yet wired into an automated xUnit test in this repo (test_strategy for T-83b4a029: infra/tooling task, no test required here); asserted against by Epic 9's integration tests once recorded in this manifest, per docs/specs/dataset-curation.md's Corpus Manifest section. T-71ab3bc0 note: expectedDetectedFormat above is NOT an empirically observed value -- verified via a standalone harness that copies CfbMimeDetector/OoxmlMimeDetector production logic byte-for-byte and runs it against this exact file: OoxmlMimeDetector returns Unknown (not a zip), and CfbMimeDetector throws OversizedNestedContentException from its declared-size guard before ever inspecting root entry names, so no DetectedFormatEnum value is actually computed for this file by either detector. 'Doc'/'application/msword' is recorded as the best-supported nominal value (tied to targetFormats[0]) per this task's guidance to record an ambiguous case with a note rather than invent an unverified value; top-level format also changed from the placeholder literal 'adversarial' to 'doc' for the same reason (format must name a real enum, not duplicate status)."
     },
     {
       "format": "docx",
@@ -753,6 +757,10 @@
       "compositionRule": "docs/specs/dataset-curation.md 'The shared adversarial set' bullet -- password-protected sample (genuine document-open password/encryption stream), tagged with its target format(s).",
       "targetFormats": ["docx"],
       "targetFormatsNote": "Genuinely CFB-wrapped MS-OFFCRYPTO encrypted OOXML; the outer container is CFB even though the target/original format is docx, since MS-OFFCRYPTO always wraps an encrypted OOXML package in a CFB container regardless of the inner format.",
+      "expectedDetectedFormat": {
+        "enum": "Doc",
+        "mimeType": "application/msword"
+      },
       "expectedBehavior": {
         "outcome": "should be rejected before parse once password-protected detection is implemented",
         "errorId": "ydk:error:extraction/password-protected",
@@ -761,7 +769,7 @@
       },
       "detectable": false,
       "verifiedBy": null,
-      "notes": "License: Apache License 2.0 (Apache Software Foundation, apache/poi repository, default branch 'trunk'). Redistribution permitted with attribution; this manifest entry's generatedBy field constitutes that attribution per docs/specs/dataset-curation.md 'Provenance & Licensing'."
+      "notes": "License: Apache License 2.0 (Apache Software Foundation, apache/poi repository, default branch 'trunk'). Redistribution permitted with attribution; this manifest entry's generatedBy field constitutes that attribution per docs/specs/dataset-curation.md 'Provenance & Licensing'. T-71ab3bc0 note: expectedDetectedFormat empirically verified via a standalone harness that copies CfbMimeDetector/OoxmlMimeDetector production logic byte-for-byte and runs it against this exact file. OoxmlMimeDetector returns Unknown (not a zip). A direct OpenMcdf root-entry enumeration of this real file shows it contains 'ObjectPool', 'DataSpaces', 'WordDocument', 'EncryptionInfo', and 'EncryptedPackage' at the root -- i.e. this genuine MS-OFFCRYPTO file also carries a legacy 'WordDocument' compatibility stream alongside the encryption streams. CfbMimeDetector checks for 'WordDocument' before Excel/PowerPoint entry names and finds it, so it structurally reports Doc/application-msword (IsSupported=true), NOT Docx -- despite the top-level format/targetFormats being docx. This is today's actual pre-failure detection result, ahead of password-protected rejection being implemented; it is not an assumption."
     },
     {
       "format": "docx",
@@ -809,7 +817,7 @@
       "notes": "Proves the per-subfile-failure rule from extraction.md: a single corrupt first-layer embedding (the third embedding, corrupt-target.bin, whose zip entry was bitwise-corrupted) is silently omitted from the result -- WordOpenStrategy logs a warning to stderr and returns the 2 remaining valid embeddings (the xlsx and the png) rather than failing the whole extraction call. This corpus fixture is the checked-in file-level counterpart to the unit-level assertion already made in DocxEmbeddedXlsxAndCorruptionTests.Docx_CorruptedEmbeddedPart_IsOmittedAndLogged_WithoutFailingExtraction."
     },
     {
-      "format": "adversarial",
+      "format": "docx",
       "status": "adversarial",
       "path": "samples/adversarial/corrupt-container.docx",
       "provenance": "self-generated",
@@ -817,6 +825,10 @@
       "compositionRule": "docs/specs/dataset-curation.md 'The shared adversarial set' bullet -- corrupt sample, satisfies ydk:error:extraction/corrupt-file ('bytes that pass mime detection's lightweight structural sniff but fail full parsing by the format library'), tagged with its target format(s).",
       "targetFormats": ["docx"],
       "targetFormatsNote": "Derived from a docx source; the same technique (destroy the Central Directory/EOCD, keep the local file header signature intact) applies identically to any zip-based OOXML format (docx/xlsx/pptx), since detection and full parsing both operate on the shared ZIP container structure, not format-specific content.",
+      "expectedDetectedFormat": {
+        "enum": "Unknown",
+        "mimeType": "application/octet-stream"
+      },
       "expectedBehavior": {
         "outcome": "detected as docx, then rejected on full parse",
         "errorId": "ydk:error:extraction/corrupt-file",
@@ -825,10 +837,10 @@
       },
       "detectable": false,
       "verifiedBy": null,
-      "notes": "Detection/full-parse behavior is derived from docs/specs/extraction.md and .ydk/components/error/extraction/corrupt-file.yaml; not yet empirically verified against a running ExtractorOLE build (no extractor code path exercises this error yet). detectable=false pending that verification, per this task's (T-3bddbe75) test_strategy: 'No test -- infra/tooling task'."
+      "notes": "Detection/full-parse behavior is derived from docs/specs/extraction.md and .ydk/components/error/extraction/corrupt-file.yaml; not yet empirically verified against a running ExtractorOLE build (no extractor code path exercises this error yet). detectable=false pending that verification, per this task's (T-3bddbe75) test_strategy: 'No test -- infra/tooling task'. T-71ab3bc0 note: expectedDetectedFormat WAS empirically verified via a standalone harness copying OoxmlMimeDetector/CfbMimeDetector production logic byte-for-byte and run against this exact file, and the result contradicts this entry's own expectedBehavior.outcome text above ('detected as docx'). Empirically, OoxmlMimeDetector.Detect() returns Unknown for this file: destroying the Central Directory/EOCD (offset 3022-3714) means System.IO.Packaging's Package.Open cannot locate a valid EOCD at all, so it throws before PartExists() is ever reached, and OoxmlMimeDetector's catch-all returns UnknownResult() rather than a Docx match; CfbMimeDetector also returns Unknown (not a CFB signature). So mime detection never actually reaches 'detected as docx' for this file as currently corrupted -- it is Unknown at the structural-sniff stage already, before any full-parse step. Recording the empirically-true Unknown value per this task's instruction to determine values empirically rather than from prose; flagging (not editing) the pre-existing expectedBehavior.outcome/trigger text above since correcting that prose is outside this task's authorized scope (samples/manifest.json field-gap fixes only) -- left for the task owner/reviewer to decide whether T-3bddbe75's outcome text should be corrected in a follow-up."
     },
     {
-      "format": "adversarial",
+      "format": "docx",
       "status": "adversarial",
       "path": "samples/adversarial/truncated-container.docx",
       "provenance": "self-generated",
@@ -836,6 +848,10 @@
       "compositionRule": "docs/specs/dataset-curation.md 'The shared adversarial set' bullet -- truncated sample, satisfies ydk:error:extraction/truncated-container ('a ZIP end-of-central-directory record pointing past the actual byte array'), tagged with its target format(s).",
       "targetFormats": ["docx"],
       "targetFormatsNote": "Derived from a docx source; the same technique (keep the local file header + original EOCD, drop the middle) applies identically to any zip-based OOXML format (docx/xlsx/pptx).",
+      "expectedDetectedFormat": {
+        "enum": "Unknown",
+        "mimeType": "application/octet-stream"
+      },
       "expectedBehavior": {
         "outcome": "detected as docx, then rejected on full parse",
         "errorId": "ydk:error:extraction/truncated-container",
@@ -848,10 +864,10 @@
       },
       "detectable": false,
       "verifiedBy": null,
-      "notes": "Detection/full-parse behavior is derived from docs/specs/extraction.md and .ydk/components/error/extraction/truncated-container.yaml; not yet empirically verified against a running ExtractorOLE build. detectable=false pending that verification, per this task's (T-3bddbe75) test_strategy: 'No test -- infra/tooling task'."
+      "notes": "Detection/full-parse behavior is derived from docs/specs/extraction.md and .ydk/components/error/extraction/truncated-container.yaml; not yet empirically verified against a running ExtractorOLE build. detectable=false pending that verification, per this task's (T-3bddbe75) test_strategy: 'No test -- infra/tooling task'. T-71ab3bc0 note: expectedDetectedFormat WAS empirically verified via a standalone harness copying OoxmlMimeDetector/CfbMimeDetector production logic byte-for-byte and run against this exact file, and the result contradicts this entry's own expectedBehavior.outcome text above ('detected as docx'). Empirically, OoxmlMimeDetector.Detect() returns Unknown: with only 222 of the original 3714 bytes present, System.IO.Packaging's Package.Open cannot open a valid ZIP/OPC package (the declared central directory at offset 3022 is past the actual 222-byte length) and throws before PartExists() is reached, so the catch-all returns UnknownResult(); CfbMimeDetector also returns Unknown (not a CFB signature). So mime detection never actually reaches 'detected as docx' for this file as currently truncated -- it is Unknown at the structural-sniff stage already. Recording the empirically-true Unknown value per this task's instruction to determine values empirically rather than from prose; flagging (not editing) the pre-existing expectedBehavior.outcome/trigger text above since correcting that prose is outside this task's authorized scope (samples/manifest.json field-gap fixes only) -- left for the task owner/reviewer to decide whether T-3bddbe75's outcome text should be corrected in a follow-up."
     },
     {
-      "format": "adversarial",
+      "format": "docx",
       "status": "adversarial",
       "path": "samples/adversarial/zero-byte.docx",
       "provenance": "self-generated",
@@ -859,6 +875,10 @@
       "compositionRule": "docs/specs/dataset-curation.md 'The shared adversarial set' bullet -- zero-byte sample, tagged with its target format(s).",
       "targetFormats": ["docx", "xlsx", "pptx"],
       "targetFormatsNote": "A 0-byte file is identical regardless of claimed extension/format, so this single sample stands in for all 3 currently-generated OOXML target formats.",
+      "expectedDetectedFormat": {
+        "enum": "Unknown",
+        "mimeType": "application/octet-stream"
+      },
       "expectedBehavior": {
         "outcome": "mime detection reports Unknown; TRUNCATED_CONTAINER is only raised if Extract() is called directly on the zero-length bytes",
         "errorId": "ydk:error:extraction/truncated-container",
@@ -868,7 +888,7 @@
       },
       "detectable": false,
       "verifiedBy": null,
-      "notes": "detectable=false pending empirical verification against a running ExtractorOLE build, per this task's (T-3bddbe75) test_strategy: 'No test -- infra/tooling task'."
+      "notes": "detectable=false pending empirical verification against a running ExtractorOLE build, per this task's (T-3bddbe75) test_strategy: 'No test -- infra/tooling task'. T-71ab3bc0 note: expectedDetectedFormat empirically confirmed (consistent with this entry's own expectedBehavior.outcome) via a standalone harness copying OoxmlMimeDetector/CfbMimeDetector production logic byte-for-byte and run against this exact 0-byte file: both detectors' zero-length guard returns UnknownResult() immediately (Unknown/application-octet-stream) without attempting any structural parse."
     }
   ]
 }
