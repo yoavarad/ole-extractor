@@ -44,3 +44,12 @@
 - Full `SampleGenerator/Program.cs` run regenerates all samples non-deterministically (documented pre-existing behavior — random GUID/timestamp per zip-container write); reverted the incidental byte-diffs on unrelated pre-existing sample files (`git checkout --`) to keep this change surgical.
 - `dotnet test ExtractorOle/ExtractorOLE.Tests`: 129 passed, 0 failed.
 - PR: (opened via `ydk task done`)
+
+## 2026-09-13 — T-7cdaeceb: Produce wrong-extension and corrupt-embedded-object adversarial samples
+- Added `samples/adversarial/wrong-extension-sample.txt`: a real docx package (valid body text, no embeddings) saved with a misleading `.txt` extension — proves content-based MIME detection ignores the filename/extension entirely.
+- Added `samples/adversarial/corrupt-embedded-object.docx`: a docx with 3 first-layer embeddings (an embedded xlsx, an inline PNG, and a third blob), where the third embedding's zip entry is bitwise-corrupted in place after generation via the existing `SampleGenerator.Generators.ZipEntryCorruptor.CorruptEntryData` (leaving the Central Directory and the other two embeddings byte-identical) — proves the per-subfile-failure rule: extraction succeeds and returns the 2 valid embeddings, silently omitting the corrupt one (stderr warning), rather than failing the whole call.
+- Both generators wired into `SampleGenerator/Program.cs` behind a new `--adversarial` CLI flag (`GenerateAdversarialSamples()`), gated so normal generator runs don't touch these files or regenerate the existing (partly non-deterministic) sample corpus.
+- Both samples registered in `samples/manifest.json` with exact CLI-verified `expectedDetectedFormat`/`expectedSubfileCount`/`expectedSubfiles`, each citing the corresponding existing unit test that already proves the same behavior at the code level (`OoxmlMimeDetectorTests.Detect_WrongExtension_StillDetectsCorrectFormat`; `DocxEmbeddedXlsxAndCorruptionTests.Docx_CorruptedEmbeddedPart_IsOmittedAndLogged_WithoutFailingExtraction`).
+- Both tagged to docx as their target format — this is the shared (not per-format) adversarial set per `docs/specs/dataset-curation.md`.
+- All verification plugins passed (dotnet-build, dotnet-format, dotnet-quality, dotnet-test, etc.).
+- PR: https://github.com/yoavarad/ole-extractor/pull/71
