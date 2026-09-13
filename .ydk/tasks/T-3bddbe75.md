@@ -18,12 +18,12 @@ test_strategy: "No test \u2014 infra/tooling task; these samples are asserted ag
 acceptance_criteria:
 - text: One corrupt sample exists that is structurally malformed and unparseable,
     tagged with its target format(s)
-  done: false
+  done: true
 - text: One truncated sample exists whose declared container size exceeds its actual
     byte length, tagged with its target format(s)
-  done: false
+  done: true
 - text: One zero-byte sample exists, tagged with its target format(s)
-  done: false
+  done: true
 milestone: null
 complexity: null
 gates: []

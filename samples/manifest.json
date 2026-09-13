@@ -807,6 +807,68 @@
       "detectable": true,
       "verifiedBy": "ExtractorOle/ExtractorOLE/Program.cs CLI run via `dotnet run --project ExtractorOle/ExtractorOLE -- samples/adversarial/corrupt-embedded-object.docx` on 2026-09-13 (output: 'Detected format: Word (application/vnd.openxmlformats-officedocument.wordprocessingml.document)'; stderr 'Skipping unreadable embedded part '/word/embeddings/embeddedObject2.bin': The archive entry was compressed using an unsupported compression method.'; 'Embedded files: 2' listing exactly 'embedded_object_1.xlsx (1949 bytes) [/word/embeddings/embeddedObject.bin]' and 'embedded_object_2.png (68 bytes) [/media/image.png]'). Also covered at the unit level by ExtractorOle/ExtractorOLE.Tests/MultiEmbedding/DocxEmbeddedXlsxAndCorruptionTests.cs :: Docx_CorruptedEmbeddedPart_IsOmittedAndLogged_WithoutFailingExtraction, using the identical ZipEntryCorruptor technique.",
       "notes": "Proves the per-subfile-failure rule from extraction.md: a single corrupt first-layer embedding (the third embedding, corrupt-target.bin, whose zip entry was bitwise-corrupted) is silently omitted from the result -- WordOpenStrategy logs a warning to stderr and returns the 2 remaining valid embeddings (the xlsx and the png) rather than failing the whole extraction call. This corpus fixture is the checked-in file-level counterpart to the unit-level assertion already made in DocxEmbeddedXlsxAndCorruptionTests.Docx_CorruptedEmbeddedPart_IsOmittedAndLogged_WithoutFailingExtraction."
+    },
+    {
+      "format": "adversarial",
+      "status": "adversarial",
+      "path": "samples/adversarial/corrupt-container.docx",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator.Generators.CorruptedContainerSampleGenerator.CorruptCentralDirectory() via SampleGenerator/Program.cs, run via `dotnet run --project SampleGenerator`. Reads the existing valid samples/synthetic/multi-embedding/sample.docx (3714 bytes), locates its End Of Central Directory (EOCD) record, and bitwise-complements every byte from the start of the ZIP Central Directory (offset 3022) through end-of-file (3714) -- destroying both the Central Directory (originally 670 bytes) and the EOCD record itself, while leaving bytes 0-3021 (every local file header and compressed part) byte-identical to the source.",
+      "compositionRule": "docs/specs/dataset-curation.md 'The shared adversarial set' bullet -- corrupt sample, satisfies ydk:error:extraction/corrupt-file ('bytes that pass mime detection's lightweight structural sniff but fail full parsing by the format library'), tagged with its target format(s).",
+      "targetFormats": ["docx"],
+      "targetFormatsNote": "Derived from a docx source; the same technique (destroy the Central Directory/EOCD, keep the local file header signature intact) applies identically to any zip-based OOXML format (docx/xlsx/pptx), since detection and full parsing both operate on the shared ZIP container structure, not format-specific content.",
+      "expectedBehavior": {
+        "outcome": "detected as docx, then rejected on full parse",
+        "errorId": "ydk:error:extraction/corrupt-file",
+        "code": "CORRUPT_FILE",
+        "trigger": "The file's first 4 bytes (PK\\x03\\x04) still sniff as a zip/OOXML container, but no valid Central Directory or EOCD record can be located -- DocumentFormat.OpenXml's WordprocessingDocument.Open (backed by System.IO.Packaging) cannot open the package."
+      },
+      "detectable": false,
+      "verifiedBy": null,
+      "notes": "Detection/full-parse behavior is derived from docs/specs/extraction.md and .ydk/components/error/extraction/corrupt-file.yaml; not yet empirically verified against a running ExtractorOLE build (no extractor code path exercises this error yet). detectable=false pending that verification, per this task's (T-3bddbe75) test_strategy: 'No test -- infra/tooling task'."
+    },
+    {
+      "format": "adversarial",
+      "status": "adversarial",
+      "path": "samples/adversarial/truncated-container.docx",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator.Generators.CorruptedContainerSampleGenerator.TruncateKeepingEocd() via SampleGenerator/Program.cs, run via `dotnet run --project SampleGenerator`. Reads the existing valid samples/synthetic/multi-embedding/sample.docx (3714 bytes) and keeps only the first 200 bytes (still starting with the PK\\x03\\x04 local file header signature) plus the original, unmodified 22-byte End Of Central Directory (EOCD) record (originally at offset 3692-3714), dropping everything in between.",
+      "compositionRule": "docs/specs/dataset-curation.md 'The shared adversarial set' bullet -- truncated sample, satisfies ydk:error:extraction/truncated-container ('a ZIP end-of-central-directory record pointing past the actual byte array'), tagged with its target format(s).",
+      "targetFormats": ["docx"],
+      "targetFormatsNote": "Derived from a docx source; the same technique (keep the local file header + original EOCD, drop the middle) applies identically to any zip-based OOXML format (docx/xlsx/pptx).",
+      "expectedBehavior": {
+        "outcome": "detected as docx, then rejected on full parse",
+        "errorId": "ydk:error:extraction/truncated-container",
+        "code": "TRUNCATED_CONTAINER",
+        "declaredCentralDirectoryOffset": 3022,
+        "declaredCentralDirectorySize": 670,
+        "declaredContainerEndByte": 3692,
+        "actualBytes": 222,
+        "trigger": "The EOCD record (present, unmodified, at the tail of the 222-byte file) declares centralDirectoryOffset=3022 / centralDirectorySize=670 -- i.e. a container that should extend to byte 3692 -- but the file is only 222 bytes long, so the declared container size (3692) exceeds the actual byte length (222)."
+      },
+      "detectable": false,
+      "verifiedBy": null,
+      "notes": "Detection/full-parse behavior is derived from docs/specs/extraction.md and .ydk/components/error/extraction/truncated-container.yaml; not yet empirically verified against a running ExtractorOLE build. detectable=false pending that verification, per this task's (T-3bddbe75) test_strategy: 'No test -- infra/tooling task'."
+    },
+    {
+      "format": "adversarial",
+      "status": "adversarial",
+      "path": "samples/adversarial/zero-byte.docx",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator/Program.cs writes a literal empty byte array via `dotnet run --project SampleGenerator`. Content-independent by construction -- the .docx extension is representative/arbitrary, not load-bearing.",
+      "compositionRule": "docs/specs/dataset-curation.md 'The shared adversarial set' bullet -- zero-byte sample, tagged with its target format(s).",
+      "targetFormats": ["docx", "xlsx", "pptx"],
+      "targetFormatsNote": "A 0-byte file is identical regardless of claimed extension/format, so this single sample stands in for all 3 currently-generated OOXML target formats.",
+      "expectedBehavior": {
+        "outcome": "mime detection reports Unknown; TRUNCATED_CONTAINER is only raised if Extract() is called directly on the zero-length bytes",
+        "errorId": "ydk:error:extraction/truncated-container",
+        "code": "TRUNCATED_CONTAINER",
+        "actualBytes": 0,
+        "trigger": "Per ydk:error:extraction/truncated-container's own trigger list: 'ExtractionRequest.FileBytes is zero-length ... detection itself never throws this, a zero-length input simply detects as Unknown; this trigger fires only if Extract() is called directly with a zero-length input'."
+      },
+      "detectable": false,
+      "verifiedBy": null,
+      "notes": "detectable=false pending empirical verification against a running ExtractorOLE build, per this task's (T-3bddbe75) test_strategy: 'No test -- infra/tooling task'."
     }
   ]
 }
