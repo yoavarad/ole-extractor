@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using SampleGenerator;
 using SampleGenerator.Abstractions;
 using SampleGenerator.Fixtures;
+using SampleGenerator.Generators;
 
 var services = new ServiceCollection();
 ServiceRegistration.Register(services);
@@ -125,3 +126,15 @@ foreach (var (format, fileName, spec) in curatedSamples)
     File.WriteAllBytes(path, sample.Content);
     Console.WriteLine($"Generated curated {format}: {path} ({sample.Content.Length} bytes)");
 }
+
+// docs/specs/dataset-curation.md's shared adversarial set: "one
+// oversized-declared-size sample (zip/CFB bomb)". Small on disk, but its
+// declared internal size (forged FAT sector count) implies well over the
+// nesting-depth-guard's 2GB total cap.
+var adversarialOutputDir = Path.Combine("samples", "adversarial");
+Directory.CreateDirectory(adversarialOutputDir);
+
+var sizeBombPath = Path.Combine(adversarialOutputDir, "oversized-declared-size-bomb.doc");
+var sizeBombBytes = AdversarialSampleGenerator.BuildCfbSizeBomb();
+File.WriteAllBytes(sizeBombPath, sizeBombBytes);
+Console.WriteLine($"Generated adversarial oversized-declared-size-bomb: {sizeBombPath} ({sizeBombBytes.Length} bytes)");
