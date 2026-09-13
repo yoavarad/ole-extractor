@@ -195,3 +195,27 @@ void GenerateAdversarialSamples()
     File.WriteAllBytes(corruptedPath, corruptedBytes);
     Console.WriteLine($"Generated adversarial corrupt-embedded-object docx: {corruptedPath} ({corruptedBytes.Length} bytes)");
 }
+
+// docs/specs/dataset-curation.md's shared adversarial set (not per-format):
+// corrupt-container and truncated-container samples, derived from the
+// existing valid synthetic multi-embedding docx - T-3bddbe75. A third
+// zero-byte sample is also written here since it belongs alongside the
+// other two in samples/adversarial/, though it needs no derivation.
+var adversarialDir = Path.Combine("samples", "adversarial");
+Directory.CreateDirectory(adversarialDir);
+
+var validDocxBytes = File.ReadAllBytes(Path.Combine("samples", "synthetic", "multi-embedding", "sample.docx"));
+
+var corruptContainerBytes = CorruptedContainerSampleGenerator.CorruptCentralDirectory(validDocxBytes);
+var corruptContainerPath = Path.Combine(adversarialDir, "corrupt-container.docx");
+File.WriteAllBytes(corruptContainerPath, corruptContainerBytes);
+Console.WriteLine($"Generated adversarial corrupt-container: {corruptContainerPath} ({corruptContainerBytes.Length} bytes)");
+
+var truncatedContainerBytes = CorruptedContainerSampleGenerator.TruncateKeepingEocd(validDocxBytes, 200);
+var truncatedContainerPath = Path.Combine(adversarialDir, "truncated-container.docx");
+File.WriteAllBytes(truncatedContainerPath, truncatedContainerBytes);
+Console.WriteLine($"Generated adversarial truncated-container: {truncatedContainerPath} ({truncatedContainerBytes.Length} bytes)");
+
+var zeroBytePath = Path.Combine(adversarialDir, "zero-byte.docx");
+File.WriteAllBytes(zeroBytePath, []);
+Console.WriteLine($"Generated adversarial zero-byte: {zeroBytePath} (0 bytes)");
