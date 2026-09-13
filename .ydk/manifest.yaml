@@ -734,7 +734,7 @@ tasks:
   T-c573e72e:
     title: Record curated samples in samples/manifest.json
     story: S-da936361
-    status: open
+    status: done
     dependencies:
     - T-6f033869
     - T-0834290d
@@ -743,7 +743,7 @@ tasks:
   T-3bddbe75:
     title: Produce corrupt, truncated, and zero-byte adversarial samples
     story: S-6bc8566f
-    status: open
+    status: done
     dependencies:
     - T-f96fa73d
     component_refs:
@@ -753,7 +753,7 @@ tasks:
     title: Produce oversized-declared-size (bomb) and password-protected adversarial
       samples
     story: S-6bc8566f
-    status: open
+    status: done
     dependencies:
     - T-f96fa73d
     component_refs:
@@ -763,7 +763,7 @@ tasks:
   T-7cdaeceb:
     title: Produce wrong-extension and corrupt-embedded-object adversarial samples
     story: S-6bc8566f
-    status: open
+    status: done
     dependencies:
     - T-f96fa73d
     component_refs:

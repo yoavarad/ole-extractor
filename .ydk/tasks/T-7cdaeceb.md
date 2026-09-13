@@ -2,7 +2,7 @@
 id: T-7cdaeceb
 title: Produce wrong-extension and corrupt-embedded-object adversarial samples
 story: S-6bc8566f
-status: open
+status: done
 assignee: null
 labels: []
 dependencies:
@@ -29,7 +29,7 @@ milestone: null
 complexity: null
 gates: []
 created: '2026-08-19T12:47:21Z'
-updated: '2026-08-19T12:47:24Z'
+updated: '2026-09-13T19:30:46Z'
 ---
 
 ## Description
