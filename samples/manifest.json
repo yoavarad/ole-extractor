@@ -724,6 +724,44 @@
       "detectable": false,
       "verifiedBy": null,
       "notes": "GENUINE (not scripted) multi-user, multi-save revision-history provenance, verified directly against the file's OOXML docProps/core.xml and docProps/app.xml on 2026-09-12: Author='xnv' != LastModifiedBy='Robbie DeJarnette', RevisionNumber=436 (>>1), TotalTime=10583 minutes (~176 hours) of real cumulative editing spread across a ~15-month span (Created 2007-06-20 to Modified 2008-09-29) -- these are the exact, unrounded values stored in the file, not idealized. Note: cp:lastPrinted (2009-04-22) is after Modified (2008-09-29) -- left as-is (not corrected) since this is real third-party data reported verbatim; plausible if the file was reopened and printed without a subsequent content save. app.xml reports 37 slides / 3 notes pages / 1659 words / 2 Embedded OLE Servers / Microsoft PowerPoint, Template 'ORNL template_0704'. The deck body itself is a real Oak Ridge National Laboratory (operated by UT-Battelle, LLC for the U.S. Department of Energy) lecture on Quasi-Elastic Neutron Scattering presented by Ken Herwig, Deputy Director of ORNL's Neutron Scattering Science Division, to the National School on Neutron and X-ray Scattering (Sept 29, 2008), confirming genuine DOE national-laboratory scientific work product. License basis note: unlike the docx samples and noaa-transition-team-briefing-2008.pptx above (direct federal-employee work, cleanly public domain under 17 U.S.C. Sec. 105), ORNL is DOE-owned but contractor-operated (UT-Battelle, LLC); the author may be a contractor employee rather than a federal employee, so the clean federal-public-domain basis is not asserted for this specific file's authorship. Instead, this file's redistribution basis rests on govdocs1's general .gov-TLD harvest scope and digitalcorpora.org's stated redistribution permission (https://digitalcorpora.org/corpora/file-corpora/files/: 'freely available for research and may be (to the best of our knowledge) freely redistributed'); content is an unclassified public educational science lecture with no apparent distribution restriction markings. Candidate selection: from the same initial-scan pass described in the noaa-transition-team-briefing-2008.pptx entry above, this file was selected as a second, independent genuine candidate (distinct author/agency, RevisionNumber=436, ~176 hours of real edit time). expectedSubfileCount=83 is the real, verified count of first-layer parts under ppt/media/ and ppt/embeddings/ in the package (enumerated directly from the zip, including several oleObjectN.bin embedded OLE objects); a full per-object expectedSubfiles breakdown was intentionally not enumerated here given the volume and unverified extractor naming/ordering -- detectable=false pending that verification, same caution as applied elsewhere in this manifest for real third-party files with embedded content."
+    },
+    {
+      "format": "adversarial",
+      "status": "adversarial",
+      "path": "samples/adversarial/oversized-declared-size-bomb.doc",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator.Generators.AdversarialSampleGenerator.BuildCfbSizeBomb() via SampleGenerator/Program.cs -- builds a minimal real CFB (OpenMcdf RootStorage.Create, one root-level stream) then forges the CFB header's FAT sector count field (byte offset 0x2C) to 100000 via BinaryPrimitives.WriteUInt32LittleEndian, implying a total declared/addressable size of roughly 6.1GB (100000 FAT sectors x 128 entries/sector x 512 bytes/sector). This exceeds nesting-depth-guard's 2GB total cap while the actual file on disk stays a few KB -- no real bulk data is allocated. Mirrors the exact, already-proven forgery pattern in ExtractorOle/ExtractorOLE.Tests/MimeDetection/CfbMimeDetectorGuardrailTests.cs :: Detect_ForgedFatSectorCountImplyingOver2GB_ThrowsOversizedNestedContentException.",
+      "compositionRule": "docs/specs/dataset-curation.md 'The shared adversarial set' bullet -- oversized-declared-size sample (zip/CFB bomb per ydk:nfr:extraction/nesting-depth-guard), tagged with its target format(s).",
+      "targetFormats": ["doc", "xls", "ppt"],
+      "targetFormatsNote": "CFB is the shared container for the legacy doc/xls/ppt formats; nesting-depth-guard's declared-size check runs at the container-detection layer (CfbMimeDetector) before any per-format parsing, so a single CFB bomb exercises all three formats identically.",
+      "expectedBehavior": {
+        "outcome": "rejected before parse",
+        "thrownException": "ExtractorOLE.Exceptions.OversizedNestedContentException",
+        "errorId": "ydk:error:extraction/oversized-nested-content",
+        "guard": "ydk:nfr:extraction/nesting-depth-guard (1GB per-entry / 2GB total cap, checked against declared size -- CFB FAT chain length x sector size -- not actual decompressed bytes)"
+      },
+      "detectable": false,
+      "verifiedBy": null,
+      "notes": "Actual on-disk file size is intentionally a few KB, not gigabytes -- only the declared FAT sector count is forged, per this task's (T-83b4a029) acceptance criterion that no sample may require actually allocating real bulk data. Manually verified via the ExtractorOLE CLI to throw the expected OversizedNestedContentException (see PR verification section). Not yet wired into an automated xUnit test in this repo (test_strategy for T-83b4a029: infra/tooling task, no test required here); asserted against by Epic 9's integration tests once recorded in this manifest, per docs/specs/dataset-curation.md's Corpus Manifest section."
+    },
+    {
+      "format": "docx",
+      "status": "curated",
+      "path": "samples/adversarial/password-protected.docx",
+      "provenance": "third-party",
+      "generatedBy": "Downloaded verbatim (unmodified) from the Apache Software Foundation's Apache POI project test-data corpus (Apache License 2.0) at https://github.com/apache/poi, path test-data/document/bug53475-password-is-solrcell.docx (fetched via raw.githubusercontent.com/apache/poi/trunk/test-data/document/bug53475-password-is-solrcell.docx). A genuine Word-produced, document-open-password-protected .docx: the OOXML package is wrapped in a CFB container per MS-OFFCRYPTO (file starts with the CFB magic D0 CF 11 E0, not a zip PK signature). Document-open password is 'solrcell' (per the well-known upstream POI test-file name, used by Apache POI's own encryption test suite for this exact file since POI bug 53475). File sha256: cde5752f65238b42fefeaa28c0a10ef3b75bd6232cd6427b3920113c91c5909d, 33792 bytes on disk.",
+      "compositionRule": "docs/specs/dataset-curation.md 'The shared adversarial set' bullet -- password-protected sample (genuine document-open password/encryption stream), tagged with its target format(s).",
+      "targetFormats": ["docx"],
+      "targetFormatsNote": "Genuinely CFB-wrapped MS-OFFCRYPTO encrypted OOXML; the outer container is CFB even though the target/original format is docx, since MS-OFFCRYPTO always wraps an encrypted OOXML package in a CFB container regardless of the inner format.",
+      "expectedBehavior": {
+        "outcome": "should be rejected before parse once password-protected detection is implemented",
+        "errorId": "ydk:error:extraction/password-protected",
+        "trigger": "Genuine EncryptionInfo and EncryptedPackage streams are present in the CFB container -- confirmed by a raw UTF-16LE byte scan of the file for both stream names (both FOUND), not just inferred from the filename.",
+        "currentBehaviorNote": "Password-protected detection/rejection (.ydk/components/error/extraction/password-protected.yaml) is not yet implemented in ExtractorOLE's production code as of T-83b4a029 -- no reference to EncryptionInfo/EncryptedPackage/password exists in ExtractorOle source outside specs. This sample is recorded now per T-83b4a029's scope (produce + record the genuine sample); actual rejection behavior is asserted by Epic 9's integration tests once that detection lands (test_strategy for T-83b4a029: infra/tooling task, no test required here)."
+      },
+      "detectable": false,
+      "verifiedBy": null,
+      "notes": "License: Apache License 2.0 (Apache Software Foundation, apache/poi repository, default branch 'trunk'). Redistribution permitted with attribution; this manifest entry's generatedBy field constitutes that attribution per docs/specs/dataset-curation.md 'Provenance & Licensing'."
     }
   ]
 }
