@@ -775,7 +775,7 @@ tasks:
     title: Assemble and finalize samples/manifest.json as the ground-truth corpus
       manifest
     story: S-6bc8566f
-    status: in-review
+    status: done
     dependencies:
     - T-f96fa73d
     - T-c573e72e
