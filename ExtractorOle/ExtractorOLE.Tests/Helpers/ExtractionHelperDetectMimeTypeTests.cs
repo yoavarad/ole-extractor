@@ -1,7 +1,9 @@
 using ExtractorOLE.Helpers;
 using ExtractorOLE.Helpers.MimeDetection;
 using ExtractorOLE.DTOs;
+using ExtractorOLE.Registry;
 using NPOI.HSSF.UserModel;
+using System;
 using System.IO;
 using Xunit;
 
@@ -9,6 +11,22 @@ namespace ExtractorOLE.Tests.Helpers
 {
     public class ExtractionHelperDetectMimeTypeTests
     {
+        private sealed class SpyDetector : IMimeTypeDetector
+        {
+            public bool WasCalled { get; private set; }
+
+            public MimeDetectionResult Detect(MimeDetectionRequest request)
+            {
+                WasCalled = true;
+                return new MimeDetectionResult
+                {
+                    DetectedFormat = DetectedFormatEnum.Unknown,
+                    MimeType = "application/octet-stream",
+                    IsSupported = false
+                };
+            }
+        }
+
         private static byte[] BuildMinimalXlsBytes()
         {
             var workbook = new HSSFWorkbook();
@@ -44,6 +62,26 @@ namespace ExtractorOLE.Tests.Helpers
             var mime = new ExtractionHelper().MimeFor(OfficeMimeTypeEnum.Word);
 
             Assert.False(string.IsNullOrEmpty(mime));
+        }
+
+        [Fact]
+        public void DetectMimeTypeFromBytes_NullFileBytes_ThrowsArgumentNullException_BeforeAnyDetectorInvoked()
+        {
+            var spy = new SpyDetector();
+            var registry = new MimeDetectionRegistry(new IMimeTypeDetector[] { spy });
+            var helper = new ExtractionHelper(registry);
+
+            Assert.Throws<ArgumentNullException>(() => helper.DetectMimeTypeFromBytes(null!));
+
+            Assert.False(spy.WasCalled);
+        }
+
+        [Fact]
+        public void DetectMimeTypeFromBytes_EmptyFileBytes_StillReturnsOpenXmlUnknown()
+        {
+            var result = new ExtractionHelper().DetectMimeTypeFromBytes(Array.Empty<byte>());
+
+            Assert.Equal(OfficeMimeTypeEnum.OpenXmlUnknown, result);
         }
     }
 }
