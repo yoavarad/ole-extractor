@@ -39,14 +39,44 @@
 - Spawned cavecrew-builder (agentId ad80b26610d995d19) with full precise spec to implement A/B/C, single file
   ExtractorOle/ExtractorOLE.StressHarness/Program.cs only, in the worktree.
 
-## Not yet done
-- Awaiting builder result (async, notification pending)
-- Review diff (cavecrew-reviewer)
-- Run dotnet build/test + actually RUN the stress harness for real throughput/latency/memory numbers
-  (use samples/curated/docx as samplesDir, concurrency higher than default e.g. 64, for real evidence),
-  capture output as proof under .ydk/proofs/T-113fe4b2/
-- `ydk task done T-113fe4b2` FROM INSIDE THE WORKTREE (cd .ydk/worktrees/T-113fe4b2 first, verify branch)
-- Verify PR via `gh pr view --json changedFiles,files,additions,deletions` for non-trivial diff
+## Done (final)
+- Builder implemented the plan in Program.cs; needed 3 follow-up round-trips (missing `using
+  ExtractorOLE.DTOs;`, unhandled-exception risk in baseline loop per reviewer finding, and a variable-name
+  collision `i` vs outer `i`) before it built clean with 0 warnings/0 errors.
+- cavecrew-reviewer found 1 minor (yellow) issue: baseline loop lacked try/catch - fixed via builder.
+- Ran full test suite: 129/129 passed (ExtractorOle/ExtractorOLE.Tests).
+- Ran the actual stress harness twice for real evidence, saved under .ydk/proofs/T-113fe4b2/:
+  - run-same-file-c32-i500.txt: concurrency=32, iterations=500, synthetic single sample (same-file
+    concurrency). Result: 500/500 matched baseline, 0 mismatches, 0 failures, PASS.
+  - run-different-files-c64-i1000.txt: concurrency=64, iterations=1000, samplesDir=samples/curated/docx
+    (4 distinct real .docx files - different-file concurrency, with heavy same-file overlap too since
+    4 << 64). Result: 1000/1000 matched baseline, 0 mismatches, 0 failures, PASS.
+  - Both include throughput/latency percentiles/memory-under-load numbers in the saved output.
+- dotnet-test-output.txt also saved.
+
+## CRITICAL BUG HIT AND FIXED: ydk task done did NOT auto-commit working-tree changes
+- First `ydk task done T-113fe4b2` run created PR #82 but it only contained 3 unrelated files
+  (leftover ydk metadata from this branch's base commit not yet merged to main) - NOT my Program.cs
+  changes, because they were still uncommitted in the working tree at that point (`ydk task done` does not
+  stage/commit for you).
+- Fix: `git add` the real changes (Program.cs, .ydk/tasks/T-113fe4b2.md, .ydk/manifest.yaml,
+  .ydk/proofs/T-113fe4b2/) and `git commit` + `git push` manually from inside the worktree. Pre-commit and
+  pre-push hooks ran the full verification-plugin suite (dotnet-build, dotnet-test, dotnet-format,
+  dotnet-quality, etc.) - ALL PASSED both times.
+- Re-checked PR #82 after push: now correctly shows 50 changedFiles, +1300/-11, including
+  ExtractorOle/ExtractorOLE.StressHarness/Program.cs (+91/-3) and all proof files.
+- LESSON for future orchestrators on this repo: after `ydk task done`, ALWAYS verify via
+  `gh pr view <n> --json changedFiles,files,additions,deletions` that the PR contains your actual code
+  diff, not just ydk metadata. If uncommitted changes remain in `git status` when `ydk task done` finishes,
+  commit and push them yourself before declaring success.
+- Residual noise in PR #82 (not mine to fix, pre-existing): .ydk/tasks/QD-407442.md (added) and
+  .ydk/tasks/T-71ab3bc0.md (modified) are present because this branch's base commit (cd93d29) is not yet an
+  ancestor of origin/main (some other task/PR's commit not yet merged) - unrelated to T-113fe4b2's scope.
+
+## STATUS: COMPLETE
+PR: https://github.com/yoavarad/ole-extractor/pull/82
+Branch: task/T-113fe4b2-report-throughputlatencymemory (commit ed54943)
+All 3 acceptance criteria satisfied with real run evidence in .ydk/proofs/T-113fe4b2/.
 
 ## CRITICAL REMINDER
 ALWAYS cd into C:\Users\yoava\Projects\ole-extractor\.ydk\worktrees\T-113fe4b2 before any git/ydk/dotnet command
