@@ -830,7 +830,7 @@
         "mimeType": "application/octet-stream"
       },
       "expectedBehavior": {
-        "outcome": "detected as docx, then rejected on full parse",
+        "outcome": "mime detection reports Unknown; CORRUPT_FILE is only raised if Extract() is called directly on the corrupted bytes",
         "errorId": "ydk:error:extraction/corrupt-file",
         "code": "CORRUPT_FILE",
         "trigger": "The file's first 4 bytes (PK\\x03\\x04) still sniff as a zip/OOXML container, but no valid Central Directory or EOCD record can be located -- DocumentFormat.OpenXml's WordprocessingDocument.Open (backed by System.IO.Packaging) cannot open the package."
@@ -853,7 +853,7 @@
         "mimeType": "application/octet-stream"
       },
       "expectedBehavior": {
-        "outcome": "detected as docx, then rejected on full parse",
+        "outcome": "mime detection reports Unknown; TRUNCATED_CONTAINER is only raised if Extract() is called directly on the truncated bytes",
         "errorId": "ydk:error:extraction/truncated-container",
         "code": "TRUNCATED_CONTAINER",
         "declaredCentralDirectoryOffset": 3022,
