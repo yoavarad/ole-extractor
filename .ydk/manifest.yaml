@@ -896,7 +896,7 @@ tasks:
     title: Report throughput/latency/memory under load and confirm no shared-state
       issues
     story: S-d88f514b
-    status: open
+    status: in-review
     dependencies:
     - T-96b5181b
     component_refs: []
