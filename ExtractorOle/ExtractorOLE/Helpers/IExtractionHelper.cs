@@ -15,6 +15,7 @@ namespace ExtractorOLE.Helpers
         void ExtractFirstLayerEmbedded(DocumentExtractionResult result, HSSFWorkbook workbook);
 
         OfficeMimeTypeEnum DetectMimeTypeFromBytes(byte[] fileBytes);
+        MimeDetectionResult DetectMimeType(MimeDetectionRequest request);
         string GetExtensionFromContentType(string contentType);
         string DetectMimeFromMagicBytes(byte[] bytes);
     }
