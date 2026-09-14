@@ -1,9 +1,8 @@
-using System.Collections.Concurrent;
-using System.Diagnostics;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using ExtractorOLE;
+using ExtractorOLE.Helpers;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ExtractorOLE.StressHarness
@@ -11,16 +10,17 @@ namespace ExtractorOLE.StressHarness
     /// <summary>
     /// Hand-rolled concurrent-load console harness (ADR-002).
     ///
-    /// Not a unit test: exercises <see cref="MainExtractor"/> under N concurrent
-    /// callers via Parallel.ForEachAsync with SemaphoreSlim-bounded concurrency,
-    /// timing each call with Stopwatch and reporting throughput/latency.
+    /// Not a unit test: exercises <see cref="MainExtractor"/> and
+    /// <see cref="IExtractionHelper"/> under N concurrent callers via
+    /// <see cref="LoadGenerator"/> (SemaphoreSlim-bounded concurrency), timing
+    /// each call and reporting throughput/latency.
     ///
     /// Usage: dotnet run --project ExtractorOLE.StressHarness -- [concurrency] [iterations] [samplesDir]
     /// All arguments are optional.
     /// </summary>
     internal static class Program
     {
-        private const int DefaultConcurrency = 8;
+        private const int DefaultConcurrency = 50;
         private const int DefaultIterations = 200;
 
         private static async Task Main(string[] args)
@@ -37,50 +37,37 @@ namespace ExtractorOLE.StressHarness
             ServiceRegistration.Register(services);
             using var provider = services.BuildServiceProvider();
             var extractor = provider.GetRequiredService<MainExtractor>();
+            var helper = provider.GetRequiredService<IExtractionHelper>();
 
-            var latencies = new ConcurrentBag<double>();
-            long failures = 0;
+            var options = new LoadGenerationOptions(concurrency, iterations);
 
-            using var gate = new SemaphoreSlim(concurrency);
-            var indices = Enumerable.Range(0, iterations);
+            Console.WriteLine();
+            Console.WriteLine("--- DetectMimeTypeFromBytes ---");
+            var mimeSummary = await LoadGenerator.RunAsync(helper.DetectMimeTypeFromBytes, samples, options);
+            PrintSummary(mimeSummary);
 
-            var overall = Stopwatch.StartNew();
-
-            await Parallel.ForEachAsync(indices, async (index, ct) =>
-            {
-                await gate.WaitAsync(ct);
-                try
-                {
-                    var bytes = samples[index % samples.Count];
-                    var sw = Stopwatch.StartNew();
-                    await Task.Run(() => extractor.Extract(bytes), ct);
-                    sw.Stop();
-                    latencies.Add(sw.Elapsed.TotalMilliseconds);
-                }
-                catch (Exception ex)
-                {
-                    Interlocked.Increment(ref failures);
-                    Console.WriteLine($"[iteration {index}] failed: {ex.Message}");
-                }
-                finally
-                {
-                    gate.Release();
-                }
-            });
-
-            overall.Stop();
-
-            PrintSummary(overall.Elapsed, latencies.ToList(), failures, iterations);
+            Console.WriteLine();
+            Console.WriteLine("--- Extract ---");
+            var extractSummary = await LoadGenerator.RunAsync(extractor.Extract, samples, options);
+            PrintSummary(extractSummary);
         }
 
         private static List<byte[]> LoadSamples(string? samplesDir)
         {
             var samples = new List<byte[]>();
+            var directory = !string.IsNullOrWhiteSpace(samplesDir) && Directory.Exists(samplesDir)
+                ? samplesDir
+                : FindDefaultSamplesDirectory();
 
-            if (!string.IsNullOrWhiteSpace(samplesDir) && Directory.Exists(samplesDir))
+            if (directory is not null)
             {
-                foreach (var file in Directory.EnumerateFiles(samplesDir))
+                foreach (var file in Directory.EnumerateFiles(directory, "*", SearchOption.AllDirectories))
                 {
+                    if (string.Equals(Path.GetFileName(file), "manifest.json", StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+
                     samples.Add(File.ReadAllBytes(file));
                 }
             }
@@ -92,6 +79,24 @@ namespace ExtractorOLE.StressHarness
             }
 
             return samples;
+        }
+
+        private static string? FindDefaultSamplesDirectory()
+        {
+            var directory = new DirectoryInfo(AppContext.BaseDirectory);
+
+            while (directory is not null)
+            {
+                var candidate = Path.Combine(directory.FullName, "samples");
+                if (Directory.Exists(candidate))
+                {
+                    return candidate;
+                }
+
+                directory = directory.Parent;
+            }
+
+            return null;
         }
 
         private static byte[] CreateSyntheticDocx()
@@ -111,21 +116,21 @@ namespace ExtractorOLE.StressHarness
             return stream.ToArray();
         }
 
-        private static void PrintSummary(TimeSpan elapsed, List<double> latencies, long failures, int totalIterations)
+        private static void PrintSummary(LoadGenerationSummary summary)
         {
-            latencies.Sort();
-            var succeeded = latencies.Count;
-            var throughput = elapsed.TotalSeconds > 0 ? succeeded / elapsed.TotalSeconds : 0;
+            var latencies = summary.LatenciesMs.OrderBy(l => l).ToList();
+            var throughput = summary.Elapsed.TotalSeconds > 0 ? summary.Succeeded / summary.Elapsed.TotalSeconds : 0;
 
             Console.WriteLine();
             Console.WriteLine("=== Stress harness summary ===");
-            Console.WriteLine($"Total iterations : {totalIterations}");
-            Console.WriteLine($"Succeeded        : {succeeded}");
-            Console.WriteLine($"Failed           : {failures}");
-            Console.WriteLine($"Wall-clock time  : {elapsed.TotalSeconds:F3} s");
+            Console.WriteLine($"Total iterations : {summary.TotalCalls}");
+            Console.WriteLine($"Succeeded        : {summary.Succeeded}");
+            Console.WriteLine($"Failed           : {summary.Failed}");
+            Console.WriteLine($"Peak concurrency : {summary.PeakObservedConcurrency}");
+            Console.WriteLine($"Wall-clock time  : {summary.Elapsed.TotalSeconds:F3} s");
             Console.WriteLine($"Throughput       : {throughput:F2} ops/sec");
 
-            if (succeeded > 0)
+            if (latencies.Count > 0)
             {
                 Console.WriteLine($"Latency min      : {latencies[0]:F2} ms");
                 Console.WriteLine($"Latency avg      : {latencies.Average():F2} ms");
