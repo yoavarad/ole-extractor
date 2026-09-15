@@ -2,9 +2,10 @@
 id: T-b62ffe04
 title: Implement Extract() latency/allocation benchmarks per format
 story: S-709fe2de
-status: open
+status: blocked-by-dependency-gap
 assignee: null
-labels: []
+labels:
+- blocked-by-dependency-gap
 dependencies:
 - T-fb06300e
 - T-71ab3bc0
@@ -30,7 +31,7 @@ milestone: null
 complexity: null
 gates: []
 created: '2026-08-19T12:47:23Z'
-updated: '2026-08-19T12:47:24Z'
+updated: '2026-09-15T20:57:17Z'
 ---
 
 ## Description
@@ -39,3 +40,5 @@ Implement BenchmarkDotNet benchmarks running Extract() against a fixed 10MB and 
 
 
 ## Activity Log
+### 2026-09-15T20:57:17Z (UTC)
+**Blocked (dependency-gap):** Acceptance criteria require benchmarking Extract() for all 6 formats, but ServiceRegistration.cs (ExtractorOle/ExtractorOLE/ServiceRegistration.cs) only wires 4: Word(docx)/Excel(xlsx)/PowerPoint(pptx)/ExcelLegacy(xls) into IDictionary<OfficeMimeTypeEnum,IOpenStrategy/ITextExtractor>. Legacy .doc and .ppt have no Extract() path at all -- their upstream tasks T-c4123b53 (doc open component) and T-517f89c5 (ppt open component) are themselves status=blocked-by-blocked-by-research, per ADR-004 (docs/adrs/004-legacy-doc-ppt-parsing.md), which requires a b2xtranslator .doc/.ppt-to-OOXML conversion step not yet implemented. Benchmarking Doc/Ppt today would only time a no-op/failure path, not real extraction, producing misleading latency/allocation numbers. Recommend re-scoping to the 4 currently-supported formats now (separate follow-up task for Doc/Ppt once T-c4123b53/T-517f89c5 land) or waiting on those tasks -- needs task-owner decision. Independently re-confirmed same blocker previously surfaced (uncommitted, orphaned) in a stale worktree from an earlier aborted run on 2026-09-13/14; that worktree/branch has been removed and this block is filed properly via ydk.
