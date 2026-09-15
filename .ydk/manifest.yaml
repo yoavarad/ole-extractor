@@ -821,7 +821,7 @@ tasks:
   T-9a4ff765:
     title: Unit tests for null request/field validation on DetectMimeType
     story: S-814fa928
-    status: open
+    status: in-progress
     dependencies:
     - T-fb89c6f3
     component_refs:
