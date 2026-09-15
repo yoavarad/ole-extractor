@@ -586,7 +586,7 @@ tasks:
   T-ef73861f:
     title: Wire DetectMimeType facade to the OOXML + CFB detection registry
     story: S-072bfdf6
-    status: open
+    status: done
     dependencies:
     - T-0a81d133
     - T-1653b76b
@@ -601,7 +601,7 @@ tasks:
   T-fb89c6f3:
     title: Add null request/field boundary validation to DetectMimeType
     story: S-072bfdf6
-    status: in-review
+    status: done
     dependencies:
     - T-ef73861f
     component_refs:
@@ -787,7 +787,7 @@ tasks:
   T-e0a5bfec:
     title: 'Integration tests: DetectMimeType against every corpus manifest sample'
     story: S-f6d7124a
-    status: open
+    status: in-progress
     dependencies:
     - T-71ab3bc0
     - T-fb89c6f3
@@ -885,7 +885,7 @@ tasks:
   T-96b5181b:
     title: Implement >=50 concurrent-call exercise of both public functions
     story: S-d88f514b
-    status: open
+    status: done
     dependencies:
     - T-0055ec7c
     - T-71ab3bc0
@@ -896,7 +896,7 @@ tasks:
     title: Report throughput/latency/memory under load and confirm no shared-state
       issues
     story: S-d88f514b
-    status: in-review
+    status: done
     dependencies:
     - T-96b5181b
     component_refs: []
@@ -960,7 +960,7 @@ tasks:
     title: Fix stale expectedBehavior/errorId on corrupt-container.docx and truncated-container.docx
       manifest entries
     story: S-6bc8566f
-    status: open
+    status: done
     dependencies: []
     component_refs:
     - ydk:nfr:extraction/nesting-depth-guard

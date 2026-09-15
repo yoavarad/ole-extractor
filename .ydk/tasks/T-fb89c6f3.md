@@ -2,7 +2,7 @@
 id: T-fb89c6f3
 title: Add null request/field boundary validation to DetectMimeType
 story: S-072bfdf6
-status: in-review
+status: done
 assignee: null
 labels:
 - in-review
@@ -26,7 +26,7 @@ milestone: null
 complexity: null
 gates: []
 created: '2026-08-19T12:42:59Z'
-updated: '2026-09-14T20:57:34Z'
+updated: '2026-09-15T20:18:50Z'
 ---
 
 ## Description
