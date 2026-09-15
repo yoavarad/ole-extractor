@@ -1,5 +1,7 @@
 # Activity Log
 
+## 2026-09-14 — T-96b5181b: Implement >=50 concurrent-call exercise of both public functions — PR: https://github.com/yoavarad/ole-extractor/pull/80
+
 ## 2026-09-02 — T-07188baf: Wire Program.cs to invoke both public functions on a real file
 - Investigated Program.cs and found it already invokes `IExtractionHelper.DetectMimeTypeFromBytes` then `MainExtractor.Extract` in sequence against a real file (CLI arg or default fallback to `samples/curated/docx/invoice-acme-corp.docx`), printing real detection/extraction output.
 - Verified by building and running the console app: real detected format, metadata, extracted text preview, and embedded file list printed to stdout — no placeholder output.
@@ -63,3 +65,7 @@
 - `detectable: false` on all 3 pending empirical verification against a running ExtractorOLE build — no extractor code path exercises these error paths yet, matching this task's test_strategy ("No test — infra/tooling task; these samples are asserted against by Epic 9's integration tests once recorded in the corpus manifest").
 - Note: sibling tasks T-83b4a029 (PR #70) and T-7cdaeceb (PR #71) also touch `samples/manifest.json` and `activity.md` on parallel branches off the same base — expect merge conflicts at merge time between these 3 PRs; not resolved here.
 - PR: https://github.com/yoavarad/ole-extractor/pull/72
+
+## 2026-09-14 — T-48110fcb: Fix stale expectedBehavior/errorId on corrupt-container.docx and truncated-container.docx manifest entries — PR: https://github.com/yoavarad/ole-extractor/pull/78
+
+## 2026-09-14 — T-ef73861f: Wire DetectMimeType facade to the OOXML + CFB detection registry — PR: https://github.com/yoavarad/ole-extractor/pull/79

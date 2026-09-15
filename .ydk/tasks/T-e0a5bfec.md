@@ -2,9 +2,10 @@
 id: T-e0a5bfec
 title: 'Integration tests: DetectMimeType against every corpus manifest sample'
 story: S-f6d7124a
-status: open
-assignee: null
-labels: []
+status: in-progress
+assignee: agent
+labels:
+- in-progress
 dependencies:
 - T-71ab3bc0
 - T-fb89c6f3
@@ -28,7 +29,7 @@ milestone: null
 complexity: null
 gates: []
 created: '2026-08-19T12:47:21Z'
-updated: '2026-08-19T12:47:24Z'
+updated: '2026-09-15T20:18:56Z'
 ---
 
 ## Description
