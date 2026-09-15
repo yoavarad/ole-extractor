@@ -787,7 +787,7 @@ tasks:
   T-e0a5bfec:
     title: 'Integration tests: DetectMimeType against every corpus manifest sample'
     story: S-f6d7124a
-    status: in-progress
+    status: done
     dependencies:
     - T-71ab3bc0
     - T-fb89c6f3
@@ -821,7 +821,7 @@ tasks:
   T-9a4ff765:
     title: Unit tests for null request/field validation on DetectMimeType
     story: S-814fa928
-    status: in-progress
+    status: done
     dependencies:
     - T-fb89c6f3
     component_refs:

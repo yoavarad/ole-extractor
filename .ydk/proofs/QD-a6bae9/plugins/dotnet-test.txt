@@ -1,0 +1,15 @@
+PASSED (8.7s)
+
+Determining projects to restore...
+  Restored C:\Users\yoava\Projects\ole-extractor\ExtractorOle\ExtractorOLE.StressHarness\ExtractorOLE.StressHarness.csproj (in 225 ms).
+  Restored C:\Users\yoava\Projects\ole-extractor\ExtractorOle\ExtractorOLE.Tests\ExtractorOLE.Tests.csproj (in 225 ms).
+  3 of 5 projects are up-to-date for restore.
+  SampleGenerator -> C:\Users\yoava\Projects\ole-extractor\SampleGenerator\bin\Debug\net8.0\SampleGenerator.dll
+  NPOI.Core -> C:\Users\yoava\Projects\ole-extractor\third_party\npoi\solution\Debug\net8.0\NPOI.Core.dll
+  ExtractorOLE -> C:\Users\yoava\Projects\ole-extractor\ExtractorOle\ExtractorOLE\bin\Debug\net8.0\ExtractorOLE.dll
+  ExtractorOLE.StressHarness -> C:\Users\yoava\Projects\ole-extractor\ExtractorOle\ExtractorOLE.StressHarness\bin\Debug\net8.0\ExtractorOLE.StressHarness.dll
+  ExtractorOLE.Tests -> C:\Users\yoava\Projects\ole-extractor\ExtractorOle\ExtractorOLE.Tests\bin\Debug\net8.0\ExtractorOLE.Tests.dll
+Test run for C:\Users\yoava\Projects\ole-extractor\ExtractorOle\ExtractorOLE.Tests\bin\Debug\net8.0\ExtractorOLE.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:   143, Skipped:     0, Total:   143, Duration: 1 s - ExtractorOLE.Tests.dll (net8.0)

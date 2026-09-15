@@ -2,7 +2,7 @@
 id: T-e0a5bfec
 title: 'Integration tests: DetectMimeType against every corpus manifest sample'
 story: S-f6d7124a
-status: in-progress
+status: done
 assignee: agent
 labels:
 - in-progress
@@ -29,7 +29,7 @@ milestone: null
 complexity: null
 gates: []
 created: '2026-08-19T12:47:21Z'
-updated: '2026-09-15T20:18:56Z'
+updated: '2026-09-15T20:45:16Z'
 ---
 
 ## Description
