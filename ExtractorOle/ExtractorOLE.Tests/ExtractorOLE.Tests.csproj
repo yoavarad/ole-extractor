@@ -18,6 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ExtractorOLE\ExtractorOLE.csproj" />
     <ProjectReference Include="..\..\SampleGenerator\SampleGenerator.csproj" />
+    <ProjectReference Include="..\ExtractorOLE.StressHarness\ExtractorOLE.StressHarness.csproj" />
   </ItemGroup>
 
 </Project>

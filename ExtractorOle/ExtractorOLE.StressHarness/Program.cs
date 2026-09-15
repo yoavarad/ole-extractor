@@ -1,10 +1,10 @@
-using System.Collections.Concurrent;
 using System.Diagnostics;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using ExtractorOLE;
 using ExtractorOLE.DTOs;
+using ExtractorOLE.Helpers;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ExtractorOLE.StressHarness
@@ -12,16 +12,19 @@ namespace ExtractorOLE.StressHarness
     /// <summary>
     /// Hand-rolled concurrent-load console harness (ADR-002).
     ///
-    /// Not a unit test: exercises <see cref="MainExtractor"/> under N concurrent
-    /// callers via Parallel.ForEachAsync with SemaphoreSlim-bounded concurrency,
-    /// timing each call with Stopwatch and reporting throughput/latency.
+    /// Not a unit test: exercises <see cref="MainExtractor"/> and
+    /// <see cref="IExtractionHelper"/> under N concurrent callers via
+    /// <see cref="LoadGenerator"/> (SemaphoreSlim-bounded concurrency), timing
+    /// each call and reporting throughput/latency/memory, and comparing
+    /// extraction results against a single-threaded baseline to catch
+    /// shared-mutable-state corruption under concurrency.
     ///
     /// Usage: dotnet run --project ExtractorOLE.StressHarness -- [concurrency] [iterations] [samplesDir]
     /// All arguments are optional.
     /// </summary>
     internal static class Program
     {
-        private const int DefaultConcurrency = 8;
+        private const int DefaultConcurrency = 50;
         private const int DefaultIterations = 200;
 
         private static async Task Main(string[] args)
@@ -38,23 +41,41 @@ namespace ExtractorOLE.StressHarness
             ServiceRegistration.Register(services);
             using var provider = services.BuildServiceProvider();
             var extractor = provider.GetRequiredService<MainExtractor>();
+            var helper = provider.GetRequiredService<IExtractionHelper>();
 
-            var latencies = new ConcurrentBag<double>();
-            long failures = 0;
-            long mismatches = 0;
+            var options = new LoadGenerationOptions(concurrency, iterations);
 
-            var baselines = new List<DocumentExtractionResult?>(samples.Count);
-            for (int sampleIndex = 0; sampleIndex < samples.Count; sampleIndex++)
+            Console.WriteLine();
+            Console.WriteLine("--- DetectMimeTypeFromBytes ---");
+            var mimeSummary = await LoadGenerator.RunAsync(helper.DetectMimeTypeFromBytes, samples, options);
+            PrintSummary(mimeSummary);
+
+            // Single-threaded baseline per sample, used below to detect
+            // shared-mutable-state corruption once Extract runs concurrently.
+            var baselines = new Dictionary<byte[], DocumentExtractionResult?>(ReferenceEqualityComparer.Instance);
+            foreach (var sample in samples)
             {
                 try
                 {
-                    baselines.Add(extractor.Extract(samples[sampleIndex]));
+                    baselines[sample] = extractor.Extract(sample);
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"[baseline] sample {sampleIndex} failed: {ex.Message}");
-                    baselines.Add(null);
+                    Console.WriteLine($"[baseline] sample failed: {ex.Message}");
+                    baselines[sample] = null;
                 }
+            }
+
+            long mismatches = 0;
+            DocumentExtractionResult ExtractAndCompare(byte[] bytes)
+            {
+                var actual = extractor.Extract(bytes);
+                if (baselines.TryGetValue(bytes, out var baseline) && baseline is not null &&
+                    (actual.MimeType != baseline.MimeType || actual.ExtractedText != baseline.ExtractedText))
+                {
+                    Interlocked.Increment(ref mismatches);
+                }
+                return actual;
             }
 
             GC.Collect();
@@ -64,53 +85,18 @@ namespace ExtractorOLE.StressHarness
             long heapBefore = GC.GetTotalMemory(false);
             int gen0Before = GC.CollectionCount(0), gen1Before = GC.CollectionCount(1), gen2Before = GC.CollectionCount(2);
 
-            using var gate = new SemaphoreSlim(concurrency);
-            var indices = Enumerable.Range(0, iterations);
-
-            var overall = Stopwatch.StartNew();
-
-            await Parallel.ForEachAsync(indices, async (index, ct) =>
-            {
-                await gate.WaitAsync(ct);
-                try
-                {
-                    var bytes = samples[index % samples.Count];
-                    var baseline = baselines[index % samples.Count];
-                    var sw = Stopwatch.StartNew();
-                    var actual = await Task.Run(() => extractor.Extract(bytes), ct);
-                    sw.Stop();
-                    latencies.Add(sw.Elapsed.TotalMilliseconds);
-
-                    if (baseline is not null && (actual.MimeType != baseline.MimeType || actual.ExtractedText != baseline.ExtractedText))
-                    {
-                        Interlocked.Increment(ref mismatches);
-                        Console.WriteLine($"[iteration {index}] mismatch: result diverged from baseline (mime/text).");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Interlocked.Increment(ref failures);
-                    Console.WriteLine($"[iteration {index}] failed: {ex.Message}");
-                }
-                finally
-                {
-                    gate.Release();
-                }
-            });
-
-            overall.Stop();
+            Console.WriteLine();
+            Console.WriteLine("--- Extract ---");
+            var extractSummary = await LoadGenerator.RunAsync(ExtractAndCompare, samples, options);
 
             long allocatedAfter = GC.GetTotalAllocatedBytes(precise: false);
             long heapAfter = GC.GetTotalMemory(false);
             int gen0After = GC.CollectionCount(0), gen1After = GC.CollectionCount(1), gen2After = GC.CollectionCount(2);
             long peakWorkingSetBytes = Process.GetCurrentProcess().PeakWorkingSet64;
 
-            PrintSummary(
-                overall.Elapsed,
-                latencies.ToList(),
-                failures,
-                iterations,
-                mismatches,
+            PrintSummary(extractSummary);
+            PrintDiagnostics(
+                extractSummary,
                 allocatedBefore,
                 allocatedAfter,
                 heapBefore,
@@ -122,6 +108,7 @@ namespace ExtractorOLE.StressHarness
                 gen2Before,
                 gen2After,
                 peakWorkingSetBytes,
+                mismatches,
                 samples.Count);
 
             if (mismatches > 0)
@@ -133,11 +120,19 @@ namespace ExtractorOLE.StressHarness
         private static List<byte[]> LoadSamples(string? samplesDir)
         {
             var samples = new List<byte[]>();
+            var directory = !string.IsNullOrWhiteSpace(samplesDir) && Directory.Exists(samplesDir)
+                ? samplesDir
+                : FindDefaultSamplesDirectory();
 
-            if (!string.IsNullOrWhiteSpace(samplesDir) && Directory.Exists(samplesDir))
+            if (directory is not null)
             {
-                foreach (var file in Directory.EnumerateFiles(samplesDir))
+                foreach (var file in Directory.EnumerateFiles(directory, "*", SearchOption.AllDirectories))
                 {
+                    if (string.Equals(Path.GetFileName(file), "manifest.json", StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+
                     samples.Add(File.ReadAllBytes(file));
                 }
             }
@@ -149,6 +144,24 @@ namespace ExtractorOLE.StressHarness
             }
 
             return samples;
+        }
+
+        private static string? FindDefaultSamplesDirectory()
+        {
+            var directory = new DirectoryInfo(AppContext.BaseDirectory);
+
+            while (directory is not null)
+            {
+                var candidate = Path.Combine(directory.FullName, "samples");
+                if (Directory.Exists(candidate))
+                {
+                    return candidate;
+                }
+
+                directory = directory.Parent;
+            }
+
+            return null;
         }
 
         private static byte[] CreateSyntheticDocx()
@@ -168,12 +181,33 @@ namespace ExtractorOLE.StressHarness
             return stream.ToArray();
         }
 
-        private static void PrintSummary(
-            TimeSpan elapsed,
-            List<double> latencies,
-            long failures,
-            int totalIterations,
-            long mismatches,
+        private static void PrintSummary(LoadGenerationSummary summary)
+        {
+            var latencies = summary.LatenciesMs.OrderBy(l => l).ToList();
+            var throughput = summary.Elapsed.TotalSeconds > 0 ? summary.Succeeded / summary.Elapsed.TotalSeconds : 0;
+
+            Console.WriteLine();
+            Console.WriteLine("=== Stress harness summary ===");
+            Console.WriteLine($"Total iterations : {summary.TotalCalls}");
+            Console.WriteLine($"Succeeded        : {summary.Succeeded}");
+            Console.WriteLine($"Failed           : {summary.Failed}");
+            Console.WriteLine($"Peak concurrency : {summary.PeakObservedConcurrency}");
+            Console.WriteLine($"Wall-clock time  : {summary.Elapsed.TotalSeconds:F3} s");
+            Console.WriteLine($"Throughput       : {throughput:F2} ops/sec");
+
+            if (latencies.Count > 0)
+            {
+                Console.WriteLine($"Latency min      : {latencies[0]:F2} ms");
+                Console.WriteLine($"Latency avg      : {latencies.Average():F2} ms");
+                Console.WriteLine($"Latency p50      : {Percentile(latencies, 50):F2} ms");
+                Console.WriteLine($"Latency p95      : {Percentile(latencies, 95):F2} ms");
+                Console.WriteLine($"Latency p99      : {Percentile(latencies, 99):F2} ms");
+                Console.WriteLine($"Latency max      : {latencies[^1]:F2} ms");
+            }
+        }
+
+        private static void PrintDiagnostics(
+            LoadGenerationSummary summary,
             long allocatedBefore,
             long allocatedAfter,
             long heapBefore,
@@ -185,29 +219,10 @@ namespace ExtractorOLE.StressHarness
             int gen2Before,
             int gen2After,
             long peakWorkingSetBytes,
+            long mismatches,
             int sampleCount)
         {
-            latencies.Sort();
-            var succeeded = latencies.Count;
-            var throughput = elapsed.TotalSeconds > 0 ? succeeded / elapsed.TotalSeconds : 0;
-
-            Console.WriteLine();
-            Console.WriteLine("=== Stress harness summary ===");
-            Console.WriteLine($"Total iterations : {totalIterations}");
-            Console.WriteLine($"Succeeded        : {succeeded}");
-            Console.WriteLine($"Failed           : {failures}");
-            Console.WriteLine($"Wall-clock time  : {elapsed.TotalSeconds:F3} s");
-            Console.WriteLine($"Throughput       : {throughput:F2} ops/sec");
-
-            if (succeeded > 0)
-            {
-                Console.WriteLine($"Latency min      : {latencies[0]:F2} ms");
-                Console.WriteLine($"Latency avg      : {latencies.Average():F2} ms");
-                Console.WriteLine($"Latency p50      : {Percentile(latencies, 50):F2} ms");
-                Console.WriteLine($"Latency p95      : {Percentile(latencies, 95):F2} ms");
-                Console.WriteLine($"Latency p99      : {Percentile(latencies, 99):F2} ms");
-                Console.WriteLine($"Latency max      : {latencies[^1]:F2} ms");
-            }
+            var succeeded = summary.Succeeded;
 
             Console.WriteLine();
             Console.WriteLine("=== Memory under load ===");
