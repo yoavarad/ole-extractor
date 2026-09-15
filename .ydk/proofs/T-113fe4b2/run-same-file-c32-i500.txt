@@ -1,0 +1,27 @@
+No sample directory provided (or it was empty) - generating a synthetic in-memory .docx sample.
+Samples: 1 | Concurrency: 32 | Iterations: 500
+
+=== Stress harness summary ===
+Total iterations : 500
+Succeeded        : 500
+Failed           : 0
+Wall-clock time  : 0.522 s
+Throughput       : 958.46 ops/sec
+Latency min      : 14.84 ms
+Latency avg      : 22.43 ms
+Latency p50      : 22.43 ms
+Latency p95      : 25.64 ms
+Latency p99      : 26.54 ms
+Latency max      : 27.37 ms
+
+=== Memory under load ===
+Allocated (total)  : 115.77 MB
+Allocated / op     : 237.10 KB
+Heap size delta    : -0.72 MB
+GC collections     : Gen0=10 Gen1=5 Gen2=1
+Peak working set   : 66.43 MB
+
+=== Shared-state / correctness check ===
+Distinct samples   : 1 (same-file concurrency when sampleCount < concurrency)
+Correctness checks : 500/500 matched baseline
+Mismatches         : 0  [PASS: no cross-call corruption detected]
