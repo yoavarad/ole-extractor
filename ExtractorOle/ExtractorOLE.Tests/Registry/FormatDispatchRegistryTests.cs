@@ -52,6 +52,9 @@ namespace ExtractorOLE.Tests.Registry
 
             public OfficeMimeTypeEnum DetectMimeTypeFromBytes(byte[] fileBytes) => OfficeMimeTypeEnum.Word;
 
+            public MimeDetectionResult DetectMimeType(MimeDetectionRequest request) =>
+                throw new NotSupportedException("Not exercised by this test.");
+
             public string GetExtensionFromContentType(string contentType) => ".fake";
 
             public string DetectMimeFromMagicBytes(byte[] bytes) => "application/x-fake-format";

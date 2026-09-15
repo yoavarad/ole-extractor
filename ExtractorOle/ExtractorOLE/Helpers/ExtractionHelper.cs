@@ -308,6 +308,39 @@ namespace ExtractorOLE.Helpers
             return OfficeMimeTypeEnum.OpenXmlUnknown;
         }
 
+        // Facade over the DI-registered detection registry: tries every registered
+        // structural check (OOXML, then CFB) in registered order and returns the
+        // first non-Unknown result, or an Unknown result if none match. Pure
+        // orchestration - no format-specific parsing logic here
+        // ([ydk:req:extraction/format-extensibility]).
+        public MimeDetectionResult DetectMimeType(MimeDetectionRequest request)
+        {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+            if (request.FileBytes == null)
+            {
+                throw new ArgumentNullException(nameof(request.FileBytes));
+            }
+
+            foreach (var detector in _detectionRegistry.Detectors)
+            {
+                var result = detector.Detect(request);
+                if (result.DetectedFormat != DetectedFormatEnum.Unknown)
+                {
+                    return result;
+                }
+            }
+
+            return new MimeDetectionResult
+            {
+                DetectedFormat = DetectedFormatEnum.Unknown,
+                MimeType = "application/octet-stream",
+                IsSupported = false,
+            };
+        }
+
         // OfficeMimeTypeEnum only has one legacy value (ExcelLegacy) - Doc/Ppt CFB
         // detections and Unknown all fall through to OpenXmlUnknown here, matching
         // pre-existing dispatch behavior.
