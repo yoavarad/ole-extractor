@@ -283,7 +283,12 @@ namespace ExtractorOLE.Helpers
         // ([ydk:req:extraction/format-extensibility]).
         public OfficeMimeTypeEnum DetectMimeTypeFromBytes(byte[] fileBytes)
         {
-            if (fileBytes == null || fileBytes.Length == 0)
+            if (fileBytes == null)
+            {
+                throw new ArgumentNullException(nameof(fileBytes));
+            }
+
+            if (fileBytes.Length == 0)
             {
                 return OfficeMimeTypeEnum.OpenXmlUnknown;
             }
