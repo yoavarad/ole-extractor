@@ -123,17 +123,28 @@ namespace ExtractorOLE.Tests.Helpers
         }
 
         [Fact]
-        public void DetectMimeType_NullRequest_ThrowsArgumentNullException()
+        public void DetectMimeType_NullRequest_ThrowsArgumentNullException_BeforeAnyDetectorInvoked()
         {
-            Assert.Throws<ArgumentNullException>(() => new ExtractionHelper().DetectMimeType(null!));
+            var spy = new SpyDetector();
+            var registry = new MimeDetectionRegistry(new IMimeTypeDetector[] { spy });
+            var helper = new ExtractionHelper(registry);
+
+            Assert.Throws<ArgumentNullException>(() => helper.DetectMimeType(null!));
+
+            Assert.False(spy.WasCalled);
         }
 
         [Fact]
-        public void DetectMimeType_NullFileBytes_ThrowsArgumentNullException()
+        public void DetectMimeType_NullFileBytes_ThrowsArgumentNullException_BeforeAnyDetectorInvoked()
         {
+            var spy = new SpyDetector();
+            var registry = new MimeDetectionRegistry(new IMimeTypeDetector[] { spy });
+            var helper = new ExtractionHelper(registry);
             var request = new MimeDetectionRequest { FileBytes = null! };
 
-            Assert.Throws<ArgumentNullException>(() => new ExtractionHelper().DetectMimeType(request));
+            Assert.Throws<ArgumentNullException>(() => helper.DetectMimeType(request));
+
+            Assert.False(spy.WasCalled);
         }
     }
 }
