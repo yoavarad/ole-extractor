@@ -40,6 +40,7 @@ namespace ExtractorOLE.Helpers
                 OfficeMimeTypeEnum.Excel => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 OfficeMimeTypeEnum.PowerPoint => "application/vnd.openxmlformats-officedocument.presentationml.presentation",
                 OfficeMimeTypeEnum.ExcelLegacy => "application/vnd.ms-excel",
+                OfficeMimeTypeEnum.PowerPointLegacy => "application/vnd.ms-powerpoint",
                 OfficeMimeTypeEnum.WordLegacy => "application/msword",
                 _ => "application/vnd.openxmlformats-package",
             };
@@ -342,15 +343,16 @@ namespace ExtractorOLE.Helpers
             };
         }
 
-        // OfficeMimeTypeEnum has two legacy values so far (ExcelLegacy, WordLegacy) - Ppt CFB
-        // detections and Unknown still fall through to OpenXmlUnknown here, matching
-        // pre-existing dispatch behavior.
+        // OfficeMimeTypeEnum now has three legacy values (ExcelLegacy, PowerPointLegacy,
+        // WordLegacy); Xls, Ppt, and Doc CFB detections are all wired to their legacy enum
+        // values, and only Unknown still falls through to OpenXmlUnknown here.
         private static OfficeMimeTypeEnum? MapDetectedFormat(DetectedFormatEnum format) => format switch
         {
             DetectedFormatEnum.Docx => OfficeMimeTypeEnum.Word,
             DetectedFormatEnum.Xlsx => OfficeMimeTypeEnum.Excel,
             DetectedFormatEnum.Pptx => OfficeMimeTypeEnum.PowerPoint,
             DetectedFormatEnum.Xls => OfficeMimeTypeEnum.ExcelLegacy,
+            DetectedFormatEnum.Ppt => OfficeMimeTypeEnum.PowerPointLegacy,
             DetectedFormatEnum.Doc => OfficeMimeTypeEnum.WordLegacy,
             _ => null,
         };

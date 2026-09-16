@@ -41,6 +41,7 @@ namespace ExtractorOLE
             services.AddSingleton<PowerPointOpenStrategy>();
             services.AddSingleton<ZipFallbackOpenStrategy>();
             services.AddSingleton<XlsOpenStrategy>();
+            services.AddSingleton<PptOpenStrategy>();
             services.AddSingleton<DocOpenStrategy>();
 
             // Map enum to strategy implementation
@@ -53,6 +54,7 @@ namespace ExtractorOLE
                     [OfficeMimeTypeEnum.PowerPoint] = sp.GetRequiredService<PowerPointOpenStrategy>(),
                     [OfficeMimeTypeEnum.OpenXmlUnknown] = sp.GetRequiredService<ZipFallbackOpenStrategy>(),
                     [OfficeMimeTypeEnum.ExcelLegacy] = sp.GetRequiredService<XlsOpenStrategy>(),
+                    [OfficeMimeTypeEnum.PowerPointLegacy] = sp.GetRequiredService<PptOpenStrategy>(),
                     [OfficeMimeTypeEnum.WordLegacy] = sp.GetRequiredService<DocOpenStrategy>(),
                 };
                 return dict;
@@ -65,6 +67,11 @@ namespace ExtractorOLE
             services.AddSingleton<XlsTextExtractor>();
             services.AddSingleton<DocTextExtractor>();
 
+            // No PowerPointLegacy entry: T-517f89c5's acceptance criteria scope PptOpenStrategy
+            // to Open()/FileMetadata/DI-registration only, not flat-text body extraction. Missing
+            // entries resolve to null via FormatDispatchRegistry.GetTextExtractor (TryGetValue-based)
+            // and MainExtractor already handles that (logs, leaves ExtractedText empty) - see
+            // T-b62ffe04 for the tracked follow-up once a PowerPointLegacy ITextExtractor lands.
             services.AddSingleton<IDictionary<OfficeMimeTypeEnum, ITextExtractor>>(sp =>
             {
                 var dict = new Dictionary<OfficeMimeTypeEnum, ITextExtractor>
