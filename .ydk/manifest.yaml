@@ -124,6 +124,7 @@ stories:
     - T-3f3dab44
     - T-a8b6b4ec
     - T-1df33d6c
+    - T-f8ccfe08
   S-0602557d:
     title: xls extraction (Excel legacy)
     epic: E-a7ddf85b
@@ -964,3 +965,13 @@ tasks:
     dependencies: []
     component_refs:
     - ydk:nfr:extraction/nesting-depth-guard
+  T-f8ccfe08:
+    title: Retarget b2xtranslator Doc module to net8.0 and wire .doc body-text extraction
+    story: S-32677db6
+    status: open
+    dependencies:
+    - task_id: T-c4123b53
+      type: discovered-from
+    component_refs:
+    - ydk:entity:extraction/FileMetadata
+    - ydk:entity:extraction/ExtractionResult
