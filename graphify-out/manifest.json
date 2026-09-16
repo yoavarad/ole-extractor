@@ -162,9 +162,9 @@
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE/DTOs/OfficeMimeTypeEnum.cs": {
-    "mtime": 1789587940.7645676,
-    "seen": 1789588591.3685975,
-    "ast_hash": "06336b9846f81a759f9b0057c6ea9ac1",
+    "mtime": 1789589400.3301926,
+    "seen": 1789589523.6787415,
+    "ast_hash": "5fd063b01d08b2cef2111f3ff1b1cd1c",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE/ExtractorOLE.csproj": {
@@ -192,9 +192,9 @@
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE/Helpers/ExtractionHelper.cs": {
-    "mtime": 1789587950.623388,
-    "seen": 1789588591.3686283,
-    "ast_hash": "96fa0ef12c8d2495fce1199ac99fd665",
+    "mtime": 1789589413.8510535,
+    "seen": 1789589523.683341,
+    "ast_hash": "c6b19f009076fbcf711ef92a760fbc05",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE/Helpers/FileTypeStrategy/ExcelOpenStrategy.cs": {
@@ -294,9 +294,9 @@
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE/ServiceRegistration.cs": {
-    "mtime": 1789588538.0744653,
-    "seen": 1789588591.368715,
-    "ast_hash": "b37752c2f31683c917c1afd05c928223",
+    "mtime": 1789589429.3098004,
+    "seen": 1789589523.6950347,
+    "ast_hash": "1465a226ab13e06dcb25a7e77054da42",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOle.slnx": {
@@ -762,9 +762,9 @@
     "semantic_hash": ""
   },
   ".ydk/manifest.yaml": {
-    "mtime": 1789587491.384074,
-    "seen": 1789588591.368921,
-    "ast_hash": "cd0ed393ff65c80a3df28baebf9c8394",
+    "mtime": 1789588879.4749124,
+    "seen": 1789589523.730814,
+    "ast_hash": "9ff8c3ef6a3069725baaa97cbbfc6769",
     "semantic_hash": ""
   },
   ".ydk/proofs/T-6ac3f215/plugins/ai-code-review.txt": {
@@ -1482,9 +1482,9 @@
     "semantic_hash": ""
   },
   ".ydk/tasks/T-517f89c5.md": {
-    "mtime": 1789588245.576911,
-    "seen": 1789588591.371779,
-    "ast_hash": "5c75415580a65918d684daccecfad100",
+    "mtime": 1789588879.5220797,
+    "seen": 1789589524.129824,
+    "ast_hash": "5a3d1005d22090de54f19bce28fb5afe",
     "semantic_hash": ""
   },
   ".ydk/tasks/T-5e489191.md": {
@@ -7257,6 +7257,270 @@
     "mtime": 1789587491.899487,
     "seen": 1789588591.3717186,
     "ast_hash": "b59661f2cb0bc889df96b1107204eb8f",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/T-517f89c5/verification-report.json": {
+    "mtime": 1789588873.2998302,
+    "seen": 1789589523.6589837,
+    "ast_hash": "667bb5e3f451d520d637fed688470325",
+    "semantic_hash": ""
+  },
+  "ExtractorOle/ExtractorOLE.Tests/Doc/DocOpenStrategyTests.cs": {
+    "mtime": 1789589382.9086685,
+    "seen": 1789589523.6658986,
+    "ast_hash": "3ff5c77db8724459315db3a14ee7ddcb",
+    "semantic_hash": ""
+  },
+  "ExtractorOle/ExtractorOLE/Handlers/DocTextExtractor.cs": {
+    "mtime": 1789589382.9086685,
+    "seen": 1789589523.681495,
+    "ast_hash": "a5a438c4456fbddc312979ca838148a7",
+    "semantic_hash": ""
+  },
+  "ExtractorOle/ExtractorOLE/Helpers/FileTypeStrategy/DocOpenStrategy.cs": {
+    "mtime": 1789589382.9086685,
+    "seen": 1789589523.683347,
+    "ast_hash": "fe05103894011e1a23b2aefd50a8a729",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/T-517f89c5/plugins/ai-code-review.txt": {
+    "mtime": 1789588873.2683177,
+    "seen": 1789589523.9879248,
+    "ast_hash": "de4372cf54d62b8a8da0df114ed24429",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/T-517f89c5/plugins/cli-error-handling.txt": {
+    "mtime": 1789588873.2683177,
+    "seen": 1789589523.9879324,
+    "ast_hash": "36ce08fca6a349913a03a75a4fec3023",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/T-517f89c5/plugins/cli-output-format.txt": {
+    "mtime": 1789588873.2683177,
+    "seen": 1789589523.9879372,
+    "ast_hash": "36ce08fca6a349913a03a75a4fec3023",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/T-517f89c5/plugins/dotnet-build.txt": {
+    "mtime": 1789588873.2683177,
+    "seen": 1789589523.987941,
+    "ast_hash": "802014a2b4d45d8e9677bd2d725a08b5",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/T-517f89c5/plugins/dotnet-format.txt": {
+    "mtime": 1789588873.2683177,
+    "seen": 1789589523.9879456,
+    "ast_hash": "ad9baf8c2809658f777072512b2be016",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/T-517f89c5/plugins/dotnet-quality.txt": {
+    "mtime": 1789588873.2683177,
+    "seen": 1789589523.9879496,
+    "ast_hash": "8d6a089435bbff0bea86619673cdd2c3",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/T-517f89c5/plugins/dotnet-test.txt": {
+    "mtime": 1789588873.2998302,
+    "seen": 1789589523.987954,
+    "ast_hash": "800fa9edcc61d286368e1b8cdf7dac85",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/T-517f89c5/plugins/fastapi-adapter-isolation.txt": {
+    "mtime": 1789588873.2683177,
+    "seen": 1789589523.9879596,
+    "ast_hash": "71642a03f17dbeb433a7fed94ffd2f45",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/T-517f89c5/plugins/fastapi-core-purity.txt": {
+    "mtime": 1789588873.2771146,
+    "seen": 1789589523.9879644,
+    "ast_hash": "08e49d11a0457ce8a5bdcafa94b7f113",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/T-517f89c5/plugins/fastapi-no-mocks-e2e.txt": {
+    "mtime": 1789588873.2771146,
+    "seen": 1789589523.9879694,
+    "ast_hash": "c933df2499d960d5572db1249cb837c9",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/T-517f89c5/plugins/fastapi-no-mocks-integration.txt": {
+    "mtime": 1789588873.2771146,
+    "seen": 1789589523.987973,
+    "ast_hash": "11aaa752bfbda80c70bfe506f62253e2",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/T-517f89c5/plugins/fastapi-route-delegation.txt": {
+    "mtime": 1789588873.2771146,
+    "seen": 1789589523.987979,
+    "ast_hash": "0242eb28ebb7c5d67478c41c4b2847ca",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/T-517f89c5/plugins/fastapi-route-splitting.txt": {
+    "mtime": 1789588873.2771146,
+    "seen": 1789589523.9879844,
+    "ast_hash": "0242eb28ebb7c5d67478c41c4b2847ca",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/T-517f89c5/plugins/fastapi-service-sync.txt": {
+    "mtime": 1789588873.2771146,
+    "seen": 1789589523.9879878,
+    "ast_hash": "de8de5bb5ec0ad1e0f29e5e2a0e04915",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/T-517f89c5/plugins/nextjs-file-sizes.txt": {
+    "mtime": 1789588873.2771146,
+    "seen": 1789589523.9879913,
+    "ast_hash": "cd4e8b0e16946d59b11d650102319cae",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/T-517f89c5/plugins/nextjs-fsd-imports.txt": {
+    "mtime": 1789588873.2840977,
+    "seen": 1789589523.9879956,
+    "ast_hash": "cd4e8b0e16946d59b11d650102319cae",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/T-517f89c5/plugins/nextjs-fsd-layers.txt": {
+    "mtime": 1789588873.2840977,
+    "seen": 1789589523.9879987,
+    "ast_hash": "c2946755d0cc19a543d80ec70aa6da40",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/T-517f89c5/plugins/nextjs-module-density.txt": {
+    "mtime": 1789588873.2840977,
+    "seen": 1789589523.9880018,
+    "ast_hash": "cd4e8b0e16946d59b11d650102319cae",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/T-517f89c5/plugins/nextjs-no-direct-env.txt": {
+    "mtime": 1789588873.286108,
+    "seen": 1789589523.9880056,
+    "ast_hash": "cd4e8b0e16946d59b11d650102319cae",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/T-517f89c5/plugins/nextjs-no-direct-fetch.txt": {
+    "mtime": 1789588873.286108,
+    "seen": 1789589523.9880092,
+    "ast_hash": "cd4e8b0e16946d59b11d650102319cae",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/T-517f89c5/plugins/nextjs-no-direct-ui-imports.txt": {
+    "mtime": 1789588873.286108,
+    "seen": 1789589523.9880128,
+    "ast_hash": "cd4e8b0e16946d59b11d650102319cae",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/T-517f89c5/plugins/nextjs-no-query-key-strings.txt": {
+    "mtime": 1789588873.286108,
+    "seen": 1789589523.988017,
+    "ast_hash": "cd4e8b0e16946d59b11d650102319cae",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/T-517f89c5/plugins/nextjs-no-useeffect-fetch.txt": {
+    "mtime": 1789588873.286108,
+    "seen": 1789589523.9880204,
+    "ast_hash": "cd4e8b0e16946d59b11d650102319cae",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/T-517f89c5/plugins/nextjs-no-zustand-module-level.txt": {
+    "mtime": 1789588873.286108,
+    "seen": 1789589523.9880238,
+    "ast_hash": "cd4e8b0e16946d59b11d650102319cae",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/T-517f89c5/plugins/nextjs-page-purity.txt": {
+    "mtime": 1789588873.286108,
+    "seen": 1789589523.988028,
+    "ast_hash": "6810b2f8132f6aa85f27df29813ecc28",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/T-517f89c5/plugins/nextjs-server-client-boundary.txt": {
+    "mtime": 1789588873.286108,
+    "seen": 1789589523.9880323,
+    "ast_hash": "cd4e8b0e16946d59b11d650102319cae",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/T-517f89c5/plugins/nextjs-sse-abort-controller.txt": {
+    "mtime": 1789588873.286108,
+    "seen": 1789589523.988036,
+    "ast_hash": "cd4e8b0e16946d59b11d650102319cae",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/T-517f89c5/plugins/python-file-length.txt": {
+    "mtime": 1789588873.286108,
+    "seen": 1789589523.9880395,
+    "ast_hash": "2f9c144c5c12405a9c78d43789754db5",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/T-517f89c5/plugins/python-no-future-annotations.txt": {
+    "mtime": 1789588873.286108,
+    "seen": 1789589523.9880435,
+    "ast_hash": "0242eb28ebb7c5d67478c41c4b2847ca",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/T-517f89c5/plugins/react-fsd-imports.txt": {
+    "mtime": 1789588873.286108,
+    "seen": 1789589523.9880471,
+    "ast_hash": "cd4e8b0e16946d59b11d650102319cae",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/T-517f89c5/plugins/spec-alignment.txt": {
+    "mtime": 1789588873.286108,
+    "seen": 1789589523.98805,
+    "ast_hash": "1e83c0f2f677329767c38abe9afa0cb0",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/T-517f89c5/plugins/terraform-dangling-resources.txt": {
+    "mtime": 1789588873.286108,
+    "seen": 1789589523.9880536,
+    "ast_hash": "a4325c90048fc5437b33e196346c18d9",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/T-517f89c5/plugins/terraform-external-iam.txt": {
+    "mtime": 1789588873.286108,
+    "seen": 1789589523.988058,
+    "ast_hash": "e12bed253d0fec244a95cf44e0638cc4",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/T-517f89c5/plugins/terraform-format.txt": {
+    "mtime": 1789588873.286108,
+    "seen": 1789589523.9880626,
+    "ast_hash": "3ad81c857c4f6111f03eab64889f4252",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/T-517f89c5/plugins/terraform-glacier-public.txt": {
+    "mtime": 1789588873.286108,
+    "seen": 1789589523.988066,
+    "ast_hash": "4b46117a499a5ffd39e119198c7400be",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/T-517f89c5/plugins/terraform-paravirt-ec2.txt": {
+    "mtime": 1789588873.2998302,
+    "seen": 1789589523.9880693,
+    "ast_hash": "1ea994658ff196a59d5cf19f284f499b",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/T-517f89c5/plugins/terraform-public-ami.txt": {
+    "mtime": 1789588873.2998302,
+    "seen": 1789589523.988073,
+    "ast_hash": "e809d55ee51ebe58a890b8f037c2d3eb",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/T-517f89c5/plugins/terraform-security.txt": {
+    "mtime": 1789588873.2998302,
+    "seen": 1789589523.9880764,
+    "ast_hash": "3ad81c857c4f6111f03eab64889f4252",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/T-517f89c5/plugins/terraform-tagging.txt": {
+    "mtime": 1789588873.2998302,
+    "seen": 1789589523.9880805,
+    "ast_hash": "3ad81c857c4f6111f03eab64889f4252",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/T-517f89c5/plugins/tests-pytest.txt": {
+    "mtime": 1789588873.2998302,
+    "seen": 1789589523.9880834,
+    "ast_hash": "05569dde45cb2f1252c71901c19270f5",
     "semantic_hash": ""
   }
 }
