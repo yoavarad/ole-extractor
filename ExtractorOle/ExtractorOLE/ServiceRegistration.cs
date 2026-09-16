@@ -41,6 +41,7 @@ namespace ExtractorOLE
             services.AddSingleton<PowerPointOpenStrategy>();
             services.AddSingleton<ZipFallbackOpenStrategy>();
             services.AddSingleton<XlsOpenStrategy>();
+            services.AddSingleton<DocOpenStrategy>();
 
             // Map enum to strategy implementation
             services.AddSingleton<IDictionary<OfficeMimeTypeEnum, IOpenStrategy>>(sp =>
@@ -52,6 +53,7 @@ namespace ExtractorOLE
                     [OfficeMimeTypeEnum.PowerPoint] = sp.GetRequiredService<PowerPointOpenStrategy>(),
                     [OfficeMimeTypeEnum.OpenXmlUnknown] = sp.GetRequiredService<ZipFallbackOpenStrategy>(),
                     [OfficeMimeTypeEnum.ExcelLegacy] = sp.GetRequiredService<XlsOpenStrategy>(),
+                    [OfficeMimeTypeEnum.WordLegacy] = sp.GetRequiredService<DocOpenStrategy>(),
                 };
                 return dict;
             });
@@ -61,6 +63,7 @@ namespace ExtractorOLE
             services.AddSingleton<XlsxTextExtractor>();
             services.AddSingleton<PptxTextExtractor>();
             services.AddSingleton<XlsTextExtractor>();
+            services.AddSingleton<DocTextExtractor>();
 
             services.AddSingleton<IDictionary<OfficeMimeTypeEnum, ITextExtractor>>(sp =>
             {
@@ -70,6 +73,7 @@ namespace ExtractorOLE
                     [OfficeMimeTypeEnum.Excel] = sp.GetRequiredService<XlsxTextExtractor>(),
                     [OfficeMimeTypeEnum.PowerPoint] = sp.GetRequiredService<PptxTextExtractor>(),
                     [OfficeMimeTypeEnum.ExcelLegacy] = sp.GetRequiredService<XlsTextExtractor>(),
+                    [OfficeMimeTypeEnum.WordLegacy] = sp.GetRequiredService<DocTextExtractor>(),
                 };
                 return dict;
             });
