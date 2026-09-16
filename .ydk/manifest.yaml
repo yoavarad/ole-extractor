@@ -366,7 +366,7 @@ tasks:
   T-c4123b53:
     title: Implement doc open component (NPOI HWPFDocument + FileMetadata)
     story: S-32677db6
-    status: blocked-by-blocked-by-research
+    status: open
     dependencies:
     - T-90924b6d
     - T-a5f1d074
@@ -442,7 +442,7 @@ tasks:
   T-517f89c5:
     title: Implement ppt open component (NPOI HSLFSlideShow + FileMetadata)
     story: S-23b8b734
-    status: blocked-by-blocked-by-research
+    status: open
     dependencies:
     - T-90924b6d
     - T-a5f1d074
