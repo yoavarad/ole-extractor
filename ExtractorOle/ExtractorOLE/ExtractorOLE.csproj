@@ -22,6 +22,14 @@
          it covers legacy .xls (HSSFWorkbook). Legacy .doc/.ppt (HWPF/HSLF) are NOT included —
          see task report / project-rules.md for why. -->
     <ProjectReference Include="..\..\third_party\npoi\main\NPOI.Core.csproj" />
+
+    <!-- Self-compiled from BSD-3-Clause source (submodule at third_party/b2xtranslator,
+         branch net8-xls-retarget), per ADR-004: legacy .ppt has no working NPOI HSLF entry
+         point, so .ppt body content is converted in-process to .pptx via b2xtranslator's Ppt
+         module, then read through the existing DocumentFormat.OpenXml pptx path. Only the Ppt
+         project (and its Common dependency) is referenced here — Doc/Xls modules are wired by
+         their own respective tasks. -->
+    <ProjectReference Include="..\..\third_party\b2xtranslator\Ppt\b2xtranslator.ppt.csproj" />
   </ItemGroup>
 
 </Project>
