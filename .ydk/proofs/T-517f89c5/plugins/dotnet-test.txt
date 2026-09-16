@@ -1,0 +1,15 @@
+PASSED (13.1s)
+
+Determining projects to restore...
+  All projects are up-to-date for restore.
+  SampleGenerator -> C:\Users\yoava\Projects\ole-extractor\.ydk\worktrees\T-517f89c5\SampleGenerator\bin\Debug\net8.0\SampleGenerator.dll
+  b2xtranslator -> C:\Users\yoava\Projects\ole-extractor\.ydk\worktrees\T-517f89c5\third_party\b2xtranslator\Common\bin\Debug\net8.0\b2xtranslator.dll
+  NPOI.Core -> C:\Users\yoava\Projects\ole-extractor\.ydk\worktrees\T-517f89c5\third_party\npoi\solution\Debug\net8.0\NPOI.Core.dll
+  b2xtranslator.ppt -> C:\Users\yoava\Projects\ole-extractor\.ydk\worktrees\T-517f89c5\third_party\b2xtranslator\Ppt\bin\Debug\net8.0\b2xtranslator.ppt.dll
+  ExtractorOLE -> C:\Users\yoava\Projects\ole-extractor\.ydk\worktrees\T-517f89c5\ExtractorOle\ExtractorOLE\bin\Debug\net8.0\ExtractorOLE.dll
+  ExtractorOLE.StressHarness -> C:\Users\yoava\Projects\ole-extractor\.ydk\worktrees\T-517f89c5\ExtractorOle\ExtractorOLE.StressHarness\bin\Debug\net8.0\ExtractorOLE.StressHarness.dll
+  ExtractorOLE.Tests -> C:\Users\yoava\Projects\ole-extractor\.ydk\worktrees\T-517f89c5\ExtractorOle\ExtractorOLE.Tests\bin\Debug\net8.0\ExtractorOLE.Tests.dll
+Test run for C:\Users\yoava\Projects\ole-extractor\.ydk\worktrees\T-517f89c5\ExtractorOle\ExtractorOLE.Tests\bin\Debug\net8.0\ExtractorOLE.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:   174, Skipped:     0, Total:   174, Duration: 2 s - ExtractorOLE.Tests.dll (net8.0)

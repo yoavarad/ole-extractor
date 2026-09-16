@@ -442,7 +442,7 @@ tasks:
   T-517f89c5:
     title: Implement ppt open component (NPOI HSLFSlideShow + FileMetadata)
     story: S-23b8b734
-    status: open
+    status: in-review
     dependencies:
     - T-90924b6d
     - T-a5f1d074
