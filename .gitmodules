@@ -4,4 +4,4 @@
 [submodule "third_party/b2xtranslator"]
 	path = third_party/b2xtranslator
 	url = https://github.com/yoavarad/b2xtranslator.git
-	branch = net8-xls-retarget
+	branch = master
