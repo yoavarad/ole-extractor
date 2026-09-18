@@ -2,7 +2,7 @@
 id: T-a8b6b4ec
 title: Implement doc flat-text extraction with unicode fidelity
 story: S-32677db6
-status: in-review
+status: done
 assignee: null
 labels:
 - in-review
@@ -31,7 +31,7 @@ milestone: null
 complexity: null
 gates: []
 created: '2026-08-19T12:42:56Z'
-updated: '2026-09-18T20:06:38Z'
+updated: '2026-09-18T21:31:33Z'
 ---
 
 ## Description

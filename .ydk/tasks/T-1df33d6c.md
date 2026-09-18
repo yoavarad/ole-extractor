@@ -2,7 +2,7 @@
 id: T-1df33d6c
 title: Implement doc first-layer embedded-subfile walk
 story: S-32677db6
-status: in-review
+status: done
 assignee: null
 labels:
 - in-review
@@ -30,7 +30,7 @@ milestone: null
 complexity: null
 gates: []
 created: '2026-08-19T12:42:56Z'
-updated: '2026-09-18T11:15:32Z'
+updated: '2026-09-18T21:31:33Z'
 ---
 
 ## Description

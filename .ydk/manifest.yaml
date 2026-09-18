@@ -367,7 +367,7 @@ tasks:
   T-c4123b53:
     title: Implement doc open component (NPOI HWPFDocument + FileMetadata)
     story: S-32677db6
-    status: open
+    status: done
     dependencies:
     - T-90924b6d
     - T-a5f1d074
@@ -378,7 +378,7 @@ tasks:
   T-3f3dab44:
     title: Map WordFormatMetadata for doc
     story: S-32677db6
-    status: open
+    status: done
     dependencies:
     - T-c4123b53
     component_refs:
@@ -386,7 +386,7 @@ tasks:
   T-a8b6b4ec:
     title: Implement doc flat-text extraction with unicode fidelity
     story: S-32677db6
-    status: open
+    status: done
     dependencies:
     - T-94570c2b
     - T-c4123b53
@@ -396,7 +396,7 @@ tasks:
   T-1df33d6c:
     title: Implement doc first-layer embedded-subfile walk
     story: S-32677db6
-    status: in-review
+    status: done
     dependencies:
     - T-c4123b53
     component_refs:
@@ -443,7 +443,7 @@ tasks:
   T-517f89c5:
     title: Implement ppt open component (NPOI HSLFSlideShow + FileMetadata)
     story: S-23b8b734
-    status: in-review
+    status: done
     dependencies:
     - T-90924b6d
     - T-a5f1d074
@@ -454,7 +454,7 @@ tasks:
   T-2c3440d2:
     title: Map PowerPointFormatMetadata for ppt
     story: S-23b8b734
-    status: open
+    status: done
     dependencies:
     - T-517f89c5
     component_refs:
@@ -462,7 +462,7 @@ tasks:
   T-40fc15b4:
     title: Implement ppt flat-text extraction with unicode fidelity
     story: S-23b8b734
-    status: in-review
+    status: done
     dependencies:
     - T-517f89c5
     - T-94570c2b
@@ -472,7 +472,7 @@ tasks:
   T-12dfd045:
     title: Implement ppt first-layer embedded-subfile walk
     story: S-23b8b734
-    status: in-review
+    status: done
     dependencies:
     - T-517f89c5
     component_refs:

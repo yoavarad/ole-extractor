@@ -2,7 +2,7 @@
 id: T-3f3dab44
 title: Map WordFormatMetadata for doc
 story: S-32677db6
-status: open
+status: done
 assignee: null
 labels: []
 dependencies:
@@ -26,7 +26,7 @@ milestone: null
 complexity: null
 gates: []
 created: '2026-08-19T12:42:56Z'
-updated: '2026-08-19T12:42:59Z'
+updated: '2026-09-18T21:31:33Z'
 ---
 
 ## Description
