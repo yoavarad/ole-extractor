@@ -170,6 +170,170 @@ namespace ExtractorOLE.Helpers
             }
         }
 
+        // Legacy .ppt has no per-format API like HSSFWorkbook.GetAllEmbeddedObjects() to
+        // enumerate embeddings -- NPOI has no working HSLF entry point (ADR-004). Embedded
+        // OLE objects show up as CFB storages directly under the file's root, so this walks
+        // the root directory entries generically: any top-level storage is one opaque
+        // embedded object, named by its own CFB storage name (per ydk:req:extraction/subfile-scope's
+        // ppt-specific acceptance criterion). The standard root streams a real .ppt carries
+        // (PowerPoint Document, SummaryInformation, DocumentSummaryInformation, Current User)
+        // are never directories, so they never collide with this check. Inline media -- legacy
+        // .ppt concatenates every slide image into one root "Pictures" stream -- is returned as
+        // one further opaque subfile rather than parsed apart into individual images (no
+        // acceptance criterion asks for splitting it, and it fits the same "container returned
+        // as one opaque item, not recursively unpacked" rule already established for OLE objects).
+        public void ExtractFirstLayerEmbedded(DocumentExtractionResult result, NPOIFSFileSystem fs)
+        {
+            var root = fs.Root;
+            var topLevelEntries = new List<Entry>();
+            foreach (Entry entry in root)
+            {
+                topLevelEntries.Add(entry);
+            }
+
+            foreach (var entry in topLevelEntries)
+            {
+                if (!entry.IsDirectoryEntry) continue;
+
+                try
+                {
+                    ExtractCfbStorage((DirectoryEntry)entry, result.EmbeddedFiles);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Skipping unreadable embedded object storage '{entry.Name}': {ex.Message}");
+                }
+            }
+
+            // Guarded with an `is` check rather than relying on the catch below: "Pictures" is
+            // always a stream in a real .ppt, but if it were somehow a storage it would already
+            // have been picked up (and, if unreadable, logged) by the storage loop above -- an
+            // unconditional cast here would just re-attempt and re-log it as a second, unrelated
+            // failure.
+            if (root.HasEntry("Pictures") && root.GetEntry("Pictures") is DocumentEntry picturesEntry)
+            {
+                try
+                {
+                    ExtractCfbStream(picturesEntry, result.EmbeddedFiles);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Skipping unreadable Pictures stream: {ex.Message}");
+                }
+            }
+        }
+
+        // Copies one CFB storage's whole subtree into a standalone POIFS filesystem and
+        // serializes it to bytes -- the same opaque, no-recursive-unpacking technique
+        // ExtractHssfObjectData uses for .xls embedded objects. Named by the storage's own
+        // CFB name.
+        private void ExtractCfbStorage(DirectoryEntry storage, List<EmbeddedFileItem> fileList)
+        {
+            var target = new NPOIFSFileSystem();
+            try
+            {
+                EntryUtils.CopyNodes(storage, target.Root);
+                byte[] extractedBytes;
+                using (var outStream = new MemoryStream())
+                {
+                    target.WriteFileSystem(outStream);
+                    extractedBytes = outStream.ToArray();
+                }
+
+                fileList.Add(new EmbeddedFileItem
+                {
+                    BinaryData = extractedBytes,
+                    PackagePath = storage.Name,
+                    SizeInBytes = extractedBytes.LongLength,
+                    FileName = storage.Name,
+                });
+            }
+            finally
+            {
+                target.Close();
+            }
+        }
+
+        // Reads one root-level CFB stream (the "Pictures" media blob) as one opaque subfile.
+        private void ExtractCfbStream(DocumentEntry stream, List<EmbeddedFileItem> fileList)
+        {
+            using var input = new DocumentInputStream(stream);
+            using var buffer = new MemoryStream();
+            input.CopyTo(buffer);
+            byte[] extractedBytes = buffer.ToArray();
+
+            fileList.Add(new EmbeddedFileItem
+            {
+                BinaryData = extractedBytes,
+                PackagePath = stream.Name,
+                SizeInBytes = extractedBytes.LongLength,
+                FileName = stream.Name,
+            });
+        }
+
+        // Legacy .doc has no HWPFDocument-level "get all embedded objects" convenience API
+        // (ADR-004: HWPF lives only in NPOI's un-compiled scratchpad tree). Per the Word/OLE
+        // storage convention (mirrored from Java POI, documented in docs/research/npoi.md),
+        // first-layer OLE-embedded objects live as child storages of a root-level "ObjectPool"
+        // directory - so this walks that storage directly off the raw CFB tree, independent of
+        // any body-text conversion path. Each child directory is copied out and serialized as
+        // one opaque blob (same technique as ExtractHssfObjectData), never unpacked further.
+        public void ExtractFirstLayerEmbedded(DocumentExtractionResult result, DirectoryEntry root)
+        {
+            if (!root.HasEntry("ObjectPool")) return;
+            if (root.GetEntry("ObjectPool") is not DirectoryEntry objectPool) return;
+
+            int index = 1;
+            foreach (var entry in objectPool)
+            {
+                ExtractDocObjectPoolEntry(entry, result.EmbeddedFiles, ref index);
+            }
+        }
+
+        // Reads one ObjectPool child. Wrapped in its own try/catch, mirroring
+        // ExtractHssfObjectData, so that one corrupt/malformed entry (e.g. one that isn't
+        // actually a directory storage) is skipped and logged without failing the whole walk.
+        private void ExtractDocObjectPoolEntry(Entry entry, List<EmbeddedFileItem> fileList, ref int index)
+        {
+            try
+            {
+                if (entry is not DirectoryEntry objectDir)
+                {
+                    throw new IOException($"ObjectPool entry '{entry.Name}' is not a directory storage");
+                }
+
+                var target = new NPOIFSFileSystem();
+                try
+                {
+                    EntryUtils.CopyNodes(objectDir, target.Root);
+                    using (var outStream = new MemoryStream())
+                    {
+                        target.WriteFileSystem(outStream);
+                        var extractedBytes = outStream.ToArray();
+
+                        var item = new EmbeddedFileItem
+                        {
+                            BinaryData = extractedBytes,
+                            PackagePath = $"ObjectPool/{objectDir.Name}",
+                            SizeInBytes = extractedBytes.LongLength,
+                            FileName = objectDir.Name,
+                        };
+
+                        fileList.Add(item);
+                        index++;
+                    }
+                }
+                finally
+                {
+                    target.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Skipping corrupt embedded object '{entry.Name}' in ObjectPool: {ex.Message}");
+            }
+        }
+
         // Reads one embedded OLE object. Wrapped in its own try/catch so that one corrupt item
         // (e.g. a POIFS directory entry that doesn't resolve to a real DirectoryEntry) is skipped
         // and logged without failing the whole extraction.

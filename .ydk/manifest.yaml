@@ -396,7 +396,7 @@ tasks:
   T-1df33d6c:
     title: Implement doc first-layer embedded-subfile walk
     story: S-32677db6
-    status: open
+    status: in-review
     dependencies:
     - T-c4123b53
     component_refs:
@@ -472,7 +472,7 @@ tasks:
   T-12dfd045:
     title: Implement ppt first-layer embedded-subfile walk
     story: S-23b8b734
-    status: open
+    status: in-review
     dependencies:
     - T-517f89c5
     component_refs:

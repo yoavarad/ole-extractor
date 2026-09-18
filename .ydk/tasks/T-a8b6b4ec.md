@@ -2,9 +2,10 @@
 id: T-a8b6b4ec
 title: Implement doc flat-text extraction with unicode fidelity
 story: S-32677db6
-status: open
+status: in-review
 assignee: null
-labels: []
+labels:
+- in-review
 dependencies:
 - T-c4123b53
 - T-94570c2b
@@ -30,7 +31,7 @@ milestone: null
 complexity: null
 gates: []
 created: '2026-08-19T12:42:56Z'
-updated: '2026-08-19T12:42:59Z'
+updated: '2026-09-18T20:06:38Z'
 ---
 
 ## Description
@@ -39,3 +40,64 @@ Extract flattened plain-text body content from .doc via NPOI, ensuring Hebrew/Ar
 
 
 ## Activity Log
+### 2026-09-18T19:55:07Z (UTC)
+Implemented + committed locally (0775961), suite 196/196. Blocked: b2xtranslator fork branch net8-doc-retarget (06e87fb) needs push to yoavarad/b2xtranslator; push denied. See .ydk/proofs/T-a8b6b4ec/orchestrator-progress.md
+### 2026-09-18T20:03:18Z (UTC)
+**pr-body-validation FAILED:**
+FAIL: Missing requirements: screenshot_for_ui
+PASS: PR body contains command output in code block
+PASS: PR body contains ## Summary section
+PASS: PR body contains ## Test Plan section
+FAIL: UI file changes detected — PR body must include screenshots
+### 2026-09-18T20:06:10Z (UTC)
+**pr-body-validation FAILED:**
+FAIL: Missing requirements: screenshot_for_ui
+PASS: PR body contains command output in code block
+PASS: PR body contains ## Summary section
+PASS: PR body contains ## Test Plan section
+FAIL: UI file changes detected — PR body must include screenshots
+### 2026-09-18T20:06:37Z (UTC)
+## Verification Proof
+
+OK dotnet-build (7.3s)
+OK dotnet-format (49.6s)
+OK dotnet-quality (56.8s)
+OK ai-code-review (0.0s)
+OK cli-error-handling (0.0s)
+OK cli-output-format (0.0s)
+OK fastapi-adapter-isolation (0.0s)
+OK fastapi-core-purity (0.0s)
+OK fastapi-no-mocks-e2e (0.0s)
+OK fastapi-no-mocks-integration (0.0s)
+OK fastapi-route-delegation (0.0s)
+OK fastapi-route-splitting (0.0s)
+OK fastapi-service-sync (0.0s)
+OK nextjs-file-sizes (0.0s)
+OK nextjs-fsd-imports (0.0s)
+OK nextjs-fsd-layers (0.0s)
+OK nextjs-module-density (0.0s)
+OK nextjs-no-direct-env (0.0s)
+OK nextjs-no-direct-fetch (0.0s)
+OK nextjs-no-direct-ui-imports (0.0s)
+OK nextjs-no-query-key-strings (0.0s)
+OK nextjs-no-useeffect-fetch (0.0s)
+OK nextjs-no-zustand-module-level (0.0s)
+OK nextjs-page-purity (0.0s)
+OK nextjs-server-client-boundary (0.0s)
+OK nextjs-sse-abort-controller (0.0s)
+OK python-file-length (0.0s)
+OK python-no-future-annotations (0.0s)
+OK react-fsd-imports (0.0s)
+OK spec-alignment (1.6s)
+OK terraform-dangling-resources (0.1s)
+OK terraform-external-iam (0.1s)
+OK terraform-format (0.0s)
+OK terraform-glacier-public (0.1s)
+OK terraform-paravirt-ec2 (0.1s)
+OK terraform-public-ami (0.1s)
+OK terraform-security (0.0s)
+OK terraform-tagging (0.0s)
+OK dotnet-test (16.2s)
+OK tests-pytest (0.0s)
+
+PR: https://github.com/yoavarad/ole-extractor/pull/102
