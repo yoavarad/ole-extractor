@@ -27,9 +27,12 @@
          branch net8-xls-retarget), per ADR-004: legacy .ppt has no working NPOI HSLF entry
          point, so .ppt body content is converted in-process to .pptx via b2xtranslator's Ppt
          module, then read through the existing DocumentFormat.OpenXml pptx path. Only the Ppt
-         project (and its Common dependency) is referenced here — Doc/Xls modules are wired by
-         their own respective tasks. -->
+         project (and its Common dependency) is referenced here — the Xls module is wired by
+         its own task. The Doc module is likewise referenced for .doc -> .docx body-text
+         conversion (DocTextExtractor); it needs the fork's net8.0 retarget + surrogate-pair
+         fix (branch net8-doc-retarget). -->
     <ProjectReference Include="..\..\third_party\b2xtranslator\Ppt\b2xtranslator.ppt.csproj" />
+    <ProjectReference Include="..\..\third_party\b2xtranslator\Doc\b2xtranslator.doc.csproj" />
   </ItemGroup>
 
 </Project>
