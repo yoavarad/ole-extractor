@@ -1,8 +1,3 @@
-using B2xPresentationDocument = b2xtranslator.OpenXmlLib.PresentationML.PresentationDocument;
-using b2xtranslator.OpenXmlLib;
-using b2xtranslator.PptFileFormat;
-using b2xtranslator.PresentationMLMapping;
-using b2xtranslator.StructuredStorage.Reader;
 using DocumentFormat.OpenXml.Packaging;
 using ExtractorOLE.DTOs;
 using NPOI.HPSF;
@@ -110,32 +105,12 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
 
         private void PopulateBodyContent(byte[] fileBytes, DocumentExtractionResult result)
         {
-            string tempPptxPath = Path.Combine(Path.GetTempPath(), $"ole-extractor-ppt2x-{Guid.NewGuid():N}.pptx");
-            try
-            {
-                using (var reader = new StructuredStorageReader(new MemoryStream(fileBytes)))
-                {
-                    var ppt = new PowerpointDocument(reader);
-                    var outType = Converter.DetectOutputType(ppt);
+            byte[] pptxBytes = PptToPptxConverter.Convert(fileBytes);
+            using var pptxStream = new MemoryStream(pptxBytes);
+            using var pres = PresentationDocument.Open(pptxStream, false);
 
-                    using var pptx = B2xPresentationDocument.Create(tempPptxPath, outType);
-                    Converter.Convert(ppt, pptx);
-                }
-
-                byte[] pptxBytes = File.ReadAllBytes(tempPptxPath);
-                using var pptxStream = new MemoryStream(pptxBytes);
-                using var pres = PresentationDocument.Open(pptxStream, false);
-
-                _helper.ExtractFirstLayerEmbedded(result, pres.PresentationPart!);
-                PopulateSlideCounts((PowerPointFormatMetadata)result.FormatMetadata!, pres.PresentationPart);
-            }
-            finally
-            {
-                if (File.Exists(tempPptxPath))
-                {
-                    File.Delete(tempPptxPath);
-                }
-            }
+            _helper.ExtractFirstLayerEmbedded(result, pres.PresentationPart!);
+            PopulateSlideCounts((PowerPointFormatMetadata)result.FormatMetadata!, pres.PresentationPart);
         }
 
         // Mirrors PowerPointOpenStrategy.BuildPowerPointFormatMetadata's slide/notes-slide counting

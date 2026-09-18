@@ -16,6 +16,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="PowerPoint\Fixtures\with_textbox.ppt" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ExtractorOLE\ExtractorOLE.csproj" />
     <ProjectReference Include="..\..\SampleGenerator\SampleGenerator.csproj" />
     <ProjectReference Include="..\ExtractorOLE.StressHarness\ExtractorOLE.StressHarness.csproj" />
