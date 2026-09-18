@@ -50,6 +50,9 @@ namespace ExtractorOLE.Tests.Registry
             public void ExtractFirstLayerEmbedded(DocumentExtractionResult result, HSSFWorkbook workbook) =>
                 throw new NotSupportedException("Not exercised by this test.");
 
+            public void ExtractFirstLayerEmbedded(DocumentExtractionResult result, NPOI.POIFS.FileSystem.NPOIFSFileSystem fs) =>
+                throw new NotSupportedException("Not exercised by this test.");
+
             public void ExtractFirstLayerEmbedded(DocumentExtractionResult result, NPOI.POIFS.FileSystem.DirectoryEntry root) =>
                 throw new NotSupportedException("Not exercised by this test.");
 

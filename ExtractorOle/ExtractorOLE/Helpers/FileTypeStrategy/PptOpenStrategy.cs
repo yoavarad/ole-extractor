@@ -60,11 +60,24 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
                 return null;
             }
 
+            // First-layer embedded objects/media are read directly off the *original* .ppt's raw
+            // CFB structure (T-12dfd045), independent of whether body conversion below succeeds --
+            // same reasoning as FileMetadata above: a walk over POIFS directory entries doesn't
+            // depend on b2xtranslator's Ppt module understanding the file's body records.
+            try
+            {
+                ExtractFirstLayerEmbedded(fileBytes, result);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ppt first-layer embedded walk failed: {ex.Message}");
+            }
+
             // Body/slide content is best-effort: b2xtranslator's Ppt module was built against the
             // published MS-PPT binary spec but is unmaintained since 2018 (ADR-004), so a record shape
-            // it doesn't handle should not take down the whole extraction -- FileMetadata and
-            // FormatMetadata.HasMacros above are already valid and returned either way; only
-            // SlideCount/NotesSlideCount/EmbeddedFiles stay at their defaults (0/null/empty).
+            // it doesn't handle should not take down the whole extraction -- FileMetadata,
+            // FormatMetadata.HasMacros and EmbeddedFiles above are already valid and returned either
+            // way; only SlideCount/NotesSlideCount stay at their defaults (0/null/empty).
             try
             {
                 PopulateBodyContent(fileBytes, result);
@@ -75,6 +88,23 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
             }
 
             return result;
+        }
+
+        // Opens its own short-lived NPOIFSFileSystem over the original .ppt bytes -- separate
+        // from ReadFileMetadataAndMacroFlag's (HPSF/root-storage) and PopulateBodyContent's
+        // (b2xtranslator-owned) readers, matching this method's existing "each step opens what it
+        // needs" shape.
+        private void ExtractFirstLayerEmbedded(byte[] fileBytes, DocumentExtractionResult result)
+        {
+            var fs = new NPOIFSFileSystem(new MemoryStream(fileBytes));
+            try
+            {
+                _helper.ExtractFirstLayerEmbedded(result, fs);
+            }
+            finally
+            {
+                fs.Close();
+            }
         }
 
         private static (FileMetadata Metadata, bool HasMacros) ReadFileMetadataAndMacroFlag(byte[] fileBytes)
@@ -126,7 +156,9 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
                 using var pptxStream = new MemoryStream(pptxBytes);
                 using var pres = PresentationDocument.Open(pptxStream, false);
 
-                _helper.ExtractFirstLayerEmbedded(result, pres.PresentationPart!);
+                // EmbeddedFiles is populated separately, directly off the original .ppt's CFB
+                // structure (see ExtractFirstLayerEmbedded above) -- not from this converted
+                // pptx, which would misname entries and not exist at all when conversion fails.
                 PopulateSlideCounts((PowerPointFormatMetadata)result.FormatMetadata!, pres.PresentationPart);
             }
             finally

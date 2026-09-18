@@ -14,6 +14,7 @@ namespace ExtractorOLE.Helpers
         void ExtractMetadataAndEmbedded(OpenXmlPackage package, OpenXmlPart? rootPart, DocumentExtractionResult result);
         void ExtractFirstLayerEmbedded(DocumentExtractionResult result, OpenXmlPart rootPart);
         void ExtractFirstLayerEmbedded(DocumentExtractionResult result, HSSFWorkbook workbook);
+        void ExtractFirstLayerEmbedded(DocumentExtractionResult result, NPOIFSFileSystem fs);
         void ExtractFirstLayerEmbedded(DocumentExtractionResult result, DirectoryEntry root);
 
         OfficeMimeTypeEnum DetectMimeTypeFromBytes(byte[] fileBytes);
