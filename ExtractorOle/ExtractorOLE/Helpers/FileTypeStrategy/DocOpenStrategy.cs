@@ -22,8 +22,18 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
     //
     // Body text (ExtractedText) and embedded-object discovery (EmbeddedFiles) are intentionally
     // left at their default empty values until the b2xtranslator conversion path lands.
+    //
+    // WordFormatMetadata (page/word/character/paragraph/line counts, company/manager/template,
+    // HasMacros) is likewise sourced from SummaryInformation/DocumentSummaryInformation (HPSF) -
+    // these are the same cached-by-the-producing-app values used for FileMetadata, not
+    // recomputed. HasMacros is true when the root storage carries a "Macros" entry, the standard
+    // OLE-CFB location for an embedded VBA project in a binary (97-2003) Word document.
     public class DocOpenStrategy : IOpenStrategy
     {
+        // Standard root-storage name Word uses for an embedded VBA project in a legacy
+        // (binary, 97-2003) .doc compound file.
+        private const string VbaMacrosStorageName = "Macros";
+
         private readonly IExtractionHelper _helper;
 
         public DocOpenStrategy(IExtractionHelper helper)
@@ -52,6 +62,9 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
                             result.Metadata.Modified = summary.LastSaveDateTime;
                             result.Metadata.LastModifiedBy = summary.LastAuthor;
                         }
+
+                        var docSummary = ReadDocumentSummaryInformation(fs.Root);
+                        result.FormatMetadata = BuildWordFormatMetadata(fs.Root, summary, docSummary);
                     }
                     finally
                     {
@@ -81,6 +94,54 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
             {
                 return null;
             }
+        }
+
+        // Same absent-is-normal handling as ReadSummaryInformation, for the second HPSF
+        // property-set stream (paragraph/line counts, company/manager).
+        private static DocumentSummaryInformation? ReadDocumentSummaryInformation(DirectoryNode root)
+        {
+            try
+            {
+                return PropertySetFactory.Create(root, DocumentSummaryInformation.DEFAULT_STREAM_NAME) as DocumentSummaryInformation;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        // Page/word/character counts and Template come from SummaryInformation; paragraph/line
+        // counts and Company/Manager come from DocumentSummaryInformation - mirrors the OOXML
+        // path's field-to-source mapping (WordOpenStrategy.BuildWordFormatMetadata), just off
+        // the legacy CFB property streams instead of app.xml. A count property is left null when
+        // its underlying HPSF property is absent (NPOI's Get*IntValue returns 0 for "absent",
+        // indistinguishable from a real 0 without checking WasNull right after the read).
+        private static WordFormatMetadata BuildWordFormatMetadata(
+            DirectoryNode root, SummaryInformation? summary, DocumentSummaryInformation? docSummary)
+        {
+            return new WordFormatMetadata
+            {
+                PageCount = ReadNullableInt(summary, s => s.PageCount),
+                WordCount = ReadNullableInt(summary, s => s.WordCount),
+                CharacterCount = ReadNullableInt(summary, s => s.CharCount),
+                ParagraphCount = ReadNullableInt(docSummary, d => d.ParCount),
+                LineCount = ReadNullableInt(docSummary, d => d.LineCount),
+                Company = docSummary?.Company,
+                Manager = docSummary?.Manager,
+                Template = summary?.Template,
+                HasMacros = root.HasEntryCaseInsensitive(VbaMacrosStorageName),
+            };
+        }
+
+        private static int? ReadNullableInt<T>(T? propertySet, Func<T, int> selector) where T : PropertySet
+        {
+            if (propertySet == null)
+            {
+                return null;
+            }
+
+            int value = selector(propertySet);
+            return propertySet.WasNull ? (int?)null : value;
         }
     }
 }

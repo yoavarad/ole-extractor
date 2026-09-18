@@ -1,40 +1,41 @@
-# Graph Report - T-517f89c5  (2026-09-16)
+# Graph Report - T-3f3dab44  (2026-09-18)
 
 ## Corpus Check
-- 318 files · ~289,099 words
+- 321 files · ~291,536 words
 - Verdict: corpus is large enough that graph structure adds value.
+- Unclassified: 16 file(s) not represented in the graph (top: .pptx 6, (none) 5, .toml 1)
 
 ## Summary
-- 1956 nodes · 3226 edges · 188 communities (140 shown, 48 thin omitted)
-- Extraction: 95% EXTRACTED · 5% INFERRED · 0% AMBIGUOUS · INFERRED: 149 edges (avg confidence: 0.79)
+- 2136 nodes · 4111 edges · 171 communities (118 shown, 53 thin omitted)
+- Extraction: 88% EXTRACTED · 12% INFERRED · 0% AMBIGUOUS · INFERRED: 480 edges (avg confidence: 0.84)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `3cc42e70`
+- Built from commit: `bb6f7070`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
 - ExtractionResult Entity
-- .Apply
-- .Detect
-- XlsxTextExtractorTests
+- .Generate
+- XlsTextExtractor
+- XlsxTextExtractor
 - extraction.md
 - T-3b4e70f4.md
 - .RunAsync
 - Per-Criterion Detail
 - 001-extraction-library-stack.md
-- README.md
+- FormatDispatchRegistryTests.cs
 - unicode-fidelity requirement
 - testing-strategy.md
 - SampleGenerator.Abstractions
-- ExtractorOLE.Exceptions
-- project-rules.md
-- T-fb89c6f3.md
-- Adversarial Review
+- ExtractorOLE.DTOs
+- README.md
+- mime-detection.md
+- Oversized Nested Content Error
 - --update Incremental Re-extraction
 - ExtractorOLE
-- ITextExtractor
+- PptxSampleGenerator
 - OfficeMimeTypeEnum
 - T-f96fa73d.md
 - Stage 02 Planning Report — Sprint 2 & 3
@@ -42,48 +43,48 @@
 - Legacy .xls parsing -- research spike (T-b70522d2)
 - T-eeb6684b.md
 - S-43c41d4a.md
-- ExtractionHelper
-- Extract Contract
+- .ExtractFirstLayerEmbedded
+- Task: Assemble and finalize samples/manifest.json
 - S-0602557d.md
-- T-a2b91dc6.md
-- ExtractorOLE.Helpers.MimeDetection
-- FormatDispatchRegistryTests
+- T-71ab3bc0.md
+- system
+- IOpenStrategy
 - XlsOpenStrategyTests
-- T-6f033869.md
+- MimeDetectionRegistry
 - What You Must Do When Invoked
 - remediate_task_status.py
 - Upstream recommendation: .NET/C# support in YDK
 - Legacy Office Format Library Landscape Scan
-- .Detect
-- PowerPointOpenStrategyTests
+- MimeDetectionRequest
+- PowerPointOpenStrategy
 - epic.md
 - T-b62ffe04.md
 - DetectMimeType Contract
 - Stage 02 Planning Report — 2026-08-19
 - exports.md
 - SampleSpec
-- S-072bfdf6.md
+- overview.md
 - query.md
-- mime-detection.md
-- XlsOpenStrategy
+- Overview
+- IExtractionHelper
 - T-9e6bfce8-plan.md
-- ZipEntryCorruptor
+- DocxTextExtractor
 - T-2ac2f140.md
-- T-c2a60f06.md
-- .Build
-- IOpenStrategy
+- T-90924b6d.md
+- ExcelOpenStrategy
+- WordOpenStrategy
 - ExcelExtractor
 - /graphify
-- BenchmarkDotNet Research Spike
+- DocumentExtractionResult
 - Candidates evaluated
 - NPOI — Research Spike
-- T-f4ed5c8f.md
+- Extract Contract
 - MacroEmbedSampleGeneratorTests
 - Stage 02 Planning Report — Sprint 2 & Sprint 3 — 2026-08-19
 - extraction-spec.md
 - DocumentFormat.OpenXml — Research Spike
 - OpenMcdf — Research Spike Notes
-- WordOpenStrategyTests
+- WordFormatMetadata
 - QD-7c1726.md
 - SKILL.md
 - .claude/CLAUDE.md
@@ -91,50 +92,38 @@
 - ADR-003: Manual LLM spec review in place of `ydk spec verify`
 - SubfileItem
 - Extraction
-- DocOpenStrategyTests
-- T-71ab3bc0.md
+- DocOpenStrategy
+- Activity Log
 - MainExtractorDispatchIntegrationTests
 - YDK Task Registry (Epics/Stories/Tasks)
 - Error Schema
-- DocOpenStrategy
+- FileMetadata
 - CLAUDE.md
-- DocExtractor
-- ServiceRegistration
-- ExtractionUtil
-- QD-c02a7c.md
-- ADR-001: Extraction library stack (OOXML, legacy OLE, CFB introspection)
-- S-e496f356.md
-- .Open
-- ole-extractor
-- DocxEmbeddedXlsxSampleSpecs
-- main
-- main
-- main
+- .ExtractFromDocxBinary
+- PptOpenStrategy.cs
+- .GetFirstLayerEmbedded
 - Task T-eeb6684b: downgrade to net8.0
+- ADR-001: Extraction library stack (OOXML, legacy OLE, CFB introspection)
+- LoadGeneratorTests.cs
+- .FindHandlerForMime
+- Activity Log
+- QD-334b3d.md
+- T-f8ccfe08.md
 - github-and-merge.md
-- ADR-004: Legacy .doc/.ppt body-text parsing (b2xtranslator, not NPOI)
 - Project Rules
-- ExtractorOLE.DTOs
-- ExcelOpenStrategyTests
+- system_io
+- ExcelFormatMetadata
 - Task: Record curated samples in manifest.json
-- SlidesExtractor.cs
-- Library Tradeoffs — Office File MIME Detection & Extraction
-- Dataset Curation
+- EmbeddedFileItem
 - QD-012d8e.md
 - DetectMimeTypeCorpusManifestTests
 - task.md
-- main
-- DocumentFormat.OpenXml extraction path
-- QD-8a231b.md
+- documentformat_openxml_packaging
 - Epic: OOXML Extraction Completeness
 - Epic: Legacy OLE Extraction
 - Epic: Dataset Curation
 - Epic: Project Restructure
-- T-02637847.md
-- GeneratedSample
-- BackupLogic.cs
-- Activity Log
-- MetadataFields.cs
+- SampleFormat
 - E-3ffdc4d5.md
 - E-46875bcf.md
 - E-5717c1fe.md
@@ -151,7 +140,6 @@
 - Epic: Public API Surface
 - check-task-complete.sh
 - Spec Refs Field
-- SampleGenerator/Abstractions/MetadataFields.cs
 - YAGNI (You Aren't Gonna Need It)
 - commit-msg
 - pre-commit
@@ -162,10 +150,11 @@
 - Epic: Stress Test Harness
 - N05 Ambiguity Reviewer
 - N08 No Technical Specs in Prose Reviewer
-- PptxSampleGenerator
-- DocumentExtractionResult
+- .Generate
+- benchmarkdotnet_running
+- PptOpenStrategy
 - T-0055ec7c.md
-- ExtractionBenchmarks
+- .Register
 - .AddEmbeddings
 - Sprint 2 Task Batch (Pass 3)
 - Sprint 3 Task Batch (Pass 4)
@@ -185,39 +174,36 @@
 - T-36b41128.md
 - T-07571b32.md
 - T-113fe4b2 Orchestrator Progress
-- PptOpenStrategyTests
 - T-9a4ff765 — Orchestrator Progress
-- T-ef73861f/summary.md
+- ExtractionHelper
 - T-48110fcb.md
 - QD-407442.md
 - QD-82271f.md
 - MIME Detection
-- Performance & Stress Testing Tooling — Tradeoffs
-- Activity Log
 
 ## God Nodes (most connected - your core abstractions)
-1. `ExtractorOLE.DTOs` - 48 edges
-2. `DocumentExtractionResult` - 30 edges
-3. `SampleGenerator.Abstractions` - 30 edges
-4. `SampleGenerator.Generators` - 28 edges
-5. `ExtractorOLE.Helpers.FileTypeStrategy` - 23 edges
-6. `SampleSpec` - 22 edges
-7. `ExtractorOLE.Helpers` - 20 edges
-8. `MimeDetectionResult` - 17 edges
-9. `OfficeMimeTypeEnum` - 17 edges
-10. `SampleGenerator.Fixtures` - 16 edges
+1. `ExtractionHelper` - 70 edges
+2. `MimeDetectionRequest` - 53 edges
+3. `SampleSpec` - 52 edges
+4. `ExtractorOLE.DTOs` - 48 edges
+5. `DocumentExtractionResult` - 34 edges
+6. `OoxmlMimeDetector` - 33 edges
+7. `SampleGenerator.Abstractions` - 30 edges
+8. `OfficeMimeTypeEnum` - 29 edges
+9. `SampleGenerator.Generators` - 28 edges
+10. `CfbMimeDetector` - 26 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `NBomber` --semantically_similar_to--> `NPOI library`  [INFERRED] [semantically similar]
-  docs/research/stress-testing-tools.md → README.md
-- `Spec Check Configuration` --semantically_similar_to--> `Acceptance Criteria`  [INFERRED] [semantically similar]
-  .ydk/config.yaml → .github/ISSUE_TEMPLATE/task.md
-- `HdrHistogram.NET` --semantically_similar_to--> `BenchmarkDotNet`  [INFERRED] [semantically similar]
-  docs/research/stress-testing-tools.md → .ydk/stories/S-709fe2de.md
-- `Unit-Test-Backed Coverage` --references--> `Max File Size NFR`  [EXTRACTED]
-  docs/specs/testing-strategy.md → .ydk/components/nfr/extraction/max-file-size.yaml
-- `BenchmarkDotNet` --cites--> `ADR-002 Profiling and Stress Testing`  [EXTRACTED]
-  .ydk/stories/S-709fe2de.md → README.md
+- `Test Plan` --references--> `ExtractionHelperDetectMimeTypeTests`  [INFERRED]
+  .ydk/proofs/T-ef73861f/summary.md → ExtractorOle/ExtractorOLE.Tests/Helpers/ExtractionHelperDetectMimeTypeTests.cs
+- `2026-09-13T20:14:58Z (UTC)` --references--> `DetectedFormatEnum`  [INFERRED]
+  .ydk/tasks/T-71ab3bc0.md → ExtractorOle/ExtractorOLE/DTOs/DetectedFormatEnum.cs
+- `HPSF -> OOXML core/app property mapping` --references--> `FileMetadata`  [INFERRED]
+  docs/research/legacy-xls-parsing.md → ExtractorOle/ExtractorOLE/DTOs/DocumentExtractionResult.cs
+- `What was done` --references--> `MimeDetectionRequest`  [INFERRED]
+  .ydk/proofs/T-9a4ff765/orchestrator-progress.md → ExtractorOle/ExtractorOLE/DTOs/MimeDetectionRequest.cs
+- `Summary` --references--> `MimeDetectionResult`  [INFERRED]
+  .ydk/proofs/T-ef73861f/summary.md → ExtractorOle/ExtractorOLE/DTOs/MimeDetectionResult.cs
 
 ## Import Cycles
 - None detected.
@@ -263,155 +249,155 @@
 - **Legacy OLE Format Extraction (doc/xls/ppt)** — ydk_stories_s_0602557d, ydk_stories_s_23b8b734, ydk_stories_s_32677db6 [INFERRED 0.90]
 - **OOXML Format Completeness (docx/pptx/xlsx)** — ydk_stories_s_156ec71a, ydk_stories_s_37c18545, ydk_stories_s_8d6146f0 [INFERRED 0.90]
 
-## Communities (188 total, 48 thin omitted)
+## Communities (171 total, 53 thin omitted)
 
 ### Community 0 - "ExtractionResult Entity"
 Cohesion: 0.18
 Nodes (20): Task: Map WordFormatMetadata for doc, Task: Implement doc open component (NPOI HWPFDocument), Task: Implement doc flat-text extraction with unicode fidelity, Task: Complete WordFormatMetadata parity for docx, Task: Implement docx flat-text extraction with unicode fidelity, Task: Map PowerPointFormatMetadata for ppt, Task: Implement ppt open component (NPOI HSLFSlideShow), Task: Implement ppt flat-text extraction with unicode fidelity (+12 more)
 
-### Community 1 - ".Apply"
-Cohesion: 0.19
-Nodes (8): IPackageProperties, IEnumerable, DocxSampleGenerator, DateTime, IDictionary, OpenXmlPackagePropertiesHelper, XlsxSampleGenerator, SharedStringTable
+### Community 1 - ".Generate"
+Cohesion: 0.14
+Nodes (10): IPackageProperties, IEnumerable, VbaProjectPart, DateTime, IDictionary, OpenXmlPackagePropertiesHelper, VbaProjectPart, WorksheetPart (+2 more)
 
-### Community 2 - ".Detect"
-Cohesion: 0.12
-Nodes (11): MimeDetectionLimits, Action, int, OoxmlMimeDetector, Fact, OoxmlMimeDetectorGuardrailTests, Fact, OoxmlMimeDetectorTests (+3 more)
+### Community 2 - "XlsTextExtractor"
+Cohesion: 0.22
+Nodes (9): XlsTextExtractor, Fact, InlineData, Theory, XlsTextExtractorTests, 2026-09-01T21:29:27Z (UTC), 2026-09-01T21:30:20Z (UTC), 2026-09-02 (+1 more)
 
-### Community 3 - "XlsxTextExtractorTests"
-Cohesion: 0.07
-Nodes (15): Fact, DocxTextExtractorTests, Fact, InlineData, Theory, XlsTextExtractorTests, Fact, InlineData (+7 more)
+### Community 3 - "XlsxTextExtractor"
+Cohesion: 0.16
+Nodes (11): Cell, List, Row, SharedStringItem, WorkbookPart, XlsxTextExtractor, Fact, InlineData (+3 more)
 
 ### Community 4 - "extraction.md"
-Cohesion: 0.09
-Nodes (25): Format Family (LegacyOle vs Ooxml), Format Kind (Word/Excel/PowerPoint), Subfile Scope (First-Layer Extraction), Unicode/i18n Fidelity Requirement, Glossary, Epic E-c2846232: Dataset curation, ExtractionHelper.ExtractFirstLayerEmbedded, samples/manifest.json (+17 more)
+Cohesion: 0.05
+Nodes (45): Content-Only MIME Detection Rule, Format Family (LegacyOle vs Ooxml), Format Kind (Word/Excel/PowerPoint), Subfile Scope (First-Layer Extraction), Corpus Composition, Corpus Manifest, Dataset Curation, Provenance & Licensing (+37 more)
 
 ### Community 5 - "T-3b4e70f4.md"
-Cohesion: 0.08
-Nodes (25): subfile-scope requirement, SubfileItem entity, Story S-37c18545 (pptx embeddings walk), Activity Log, Description, Activity Log, Description, Activity Log (+17 more)
+Cohesion: 0.07
+Nodes (29): subfile-scope requirement, SubfileItem entity, ExtractionHelper.ExtractFirstLayerEmbedded, ExcelExtractor.GetFirstLayerEmbedded, SampleGenerator project, Story S-37c18545 (pptx embeddings walk), XlsxSampleGenerator, Activity Log (+21 more)
 
 ### Community 6 - ".RunAsync"
-Cohesion: 0.08
-Nodes (23): CancellationToken, ExtractorOLE.StressHarness, ExtractorOLE.Tests.StressHarness, Program, IServiceCollection, ServiceRegistration, IReadOnlyList, Task (+15 more)
+Cohesion: 0.07
+Nodes (36): CancellationToken, Alternatives Considered, API Shape For Our Use Case, BenchmarkDotNet Research Spike, Citations/Links, License, Maintenance Signal, Strengths (+28 more)
 
 ### Community 7 - "Per-Criterion Detail"
 Cohesion: 0.06
 Nodes (32): 1. Placeholder scan — **PASS**, 2. Internal consistency — **C1–C3 resolved (re-run 2); C4, C5, C6 resolved (re-run 3); C5a resolved (re-run 4); one trivial residual, C5b**, 3. Scope — **PASS**, 4. Ambiguity — **PASS** (all 4 prior findings fixed; 4 minor residuals, none critical), 5. YAGNI — **PASS**, 6. Component reference check — **PASS**, Considered and not counted, Deterministic Scan Results (+24 more)
 
 ### Community 8 - "001-extraction-library-stack.md"
-Cohesion: 0.27
-Nodes (7): ADR-004 Decision: b2xtranslator for Legacy Body Text, DocSharp (manfromarce/DocSharp), IllidanS4/npoi Scratchpad Retarget Fork, LibreOffice Headless Subprocess Conversion, modeverv/dotnet-poi, ADR-004 Legacy doc/ppt Parsing, b2xtranslator library
+Cohesion: 0.10
+Nodes (24): ADR-004 Decision: b2xtranslator for Legacy Body Text, DocSharp (manfromarce/DocSharp), IllidanS4/npoi Scratchpad Retarget Fork, LibreOffice Headless Subprocess Conversion, modeverv/dotnet-poi, Unicode/i18n Fidelity Requirement, ADR-004: Legacy .doc/.ppt body-text parsing (b2xtranslator, not NPOI), Alternatives Considered (+16 more)
 
-### Community 9 - "README.md"
-Cohesion: 0.29
-Nodes (11): ADR-001 Decision: Extraction Library Stack, ADR-001 Extraction Library Stack, ADR-002 Profiling and Stress Testing, ADR-003 Manual Spec Review in Place of Bedrock, DocumentFormat.OpenXml library, ITextExtractor.cs, MainExtractor.cs, NPOI library (+3 more)
+### Community 9 - "FormatDispatchRegistryTests.cs"
+Cohesion: 0.13
+Nodes (9): benchmarkdotnet_attributes, ExtractorOLE, SampleGenerator, ExtractorOLE.Benchmarks, ExtractorOLE.Tests.Registry, microsoft_extensions_dependencyinjection, npoi_hssf_record, npoi_hssf_usermodel (+1 more)
 
 ### Community 10 - "unicode-fidelity requirement"
-Cohesion: 0.10
-Nodes (20): ExtractionResult entity, unicode-fidelity requirement, PptxTextExtractor, PptxTextExtractorTests, Story S-8d6146f0 (xlsx flat-text extraction), Activity Log, Description, Activity Log (+12 more)
+Cohesion: 0.13
+Nodes (16): ExtractionResult entity, unicode-fidelity requirement, PptxTextExtractor, PptxTextExtractorTests, Story S-8d6146f0 (xlsx flat-text extraction), Activity Log, Description, Activity Log (+8 more)
 
 ### Community 11 - "testing-strategy.md"
-Cohesion: 0.10
-Nodes (21): DetectMimeType, Corpus-Sample-Backed Coverage, Integration Tests, Rules, Stress-Harness-Backed Coverage, Test Types, Testing Strategy, Unit-Test-Backed Coverage (+13 more)
+Cohesion: 0.09
+Nodes (24): ADR-002, DetectMimeType, Corpus-Sample-Backed Coverage, Integration Tests, Rules, Stress-Harness-Backed Coverage, Stress Testing, Test Types (+16 more)
 
 ### Community 12 - "SampleGenerator.Abstractions"
+Cohesion: 0.17
+Nodes (8): ExtractorOLE.Tests.Helpers, SampleGenerator.Abstractions, SampleGenerator.Generators, SampleGenerator.Fixtures, ExtractorOLE.Tests.SampleGeneration, MetadataFields, CuratedSampleSpecs.BuildMeetingMinutesBoardroom, CuratedSampleSpecs.BuildProductLaunchDeck
+
+### Community 13 - "ExtractorOLE.DTOs"
+Cohesion: 0.14
+Nodes (12): ExtractorOLE.Old.Doc, ExtractorOLE.DTOs, ExtractorOLE.Helpers.MimeDetection, ExtractorOLE.Tests.MimeDetection, ExtractorOLE.Exceptions, ExtractorOLE.Configuration, OpenMcdf, AdversarialSampleGenerator (+4 more)
+
+### Community 14 - "README.md"
 Cohesion: 0.12
-Nodes (12): ExtractorOLE.Tests.PowerPoint, ExtractorOLE.Tests.Helpers, SampleGenerator.Abstractions, SampleGenerator, SampleGenerator.Generators, ExtractorOLE.Tests.MultiEmbedding, SampleGenerator.Fixtures, ExtractorOLE.Tests.SampleGeneration (+4 more)
+Nodes (27): BenchmarkDotNet, ADR-001 Decision: Extraction Library Stack, ADR-002 Decision: Profiling and Stress Testing Approach, dotnet-counters Tool, Hand-Rolled Stress Harness, OSS-Only Library Constraint, Complexity to Adopt: NBomber vs. Hand-Rolling, Hand-Rolled Harness (+19 more)
 
-### Community 13 - "ExtractorOLE.Exceptions"
-Cohesion: 0.15
-Nodes (9): ExtractorOLE.Tests.MimeDetection, ExtractorOLE.Exceptions, ExtractorOLE.Configuration, Exception, ExtractorOleException, FileTooLargeException, OversizedNestedContentException, OpenMcdf (+1 more)
+### Community 15 - "mime-detection.md"
+Cohesion: 0.07
+Nodes (26): Scope, MimeDetectionResult entity, PowerPointFormatMetadata, Story S-072bfdf6 (DetectMimeType facade), Story S-3bc6b929 (CFB detection path), Story S-7d040ba7 (macro-variant classification), 2026-08-31 - Status-sync correction, Activity Log (+18 more)
 
-### Community 14 - "project-rules.md"
-Cohesion: 0.27
-Nodes (11): BenchmarkDotNet, ADR-002 Decision: Profiling and Stress Testing Approach, dotnet-counters Tool, Hand-Rolled Stress Harness, OSS-Only Library Constraint, Complexity to Adopt: NBomber vs. Hand-Rolling, Hand-Rolled Harness, HdrHistogram.NET (+3 more)
-
-### Community 15 - "T-fb89c6f3.md"
-Cohesion: 0.11
-Nodes (16): MimeDetectionResult entity, Story S-072bfdf6 (DetectMimeType facade), Story S-7d040ba7 (macro-variant classification), Activity Log, Description, Activity Log, Description, 2026-08-29T15:47:20Z (UTC) (+8 more)
-
-### Community 16 - "Adversarial Review"
+### Community 16 - "Oversized Nested Content Error"
 Cohesion: 0.16
-Nodes (20): Adversarial Review, Story S-3bc6b929 (CFB detection path), Task: Enforce max-file-size and nesting-depth-guard in CFB detection, Task: Implement pre-parse guardrail errors in Extract, Task: Produce oversized-declared-size and password-protected adversarial samples, Task: Unit tests for file-too-large on both public functions, File Too Large Error, Oversized Nested Content Error (+12 more)
+Nodes (19): Task: Enforce max-file-size and nesting-depth-guard in CFB detection, Task: Implement pre-parse guardrail errors in Extract, Task: Produce oversized-declared-size and password-protected adversarial samples, Task: Unit tests for file-too-large on both public functions, File Too Large Error, Oversized Nested Content Error, Max File Size NFR, Nesting Depth Guard NFR (+11 more)
 
 ### Community 17 - "--update Incremental Re-extraction"
 Cohesion: 0.09
 Nodes (19): .graphify_detect.json, graphify reference: transcribe video and audio, Step 2.5: Transcribe Video/Audio, Step 2.5 - Transcribe video / audio files (only if video files detected), transcribe_all(), .graphify_transcripts.json, GRAPHIFY_WHISPER_MODEL env var, Whisper Domain-Hint Prompt (+11 more)
 
 ### Community 18 - "ExtractorOLE"
-Cohesion: 0.07
-Nodes (28): ExtractorOLE.Benchmarks, net8.0, Microsoft.NET.Sdk, ExtractorOLE, net8.0, DocumentFormat.OpenXml (3.5.1), DocumentFormat.OpenXml.Features (3.5.1), DocumentFormat.OpenXml.Framework (3.5.1) (+20 more)
+Cohesion: 0.06
+Nodes (30): ExtractorOLE.Benchmarks, net8.0, Microsoft.NET.Sdk, ExtractorOLE, net8.0, DocumentFormat.OpenXml (3.5.1), DocumentFormat.OpenXml.Features (3.5.1), DocumentFormat.OpenXml.Framework (3.5.1) (+22 more)
 
-### Community 19 - "ITextExtractor"
-Cohesion: 0.09
-Nodes (12): DocTextExtractor, DocxTextExtractor, PptxTextExtractor, XlsTextExtractor, Cell, List, WorkbookPart, XlsxTextExtractor (+4 more)
+### Community 19 - "PptxSampleGenerator"
+Cohesion: 0.22
+Nodes (9): Text, PptxTextExtractor, Fact, NotesSlidePart, PptxTextExtractorTests, OpenXmlElement, PptxSampleGenerator, Format (+1 more)
 
 ### Community 20 - "OfficeMimeTypeEnum"
-Cohesion: 0.12
-Nodes (7): OfficeMimeTypeEnum, IExtractionHelper, ITextExtractor, MainExtractor, ITextExtractor, IFormatDispatchRegistry, FakeExtractionHelper
+Cohesion: 0.13
+Nodes (9): OfficeMimeTypeEnum, Excel, ExcelLegacy, OpenXmlUnknown, PowerPoint, PowerPointLegacy, Word, WordLegacy (+1 more)
 
 ### Community 21 - "T-f96fa73d.md"
-Cohesion: 0.09
-Nodes (18): $curatedSamplesNote, $note, samples, Story S-41ebb945 (synthetic sample generation), Story S-da936361 (curated sample dataset), Activity Log, Description, 2026-08-23T18:47:51Z (UTC) (+10 more)
+Cohesion: 0.12
+Nodes (16): Story S-41ebb945 (synthetic sample generation), 2026-08-23T18:47:51Z (UTC), Activity Log, Description, Verification Proof, 2026-08-23T18:36:50Z (UTC), Activity Log, Description (+8 more)
 
 ### Community 22 - "Stage 02 Planning Report — Sprint 2 & 3"
 Cohesion: 0.15
 Nodes (21): Content-Only MIME Detection Rule, Dependency Injection Convention for Format Components, Format Extensibility via Registry Pattern, Subfile Scope Definition, Unicode Fidelity Requirement, Time Profiling Epic, OOXML Extraction Completeness Epic, Test Suite Epic (+13 more)
 
 ### Community 23 - "T-bac988f5.md"
-Cohesion: 0.09
-Nodes (26): ADR-004: b2xtranslator decision for legacy .ppt parsing, b2xtranslator (.ppt to .pptx converter library), NPOI HSLFSlideShow (non-functional scratchpad entry point), github.com/IllidanS4/npoi (scratchpad retarget precedent), LibreOffice headless conversion fallback, modeverv/dotnet-poi (rejected, provenance concerns), NPOI, NPOI HPSF/POIFS (metadata, main tree) (+18 more)
+Cohesion: 0.10
+Nodes (24): ADR-004: b2xtranslator decision for legacy .ppt parsing, b2xtranslator (.ppt to .pptx converter library), NPOI HSLFSlideShow (non-functional scratchpad entry point), github.com/IllidanS4/npoi (scratchpad retarget precedent), LibreOffice headless conversion fallback, modeverv/dotnet-poi (rejected, provenance concerns), NPOI HPSF/POIFS (metadata, main tree), NPOI HSLF/HSLFSlideShow (.ppt, scratchpad) (+16 more)
 
 ### Community 24 - "Legacy .xls parsing -- research spike (T-b70522d2)"
-Cohesion: 0.14
-Nodes (13): Adoption evidence, Alternatives, Critical gap: embedded OLE objects, Current repo reality (verified in-code, not just b2x-side), Empirical spike results (2026-09-02), Fork attempt blocked, HPSF -> OOXML core/app property mapping, Legacy .xls parsing -- research spike (T-b70522d2) (+5 more)
+Cohesion: 0.15
+Nodes (12): Adoption evidence, Alternatives, Critical gap: embedded OLE objects, Current repo reality (verified in-code, not just b2x-side), Empirical spike results (2026-09-02), Fork attempt blocked, Legacy .xls parsing -- research spike (T-b70522d2), Module overview (+4 more)
 
 ### Community 25 - "T-eeb6684b.md"
 Cohesion: 0.09
 Nodes (20): .ydk/batch-mapping.json, ExtractorOLE.csproj, Story S-d01346bc (build/verification tooling), Story S-e496f356 (extraction library stack), 2026-08-22T18:00:40Z (UTC), Verification Proof, QD-fdc901: Land dropped status-sync fix commits, 2026-08-23T18:41:32Z (UTC) (+12 more)
 
 ### Community 26 - "S-43c41d4a.md"
-Cohesion: 0.15
-Nodes (13): Epic E-46875bcf: OOXML extraction completeness, ExcelFormatMetadata, ExtractFirstLayerEmbedded, FileMetadata, PowerPointFormatMetadata, Activity Log, Description, Activity Log (+5 more)
-
-### Community 27 - "ExtractionHelper"
-Cohesion: 0.24
-Nodes (8): EmbeddedFileItem, HSSFWorkbook, List, OpenXmlPackage, OpenXmlPart, ExtractionHelper, HSSFObjectData, HSSFPictureData
-
-### Community 28 - "Extract Contract"
 Cohesion: 0.16
-Nodes (20): Task: Implement parse-time error handling in Extract, Task: Produce corrupt/truncated/zero-byte adversarial samples, Task: Produce wrong-extension and corrupt-embedded-object adversarial samples, Task: Assemble and finalize samples/manifest.json, Task: Integration tests for adversarial scenarios, Task: Integration tests for DetectMimeType against corpus manifest, Task: Integration tests for Extract against corpus manifest, Task: Implement >=50 concurrent-call exercise of both public functions (+12 more)
+Nodes (12): Epic E-46875bcf: OOXML extraction completeness, ExcelFormatMetadata, ExtractFirstLayerEmbedded, FileMetadata, Activity Log, Description, Activity Log, Description (+4 more)
+
+### Community 27 - ".ExtractFirstLayerEmbedded"
+Cohesion: 0.19
+Nodes (8): CoreFilePropertiesPart, ExtendedFilePropertiesPart, HSSFWorkbook, List, OpenXmlPackage, OpenXmlPart, HSSFObjectData, HSSFPictureData
+
+### Community 28 - "Task: Assemble and finalize samples/manifest.json"
+Cohesion: 0.24
+Nodes (11): Task: Produce wrong-extension and corrupt-embedded-object adversarial samples, Task: Assemble and finalize samples/manifest.json, Task: Integration tests for DetectMimeType against corpus manifest, Task: Implement >=50 concurrent-call exercise of both public functions, Task: Report throughput/latency/memory under load, Task: Scaffold hand-rolled concurrent-load console harness, Task: Build synthetic sample generator scaffolding, Task: Generate 100k+ word body synthetic samples (+3 more)
 
 ### Community 29 - "S-0602557d.md"
-Cohesion: 0.23
-Nodes (9): OLE DocumentSummaryInformation, Epic E-a7ddf85b: Legacy OLE format extraction, SummaryInformation, Activity Log, Description, Activity Log, Description, Activity Log (+1 more)
-
-### Community 30 - "T-a2b91dc6.md"
 Cohesion: 0.15
-Nodes (11): ExtractionRequest entity, MimeDetectionResult, Unsupported Format Error, Activity Log, Description, Activity Log, Description, Activity Log (+3 more)
+Nodes (13): DirectoryEntry, DirectoryNode, DocumentSummaryInformation, Epic E-a7ddf85b: Legacy OLE format extraction, NPOI, NPOI HSSFWorkbook (.xls), SummaryInformation, Activity Log (+5 more)
 
-### Community 31 - "ExtractorOLE.Helpers.MimeDetection"
-Cohesion: 0.24
-Nodes (3): ExtractorOLE.Registry, ExtractorOLE.Helpers.MimeDetection, ExtractorOLE.Tests.Registry
+### Community 30 - "T-71ab3bc0.md"
+Cohesion: 0.12
+Nodes (13): ExtractionRequest entity, MimeDetectionResult, Unsupported Format Error, Activity Log, Description, Description, Verification Proof, Activity Log (+5 more)
 
-### Community 32 - "FormatDispatchRegistryTests"
-Cohesion: 0.21
-Nodes (6): IDictionary, ITextExtractor, FormatDispatchRegistry, Fact, FakeOpenStrategy, FormatDispatchRegistryTests
+### Community 31 - "system"
+Cohesion: 0.10
+Nodes (15): ExtractorOLE.Registry, ExtractorOLE.Old, ExtractorOLE.Old.Util, ExtractorOLE.Old.Excel, ExtractorOLE.Tests.Integration, ExtractorOLE.Old.PowerPoint, FormatMetadata, BackupLogic (+7 more)
+
+### Community 32 - "IOpenStrategy"
+Cohesion: 0.16
+Nodes (14): IOpenStrategy, IDictionary, ITextExtractor, FormatDispatchRegistry, IFormatDispatchRegistry, Fact, MainExtractor, FakeOpenStrategy (+6 more)
 
 ### Community 33 - "XlsOpenStrategyTests"
-Cohesion: 0.23
-Nodes (3): DateTime, Fact, XlsOpenStrategyTests
+Cohesion: 0.18
+Nodes (7): HSSFWorkbook, IExtractionHelper, XlsOpenStrategy, DateTime, Fact, IDictionary, XlsOpenStrategyTests
 
-### Community 34 - "T-6f033869.md"
-Cohesion: 0.14
-Nodes (12): samples/curated/ directory, Activity Log, Description, Activity Log, Description, Activity Log, Description, Description (+4 more)
+### Community 34 - "MimeDetectionRegistry"
+Cohesion: 0.20
+Nodes (12): IMimeTypeDetector, IReadOnlyList, IMimeDetectionRegistry, Detectors, IReadOnlyList, MimeDetectionRegistry, Detectors, Fact (+4 more)
 
 ### Community 35 - "What You Must Do When Invoked"
 Cohesion: 0.13
 Nodes (15): Part A - Structural extraction for code files, Part B - Semantic extraction (parallel subagents), Part C - Merge AST + semantic into final extraction, Step 0 - GitHub repos and multi-path merge (only if a URL or several paths), Step 1 - Ensure graphify is installed, Step 2.5 - Video and audio (only if video files detected), Step 2 - Detect files, Step 3 - Extract entities and relationships (+7 more)
 
 ### Community 36 - "remediate_task_status.py"
-Cohesion: 0.22
-Nodes (13): Any, compute_true_status_by_task_id(), correct_manifest_statuses(), correct_task_md_frontmatter(), gh_pr_list(), main(), Resolve stale slugs in manifest['tasks'][*]['dependencies'] in place. Returns…, Correct manifest['tasks'][*]['status'] in place to match true state.… (+5 more)
+Cohesion: 0.06
+Nodes (50): Any, YDK unified guard hook - all guard checks in one script., json, pathlib, re, shutil, subprocess, sys (+42 more)
 
 ### Community 37 - "Upstream recommendation: .NET/C# support in YDK"
 Cohesion: 0.15
@@ -421,21 +407,21 @@ Nodes (13): YDK Fork Task-Dependency Bugs, 1. Ship three global plugins, not one
 Cohesion: 0.14
 Nodes (14): b2xtranslator (original) — dead, but see DocSharp fork below, CFB/OLE2 readers found (beyond OpenMcdf), Citations/links, Commercial libraries excluded, Conclusion, DocSharp (manfromarce/DocSharp) — actively maintained fork of b2xtranslator, notable finding, IKVM + Apache POI (Java interop) — not a sane approach, confirmed, Kaitai Struct-generated CFB parser (curiosity, not a library) (+6 more)
 
-### Community 39 - ".Detect"
+### Community 39 - "MimeDetectionRequest"
 Cohesion: 0.05
-Nodes (27): DetectedFormatEnum, MimeDetectionRequest, MimeDetectionResult, Action, int, string, CfbMimeDetector, ICfbMimeDetector (+19 more)
+Nodes (52): Exception, MimeDetectionLimits, MaxDeclaredNestedContentBytes, MaxFileSizeBytes, DetectedFormatEnum, Doc, Docx, Ppt (+44 more)
 
-### Community 40 - "PowerPointOpenStrategyTests"
-Cohesion: 0.30
-Nodes (5): Fact, ShapeTree, SlidePart, PowerPointOpenStrategyTests, ISet
+### Community 40 - "PowerPointOpenStrategy"
+Cohesion: 0.08
+Nodes (25): compressedSize, FormatMetadata, PowerPointFormatMetadata, HasMacros, NotesSlideCount, SlideCount, IExtractionHelper, PresentationPart (+17 more)
 
 ### Community 41 - "epic.md"
 Cohesion: 0.18
 Nodes (12): Description, Release Field (Epic), Scope, Spec Refs Field (Epic), Acceptance Criteria, Epic Field (Story), Spec Refs Field (Story), PR Template (+4 more)
 
 ### Community 42 - "T-b62ffe04.md"
-Cohesion: 0.13
-Nodes (17): ADR-002, Success Criteria, Stress Testing, Time Profiling, Story S-709fe2de (benchmarking), Task: Establish committed baseline and CI regression documentation, Task: Implement Extract() latency/allocation benchmarks per format, Task: Scaffold separate BenchmarkDotNet project (+9 more)
+Cohesion: 0.15
+Nodes (12): Story S-709fe2de (benchmarking), Task: Establish committed baseline and CI regression documentation, Task: Implement Extract() latency/allocation benchmarks per format, Task: Scaffold separate BenchmarkDotNet project, Extraction Latency NFR, Activity Log, Description, 2026-09-15T20:57:17Z (UTC) (+4 more)
 
 ### Community 43 - "DetectMimeType Contract"
 Cohesion: 0.38
@@ -450,60 +436,60 @@ Cohesion: 0.17
 Nodes (12): Token reduction benchmark, FalkorDB export, GraphML export, MCP stdio server, Neo4j export, SVG export, Wiki export, Step 4.5: Graph health check (+4 more)
 
 ### Community 46 - "SampleSpec"
-Cohesion: 0.17
-Nodes (8): Fact, CuratedNestedEmbeddingSampleTests, IList, IDictionary, SampleSpec, byte, string, CuratedSampleSpecs
+Cohesion: 0.12
+Nodes (14): Fact, ExcelExtractorEmbeddedObjectTests, IList, IDictionary, SampleSpec, BodyText, Embeddings, Metadata (+6 more)
 
-### Community 47 - "S-072bfdf6.md"
+### Community 47 - "overview.md"
 Cohesion: 0.08
-Nodes (24): CFB detection component, DI-registered format-dispatch registry, Public API, Epic E-6728ee81: CFB detection, Epic E-b54e8704: Mime detection hardening, Epic E-bd43bc02: Public facade wiring, Extract() contract, ExtractionRequest (+16 more)
+Nodes (25): CFB detection component, DI-registered format-dispatch registry, Public API, Epic E-6728ee81: CFB detection, Epic E-b54e8704: Mime detection hardening, Epic E-bd43bc02: Public facade wiring, detect-mime-type contract, Extract() contract (+17 more)
 
 ### Community 48 - "query.md"
 Cohesion: 0.20
 Nodes (11): BFS/DFS traversal modes, /graphify explain, For /graphify explain, For /graphify path, graphify reference: query, path, explain, /graphify path, save-result feedback loop, Step 0 — Constrained query expansion (REQUIRED before traversal) (+3 more)
 
-### Community 49 - "mime-detection.md"
-Cohesion: 0.15
-Nodes (16): Content-Only MIME Detection Rule, Auth & Security, Component Architecture, Detection Component, Open Component, Overview, Problem Statement, Scope (+8 more)
+### Community 49 - "Overview"
+Cohesion: 0.33
+Nodes (9): Auth & Security, Component Architecture, Detection Component, Open Component, Overview, Problem Statement, Success Criteria, Text-Extraction Component (+1 more)
 
-### Community 50 - "XlsOpenStrategy"
-Cohesion: 0.15
-Nodes (9): List, ExcelFormatMetadata, FormatMetadata, PowerPointFormatMetadata, WordFormatMetadata, HSSFWorkbook, IExtractionHelper, string (+1 more)
+### Community 50 - "IExtractionHelper"
+Cohesion: 0.19
+Nodes (5): Benchmark, HSSFWorkbook, OpenXmlPackage, OpenXmlPart, IExtractionHelper
 
 ### Community 51 - "T-9e6bfce8-plan.md"
 Cohesion: 0.17
 Nodes (11): 1. File Manifest, 2.1 Enumerating embedded OLE objects and inline pictures, 2.2 Reading a single embedded object, 2.3 Serializing a container `DirectoryEntry` to an opaque byte blob (AC #2), 2.4 Logging convention for the omitted/corrupt item, 2. Production-code NPOI APIs (verified against `third_party/npoi` @ `2.7.6-rc1`), 3.1 Building a valid embedded object, 3.2 Building the "corrupt" second embedded object (+3 more)
 
-### Community 52 - "ZipEntryCorruptor"
-Cohesion: 0.36
-Nodes (4): compressedSize, localHeaderOffset, uint, ZipEntryCorruptor
+### Community 52 - "DocxTextExtractor"
+Cohesion: 0.21
+Nodes (6): DocxTextExtractor, Fact, DocxTextExtractorTests, Paragraph, IReadOnlyList, MultilingualFixtures
 
 ### Community 53 - "T-2ac2f140.md"
 Cohesion: 0.18
 Nodes (9): Epic E-d4ac3268: Generalization and build config, ExtractionHelper, IOpenStrategy interface, MainExtractor, OfficeMimeTypeEnum, Activity Log, Description, Activity Log (+1 more)
 
-### Community 54 - "T-c2a60f06.md"
+### Community 54 - "T-90924b6d.md"
 Cohesion: 0.07
-Nodes (25): ExcelFormatMetadata entity, FileMetadata entity, PowerPointFormatMetadata entity, WordFormatMetadata entity, PowerPointOpenStrategy, Story S-0602557d (xls open component), Activity Log, Description (+17 more)
+Nodes (27): dependency-injection requirement, ExcelFormatMetadata entity, FileMetadata entity, PowerPointFormatMetadata entity, WordFormatMetadata entity, PowerPointOpenStrategy, Story S-0602557d (xls open component), Activity Log (+19 more)
 
-### Community 55 - ".Build"
-Cohesion: 0.36
-Nodes (4): Fact, MultiEmbeddingSampleTests, byte, MultiEmbeddingSampleSpecs
+### Community 55 - "ExcelOpenStrategy"
+Cohesion: 0.19
+Nodes (9): IExtractionHelper, WorkbookPart, ExcelOpenStrategy, ZipFallbackOpenStrategy, EmbeddedObjectPart, Fact, WorksheetPart, MultiEmbeddingSampleTests (+1 more)
 
-### Community 56 - "IOpenStrategy"
-Cohesion: 0.16
-Nodes (10): IExtractionHelper, WorkbookPart, ExcelOpenStrategy, IOpenStrategy, IExtractionHelper, WordprocessingDocument, WordOpenStrategy, ZipFallbackOpenStrategy (+2 more)
+### Community 56 - "WordOpenStrategy"
+Cohesion: 0.22
+Nodes (7): IExtractionHelper, WordprocessingDocument, WordOpenStrategy, Fact, CuratedNestedEmbeddingSampleTests, Fact, DocxEmbeddedXlsxAndCorruptionTests
 
 ### Community 57 - "ExcelExtractor"
-Cohesion: 0.25
-Nodes (6): Cell, IEnumerable, List, WorkbookPart, ExcelExtractor, IdPartPair
+Cohesion: 0.22
+Nodes (8): Cell, IEnumerable, List, Row, SharedStringItem, WorkbookPart, ExcelExtractor, IdPartPair
 
 ### Community 58 - "/graphify"
 Cohesion: 0.20
 Nodes (10): For /graphify add and --watch, For /graphify query, For the commit hook and native CLAUDE.md integration, For --update and --cluster-only, /graphify, Honesty Rules, Interpreter guard for subcommands, Usage (+2 more)
 
-### Community 59 - "BenchmarkDotNet Research Spike"
+### Community 59 - "DocumentExtractionResult"
 Cohesion: 0.20
-Nodes (10): Alternatives Considered, API Shape For Our Use Case, BenchmarkDotNet Research Spike, Citations/Links, License, Maintenance Signal, Strengths, Structure As A Separate Project (+2 more)
+Nodes (9): List, DocumentExtractionResult, EmbeddedFiles, ExtractedText, Metadata, MimeType, HSSFWorkbook, OpenXmlPackage (+1 more)
 
 ### Community 60 - "Candidates evaluated"
 Cohesion: 0.20
@@ -513,13 +499,13 @@ Nodes (10): 1. Port NPOI's own scratchpad HWPF/HSLF to SDK-style/net8.0 ourselve
 Cohesion: 0.20
 Nodes (10): API surface relevant to our use case, Citations / links, Library name, License — IMPORTANT FINDING, Maintenance signal, NPOI — Research Spike, Performance signal, Strengths (+2 more)
 
-### Community 62 - "T-f4ed5c8f.md"
+### Community 62 - "Extract Contract"
 Cohesion: 0.13
-Nodes (13): content-only-mime-detection requirement, detect-mime-type contract, password-protected error, Story S-f6d7124a (mime-detection integration tests), Activity Log, Description, 2026-09-13T10:19:05Z (UTC), Activity Log (+5 more)
+Nodes (20): Adversarial Review, content-only-mime-detection requirement, password-protected error, Story S-f6d7124a (mime-detection integration tests), Task: Implement parse-time error handling in Extract, Task: Produce corrupt/truncated/zero-byte adversarial samples, Task: Integration tests for adversarial scenarios, Task: Integration tests for Extract against corpus manifest (+12 more)
 
 ### Community 63 - "MacroEmbedSampleGeneratorTests"
-Cohesion: 0.27
-Nodes (5): Fact, InlineData, Theory, MacroEmbedSampleGeneratorTests, Type
+Cohesion: 0.24
+Nodes (6): Fact, InlineData, Theory, MacroEmbedSampleGeneratorTests, NotSupportedException, Type
 
 ### Community 64 - "Stage 02 Planning Report — Sprint 2 & Sprint 3 — 2026-08-19"
 Cohesion: 0.20
@@ -536,6 +522,10 @@ Nodes (9): API surface relevant to our use case, Citations/links, DocumentFormat
 ### Community 67 - "OpenMcdf — Research Spike Notes"
 Cohesion: 0.22
 Nodes (9): API surface relevant to our use case, Citations / links, Library name, License, Maintenance signal, OpenMcdf — Research Spike Notes, Strengths, Unicode / RTL / emoji findings (entry names) (+1 more)
+
+### Community 68 - "WordFormatMetadata"
+Cohesion: 0.18
+Nodes (13): WordFormatMetadata, CharacterCount, Company, HasMacros, LineCount, Manager, PageCount, ParagraphCount (+5 more)
 
 ### Community 69 - "QD-7c1726.md"
 Cohesion: 0.22
@@ -565,13 +555,13 @@ Nodes (11): Task: Implement doc first-layer embedded-subfile walk, Task: Wire do
 Cohesion: 0.25
 Nodes (8): Error Handling, Extensibility & DI, Extraction, Flat Text, Format-Specific Metadata, General Metadata, Purpose, Subfiles
 
-### Community 76 - "DocOpenStrategyTests"
-Cohesion: 0.31
-Nodes (4): DateTime, Fact, string, DocOpenStrategyTests
+### Community 76 - "DocOpenStrategy"
+Cohesion: 0.20
+Nodes (8): Func, IExtractionHelper, DocOpenStrategy, DateTime, Fact, IDictionary, ITextExtractor, DocOpenStrategyTests
 
-### Community 77 - "T-71ab3bc0.md"
-Cohesion: 0.22
-Nodes (8): 2026-09-13T20:14:58Z (UTC), 2026-09-13T20:24:35Z (UTC), 2026-09-13T20:25:38Z (UTC), 2026-09-13T20:26:31Z (UTC), 2026-09-13T20:29:01Z (UTC), Activity Log, Description, Verification Proof
+### Community 77 - "Activity Log"
+Cohesion: 0.40
+Nodes (5): 2026-09-13T20:24:35Z (UTC), 2026-09-13T20:25:38Z (UTC), 2026-09-13T20:26:31Z (UTC), 2026-09-13T20:29:01Z (UTC), Activity Log
 
 ### Community 78 - "MainExtractorDispatchIntegrationTests"
 Cohesion: 0.50
@@ -585,113 +575,73 @@ Nodes (8): Dependencies Field, Story Reference Field, AI Provider Configuration,
 Cohesion: 0.32
 Nodes (8): Contract Schema, Crosscut Schema, Entity Schema, Error Schema, Hook Schema, Page Schema, Req Schema, Route Schema
 
-### Community 81 - "DocOpenStrategy"
-Cohesion: 0.50
-Nodes (3): DirectoryEntry, IExtractionHelper, DocOpenStrategy
+### Community 81 - "FileMetadata"
+Cohesion: 0.25
+Nodes (8): HPSF -> OOXML core/app property mapping, DateTime, FileMetadata, Created, Creator, LastModifiedBy, Modified, Title
 
 ### Community 82 - "CLAUDE.md"
 Cohesion: 0.33
 Nodes (6): Code exploration: use graphify, not raw file reads, graphify, Use graphify instead of raw reads, Project Conventions — ole-extractor, Fast path: query existing graph, YDK workflow
 
-### Community 83 - "DocExtractor"
-Cohesion: 0.38
-Nodes (3): ExtractorOLE.Old.Doc, WordprocessingDocument, DocExtractor
+### Community 84 - "PptOpenStrategy.cs"
+Cohesion: 0.33
+Nodes (5): b2xtranslator_openxmllib, b2xtranslator_openxmllib_presentationml_presentationdocument, b2xtranslator_pptfileformat, b2xtranslator_presentationmlmapping, b2xtranslator_structuredstorage_reader
 
-### Community 85 - "ExtractionUtil"
-Cohesion: 0.38
-Nodes (3): ExtractorOLE.Old.Util, OpenXmlPart, ExtractionUtil
-
-### Community 86 - "QD-c02a7c.md"
-Cohesion: 0.29
-Nodes (4): docs/adrs directory, graphify-out/graph.json, third_party/npoi submodule, QD-94a6d3: Sync stale status for QD-c02a7c and QD-f9203a
+### Community 86 - "Task T-eeb6684b: downgrade to net8.0"
+Cohesion: 0.14
+Nodes (9): 2026-08-22 — T-eeb6684b: Downgrade ExtractorOLE.csproj to net8.0, Activity Log, PR #4, Task T-eeb6684b: downgrade to net8.0, docs/adrs directory, graphify-out/graph.json, YDK Development Workflow, third_party/npoi submodule (+1 more)
 
 ### Community 87 - "ADR-001: Extraction library stack (OOXML, legacy OLE, CFB introspection)"
 Cohesion: 0.29
 Nodes (7): ADR-001: Extraction library stack (OOXML, legacy OLE, CFB introspection), Alternatives Considered, Consequences, Context, Decision, Note (2026-08-23), Status
 
-### Community 88 - "S-e496f356.md"
-Cohesion: 0.29
-Nodes (5): Epic E-a2efe648: NPOI/OpenMcdf library validation and wiring, Activity Log, Description, Activity Log, Description
+### Community 88 - "LoadGeneratorTests.cs"
+Cohesion: 0.40
+Nodes (4): ExtractorOLE.StressHarness, ExtractorOLE.Tests.StressHarness, system_threading, system_threading_tasks
 
-### Community 89 - ".Open"
-Cohesion: 0.24
-Nodes (6): IExtractionHelper, PresentationPart, SlidePart, PowerPointOpenStrategy, Fact, PptxFirstLayerEmbeddedWalkTests
-
-### Community 90 - "ole-extractor"
-Cohesion: 0.29
-Nodes (7): Build & test, Development workflow, Documentation, Library stack, ole-extractor, Project structure, Supported formats
-
-### Community 91 - "DocxEmbeddedXlsxSampleSpecs"
-Cohesion: 0.38
-Nodes (3): byte, string, DocxEmbeddedXlsxSampleSpecs
-
-### Community 92 - "main"
-Cohesion: 0.38
-Nodes (6): _find_build_targets(), _has_sdk(), main(), Check that an actual .NET SDK is installed, not just the dotnet muxer. On…, Find a .sln first, else every real (non-test/bench/harness) .csproj.…, Run the dotnet-build verification check.
-
-### Community 93 - "main"
-Cohesion: 0.38
-Nodes (6): _find_format_targets(), _has_sdk(), main(), Check that an actual .NET SDK is installed, not just the dotnet muxer. On…, Find a .sln first, else every real (non-test/bench/harness) .csproj.…, Run the dotnet-format verification check.
-
-### Community 94 - "main"
-Cohesion: 0.38
-Nodes (6): _find_test_target(), _has_sdk(), main(), Check that an actual .NET SDK is installed, not just the dotnet muxer. On…, Prefer a .sln (dotnet test filters to test projects automatically); else the…, Run the dotnet-test verification check.
-
-### Community 95 - "Task T-eeb6684b: downgrade to net8.0"
-Cohesion: 0.33
-Nodes (5): 2026-08-22 — T-eeb6684b: Downgrade ExtractorOLE.csproj to net8.0, Activity Log, PR #4, Task T-eeb6684b: downgrade to net8.0, YDK Development Workflow
+### Community 90 - "Activity Log"
+Cohesion: 0.50
+Nodes (4): 2026-09-01T21:28:20Z (UTC), 2026-09-02T05:44:56Z (UTC), 2026-09-02T05:57:45Z (UTC), Activity Log
 
 ### Community 96 - "github-and-merge.md"
 Cohesion: 0.47
 Nodes (5): graphify reference: GitHub clone and cross-repo merge, Step 0 - Clone GitHub repo(s) (only if a GitHub URL was given), graphify clone, graphify merge-graphs, Multi-subfolder/monorepo merge flow
 
-### Community 97 - "ADR-004: Legacy .doc/.ppt body-text parsing (b2xtranslator, not NPOI)"
-Cohesion: 0.33
-Nodes (6): ADR-004: Legacy .doc/.ppt body-text parsing (b2xtranslator, not NPOI), Alternatives Considered, Consequences, Context, Decision, Status
-
 ### Community 98 - "Project Rules"
 Cohesion: 0.33
 Nodes (6): Brownfield Constraints, Conventions, Known Gotchas, Library Stack (locked), Product Context, Project Rules
 
-### Community 99 - "ExtractorOLE.DTOs"
-Cohesion: 0.14
-Nodes (7): ExtractorOLE, ExtractorOLE.DTOs, ExtractorOLE.Helpers.FileTypeStrategy, ExtractorOLE.Tests.Doc, ExtractorOLE.Benchmarks, ExtractorOLE.Helpers, ExtractorOLE.Tests.Integration
+### Community 99 - "system_io"
+Cohesion: 0.19
+Nodes (14): ExtractorOLE.Tests.PowerPoint, ExtractorOLE.Helpers.FileTypeStrategy, ExtractorOLE.Tests.Doc, ExtractorOLE.Tests.Excel, ExtractorOLE.Helpers, ExtractorOLE.Tests.MultiEmbedding, npoi_hpsf, npoi_poifs_filesystem (+6 more)
+
+### Community 100 - "ExcelFormatMetadata"
+Cohesion: 0.20
+Nodes (10): List, ExcelFormatMetadata, ActiveSheetIndex, HasMacros, SheetCount, SheetNames, Fact, VbaProjectPart (+2 more)
 
 ### Community 101 - "Task: Record curated samples in manifest.json"
 Cohesion: 0.83
 Nodes (4): Task: Record curated samples in manifest.json, Task: Author 2+-level nested-embedding curated sample, Task: Author real multi-user revision-history curated sample, Task: Source/author 12 curated real-world-style samples
 
-### Community 103 - "Library Tradeoffs — Office File MIME Detection & Extraction"
-Cohesion: 0.40
-Nodes (5): Cross-cutting note, Library Tradeoffs — Office File MIME Detection & Extraction, Table 1: OOXML parsing/metadata/text/embeddings (docx/xlsx/pptx), Table 2: Legacy OLE (doc/xls/ppt) parsing/metadata/text, Table 3: Raw CFB introspection for mime-sniffing and generic subfile walking
-
-### Community 104 - "Dataset Curation"
-Cohesion: 0.40
-Nodes (5): Corpus Composition, Corpus Manifest, Dataset Curation, Provenance & Licensing, Purpose
+### Community 102 - "EmbeddedFileItem"
+Cohesion: 0.25
+Nodes (7): EmbeddedFileItem, BinaryData, FileName, PackagePath, SizeInBytes, Text, SlidesExtractor
 
 ### Community 105 - "QD-012d8e.md"
 Cohesion: 0.40
 Nodes (4): .env, .gitignore, 2026-08-29T16:58:46Z (UTC), Verification Proof
 
 ### Community 106 - "DetectMimeTypeCorpusManifestTests"
-Cohesion: 0.16
-Nodes (12): ExpectedDetectedFormat, Fact, IEnumerable, List, string, Theory, DetectMimeTypeCorpusManifestTests, ExpectedDetectedFormat (+4 more)
+Cohesion: 0.12
+Nodes (16): Fact, IEnumerable, List, Theory, DetectMimeTypeCorpusManifestTests, ExpectedDetectedFormat, Enum, MimeType (+8 more)
 
 ### Community 107 - "task.md"
 Cohesion: 0.40
 Nodes (4): Acceptance Criteria, Description, Test Strategy, Spec Check Configuration
 
-### Community 108 - "main"
-Cohesion: 0.50
-Nodes (4): main(), Subprocess-invoke sibling plugin ``name``'s check.py, returning its result., Run the dotnet-quality verification check., _run_sub_check()
-
-### Community 109 - "DocumentFormat.OpenXml extraction path"
-Cohesion: 0.21
-Nodes (6): ExtractorOLE.Handlers, ExtractorOLE.Tests.Docx, ExtractorOLE.Tests.Excel, DocumentFormat.OpenXml extraction path, Fact, ExcelExtractorEmbeddedObjectTests
-
-### Community 110 - "QD-8a231b.md"
-Cohesion: 0.50
-Nodes (3): main/NPOI.Core.csproj, NPOI.Core.sln, NU1903 vulnerability (System.Security.Cryptography.Xml 8.0.2)
+### Community 109 - "documentformat_openxml_packaging"
+Cohesion: 0.20
+Nodes (10): ExtractorOLE.Handlers, ExtractorOLE.Tests.Docx, DocumentFormat.OpenXml extraction path, documentformat_openxml_drawing, documentformat_openxml_extendedproperties, documentformat_openxml_packaging, documentformat_openxml_presentation, documentformat_openxml_spreadsheet (+2 more)
 
 ### Community 111 - "Epic: OOXML Extraction Completeness"
 Cohesion: 0.50
@@ -709,17 +659,9 @@ Nodes (4): Epic: Dataset Curation, Story: Synthetic sample generator (3 per form
 Cohesion: 0.50
 Nodes (4): Epic: Project Restructure, Story: Generalize embedded-subfile walk and wire DI registry for format dispatch, Story: Downgrade to net8.0 and fix enum typo, Story: Wire Program.cs to invoke both public functions on a real file
 
-### Community 115 - "T-02637847.md"
-Cohesion: 0.32
-Nodes (6): ExtractorOLE.Old.Excel, ExcelExtractor.GetFirstLayerEmbedded, SampleGenerator project, XlsxSampleGenerator, Activity Log, Description
-
-### Community 116 - "GeneratedSample"
-Cohesion: 0.23
-Nodes (6): GeneratedSample, ISampleGenerator, SampleFormat, DocSampleGenerator, PptSampleGenerator, XlsSampleGenerator
-
-### Community 118 - "Activity Log"
-Cohesion: 0.50
-Nodes (4): 2026-09-02T05:45:01Z (UTC), 2026-09-02T05:46:06Z (UTC), 2026-09-02T05:47:27Z (UTC), Activity Log
+### Community 116 - "SampleFormat"
+Cohesion: 0.09
+Nodes (21): GeneratedSample, Content, FileName, ISampleGenerator, Format, SampleFormat, Doc, Docx (+13 more)
 
 ### Community 131 - "Epic: Test Suite"
 Cohesion: 0.67
@@ -733,25 +675,25 @@ Nodes (3): Epic: Library Setup & Validation, Story: Empirically validate NPOI i1
 Cohesion: 0.67
 Nodes (3): Epic: Public API Surface, Story: Wire the DetectMimeType public facade to the registry, Story: Wire the Extract public facade with full error handling
 
-### Community 147 - "PptxSampleGenerator"
-Cohesion: 0.31
-Nodes (7): PresentationPart, ShapeTree, SlidePart, PptxSampleGenerator, SlideLayoutPart, SlideMasterPart, ThemePart
+### Community 147 - ".Generate"
+Cohesion: 0.24
+Nodes (7): PresentationPart, ShapeTree, SlidePart, VbaProjectPart, SlideLayoutPart, SlideMasterPart, ThemePart
 
-### Community 150 - "DocumentExtractionResult"
-Cohesion: 0.12
-Nodes (14): DateTime, List, DocumentExtractionResult, FileMetadata, IExtractionHelper, PresentationPart, SlidePart, PptOpenStrategy (+6 more)
+### Community 150 - "PptOpenStrategy"
+Cohesion: 0.16
+Nodes (10): IExtractionHelper, PresentationPart, SlidePart, Text, VbaProjectPart, PptOpenStrategy, DateTime, Fact (+2 more)
 
 ### Community 152 - "T-0055ec7c.md"
 Cohesion: 0.17
 Nodes (10): DetectMimeType contract, Activity Log, Description, 2026-09-14T20:48:35Z (UTC), 2026-09-14T21:01:57Z (UTC), Activity Log, Description, Verification Proof (+2 more)
 
-### Community 153 - "ExtractionBenchmarks"
-Cohesion: 0.33
-Nodes (4): Benchmark, byte, ExtractionBenchmarks, GlobalSetup
+### Community 153 - ".Register"
+Cohesion: 0.17
+Nodes (8): ExtractionBenchmarks, DocTextExtractor, MainExtractor, Program, IDictionary, IServiceCollection, ServiceRegistration, GlobalSetup
 
 ### Community 155 - ".AddEmbeddings"
-Cohesion: 0.43
-Nodes (4): EmbeddedContentSpec, IEnumerable, OpenXmlPart, OpenXmlEmbeddingHelper
+Cohesion: 0.21
+Nodes (9): ImagePart, EmbeddedContentSpec, Content, ContentType, FileName, EmbeddedObjectPart, IEnumerable, OpenXmlPart (+1 more)
 
 ### Community 171 - "ADR-002: Time profiling and stress testing approach"
 Cohesion: 0.33
@@ -769,49 +711,41 @@ Nodes (3): 2026-09-13T20:14:11Z (UTC), Activity Log, Description
 Cohesion: 0.20
 Nodes (9): CRITICAL BUG HIT AND FIXED: ydk task done did NOT auto-commit working-tree changes, CRITICAL REMINDER, Done, Done (cont.), Done (final), Exact next step, STATUS: COMPLETE, Status: STARTED - investigation phase (+1 more)
 
-### Community 180 - "PptOpenStrategyTests"
-Cohesion: 0.43
-Nodes (3): DateTime, Fact, PptOpenStrategyTests
-
 ### Community 181 - "T-9a4ff765 — Orchestrator Progress"
-Cohesion: 0.29
-Nodes (6): Exact next command (if resuming), Side issue encountered and resolved: stale task-status bookkeeping, Status: DONE — PR open, awaiting merge, T-9a4ff765 — Orchestrator Progress, What's left, What was done
+Cohesion: 0.33
+Nodes (5): Exact next command (if resuming), Side issue encountered and resolved: stale task-status bookkeeping, Status: DONE — PR open, awaiting merge, T-9a4ff765 — Orchestrator Progress, What's left
+
+### Community 183 - "ExtractionHelper"
+Cohesion: 0.20
+Nodes (9): ArgumentNullException, ExtractionHelper, Fact, ExtractionHelperDetectMimeTypeTests, SpyDetector, WasCalled, What was done, Summary (+1 more)
 
 ### Community 190 - "MIME Detection"
 Cohesion: 0.33
 Nodes (6): Extensibility, Guardrails, How Detection Works, Macro-Enabled Variants, MIME Detection, Purpose
-
-### Community 192 - "Performance & Stress Testing Tooling — Tradeoffs"
-Cohesion: 0.50
-Nodes (4): 1. Time Profiling: BenchmarkDotNet vs. Alternatives, 2. Stress Testing: NBomber vs. Hand-Rolled Harness, Performance & Stress Testing Tooling — Tradeoffs, Summary — If Forced to Pick Today
-
-### Community 195 - "Activity Log"
-Cohesion: 0.50
-Nodes (4): 2026-08-24 - Verification, side-effect cleanup, and completion, 2026-08-24T20:56:24Z (UTC), 2026-08-24T20:57:53Z (UTC), Activity Log
 
 ## Ambiguous Edges - Review These
 - `YDK Task Registry (Epics/Stories/Tasks)` → `YDK Todos Store`  [AMBIGUOUS]
   .ydk/todos.yaml · relation: conceptually_related_to
 
 ## Knowledge Gaps
-- **675 isolated node(s):** `check-task-complete.sh script`, `ExtractorOLE.Benchmarks`, `net8.0`, `BenchmarkDotNet (0.14.0)`, `Microsoft.NET.Sdk` (+670 more)
-  These have ≤1 connection - possible missing edges or undocumented components.
-- **48 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **756 isolated node(s):** `check-task-complete.sh script`, `ExtractorOLE.Benchmarks`, `net8.0`, `BenchmarkDotNet (0.14.0)`, `Microsoft.NET.Sdk` (+751 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 955 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **53 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **What is the exact relationship between `YDK Task Registry (Epics/Stories/Tasks)` and `YDK Todos Store`?**
   _Edge tagged AMBIGUOUS (relation: conceptually_related_to) - confidence is low._
-- **Why does `ExtractorOLE.DTOs` connect `ExtractorOLE.DTOs` to `SlidesExtractor.cs`, `.Detect`, `SampleGenerator.Abstractions`, `ExtractorOLE.Exceptions`, `DocumentFormat.OpenXml extraction path`, `XlsOpenStrategy`, `DocExtractor`, `OfficeMimeTypeEnum`, `T-02637847.md`, `DocumentExtractionResult`, `ExtractionUtil`, `ExtractorOLE.Helpers.MimeDetection`?**
-  _High betweenness centrality (0.102) - this node is a cross-community bridge._
-- **Why does `DocumentFormat.OpenXml extraction path` connect `DocumentFormat.OpenXml extraction path` to `ExtractorOLE.DTOs`, `unicode-fidelity requirement`, `SampleGenerator.Abstractions`, `T-bac988f5.md`, `ExtractorOLE.Helpers.MimeDetection`?**
-  _High betweenness centrality (0.097) - this node is a cross-community bridge._
-- **Why does `OpenMcdf` connect `ExtractorOLE.Exceptions` to `S-e496f356.md`, `T-eeb6684b.md`, `Adversarial Review`, `S-072bfdf6.md`?**
-  _High betweenness centrality (0.063) - this node is a cross-community bridge._
-- **What connects `check-task-complete.sh script`, `ExtractorOLE.Benchmarks`, `net8.0` to the rest of the system?**
-  _675 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `.Detect` be split into smaller, more focused modules?**
-  _Cohesion score 0.11806543385490754 - nodes in this community are weakly interconnected._
-- **Should `XlsxTextExtractorTests` be split into smaller, more focused modules?**
-  _Cohesion score 0.0707070707070707 - nodes in this community are weakly interconnected._
+- **Why does `ExtractionHelper` connect `ExtractionHelper` to `XlsOpenStrategyTests`, `MimeDetectionRegistry`, `system_io`, `WordFormatMetadata`, `ExcelFormatMetadata`, `MimeDetectionRequest`, `PowerPointOpenStrategy`, `DetectMimeTypeCorpusManifestTests`, `DocOpenStrategy`, `IExtractionHelper`, `OfficeMimeTypeEnum`, `PptOpenStrategy`, `ExcelOpenStrategy`, `WordOpenStrategy`, `.Register`, `.ExtractFirstLayerEmbedded`?**
+  _High betweenness centrality (0.071) - this node is a cross-community bridge._
+- **Why does `DocumentFormat.OpenXml extraction path` connect `documentformat_openxml_packaging` to `unicode-fidelity requirement`, `system_io`, `T-bac988f5.md`?**
+  _High betweenness centrality (0.055) - this node is a cross-community bridge._
+- **Why does `ExtractorOLE.DTOs` connect `ExtractorOLE.DTOs` to `system_io`, `WordFormatMetadata`, `MimeDetectionRequest`, `PowerPointOpenStrategy`, `FormatDispatchRegistryTests.cs`, `SampleGenerator.Abstractions`, `documentformat_openxml_packaging`, `PptOpenStrategy.cs`, `system`?**
+  _High betweenness centrality (0.053) - this node is a cross-community bridge._
+- **Are the 54 inferred relationships involving `ExtractionHelper` (e.g. with `.Open_CorruptBytes_ReturnsNull()` and `.Open_KnownDocFixture_PopulatesFileMetadataFromSummaryInformation()`) actually correct?**
+  _`ExtractionHelper` has 54 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 39 inferred relationships involving `MimeDetectionRequest` (e.g. with `.DetectMimeType_CorpusSample_MatchesManifestExpectedFormat()` and `.DetectMimeType_OversizedDeclaredSizeBomb_ThrowsOversizedNestedContentException()`) actually correct?**
+  _`MimeDetectionRequest` has 39 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 26 inferred relationships involving `SampleSpec` (e.g. with `.CombiningCharacterSequence_NotNormalized()` and `.EmptyBody_ReturnsEmptyString_NeverNull()`) actually correct?**
+  _`SampleSpec` has 26 INFERRED edges - model-reasoned connections that need verification._

@@ -106,6 +106,100 @@ namespace ExtractorOLE.Tests.Doc
             Assert.Equal("application/msword", result.MimeType);
         }
 
+        // Builds a legacy .doc-shaped CFB fixture carrying both SummaryInformation (page/word/
+        // character counts, template) and DocumentSummaryInformation (paragraph/line counts,
+        // company/manager) - the two HPSF property-set streams WordFormatMetadata is sourced
+        // from per ADR-004/legacy-doc-ppt-parsing research. A null argument is never written to
+        // its stream at all, exercising the "absent property, not placeholder/zero" case.
+        // withMacros optionally adds a root-level "Macros" storage, the standard OLE-CFB
+        // location for an embedded VBA project in a binary Word document.
+        private static byte[] BuildDocFixtureWithFormatMetadata(
+            int? pageCount, int? wordCount, int? charCount, string? template,
+            int? parCount, int? lineCount, string? company, string? manager,
+            bool withMacros)
+        {
+            var fs = new NPOIFSFileSystem();
+            try
+            {
+                fs.Root.CreateDocument("WordDocument", new MemoryStream(new byte[] { 0x00 }));
+
+                var summary = PropertySetFactory.NewSummaryInformation();
+                if (pageCount != null) summary.PageCount = pageCount.Value;
+                if (wordCount != null) summary.WordCount = wordCount.Value;
+                if (charCount != null) summary.CharCount = charCount.Value;
+                if (template != null) summary.Template = template;
+                summary.Write(fs.Root, SummaryInformation.DEFAULT_STREAM_NAME);
+
+                var docSummary = new DocumentSummaryInformation();
+                if (parCount != null) docSummary.ParCount = parCount.Value;
+                if (lineCount != null) docSummary.LineCount = lineCount.Value;
+                if (company != null) docSummary.Company = company;
+                if (manager != null) docSummary.Manager = manager;
+                docSummary.Write(fs.Root, DocumentSummaryInformation.DEFAULT_STREAM_NAME);
+
+                if (withMacros)
+                {
+                    fs.Root.CreateDirectory("Macros");
+                }
+
+                using var ms = new MemoryStream();
+                fs.WriteFileSystem(ms);
+                return ms.ToArray();
+            }
+            finally
+            {
+                fs.Close();
+            }
+        }
+
+        [Fact]
+        public void Open_MacroEnabledDocFixture_PopulatesWordFormatMetadataFromNativeCounts()
+        {
+            var bytes = BuildDocFixtureWithFormatMetadata(
+                pageCount: 5, wordCount: 1200, charCount: 6500, template: "Normal.dotm",
+                parCount: 42, lineCount: 88, company: "Acme Corp", manager: "Jane Boss",
+                withMacros: true);
+
+            var result = new DocOpenStrategy(new ExtractionHelper()).Open(bytes);
+
+            Assert.NotNull(result);
+            var formatMetadata = Assert.IsType<WordFormatMetadata>(result!.FormatMetadata);
+            Assert.Equal(5, formatMetadata.PageCount);
+            Assert.Equal(1200, formatMetadata.WordCount);
+            Assert.Equal(6500, formatMetadata.CharacterCount);
+            Assert.Equal(42, formatMetadata.ParagraphCount);
+            Assert.Equal(88, formatMetadata.LineCount);
+            Assert.Equal("Acme Corp", formatMetadata.Company);
+            Assert.Equal("Jane Boss", formatMetadata.Manager);
+            Assert.Equal("Normal.dotm", formatMetadata.Template);
+            Assert.True(formatMetadata.HasMacros);
+        }
+
+        [Fact]
+        public void Open_NonMacroDocFixtureWithoutCompanyManagerTemplate_LeavesThoseFieldsNullAndHasMacrosFalse()
+        {
+            var bytes = BuildDocFixtureWithFormatMetadata(
+                pageCount: 2, wordCount: 300, charCount: 1500, template: null,
+                parCount: 10, lineCount: 20, company: null, manager: null,
+                withMacros: false);
+
+            var result = new DocOpenStrategy(new ExtractionHelper()).Open(bytes);
+
+            Assert.NotNull(result);
+            var formatMetadata = Assert.IsType<WordFormatMetadata>(result!.FormatMetadata);
+            Assert.Equal(2, formatMetadata.PageCount);
+            Assert.Equal(300, formatMetadata.WordCount);
+            Assert.Equal(1500, formatMetadata.CharacterCount);
+            Assert.Equal(10, formatMetadata.ParagraphCount);
+            Assert.Equal(20, formatMetadata.LineCount);
+            // Never a placeholder string ([ydk:entity:extraction/FileMetadata] convention,
+            // mirrored for WordFormatMetadata) - these properties were never written.
+            Assert.Null(formatMetadata.Company);
+            Assert.Null(formatMetadata.Manager);
+            Assert.Null(formatMetadata.Template);
+            Assert.False(formatMetadata.HasMacros);
+        }
+
         [Fact]
         public void Open_CorruptBytes_ReturnsNull()
         {
