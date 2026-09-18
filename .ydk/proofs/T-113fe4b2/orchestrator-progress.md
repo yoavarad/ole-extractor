@@ -1,6 +1,6 @@
 # T-113fe4b2 Orchestrator Progress
 
-## Status: STARTED - investigation phase
+## Status: DONE — PR #82 merged
 
 ## Done
 - Ran `ydk task start T-113fe4b2` from main repo root -> worktree created at

@@ -1,0 +1,342 @@
+{
+  "task_id": null,
+  "timestamp": "2026-09-18T19:39:06Z",
+  "checks": [
+    {
+      "name": "dotnet-build",
+      "passed": true,
+      "output": "=== ExtractorOle\\ExtractorOLE\\ExtractorOLE.csproj ===\nDetermining projects to restore...\n  All projects are up-to-date for restore.\n  NPOI.Core -> C:\\Users\\yoava\\Projects\\ole-extractor\\.ydk\\worktrees\\T-12dfd045\\third_party\\npoi\\solution\\Debug\\net8.0\\NPOI.Core.dll\n  b2xtranslator -> C:\\Users\\yoava\\Projects\\ole-extractor\\.ydk\\worktrees\\T-12dfd045\\third_party\\b2xtranslator\\Common\\bin\\Debug\\net8.0\\b2xtranslator.dll\n  b2xtranslator.ppt -> C:\\Users\\yoava\\Projects\\ole-extractor\\.ydk\\worktrees\\T-12dfd045\\third_party\\b2xtranslator\\Ppt\\bin\\Debug\\net8.0\\b2xtranslator.ppt.dll\n  ExtractorOLE -> C:\\Users\\yoava\\Projects\\ole-extractor\\.ydk\\worktrees\\T-12dfd045\\ExtractorOle\\ExtractorOLE\\bin\\Debug\\net8.0\\ExtractorOLE.dll\n\nBuild succeeded.\n    0 Warning(s)\n    0 Error(s)\n\nTime Elapsed 00:00:07.84\n\n=== SampleGenerator\\SampleGenerator.csproj ===\nDetermining projects to restore...\n  All projects are up-to-date for restore.\n  SampleGenerator -> C:\\Users\\yoava\\Projects\\ole-extractor\\.ydk\\worktrees\\T-12dfd045\\SampleGenerator\\bin\\Debug\\net8.0\\SampleGenerator.dll\n\nBuild succeeded.\n    0 Warning(s)\n    0 Error(s)\n\nTime Elapsed 00:00:01.50",
+      "duration_seconds": 10.5,
+      "detail": {
+        "targets": [
+          "ExtractorOle\\ExtractorOLE\\ExtractorOLE.csproj",
+          "SampleGenerator\\SampleGenerator.csproj"
+        ]
+      }
+    },
+    {
+      "name": "dotnet-format",
+      "passed": true,
+      "output": "=== ExtractorOle\\ExtractorOLE\\ExtractorOLE.csproj ===\n\n\n=== SampleGenerator\\SampleGenerator.csproj ===\n",
+      "duration_seconds": 72.0,
+      "detail": {
+        "targets": [
+          "ExtractorOle\\ExtractorOLE\\ExtractorOLE.csproj",
+          "SampleGenerator\\SampleGenerator.csproj"
+        ]
+      }
+    },
+    {
+      "name": "dotnet-quality",
+      "passed": true,
+      "output": "[dotnet-build] === ExtractorOle\\ExtractorOLE\\ExtractorOLE.csproj ===\nDetermining projects to restore...\n  All projects are up-to-date for restore.\n  NPOI.Core -> C:\\Users\\yoava\\Projects\\ole-extractor\\.ydk\\worktrees\\T-12dfd045\\third_party\\npoi\\solution\\Debug\\net8.0\\NPOI.Core.dll\n  b2xtranslator -> C:\\Users\\yoava\\Projects\\ole-extractor\\.ydk\\worktrees\\T-12dfd045\\third_party\\b2xtranslator\\Common\\bin\\Debug\\net8.0\\b2xtranslator.dll\n  b2xtranslator.ppt -> C:\\Users\\yoava\\Projects\\ole-extractor\\.ydk\\worktrees\\T-12dfd045\\third_party\\b2xtranslator\\Ppt\\bin\\Debug\\net8.0\\b2xtranslator.ppt.dll\n  ExtractorOLE -> C:\\Users\\yoava\\Projects\\ole-extractor\\.ydk\\worktrees\\T-12dfd045\\ExtractorOle\\ExtractorOLE\\bin\\Debug\\net8.0\\ExtractorOLE.dll\n\nBuild succeeded.\n    0 Warning(s)\n    0 Error(s)\n\nTime Elapsed 00:00:06.00\n\n=== SampleGenerator\\SampleGenerator.csproj ===\nDetermining projects to restore...\n  All projects are up-to-date for restore.\n  SampleGenerator -> C:\\Users\\yoava\\Projects\\ole-extractor\\.ydk\\worktrees\\T-12dfd045\\SampleGenerator\\bin\\Debug\\net8.0\\SampleGenerator.dll\n\nBuild succeeded.\n    0 Warning(s)\n    0 Error(s)\n\nTime Elapsed 00:00:01.43\n[dotnet-format] === ExtractorOle\\ExtractorOLE\\ExtractorOLE.csproj ===\n\n\n=== SampleGenerator\\SampleGenerator.csproj ===\n",
+      "duration_seconds": 67.4,
+      "detail": {
+        "checks": [
+          "dotnet-build",
+          "dotnet-format"
+        ],
+        "results": {
+          "dotnet-build": {
+            "name": "dotnet-build",
+            "passed": true,
+            "output": "=== ExtractorOle\\ExtractorOLE\\ExtractorOLE.csproj ===\nDetermining projects to restore...\n  All projects are up-to-date for restore.\n  NPOI.Core -> C:\\Users\\yoava\\Projects\\ole-extractor\\.ydk\\worktrees\\T-12dfd045\\third_party\\npoi\\solution\\Debug\\net8.0\\NPOI.Core.dll\n  b2xtranslator -> C:\\Users\\yoava\\Projects\\ole-extractor\\.ydk\\worktrees\\T-12dfd045\\third_party\\b2xtranslator\\Common\\bin\\Debug\\net8.0\\b2xtranslator.dll\n  b2xtranslator.ppt -> C:\\Users\\yoava\\Projects\\ole-extractor\\.ydk\\worktrees\\T-12dfd045\\third_party\\b2xtranslator\\Ppt\\bin\\Debug\\net8.0\\b2xtranslator.ppt.dll\n  ExtractorOLE -> C:\\Users\\yoava\\Projects\\ole-extractor\\.ydk\\worktrees\\T-12dfd045\\ExtractorOle\\ExtractorOLE\\bin\\Debug\\net8.0\\ExtractorOLE.dll\n\nBuild succeeded.\n    0 Warning(s)\n    0 Error(s)\n\nTime Elapsed 00:00:06.00\n\n=== SampleGenerator\\SampleGenerator.csproj ===\nDetermining projects to restore...\n  All projects are up-to-date for restore.\n  SampleGenerator -> C:\\Users\\yoava\\Projects\\ole-extractor\\.ydk\\worktrees\\T-12dfd045\\SampleGenerator\\bin\\Debug\\net8.0\\SampleGenerator.dll\n\nBuild succeeded.\n    0 Warning(s)\n    0 Error(s)\n\nTime Elapsed 00:00:01.43",
+            "duration_seconds": 8.7,
+            "detail": {
+              "targets": [
+                "ExtractorOle\\ExtractorOLE\\ExtractorOLE.csproj",
+                "SampleGenerator\\SampleGenerator.csproj"
+              ]
+            }
+          },
+          "dotnet-format": {
+            "name": "dotnet-format",
+            "passed": true,
+            "output": "=== ExtractorOle\\ExtractorOLE\\ExtractorOLE.csproj ===\n\n\n=== SampleGenerator\\SampleGenerator.csproj ===\n",
+            "duration_seconds": 58.4,
+            "detail": {
+              "targets": [
+                "ExtractorOle\\ExtractorOLE\\ExtractorOLE.csproj",
+                "SampleGenerator\\SampleGenerator.csproj"
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "ai-code-review",
+      "passed": true,
+      "output": "SKIPPED: plugin error — AsyncMessages.stream() got an unexpected keyword argument 'temperature'",
+      "duration_seconds": 0.0,
+      "detail": {
+        "skipped": true,
+        "error": "AsyncMessages.stream() got an unexpected keyword argument 'temperature'"
+      }
+    },
+    {
+      "name": "cli-error-handling",
+      "passed": true,
+      "output": "PASS: no src/commands/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "cli-output-format",
+      "passed": true,
+      "output": "PASS: no src/commands/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "fastapi-adapter-isolation",
+      "passed": true,
+      "output": "PASS: no app/adapters/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "fastapi-core-purity",
+      "passed": true,
+      "output": "PASS: no app/core/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "fastapi-no-mocks-e2e",
+      "passed": true,
+      "output": "PASS: no tests/e2e/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "fastapi-no-mocks-integration",
+      "passed": true,
+      "output": "PASS: no tests/integration/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "fastapi-route-delegation",
+      "passed": true,
+      "output": "PASS: no app/api/routes/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "fastapi-route-splitting",
+      "passed": true,
+      "output": "PASS: no app/api/routes/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "fastapi-service-sync",
+      "passed": true,
+      "output": "PASS: no app/core/services/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-file-sizes",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-fsd-imports",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-fsd-layers",
+      "passed": true,
+      "output": "WARN: node_modules not installed -- skipping FSD layer check. Run: bun install",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-module-density",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-no-direct-env",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-no-direct-fetch",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-no-direct-ui-imports",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-no-query-key-strings",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-no-useeffect-fetch",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-no-zustand-module-level",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-page-purity",
+      "passed": true,
+      "output": "PASS: no src/app/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-server-client-boundary",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-sse-abort-controller",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "python-file-length",
+      "passed": true,
+      "output": "PASS: no app/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "python-no-future-annotations",
+      "passed": true,
+      "output": "PASS: no app/api/routes/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "react-fsd-imports",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "spec-alignment",
+      "passed": true,
+      "output": "No spec references provided — skipping alignment check",
+      "duration_seconds": 1.8,
+      "detail": {
+        "skipped": true
+      }
+    },
+    {
+      "name": "terraform-dangling-resources",
+      "passed": true,
+      "output": "PASS: No dangling resource references detected.",
+      "duration_seconds": 0.1,
+      "detail": {
+        "errors": 0
+      }
+    },
+    {
+      "name": "terraform-external-iam",
+      "passed": true,
+      "output": "PASS: No wildcard IAM principals found.",
+      "duration_seconds": 0.1,
+      "detail": null
+    },
+    {
+      "name": "terraform-format",
+      "passed": true,
+      "output": "SKIP: No infra/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "terraform-glacier-public",
+      "passed": true,
+      "output": "PASS: No public Glacier vault access detected.",
+      "duration_seconds": 0.1,
+      "detail": null
+    },
+    {
+      "name": "terraform-paravirt-ec2",
+      "passed": true,
+      "output": "PASS: No paravirtualized instance types found.",
+      "duration_seconds": 0.1,
+      "detail": null
+    },
+    {
+      "name": "terraform-public-ami",
+      "passed": true,
+      "output": "PASS: AMI usage checks passed.",
+      "duration_seconds": 0.1,
+      "detail": {
+        "errors": 0
+      }
+    },
+    {
+      "name": "terraform-security",
+      "passed": true,
+      "output": "SKIP: No infra/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "terraform-tagging",
+      "passed": true,
+      "output": "SKIP: No infra/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "dotnet-test",
+      "passed": true,
+      "output": "Determining projects to restore...\n  All projects are up-to-date for restore.\n  b2xtranslator -> C:\\Users\\yoava\\Projects\\ole-extractor\\.ydk\\worktrees\\T-12dfd045\\third_party\\b2xtranslator\\Common\\bin\\Debug\\net8.0\\b2xtranslator.dll\n  b2xtranslator.ppt -> C:\\Users\\yoava\\Projects\\ole-extractor\\.ydk\\worktrees\\T-12dfd045\\third_party\\b2xtranslator\\Ppt\\bin\\Debug\\net8.0\\b2xtranslator.ppt.dll\n  SampleGenerator -> C:\\Users\\yoava\\Projects\\ole-extractor\\.ydk\\worktrees\\T-12dfd045\\SampleGenerator\\bin\\Debug\\net8.0\\SampleGenerator.dll\n  NPOI.Core -> C:\\Users\\yoava\\Projects\\ole-extractor\\.ydk\\worktrees\\T-12dfd045\\third_party\\npoi\\solution\\Debug\\net8.0\\NPOI.Core.dll\n  ExtractorOLE -> C:\\Users\\yoava\\Projects\\ole-extractor\\.ydk\\worktrees\\T-12dfd045\\ExtractorOle\\ExtractorOLE\\bin\\Debug\\net8.0\\ExtractorOLE.dll\n  ExtractorOLE.StressHarness -> C:\\Users\\yoava\\Projects\\ole-extractor\\.ydk\\worktrees\\T-12dfd045\\ExtractorOle\\ExtractorOLE.StressHarness\\bin\\Debug\\net8.0\\ExtractorOLE.StressHarness.dll\n  ExtractorOLE.Tests -> C:\\Users\\yoava\\Projects\\ole-extractor\\.ydk\\worktrees\\T-12dfd045\\ExtractorOle\\ExtractorOLE.Tests\\bin\\Debug\\net8.0\\ExtractorOLE.Tests.dll\nTest run for C:\\Users\\yoava\\Projects\\ole-extractor\\.ydk\\worktrees\\T-12dfd045\\ExtractorOle\\ExtractorOLE.Tests\\bin\\Debug\\net8.0\\ExtractorOLE.Tests.dll (.NETCoreApp,Version=v8.0)\nA total of 1 test files matched the specified pattern.\n\nPassed!  - Failed:     0, Passed:   185, Skipped:     0, Total:   185, Duration: 2 s - ExtractorOLE.Tests.dll (net8.0)",
+      "duration_seconds": 14.7,
+      "detail": {
+        "target": "ExtractorOle\\ExtractorOLE.Tests\\ExtractorOLE.Tests.csproj",
+        "failed": 0,
+        "passed_count": 185
+      }
+    },
+    {
+      "name": "tests-pytest",
+      "passed": true,
+      "output": "No 'tests/' directory found — skipped (non-Python project?)",
+      "duration_seconds": 0.0,
+      "detail": null
+    }
+  ],
+  "all_passed": true,
+  "total_duration_seconds": 17.2
+}
