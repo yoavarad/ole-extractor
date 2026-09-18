@@ -1,0 +1,20 @@
+<Project>
+  <!--
+    Workaround for the third_party/b2xtranslator submodule's Ppt project (ADR-004).
+
+    b2xtranslator.ppt.csproj is SDK-style but never declares its PresentationMLMapping/Defaults/**/*.xml
+    files (theme, clrMap, slideLayouts) as embedded resources, yet PresentationMLMapping.Utils.
+    GetDefaultDocument loads them via Assembly.GetManifestResourceStream("b2xtranslator.
+    PresentationMLMapping.Defaults.<name>.xml"). Without them every real .ppt -> .pptx conversion
+    throws a NullReferenceException. Declared here, scoped to that one project, rather than by
+    editing the submodule; setting RootNamespace to "b2xtranslator" makes the SDK's default
+    manifest-resource naming (RootNamespace + relative path with dots) produce exactly the names the
+    code looks up. Drop this once the fork's csproj carries the same fix.
+  -->
+  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'b2xtranslator.ppt'">
+    <RootNamespace>b2xtranslator</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(MSBuildProjectName)' == 'b2xtranslator.ppt'">
+    <EmbeddedResource Include="PresentationMLMapping\Defaults\**\*.xml" />
+  </ItemGroup>
+</Project>

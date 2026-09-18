@@ -66,12 +66,8 @@ namespace ExtractorOLE
             services.AddSingleton<PptxTextExtractor>();
             services.AddSingleton<XlsTextExtractor>();
             services.AddSingleton<DocTextExtractor>();
+            services.AddSingleton<PptTextExtractor>();
 
-            // No PowerPointLegacy entry: T-517f89c5's acceptance criteria scope PptOpenStrategy
-            // to Open()/FileMetadata/DI-registration only, not flat-text body extraction. Missing
-            // entries resolve to null via FormatDispatchRegistry.GetTextExtractor (TryGetValue-based)
-            // and MainExtractor already handles that (logs, leaves ExtractedText empty) - see
-            // T-b62ffe04 for the tracked follow-up once a PowerPointLegacy ITextExtractor lands.
             services.AddSingleton<IDictionary<OfficeMimeTypeEnum, ITextExtractor>>(sp =>
             {
                 var dict = new Dictionary<OfficeMimeTypeEnum, ITextExtractor>
@@ -81,6 +77,7 @@ namespace ExtractorOLE
                     [OfficeMimeTypeEnum.PowerPoint] = sp.GetRequiredService<PptxTextExtractor>(),
                     [OfficeMimeTypeEnum.ExcelLegacy] = sp.GetRequiredService<XlsTextExtractor>(),
                     [OfficeMimeTypeEnum.WordLegacy] = sp.GetRequiredService<DocTextExtractor>(),
+                    [OfficeMimeTypeEnum.PowerPointLegacy] = sp.GetRequiredService<PptTextExtractor>(),
                 };
                 return dict;
             });
