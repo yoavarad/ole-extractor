@@ -170,6 +170,69 @@ namespace ExtractorOLE.Helpers
             }
         }
 
+        // Legacy .doc has no HWPFDocument-level "get all embedded objects" convenience API
+        // (ADR-004: HWPF lives only in NPOI's un-compiled scratchpad tree). Per the Word/OLE
+        // storage convention (mirrored from Java POI, documented in docs/research/npoi.md),
+        // first-layer OLE-embedded objects live as child storages of a root-level "ObjectPool"
+        // directory - so this walks that storage directly off the raw CFB tree, independent of
+        // any body-text conversion path. Each child directory is copied out and serialized as
+        // one opaque blob (same technique as ExtractHssfObjectData), never unpacked further.
+        public void ExtractFirstLayerEmbedded(DocumentExtractionResult result, DirectoryEntry root)
+        {
+            if (!root.HasEntry("ObjectPool")) return;
+            if (root.GetEntry("ObjectPool") is not DirectoryEntry objectPool) return;
+
+            int index = 1;
+            foreach (var entry in objectPool)
+            {
+                ExtractDocObjectPoolEntry(entry, result.EmbeddedFiles, ref index);
+            }
+        }
+
+        // Reads one ObjectPool child. Wrapped in its own try/catch, mirroring
+        // ExtractHssfObjectData, so that one corrupt/malformed entry (e.g. one that isn't
+        // actually a directory storage) is skipped and logged without failing the whole walk.
+        private void ExtractDocObjectPoolEntry(Entry entry, List<EmbeddedFileItem> fileList, ref int index)
+        {
+            try
+            {
+                if (entry is not DirectoryEntry objectDir)
+                {
+                    throw new IOException($"ObjectPool entry '{entry.Name}' is not a directory storage");
+                }
+
+                var target = new NPOIFSFileSystem();
+                try
+                {
+                    EntryUtils.CopyNodes(objectDir, target.Root);
+                    using (var outStream = new MemoryStream())
+                    {
+                        target.WriteFileSystem(outStream);
+                        var extractedBytes = outStream.ToArray();
+
+                        var item = new EmbeddedFileItem
+                        {
+                            BinaryData = extractedBytes,
+                            PackagePath = $"ObjectPool/{objectDir.Name}",
+                            SizeInBytes = extractedBytes.LongLength,
+                            FileName = objectDir.Name,
+                        };
+
+                        fileList.Add(item);
+                        index++;
+                    }
+                }
+                finally
+                {
+                    target.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Skipping corrupt embedded object '{entry.Name}' in ObjectPool: {ex.Message}");
+            }
+        }
+
         // Reads one embedded OLE object. Wrapped in its own try/catch so that one corrupt item
         // (e.g. a POIFS directory entry that doesn't resolve to a real DirectoryEntry) is skipped
         // and logged without failing the whole extraction.
