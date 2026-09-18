@@ -20,8 +20,12 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
     // compound file - the same mechanism HSSFWorkbook.SummaryInformation uses internally for
     // .xls, just without a format-specific workbook class to hang it off since none exists here.
     //
-    // Body text (ExtractedText) and embedded-object discovery (EmbeddedFiles) are intentionally
-    // left at their default empty values until the b2xtranslator conversion path lands.
+    // First-layer embedded objects (EmbeddedFiles) are populated by walking the "ObjectPool"
+    // storage directly off the raw CFB tree ([ydk:req:extraction/subfile-scope]) - this does
+    // not depend on the b2xtranslator conversion path, since Word/OLE embedded-object storage
+    // is a generic CFB convention (POIFS), not part of the Word body-text binary format. Body
+    // text (ExtractedText) is intentionally left at its default empty value until the
+    // b2xtranslator conversion path lands.
     //
     // WordFormatMetadata (page/word/character/paragraph/line counts, company/manager/template,
     // HasMacros) is likewise sourced from SummaryInformation/DocumentSummaryInformation (HPSF) -
@@ -65,6 +69,8 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
 
                         var docSummary = ReadDocumentSummaryInformation(fs.Root);
                         result.FormatMetadata = BuildWordFormatMetadata(fs.Root, summary, docSummary);
+
+                        _helper.ExtractFirstLayerEmbedded(result, fs.Root);
                     }
                     finally
                     {
