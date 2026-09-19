@@ -224,7 +224,12 @@ namespace ExtractorOLE.Tests.Registry
             var (extractor, spy, _) = Build();
 
             extractor.Extract(Request(BuildZipWithDeclaredSizes(1_000, 2_000)));
-            extractor.Extract(Request(BuildCfbWithFatSectorCount(1), DocMime));
+            // The single declared FAT sector must physically exist (all-free entries), otherwise the
+            // parse-time truncated-container check (T-61477563) rightly rejects it after the guardrail passes.
+            var cfb = new byte[1024];
+            BuildCfbWithFatSectorCount(1).CopyTo(cfb, 0);
+            Array.Fill(cfb, (byte)0xFF, 512, 512);
+            extractor.Extract(Request(cfb, DocMime));
 
             Assert.Equal(4, spy.Lookups);
         }

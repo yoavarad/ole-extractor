@@ -1,5 +1,8 @@
+using ExtractorOLE.Configuration;
 using ExtractorOLE.DTOs;
 using ExtractorOLE.Exceptions;
+using ExtractorOLE.Helpers;
+using ExtractorOLE.Registry;
 using Microsoft.Extensions.DependencyInjection;
 using NPOI.HSSF.UserModel;
 using NPOI.HSSF.Record.Crypto;
@@ -181,6 +184,37 @@ namespace ExtractorOLE.Tests.Registry
             Array.Fill(bytes, (byte)0xFF, start, 512);
 
             Extract<CorruptFileException>(bytes, XlsMime);
+        }
+
+        // ---- ordering across the Extract pipeline: null checks -> guardrail -> Preflight/open ----
+
+        [Fact]
+        public void Extract_ChecksNullThenGuardrailThenParseErrors_InThatOrder()
+        {
+            var services = new ServiceCollection();
+            ServiceRegistration.Register(services);
+            using var provider = services.BuildServiceProvider();
+            var helper = provider.GetRequiredService<IExtractionHelper>();
+            var registry = provider.GetRequiredService<IFormatDispatchRegistry>();
+            var small = new MainExtractor(helper, registry, new ExtractionGuardrails(new MimeDetectionLimits { MaxFileSizeBytes = 100 }));
+            var normal = provider.GetRequiredService<MainExtractor>();
+
+            // Null field: ArgumentNullException, before the guardrail sees anything.
+            Assert.Throws<ArgumentNullException>(() => small.Extract(
+                new ExtractionRequest { FileBytes = null!, FileName = "f", DetectedMimeType = DocxMime }));
+
+            // A truncated ZIP that is also over the size limit: the guardrail wins, Preflight never runs.
+            var oversizedTruncated = new byte[] { 0x50, 0x4B, 0x03, 0x04 }.Concat(new byte[200]).ToArray();
+            Assert.Throws<FileTooLargeException>(() => small.Extract(
+                new ExtractionRequest { FileBytes = oversizedTruncated, FileName = "f", DetectedMimeType = DocxMime }));
+
+            // Within the limit the same bytes reach Preflight; the specific parse errors still fire.
+            Assert.Throws<TruncatedContainerException>(() => normal.Extract(
+                new ExtractionRequest { FileBytes = Sample("truncated-container.docx"), FileName = "f", DetectedMimeType = DocxMime }));
+            Assert.Throws<PasswordProtectedException>(() => normal.Extract(
+                new ExtractionRequest { FileBytes = Sample("password-protected.docx"), FileName = "f", DetectedMimeType = DocxMime }));
+            Assert.Throws<CorruptFileException>(() => normal.Extract(
+                new ExtractionRequest { FileBytes = Sample("corrupt-container.docx"), FileName = "f", DetectedMimeType = DocxMime }));
         }
     }
 }

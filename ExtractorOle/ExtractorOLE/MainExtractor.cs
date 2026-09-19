@@ -51,7 +51,10 @@ namespace ExtractorOLE
         /// A null request or null required field throws <see cref="ArgumentNullException"/>
         /// first; then the pre-parse guardrails reject file-too-large and
         /// oversized-nested-content input; then a mime type that is not one of the six
-        /// supported formats throws <see cref="Exceptions.UnsupportedFormatException"/>.
+        /// supported formats throws <see cref="Exceptions.UnsupportedFormatException"/>;
+        /// then a parse-time preflight and open raise the specific
+        /// password-protected / truncated-container / corrupt-file errors instead of
+        /// returning an empty result.
         /// </summary>
         public DocumentExtractionResult Extract(ExtractionRequest request)
         {
