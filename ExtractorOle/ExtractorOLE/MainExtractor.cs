@@ -27,6 +27,51 @@ namespace ExtractorOLE
             return _registry.GetOpenStrategy(mimeType);
         }
 
+        private static readonly OfficeMimeTypeEnum[] SupportedFormats =
+        {
+            OfficeMimeTypeEnum.Word, OfficeMimeTypeEnum.Excel, OfficeMimeTypeEnum.PowerPoint,
+            OfficeMimeTypeEnum.WordLegacy, OfficeMimeTypeEnum.ExcelLegacy, OfficeMimeTypeEnum.PowerPointLegacy,
+        };
+
+        /// <summary>
+        /// Extraction entry point ([ydk:contract:extraction/extract]). Trusts
+        /// <see cref="ExtractionRequest.DetectedMimeType"/> as-is (no re-detection) and
+        /// dispatches to the open + text-extraction components registered for that format
+        /// in <see cref="IFormatDispatchRegistry"/>; contains no format-specific parsing.
+        /// A mime type that is not one of the six supported formats dispatches to no
+        /// component (explicit unsupported-format rejection is a separate task).
+        /// </summary>
+        public DocumentExtractionResult Extract(ExtractionRequest request)
+        {
+            var format = ResolveFormat(request.DetectedMimeType);
+            if (format == null)
+            {
+                return new DocumentExtractionResult { MimeType = request.DetectedMimeType };
+            }
+
+            var result = _registry.GetOpenStrategy(format.Value)?.Open(request.FileBytes)
+                         ?? new DocumentExtractionResult();
+            result.MimeType = request.DetectedMimeType;
+
+            var extractor = _registry.GetTextExtractor(format.Value);
+            if (extractor != null)
+            {
+                result.ExtractedText = extractor.ExtractText(request.FileBytes) ?? string.Empty;
+            }
+
+            return result;
+        }
+
+        // Reverse of IExtractionHelper.MimeFor over the six supported formats.
+        private OfficeMimeTypeEnum? ResolveFormat(string? mime)
+        {
+            foreach (var format in SupportedFormats)
+            {
+                if (string.Equals(_helper.MimeFor(format), mime, StringComparison.OrdinalIgnoreCase)) return format;
+            }
+            return null;
+        }
+
         public DocumentExtractionResult Extract(byte[] fileBytes)
         {
             var result = new DocumentExtractionResult();
