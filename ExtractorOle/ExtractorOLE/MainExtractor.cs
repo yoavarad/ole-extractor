@@ -1,3 +1,4 @@
+using ExtractorOLE.Configuration;
 using ExtractorOLE.DTOs;
 using ExtractorOLE.Helpers;
 using ExtractorOLE.Helpers.FileTypeStrategy;
@@ -16,10 +17,19 @@ namespace ExtractorOLE
         // implementation, or its backing library, directly.
         private readonly IFormatDispatchRegistry _registry;
 
+        // Pre-parse file-too-large / oversized-nested-content checks (T-3335d397).
+        private readonly ExtractionGuardrails _guardrails;
+
         public MainExtractor(IExtractionHelper helper, IFormatDispatchRegistry registry)
+            : this(helper, registry, new ExtractionGuardrails(new MimeDetectionLimits()))
+        {
+        }
+
+        public MainExtractor(IExtractionHelper helper, IFormatDispatchRegistry registry, ExtractionGuardrails guardrails)
         {
             _helper = helper ?? throw new ArgumentNullException(nameof(helper));
             _registry = registry ?? throw new ArgumentNullException(nameof(registry));
+            _guardrails = guardrails ?? throw new ArgumentNullException(nameof(guardrails));
         }
 
         private IOpenStrategy? FindOpenStrategyForMime(OfficeMimeTypeEnum mimeType)
@@ -39,12 +49,14 @@ namespace ExtractorOLE
         /// dispatches to the open + text-extraction components registered for that format
         /// in <see cref="IFormatDispatchRegistry"/>; contains no format-specific parsing.
         /// A null request or null required field throws <see cref="ArgumentNullException"/>
-        /// first; a mime type that is not one of the six supported formats throws
-        /// <see cref="Exceptions.UnsupportedFormatException"/>.
+        /// first; then the pre-parse guardrails reject file-too-large and
+        /// oversized-nested-content input; then a mime type that is not one of the six
+        /// supported formats throws <see cref="Exceptions.UnsupportedFormatException"/>.
         /// </summary>
         public DocumentExtractionResult Extract(ExtractionRequest request)
         {
             ValidateRequest(request);
+            _guardrails.Enforce(request); // after null checks, before any parsing/dispatch (T-3335d397)
 
             var format = ResolveFormat(request.DetectedMimeType)
                          ?? throw new Exceptions.UnsupportedFormatException(request.DetectedMimeType);

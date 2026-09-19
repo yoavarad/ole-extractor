@@ -17,6 +17,10 @@ namespace ExtractorOLE
             // Core helpers
             services.AddSingleton<IExtractionHelper, ExtractionHelper>();
 
+            // Pre-parse Extract guardrails, sharing the one configured limits instance
+            // with mime detection (ydk:nfr:extraction/max-file-size, nesting-depth-guard).
+            services.AddSingleton(sp => new ExtractionGuardrails(sp.GetRequiredService<MimeDetectionLimits>()));
+
             // Mime detection (legacy CFB family)
             services.AddSingleton(new MimeDetectionLimits());
             services.AddSingleton<ICfbMimeDetector, CfbMimeDetector>();

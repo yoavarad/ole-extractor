@@ -46,7 +46,7 @@ namespace ExtractorOLE.Helpers.MimeDetection
                 throw new FileTooLargeException(request.FileBytes.Length, _limits.MaxFileSizeBytes);
             }
 
-            if (TryGetDeclaredZipTotalSize(request.FileBytes, out var declaredTotalBytes, out var entriesInspected)
+            if (TryGetDeclaredZipTotalSize(request.FileBytes, out var declaredTotalBytes, out var entriesInspected, out _)
                 && declaredTotalBytes > (ulong)_limits.MaxDeclaredNestedContentBytes)
             {
                 var metric = $"ZIP local file header(s) ({entriesInspected} {(entriesInspected == 1 ? "entry" : "entries")}) declare {declaredTotalBytes} bytes total uncompressed (limit {_limits.MaxDeclaredNestedContentBytes})";
@@ -90,10 +90,11 @@ namespace ExtractorOLE.Helpers.MimeDetection
         // Hand-parses raw ZIP local file headers (PKZIP APPNOTE section 4.3.7) to estimate
         // the total declared uncompressed bytes the file's own entries claim, without letting
         // Package.Open (System.IO.Packaging -> System.IO.Compression) walk the structure first.
-        private static bool TryGetDeclaredZipTotalSize(byte[] bytes, out ulong declaredTotalBytes, out int entriesInspected)
+        internal static bool TryGetDeclaredZipTotalSize(byte[] bytes, out ulong declaredTotalBytes, out int entriesInspected, out ulong largestEntryBytes)
         {
             declaredTotalBytes = 0;
             entriesInspected = 0;
+            largestEntryBytes = 0;
 
             const int LocalHeaderFixedLength = 30; // through end of extra-field-length at offset 28-29
             ReadOnlySpan<byte> localHeaderSignature = stackalloc byte[] { 0x50, 0x4B, 0x03, 0x04 };
@@ -119,10 +120,12 @@ namespace ExtractorOLE.Helpers.MimeDetection
                 if (uncompressedSize == uint.MaxValue || compressedSize == uint.MaxValue)
                 {
                     declaredTotalBytes = ulong.MaxValue;
+                    largestEntryBytes = ulong.MaxValue;
                     return true;
                 }
 
                 declaredTotalBytes = checked(declaredTotalBytes + uncompressedSize);
+                largestEntryBytes = Math.Max(largestEntryBytes, uncompressedSize);
 
                 long nextOffset = offset + LocalHeaderFixedLength + nameLength + extraLength + compressedSize;
                 if (nextOffset <= offset || nextOffset > bytes.Length)
