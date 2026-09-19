@@ -19,6 +19,18 @@ if (args.Length > 0 && args[0] == "--adversarial")
     return;
 }
 
+// T-f0963fc3: the 12 fixed benchmark samples (10MB + ~100MB x 6 formats) go to the gitignored
+// samples/benchmark/ (or the directory given as the second argument), never into the corpus dirs
+// below. Each SHA-256 is checked against samples/manifest.json's benchmarkSamples; exit code 1 on
+// any mismatch. Usage: dotnet run --project SampleGenerator -- --benchmark [outputDir]
+if (args.Length > 0 && args[0] == "--benchmark")
+{
+    var benchmarkDir = args.Length > 1 ? args[1] : Path.Combine("samples", "benchmark");
+    var ok = BenchmarkSampleGenerator.WriteAll(benchmarkDir, Path.Combine("samples", "manifest.json"));
+    Environment.Exit(ok ? 0 : 1);
+    return;
+}
+
 Directory.CreateDirectory(outputDir);
 
 // docs/specs/dataset-curation.md composition rule #1 ("multi-embedding"):

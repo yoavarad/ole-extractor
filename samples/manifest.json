@@ -890,5 +890,212 @@
       "verifiedBy": null,
       "notes": "detectable=false pending empirical verification against a running ExtractorOLE build, per this task's (T-3bddbe75) test_strategy: 'No test -- infra/tooling task'. T-71ab3bc0 note: expectedDetectedFormat empirically confirmed (consistent with this entry's own expectedBehavior.outcome) via a standalone harness copying OoxmlMimeDetector/CfbMimeDetector production logic byte-for-byte and run against this exact 0-byte file: both detectors' zero-length guard returns UnknownResult() immediately (Unknown/application-octet-stream) without attempting any structural parse."
     }
+  ],
+  "$benchmarkSamplesNote": "T-f0963fc3: the 12 fixed benchmark samples (10MB tier: target 10,000,000 bytes; ~100MB tier: target 102,400,000 bytes = 97.66 MiB, under the 104,857,600-byte MaxFileSizeBytes cap; each file lands in [0.99 x target, target]). They are gitignored (samples/benchmark/) and regenerated on demand with `dotnet run --project SampleGenerator -- --benchmark`, which rewrites the files and compares each SHA-256 with this list (exit code 1 on mismatch). They live under 'benchmarkSamples', not 'samples', because the committed-corpus tests (DetectMimeTypeCorpusManifestTests) read every 'samples' entry from disk. sha256 values depend on the deflate output of the .NET runtime that built them (net8.0 target, built here on the .NET 8 runtime via the .NET 9 SDK), so a different runtime's zlib could change the docx/xlsx/pptx hashes; ExtractorOLE.Tests.SampleGeneration.BenchmarkSampleGeneratorTests validates size, SHA-256 and Extract() text for each present file.",
+  "benchmarkSamples": [
+    {
+      "format": "docx",
+      "status": "generated-on-demand",
+      "path": "samples/benchmark/benchmark-10mb.docx",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator.Generators.BenchmarkSampleGenerator via `dotnet run --project SampleGenerator -- --benchmark` (T-f0963fc3)",
+      "compositionRule": "OpenXml DocxSampleGenerator authors a line-numbered multilingual body (MultilingualFixtures.ComposeLargeBody(target/20 words, 400 words/line), every line prefixed with a 7-digit line number) plus first-layer embedded-object padding parts of fixed-seed SplitMix64 bytes (1 MiB chunks, incompressible), sized so the zip lands in [0.99 x target, target]; the zip is rewritten with fixed entry order, timestamps and rId1..n relationship ids. Declared uncompressed size is about file size + text, far under the 2 GiB nested-content cap and the 1 GB per-entry cap.",
+      "sizeTier": "10mb",
+      "targetBytes": 10000000,
+      "sizeBytes": 9948610,
+      "sha256": "b5725ca8b1c40b57be3400524471e8499ed54914ced2bb05f456994067a13e1b",
+      "expectedDetectedFormat": {
+        "enum": "Docx",
+        "mimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      },
+      "committed": false
+    },
+    {
+      "format": "xlsx",
+      "status": "generated-on-demand",
+      "path": "samples/benchmark/benchmark-10mb.xlsx",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator.Generators.BenchmarkSampleGenerator via `dotnet run --project SampleGenerator -- --benchmark` (T-f0963fc3)",
+      "compositionRule": "OpenXml XlsxSampleGenerator authors a line-numbered multilingual body (MultilingualFixtures.ComposeLargeBody(target/20 words, 400 words/line), every line prefixed with a 7-digit line number) plus first-layer embedded-object padding parts of fixed-seed SplitMix64 bytes (1 MiB chunks, incompressible), sized so the zip lands in [0.99 x target, target]; the zip is rewritten with fixed entry order, timestamps and rId1..n relationship ids. Declared uncompressed size is about file size + text, far under the 2 GiB nested-content cap and the 1 GB per-entry cap.",
+      "sizeTier": "10mb",
+      "targetBytes": 10000000,
+      "sizeBytes": 9947232,
+      "sha256": "ca9cfe8e13a65137b0a8ae9f2cf8e5b4d6aa492b615e2a6fe977a503152f9117",
+      "expectedDetectedFormat": {
+        "enum": "Xlsx",
+        "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      },
+      "committed": false
+    },
+    {
+      "format": "pptx",
+      "status": "generated-on-demand",
+      "path": "samples/benchmark/benchmark-10mb.pptx",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator.Generators.BenchmarkSampleGenerator via `dotnet run --project SampleGenerator -- --benchmark` (T-f0963fc3)",
+      "compositionRule": "OpenXml PptxSampleGenerator authors a line-numbered multilingual body (MultilingualFixtures.ComposeLargeBody(target/20 words, 400 words/line), every line prefixed with a 7-digit line number) plus first-layer embedded-object padding parts of fixed-seed SplitMix64 bytes (1 MiB chunks, incompressible), sized so the zip lands in [0.99 x target, target]; the zip is rewritten with fixed entry order, timestamps and rId1..n relationship ids. Declared uncompressed size is about file size + text, far under the 2 GiB nested-content cap and the 1 GB per-entry cap.",
+      "sizeTier": "10mb",
+      "targetBytes": 10000000,
+      "sizeBytes": 9949719,
+      "sha256": "cc9d92057a7db712974791c4fb7d6f4733df542d21c4a19d6ab4f66aeb9090e1",
+      "expectedDetectedFormat": {
+        "enum": "Pptx",
+        "mimeType": "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+      },
+      "committed": false
+    },
+    {
+      "format": "doc",
+      "status": "generated-on-demand",
+      "path": "samples/benchmark/benchmark-10mb.doc",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator.Generators.BenchmarkSampleGenerator via `dotnet run --project SampleGenerator -- --benchmark` (T-f0963fc3)",
+      "compositionRule": "No legacy .doc writer exists in the repo (ADR-004), so the Word-authored ExtractorOLE.Tests/Doc/Fixtures/multilingual.doc is the extractable content and its CFB container is padded with an opaque 'Data' stream (fixed-seed SplitMix64 bytes, unreferenced by any sprm), sized so the file lands in [0.99 x target, target]. Extracted text is only the template's small multilingual body; the bulk is padding.",
+      "sizeTier": "10mb",
+      "targetBytes": 10000000,
+      "sizeBytes": 9951232,
+      "sha256": "f5105613d9db1a49e03de8b0d323c64cd4a45c0b2662fb6e42f184c379f7fd3c",
+      "expectedDetectedFormat": {
+        "enum": "Doc",
+        "mimeType": "application/msword"
+      },
+      "committed": false
+    },
+    {
+      "format": "xls",
+      "status": "generated-on-demand",
+      "path": "samples/benchmark/benchmark-10mb.xls",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator.Generators.BenchmarkSampleGenerator via `dotnet run --project SampleGenerator -- --benchmark` (T-f0963fc3)",
+      "compositionRule": "NPOI HSSFWorkbook, one sheet, one line-numbered multilingual text row per line (MultilingualFixtures.ComposeLargeBody, 400 words/line, 7-digit line-number prefix so BIFF shared strings cannot dedup), row count fitted so the file lands in [0.99 x target, target]. All size is real extractable text.",
+      "sizeTier": "10mb",
+      "targetBytes": 10000000,
+      "sizeBytes": 9973248,
+      "sha256": "e1d8ba6f06a6f6f6681df6b41dbecf214e77e18ab83ec9f821e4f349985278a5",
+      "expectedDetectedFormat": {
+        "enum": "Xls",
+        "mimeType": "application/vnd.ms-excel"
+      },
+      "committed": false
+    },
+    {
+      "format": "ppt",
+      "status": "generated-on-demand",
+      "path": "samples/benchmark/benchmark-10mb.ppt",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator.Generators.BenchmarkSampleGenerator via `dotnet run --project SampleGenerator -- --benchmark` (T-f0963fc3)",
+      "compositionRule": "No legacy .ppt writer exists in the repo (ADR-004), so the PowerPoint-authored ExtractorOLE.Tests/PowerPoint/Fixtures/with_textbox.ppt is the extractable content and its CFB container gets a 'Pictures' stream of OfficeArt JPEG BLIP records (fixed-seed SplitMix64 payloads, ~1 MiB each, unreferenced by any slide), sized so the file lands in [0.99 x target, target]. Extracted text is only the template's small body; the bulk is padding.",
+      "sizeTier": "10mb",
+      "targetBytes": 10000000,
+      "sizeBytes": 9951232,
+      "sha256": "849ce4f6f94eda18d8cd939117d656a597330d2b52d01aa110f0c4a4fec74287",
+      "expectedDetectedFormat": {
+        "enum": "Ppt",
+        "mimeType": "application/vnd.ms-powerpoint"
+      },
+      "committed": false
+    },
+    {
+      "format": "docx",
+      "status": "generated-on-demand",
+      "path": "samples/benchmark/benchmark-100mb.docx",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator.Generators.BenchmarkSampleGenerator via `dotnet run --project SampleGenerator -- --benchmark` (T-f0963fc3)",
+      "compositionRule": "OpenXml DocxSampleGenerator authors a line-numbered multilingual body (MultilingualFixtures.ComposeLargeBody(target/20 words, 400 words/line), every line prefixed with a 7-digit line number) plus first-layer embedded-object padding parts of fixed-seed SplitMix64 bytes (1 MiB chunks, incompressible), sized so the zip lands in [0.99 x target, target]; the zip is rewritten with fixed entry order, timestamps and rId1..n relationship ids. Declared uncompressed size is about file size + text, far under the 2 GiB nested-content cap and the 1 GB per-entry cap.",
+      "sizeTier": "100mb",
+      "targetBytes": 102400000,
+      "sizeBytes": 101871352,
+      "sha256": "5df7f04a441a62c9ee1f6525f314e39fd476b644ea3b60e983de9bd2976b3ec6",
+      "expectedDetectedFormat": {
+        "enum": "Docx",
+        "mimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      },
+      "committed": false
+    },
+    {
+      "format": "xlsx",
+      "status": "generated-on-demand",
+      "path": "samples/benchmark/benchmark-100mb.xlsx",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator.Generators.BenchmarkSampleGenerator via `dotnet run --project SampleGenerator -- --benchmark` (T-f0963fc3)",
+      "compositionRule": "OpenXml XlsxSampleGenerator authors a line-numbered multilingual body (MultilingualFixtures.ComposeLargeBody(target/20 words, 400 words/line), every line prefixed with a 7-digit line number) plus first-layer embedded-object padding parts of fixed-seed SplitMix64 bytes (1 MiB chunks, incompressible), sized so the zip lands in [0.99 x target, target]; the zip is rewritten with fixed entry order, timestamps and rId1..n relationship ids. Declared uncompressed size is about file size + text, far under the 2 GiB nested-content cap and the 1 GB per-entry cap.",
+      "sizeTier": "100mb",
+      "targetBytes": 102400000,
+      "sizeBytes": 101855624,
+      "sha256": "f7e3484b03699c7808e9991334650fa55502025a982a96753452d32cc7d15f1e",
+      "expectedDetectedFormat": {
+        "enum": "Xlsx",
+        "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      },
+      "committed": false
+    },
+    {
+      "format": "pptx",
+      "status": "generated-on-demand",
+      "path": "samples/benchmark/benchmark-100mb.pptx",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator.Generators.BenchmarkSampleGenerator via `dotnet run --project SampleGenerator -- --benchmark` (T-f0963fc3)",
+      "compositionRule": "OpenXml PptxSampleGenerator authors a line-numbered multilingual body (MultilingualFixtures.ComposeLargeBody(target/20 words, 400 words/line), every line prefixed with a 7-digit line number) plus first-layer embedded-object padding parts of fixed-seed SplitMix64 bytes (1 MiB chunks, incompressible), sized so the zip lands in [0.99 x target, target]; the zip is rewritten with fixed entry order, timestamps and rId1..n relationship ids. Declared uncompressed size is about file size + text, far under the 2 GiB nested-content cap and the 1 GB per-entry cap.",
+      "sizeTier": "100mb",
+      "targetBytes": 102400000,
+      "sizeBytes": 101883910,
+      "sha256": "8d8b05b218976f790063f2c7fafde7edaa3854eeb03c5e2f2ef094ff69abf4a5",
+      "expectedDetectedFormat": {
+        "enum": "Pptx",
+        "mimeType": "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+      },
+      "committed": false
+    },
+    {
+      "format": "doc",
+      "status": "generated-on-demand",
+      "path": "samples/benchmark/benchmark-100mb.doc",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator.Generators.BenchmarkSampleGenerator via `dotnet run --project SampleGenerator -- --benchmark` (T-f0963fc3)",
+      "compositionRule": "No legacy .doc writer exists in the repo (ADR-004), so the Word-authored ExtractorOLE.Tests/Doc/Fixtures/multilingual.doc is the extractable content and its CFB container is padded with an opaque 'Data' stream (fixed-seed SplitMix64 bytes, unreferenced by any sprm), sized so the file lands in [0.99 x target, target]. Extracted text is only the template's small multilingual body; the bulk is padding.",
+      "sizeTier": "100mb",
+      "targetBytes": 102400000,
+      "sizeBytes": 101900288,
+      "sha256": "e240b6dd08b9229e2cfb2f2bb238f5a7228d327dca20a446d9d14b4034d3af21",
+      "expectedDetectedFormat": {
+        "enum": "Doc",
+        "mimeType": "application/msword"
+      },
+      "committed": false
+    },
+    {
+      "format": "xls",
+      "status": "generated-on-demand",
+      "path": "samples/benchmark/benchmark-100mb.xls",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator.Generators.BenchmarkSampleGenerator via `dotnet run --project SampleGenerator -- --benchmark` (T-f0963fc3)",
+      "compositionRule": "NPOI HSSFWorkbook, one sheet, one line-numbered multilingual text row per line (MultilingualFixtures.ComposeLargeBody, 400 words/line, 7-digit line-number prefix so BIFF shared strings cannot dedup), row count fitted so the file lands in [0.99 x target, target]. All size is real extractable text.",
+      "sizeTier": "100mb",
+      "targetBytes": 102400000,
+      "sizeBytes": 102129152,
+      "sha256": "4199171436a8465ce80f8e492cb6b8530fbf48b929e19bfdf0afcacdc880ce1d",
+      "expectedDetectedFormat": {
+        "enum": "Xls",
+        "mimeType": "application/vnd.ms-excel"
+      },
+      "committed": false
+    },
+    {
+      "format": "ppt",
+      "status": "generated-on-demand",
+      "path": "samples/benchmark/benchmark-100mb.ppt",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator.Generators.BenchmarkSampleGenerator via `dotnet run --project SampleGenerator -- --benchmark` (T-f0963fc3)",
+      "compositionRule": "No legacy .ppt writer exists in the repo (ADR-004), so the PowerPoint-authored ExtractorOLE.Tests/PowerPoint/Fixtures/with_textbox.ppt is the extractable content and its CFB container gets a 'Pictures' stream of OfficeArt JPEG BLIP records (fixed-seed SplitMix64 payloads, ~1 MiB each, unreferenced by any slide), sized so the file lands in [0.99 x target, target]. Extracted text is only the template's small body; the bulk is padding.",
+      "sizeTier": "100mb",
+      "targetBytes": 102400000,
+      "sizeBytes": 101900288,
+      "sha256": "9abef1e865b469c20dbe1e93ed425ca56e3f63edab974001965a9c197ed1374f",
+      "expectedDetectedFormat": {
+        "enum": "Ppt",
+        "mimeType": "application/vnd.ms-powerpoint"
+      },
+      "committed": false
+    }
   ]
 }

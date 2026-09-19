@@ -37,3 +37,7 @@ graphify-out/20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]/
 .ydk/active-task.json
 .ydk/.verified
 .ydk/memory/
+
+# T-f0963fc3: fixed 10MB/~100MB benchmark samples, regenerated on demand
+# (dotnet run --project SampleGenerator -- --benchmark); SHA-256s live in samples/manifest.json
+samples/benchmark/
