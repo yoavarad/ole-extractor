@@ -610,7 +610,7 @@ tasks:
   T-3b4e70f4:
     title: Wire Extract facade to the format-dispatch registry (open + text-extraction)
     story: S-51d277f1
-    status: open
+    status: done
     dependencies:
     - T-12dfd045
     - T-1df33d6c
