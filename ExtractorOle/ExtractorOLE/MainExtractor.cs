@@ -49,8 +49,8 @@ namespace ExtractorOLE
                 return new DocumentExtractionResult { MimeType = request.DetectedMimeType };
             }
 
-            var result = _registry.GetOpenStrategy(format.Value)?.Open(request.FileBytes)
-                         ?? new DocumentExtractionResult();
+            ParseTimeErrorGuard.Preflight(request.FileBytes, IsOoxml(format.Value));
+            var result = ParseTimeErrorGuard.OpenOrThrow(_registry.GetOpenStrategy(format.Value), request.FileBytes, request.DetectedMimeType);
             result.MimeType = request.DetectedMimeType;
 
             var extractor = _registry.GetTextExtractor(format.Value);
@@ -61,6 +61,9 @@ namespace ExtractorOLE
 
             return result;
         }
+
+        private static bool IsOoxml(OfficeMimeTypeEnum format) =>
+            format is OfficeMimeTypeEnum.Word or OfficeMimeTypeEnum.Excel or OfficeMimeTypeEnum.PowerPoint;
 
         // Reverse of IExtractionHelper.MimeFor over the six supported formats.
         private OfficeMimeTypeEnum? ResolveFormat(string? mime)

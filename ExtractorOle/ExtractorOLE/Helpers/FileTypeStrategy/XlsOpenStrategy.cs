@@ -44,6 +44,11 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
                 result.MimeType = _helper.MimeFor(OfficeMimeTypeEnum.ExcelLegacy);
                 return result;
             }
+            catch (NPOI.EncryptedDocumentException)
+            {
+                // Not a parse failure: Extract maps this to password-protected.
+                throw;
+            }
             catch
             {
                 return null;
