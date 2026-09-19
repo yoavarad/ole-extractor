@@ -1,0 +1,31 @@
+PASSED (44.0s)
+
+[dotnet-build] === ExtractorOle\ExtractorOLE\ExtractorOLE.csproj ===
+Determining projects to restore...
+  All projects are up-to-date for restore.
+  NPOI.Core -> C:\Users\yoava\Projects\ole-extractor\.ydk\worktrees\T-3335d397\third_party\npoi\solution\Debug\net8.0\NPOI.Core.dll
+  b2xtranslator -> C:\Users\yoava\Projects\ole-extractor\.ydk\worktrees\T-3335d397\third_party\b2xtranslator\Common\bin\Debug\net8.0\b2xtranslator.dll
+  b2xtranslator.doc -> C:\Users\yoava\Projects\ole-extractor\.ydk\worktrees\T-3335d397\third_party\b2xtranslator\Doc\bin\Debug\net8.0\b2xtranslator.doc.dll
+  b2xtranslator.ppt -> C:\Users\yoava\Projects\ole-extractor\.ydk\worktrees\T-3335d397\third_party\b2xtranslator\Ppt\bin\Debug\net8.0\b2xtranslator.ppt.dll
+  ExtractorOLE -> C:\Users\yoava\Projects\ole-extractor\.ydk\worktrees\T-3335d397\ExtractorOle\ExtractorOLE\bin\Debug\net8.0\ExtractorOLE.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:02.61
+
+=== SampleGenerator\SampleGenerator.csproj ===
+Determining projects to restore...
+  All projects are up-to-date for restore.
+  SampleGenerator -> C:\Users\yoava\Projects\ole-extractor\.ydk\worktrees\T-3335d397\SampleGenerator\bin\Debug\net8.0\SampleGenerator.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:01.08
+[dotnet-format] === ExtractorOle\ExtractorOLE\ExtractorOLE.csproj ===
+
+
+=== SampleGenerator\SampleGenerator.csproj ===

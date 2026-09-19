@@ -1,0 +1,6 @@
+PASSED (41.2s)
+
+=== ExtractorOle\ExtractorOLE\ExtractorOLE.csproj ===
+
+
+=== SampleGenerator\SampleGenerator.csproj ===
