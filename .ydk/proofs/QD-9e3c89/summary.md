@@ -1,0 +1,1 @@
+Reconciles stale ydk bookkeeping with origin/main and merged PRs: ticks verified ACs and restores proofs for T-3b4e70f4, resolves T-a8b6b4ec stale blocked note and ACs, marks QD-7d3f72/QD-17b2a5 done, registers QD-9e3c89. .ydk files only; leftover T-3b4e70f4/T-f8ccfe08 worktrees removed locally.

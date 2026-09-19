@@ -1,0 +1,342 @@
+{
+  "task_id": null,
+  "timestamp": "2026-09-19T08:12:35Z",
+  "checks": [
+    {
+      "name": "dotnet-build",
+      "passed": true,
+      "output": "=== C:\\Users\\yoava\\Projects\\ole-extractor\\ExtractorOle\\ExtractorOLE\\ExtractorOLE.csproj ===\nDetermining projects to restore...\n  Restored C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Doc\\b2xtranslator.doc.csproj (in 110 ms).\n  Restored C:\\Users\\yoava\\Projects\\ole-extractor\\ExtractorOle\\ExtractorOLE\\ExtractorOLE.csproj (in 188 ms).\n  3 of 5 projects are up-to-date for restore.\n  NPOI.Core -> C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\npoi\\solution\\Debug\\net8.0\\NPOI.Core.dll\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\OpenXmlLib\\WordprocessingML\\WordprocessingDocument.cs(41,44): warning CS0108: 'WordprocessingDocument.DocumentType' hides inherited member 'OpenXmlPackage.DocumentType'. Use the new keyword if hiding was intended. [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\StructuredStorage\\Reader\\VirtualStream.cs(97,29): warning CS0809: Obsolete member 'VirtualStream.Read(byte[], int, int)' overrides non-obsolete member 'Stream.Read(byte[], int, int)' [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\OpenXmlLib\\SpreadsheetML\\SpreadsheetDocument.cs(48,44): warning CS0108: 'SpreadsheetDocument.DocumentType' hides inherited member 'OpenXmlPackage.DocumentType'. Use the new keyword if hiding was intended. [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\StructuredStorage\\Common\\Exceptions.cs(39,13): warning SYSLIB0051: 'Exception.Exception(SerializationInfo, StreamingContext)' is obsolete: 'This API supports obsolete formatter-based serialization. It should not be called or extended by application code.' (https://aka.ms/dotnet-warnings/SYSLIB0051) [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\StructuredStorage\\Common\\Exceptions.cs(25,13): warning SYSLIB0051: 'Exception.Exception(SerializationInfo, StreamingContext)' is obsolete: 'This API supports obsolete formatter-based serialization. It should not be called or extended by application code.' (https://aka.ms/dotnet-warnings/SYSLIB0051) [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\StructuredStorage\\Common\\Exceptions.cs(53,13): warning SYSLIB0051: 'Exception.Exception(SerializationInfo, StreamingContext)' is obsolete: 'This API supports obsolete formatter-based serialization. It should not be called or extended by application code.' (https://aka.ms/dotnet-warnings/SYSLIB0051) [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\StructuredStorage\\Common\\Exceptions.cs(67,13): warning SYSLIB0051: 'Exception.Exception(SerializationInfo, StreamingContext)' is obsolete: 'This API supports obsolete formatter-based serialization. It should not be called or extended by application code.' (https://aka.ms/dotnet-warnings/SYSLIB0051) [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\StructuredStorage\\Common\\Exceptions.cs(86,13): warning SYSLIB0051: 'Exception.Exception(SerializationInfo, StreamingContext)' is obsolete: 'This API supports obsolete formatter-based serialization. It should not be called or extended by application code.' (https://aka.ms/dotnet-warnings/SYSLIB0051) [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\StructuredStorage\\Common\\Exceptions.cs(100,13): warning SYSLIB0051: 'Exception.Exception(SerializationInfo, StreamingContext)' is obsolete: 'This API supports obsolete formatter-based serialization. It should not be called or extended by application code.' (https://aka.ms/dotnet-warnings/SYSLIB0051) [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\StructuredStorage\\Common\\Exceptions.cs(119,13): warning SYSLIB0051: 'Exception.Exception(SerializationInfo, StreamingContext)' is obsolete: 'This API supports obsolete formatter-based serialization. It should not be called or extended by application code.' (https://aka.ms/dotnet-warnings/SYSLIB0051) [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\StructuredStorage\\Common\\Exceptions.cs(133,13): warning SYSLIB0051: 'Exception.Exception(SerializationInfo, StreamingContext)' is obsolete: 'This API supports obsolete formatter-based serialization. It should not be called or extended by application code.' (https://aka.ms/dotnet-warnings/SYSLIB0051) [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\StructuredStorage\\Common\\Exceptions.cs(175,13): warning SYSLIB0051: 'Exception.Exception(SerializationInfo, StreamingContext)' is obsolete: 'This API supports obsolete formatter-based serialization. It should not be called or extended by application code.' (https://aka.ms/dotnet-warnings/SYSLIB0051) [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\StructuredStorage\\Common\\Exceptions.cs(147,13): warning SYSLIB0051: 'Exception.Exception(SerializationInfo, StreamingContext)' is obsolete: 'This API supports obsolete formatter-based serialization. It should not be called or extended by application code.' (https://aka.ms/dotnet-warnings/SYSLIB0051) [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\StructuredStorage\\Common\\Exceptions.cs(161,13): warning SYSLIB0051: 'Exception.Exception(SerializationInfo, StreamingContext)' is obsolete: 'This API supports obsolete formatter-based serialization. It should not be called or extended by application code.' (https://aka.ms/dotnet-warnings/SYSLIB0051) [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\StructuredStorage\\Common\\Exceptions.cs(189,13): warning SYSLIB0051: 'Exception.Exception(SerializationInfo, StreamingContext)' is obsolete: 'This API supports obsolete formatter-based serialization. It should not be called or extended by application code.' (https://aka.ms/dotnet-warnings/SYSLIB0051) [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\StructuredStorage\\Common\\Exceptions.cs(203,13): warning SYSLIB0051: 'Exception.Exception(SerializationInfo, StreamingContext)' is obsolete: 'This API supports obsolete formatter-based serialization. It should not be called or extended by application code.' (https://aka.ms/dotnet-warnings/SYSLIB0051) [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\StructuredStorage\\Common\\Exceptions.cs(217,13): warning SYSLIB0051: 'Exception.Exception(SerializationInfo, StreamingContext)' is obsolete: 'This API supports obsolete formatter-based serialization. It should not be called or extended by application code.' (https://aka.ms/dotnet-warnings/SYSLIB0051) [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\StructuredStorage\\Common\\Exceptions.cs(231,13): warning SYSLIB0051: 'Exception.Exception(SerializationInfo, StreamingContext)' is obsolete: 'This API supports obsolete formatter-based serialization. It should not be called or extended by application code.' (https://aka.ms/dotnet-warnings/SYSLIB0051) [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\StructuredStorage\\Common\\Exceptions.cs(245,13): warning SYSLIB0051: 'Exception.Exception(SerializationInfo, StreamingContext)' is obsolete: 'This API supports obsolete formatter-based serialization. It should not be called or extended by application code.' (https://aka.ms/dotnet-warnings/SYSLIB0051) [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\OfficeDrawing\\RegularContainer.cs(47,25): warning CS0162: Unreachable code detected [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\OpenXmlLib\\OpenXmlPartContainer.cs(224,67): warning SYSLIB0013: 'Uri.EscapeUriString(string)' is obsolete: 'Uri.EscapeUriString can corrupt the Uri string in some cases. Consider using Uri.EscapeDataString for query string components instead.' (https://aka.ms/dotnet-warnings/SYSLIB0013) [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\OpenXmlLib\\OpenXmlPartContainer.cs(229,63): warning SYSLIB0013: 'Uri.EscapeUriString(string)' is obsolete: 'Uri.EscapeUriString can corrupt the Uri string in some cases. Consider using Uri.EscapeDataString for query string components instead.' (https://aka.ms/dotnet-warnings/SYSLIB0013) [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\OfficeDrawing\\RegularContainer.cs(58,21): warning CA2200: Re-throwing caught exception changes stack information (https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2200) [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\n  b2xtranslator -> C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\bin\\Debug\\net8.0\\b2xtranslator.dll\n  b2xtranslator.doc -> C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Doc\\bin\\Debug\\net8.0\\b2xtranslator.doc.dll\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Ppt\\PptFileFormat\\PowerpointDocument.cs(125,21): warning CS0618: 'VirtualStream.Read(byte[])' is obsolete: 'Use IStreamReader.Read(byte[] array) instead.' [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Ppt\\b2xtranslator.ppt.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Ppt\\PresentationMLMapping\\ShapeTreeMapping.cs(1919,22): warning CS8073: The result of the expression is always 'true' since a value of type 'Rectangle' is never equal to 'null' of type 'Rectangle?' [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Ppt\\b2xtranslator.ppt.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Ppt\\PresentationMLMapping\\ShapeTreeMapping.cs(1939,21): warning CS8073: The result of the expression is always 'true' since a value of type 'Rectangle' is never equal to 'null' of type 'Rectangle?' [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Ppt\\b2xtranslator.ppt.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Ppt\\PresentationMLMapping\\SlideTransitionMapping.cs(16,34): warning CS0169: The field 'SlideTransitionMapping._stm' is never used [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Ppt\\b2xtranslator.ppt.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Ppt\\PresentationMLMapping\\ShapeTreeMapping.cs(83,21): warning CS0414: The field 'ShapeTreeMapping.groupcounter' is assigned but its value is never used [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Ppt\\b2xtranslator.ppt.csproj]\n  b2xtranslator.ppt -> C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Ppt\\bin\\Debug\\net8.0\\b2xtranslator.ppt.dll\n  ExtractorOLE -> C:\\Users\\yoava\\Projects\\ole-extractor\\ExtractorOle\\ExtractorOLE\\bin\\Debug\\net8.0\\ExtractorOLE.dll\n\nBuild succeeded.\n\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\OpenXmlLib\\WordprocessingML\\WordprocessingDocument.cs(41,44): warning CS0108: 'WordprocessingDocument.DocumentType' hides inherited member 'OpenXmlPackage.DocumentType'. Use the new keyword if hiding was intended. [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\StructuredStorage\\Reader\\VirtualStream.cs(97,29): warning CS0809: Obsolete member 'VirtualStream.Read(byte[], int, int)' overrides non-obsolete member 'Stream.Read(byte[], int, int)' [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\OpenXmlLib\\SpreadsheetML\\SpreadsheetDocument.cs(48,44): warning CS0108: 'SpreadsheetDocument.DocumentType' hides inherited member 'OpenXmlPackage.DocumentType'. Use the new keyword if hiding was intended. [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\StructuredStorage\\Common\\Exceptions.cs(39,13): warning SYSLIB0051: 'Exception.Exception(SerializationInfo, StreamingContext)' is obsolete: 'This API supports obsolete formatter-based serialization. It should not be called or extended by application code.' (https://aka.ms/dotnet-warnings/SYSLIB0051) [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\StructuredStorage\\Common\\Exceptions.cs(25,13): warning SYSLIB0051: 'Exception.Exception(SerializationInfo, StreamingContext)' is obsolete: 'This API supports obsolete formatter-based serialization. It should not be called or extended by application code.' (https://aka.ms/dotnet-warnings/SYSLIB0051) [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\StructuredStorage\\Common\\Exceptions.cs(53,13): warning SYSLIB0051: 'Exception.Exception(SerializationInfo, StreamingContext)' is obsolete: 'This API supports obsolete formatter-based serialization. It should not be called or extended by application code.' (https://aka.ms/dotnet-warnings/SYSLIB0051) [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\StructuredStorage\\Common\\Exceptions.cs(67,13): warning SYSLIB0051: 'Exception.Exception(SerializationInfo, StreamingContext)' is obsolete: 'This API supports obsolete formatter-based serialization. It should not be called or extended by application code.' (https://aka.ms/dotnet-warnings/SYSLIB0051) [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\StructuredStorage\\Common\\Exceptions.cs(86,13): warning SYSLIB0051: 'Exception.Exception(SerializationInfo, StreamingContext)' is obsolete: 'This API supports obsolete formatter-based serialization. It should not be called or extended by application code.' (https://aka.ms/dotnet-warnings/SYSLIB0051) [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\StructuredStorage\\Common\\Exceptions.cs(100,13): warning SYSLIB0051: 'Exception.Exception(SerializationInfo, StreamingContext)' is obsolete: 'This API supports obsolete formatter-based serialization. It should not be called or extended by application code.' (https://aka.ms/dotnet-warnings/SYSLIB0051) [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\StructuredStorage\\Common\\Exceptions.cs(119,13): warning SYSLIB0051: 'Exception.Exception(SerializationInfo, StreamingContext)' is obsolete: 'This API supports obsolete formatter-based serialization. It should not be called or extended by application code.' (https://aka.ms/dotnet-warnings/SYSLIB0051) [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\StructuredStorage\\Common\\Exceptions.cs(133,13): warning SYSLIB0051: 'Exception.Exception(SerializationInfo, StreamingContext)' is obsolete: 'This API supports obsolete formatter-based serialization. It should not be called or extended by application code.' (https://aka.ms/dotnet-warnings/SYSLIB0051) [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\StructuredStorage\\Common\\Exceptions.cs(175,13): warning SYSLIB0051: 'Exception.Exception(SerializationInfo, StreamingContext)' is obsolete: 'This API supports obsolete formatter-based serialization. It should not be called or extended by application code.' (https://aka.ms/dotnet-warnings/SYSLIB0051) [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\StructuredStorage\\Common\\Exceptions.cs(147,13): warning SYSLIB0051: 'Exception.Exception(SerializationInfo, StreamingContext)' is obsolete: 'This API supports obsolete formatter-based serialization. It should not be called or extended by application code.' (https://aka.ms/dotnet-warnings/SYSLIB0051) [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\StructuredStorage\\Common\\Exceptions.cs(161,13): warning SYSLIB0051: 'Exception.Exception(SerializationInfo, StreamingContext)' is obsolete: 'This API supports obsolete formatter-based serialization. It should not be called or extended by application code.' (https://aka.ms/dotnet-warnings/SYSLIB0051) [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\StructuredStorage\\Common\\Exceptions.cs(189,13): warning SYSLIB0051: 'Exception.Exception(SerializationInfo, StreamingContext)' is obsolete: 'This API supports obsolete formatter-based serialization. It should not be called or extended by application code.' (https://aka.ms/dotnet-warnings/SYSLIB0051) [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\StructuredStorage\\Common\\Exceptions.cs(203,13): warning SYSLIB0051: 'Exception.Exception(SerializationInfo, StreamingContext)' is obsolete: 'This API supports obsolete formatter-based serialization. It should not be called or extended by application code.' (https://aka.ms/dotnet-warnings/SYSLIB0051) [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\StructuredStorage\\Common\\Exceptions.cs(217,13): warning SYSLIB0051: 'Exception.Exception(SerializationInfo, StreamingContext)' is obsolete: 'This API supports obsolete formatter-based serialization. It should not be called or extended by application code.' (https://aka.ms/dotnet-warnings/SYSLIB0051) [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\StructuredStorage\\Common\\Exceptions.cs(231,13): warning SYSLIB0051: 'Exception.Exception(SerializationInfo, StreamingContext)' is obsolete: 'This API supports obsolete formatter-based serialization. It should not be called or extended by application code.' (https://aka.ms/dotnet-warnings/SYSLIB0051) [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\StructuredStorage\\Common\\Exceptions.cs(245,13): warning SYSLIB0051: 'Exception.Exception(SerializationInfo, StreamingContext)' is obsolete: 'This API supports obsolete formatter-based serialization. It should not be called or extended by application code.' (https://aka.ms/dotnet-warnings/SYSLIB0051) [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\OfficeDrawing\\RegularContainer.cs(47,25): warning CS0162: Unreachable code detected [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\OpenXmlLib\\OpenXmlPartContainer.cs(224,67): warning SYSLIB0013: 'Uri.EscapeUriString(string)' is obsolete: 'Uri.EscapeUriString can corrupt the Uri string in some cases. Consider using Uri.EscapeDataString for query string components instead.' (https://aka.ms/dotnet-warnings/SYSLIB0013) [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\OpenXmlLib\\OpenXmlPartContainer.cs(229,63): warning SYSLIB0013: 'Uri.EscapeUriString(string)' is obsolete: 'Uri.EscapeUriString can corrupt the Uri string in some cases. Consider using Uri.EscapeDataString for query string components instead.' (https://aka.ms/dotnet-warnings/SYSLIB0013) [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\OfficeDrawing\\RegularContainer.cs(58,21): warning CA2200: Re-throwing caught exception changes stack information (https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2200) [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\b2xtranslator.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Ppt\\PptFileFormat\\PowerpointDocument.cs(125,21): warning CS0618: 'VirtualStream.Read(byte[])' is obsolete: 'Use IStreamReader.Read(byte[] array) instead.' [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Ppt\\b2xtranslator.ppt.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Ppt\\PresentationMLMapping\\ShapeTreeMapping.cs(1919,22): warning CS8073: The result of the expression is always 'true' since a value of type 'Rectangle' is never equal to 'null' of type 'Rectangle?' [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Ppt\\b2xtranslator.ppt.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Ppt\\PresentationMLMapping\\ShapeTreeMapping.cs(1939,21): warning CS8073: The result of the expression is always 'true' since a value of type 'Rectangle' is never equal to 'null' of type 'Rectangle?' [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Ppt\\b2xtranslator.ppt.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Ppt\\PresentationMLMapping\\SlideTransitionMapping.cs(16,34): warning CS0169: The field 'SlideTransitionMapping._stm' is never used [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Ppt\\b2xtranslator.ppt.csproj]\nC:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Ppt\\PresentationMLMapping\\ShapeTreeMapping.cs(83,21): warning CS0414: The field 'ShapeTreeMapping.groupcounter' is assigned but its value is never used [C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Ppt\\b2xtranslator.ppt.csproj]\n    28 Warning(s)\n    0 Error(s)\n\nTime Elapsed 00:00:09.09\n\n=== C:\\Users\\yoava\\Projects\\ole-extractor\\SampleGenerator\\SampleGenerator.csproj ===\nDetermining projects to restore...\n  All projects are up-to-date for restore.\n  SampleGenerator -> C:\\Users\\yoava\\Projects\\ole-extractor\\SampleGenerator\\bin\\Debug\\net8.0\\SampleGenerator.dll\n\nBuild succeeded.\n    0 Warning(s)\n    0 Error(s)\n\nTime Elapsed 00:00:01.11",
+      "duration_seconds": 10.9,
+      "detail": {
+        "targets": [
+          "C:\\Users\\yoava\\Projects\\ole-extractor\\ExtractorOle\\ExtractorOLE\\ExtractorOLE.csproj",
+          "C:\\Users\\yoava\\Projects\\ole-extractor\\SampleGenerator\\SampleGenerator.csproj"
+        ]
+      }
+    },
+    {
+      "name": "dotnet-format",
+      "passed": true,
+      "output": "=== C:\\Users\\yoava\\Projects\\ole-extractor\\ExtractorOle\\ExtractorOLE\\ExtractorOLE.csproj ===\n\n\n=== C:\\Users\\yoava\\Projects\\ole-extractor\\SampleGenerator\\SampleGenerator.csproj ===\n",
+      "duration_seconds": 32.4,
+      "detail": {
+        "targets": [
+          "C:\\Users\\yoava\\Projects\\ole-extractor\\ExtractorOle\\ExtractorOLE\\ExtractorOLE.csproj",
+          "C:\\Users\\yoava\\Projects\\ole-extractor\\SampleGenerator\\SampleGenerator.csproj"
+        ]
+      }
+    },
+    {
+      "name": "dotnet-quality",
+      "passed": true,
+      "output": "[dotnet-build] === C:\\Users\\yoava\\Projects\\ole-extractor\\ExtractorOle\\ExtractorOLE\\ExtractorOLE.csproj ===\nDetermining projects to restore...\n  All projects are up-to-date for restore.\n  NPOI.Core -> C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\npoi\\solution\\Debug\\net8.0\\NPOI.Core.dll\n  b2xtranslator -> C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\bin\\Debug\\net8.0\\b2xtranslator.dll\n  b2xtranslator.doc -> C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Doc\\bin\\Debug\\net8.0\\b2xtranslator.doc.dll\n  b2xtranslator.ppt -> C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Ppt\\bin\\Debug\\net8.0\\b2xtranslator.ppt.dll\n  ExtractorOLE -> C:\\Users\\yoava\\Projects\\ole-extractor\\ExtractorOle\\ExtractorOLE\\bin\\Debug\\net8.0\\ExtractorOLE.dll\n\nBuild succeeded.\n    0 Warning(s)\n    0 Error(s)\n\nTime Elapsed 00:00:02.61\n\n=== C:\\Users\\yoava\\Projects\\ole-extractor\\SampleGenerator\\SampleGenerator.csproj ===\nDetermining projects to restore...\n  All projects are up-to-date for restore.\n  SampleGenerator -> C:\\Users\\yoava\\Projects\\ole-extractor\\SampleGenerator\\bin\\Debug\\net8.0\\SampleGenerator.dll\n\nBuild succeeded.\n    0 Warning(s)\n    0 Error(s)\n\nTime Elapsed 00:00:00.78\n[dotnet-format] === C:\\Users\\yoava\\Projects\\ole-extractor\\ExtractorOle\\ExtractorOLE\\ExtractorOLE.csproj ===\n\n\n=== C:\\Users\\yoava\\Projects\\ole-extractor\\SampleGenerator\\SampleGenerator.csproj ===\n",
+      "duration_seconds": 34.3,
+      "detail": {
+        "checks": [
+          "dotnet-build",
+          "dotnet-format"
+        ],
+        "results": {
+          "dotnet-build": {
+            "name": "dotnet-build",
+            "passed": true,
+            "output": "=== C:\\Users\\yoava\\Projects\\ole-extractor\\ExtractorOle\\ExtractorOLE\\ExtractorOLE.csproj ===\nDetermining projects to restore...\n  All projects are up-to-date for restore.\n  NPOI.Core -> C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\npoi\\solution\\Debug\\net8.0\\NPOI.Core.dll\n  b2xtranslator -> C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\bin\\Debug\\net8.0\\b2xtranslator.dll\n  b2xtranslator.doc -> C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Doc\\bin\\Debug\\net8.0\\b2xtranslator.doc.dll\n  b2xtranslator.ppt -> C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Ppt\\bin\\Debug\\net8.0\\b2xtranslator.ppt.dll\n  ExtractorOLE -> C:\\Users\\yoava\\Projects\\ole-extractor\\ExtractorOle\\ExtractorOLE\\bin\\Debug\\net8.0\\ExtractorOLE.dll\n\nBuild succeeded.\n    0 Warning(s)\n    0 Error(s)\n\nTime Elapsed 00:00:02.61\n\n=== C:\\Users\\yoava\\Projects\\ole-extractor\\SampleGenerator\\SampleGenerator.csproj ===\nDetermining projects to restore...\n  All projects are up-to-date for restore.\n  SampleGenerator -> C:\\Users\\yoava\\Projects\\ole-extractor\\SampleGenerator\\bin\\Debug\\net8.0\\SampleGenerator.dll\n\nBuild succeeded.\n    0 Warning(s)\n    0 Error(s)\n\nTime Elapsed 00:00:00.78",
+            "duration_seconds": 4.0,
+            "detail": {
+              "targets": [
+                "C:\\Users\\yoava\\Projects\\ole-extractor\\ExtractorOle\\ExtractorOLE\\ExtractorOLE.csproj",
+                "C:\\Users\\yoava\\Projects\\ole-extractor\\SampleGenerator\\SampleGenerator.csproj"
+              ]
+            }
+          },
+          "dotnet-format": {
+            "name": "dotnet-format",
+            "passed": true,
+            "output": "=== C:\\Users\\yoava\\Projects\\ole-extractor\\ExtractorOle\\ExtractorOLE\\ExtractorOLE.csproj ===\n\n\n=== C:\\Users\\yoava\\Projects\\ole-extractor\\SampleGenerator\\SampleGenerator.csproj ===\n",
+            "duration_seconds": 30.1,
+            "detail": {
+              "targets": [
+                "C:\\Users\\yoava\\Projects\\ole-extractor\\ExtractorOle\\ExtractorOLE\\ExtractorOLE.csproj",
+                "C:\\Users\\yoava\\Projects\\ole-extractor\\SampleGenerator\\SampleGenerator.csproj"
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "ai-code-review",
+      "passed": true,
+      "output": "SKIPPED: plugin error — AsyncMessages.stream() got an unexpected keyword argument 'temperature'",
+      "duration_seconds": 0.0,
+      "detail": {
+        "skipped": true,
+        "error": "AsyncMessages.stream() got an unexpected keyword argument 'temperature'"
+      }
+    },
+    {
+      "name": "cli-error-handling",
+      "passed": true,
+      "output": "PASS: no src/commands/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "cli-output-format",
+      "passed": true,
+      "output": "PASS: no src/commands/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "fastapi-adapter-isolation",
+      "passed": true,
+      "output": "PASS: no app/adapters/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "fastapi-core-purity",
+      "passed": true,
+      "output": "PASS: no app/core/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "fastapi-no-mocks-e2e",
+      "passed": true,
+      "output": "PASS: no tests/e2e/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "fastapi-no-mocks-integration",
+      "passed": true,
+      "output": "PASS: no tests/integration/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "fastapi-route-delegation",
+      "passed": true,
+      "output": "PASS: no app/api/routes/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "fastapi-route-splitting",
+      "passed": true,
+      "output": "PASS: no app/api/routes/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "fastapi-service-sync",
+      "passed": true,
+      "output": "PASS: no app/core/services/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-file-sizes",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-fsd-imports",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-fsd-layers",
+      "passed": true,
+      "output": "WARN: node_modules not installed -- skipping FSD layer check. Run: bun install",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-module-density",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-no-direct-env",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-no-direct-fetch",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-no-direct-ui-imports",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-no-query-key-strings",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-no-useeffect-fetch",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-no-zustand-module-level",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-page-purity",
+      "passed": true,
+      "output": "PASS: no src/app/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-server-client-boundary",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-sse-abort-controller",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "python-file-length",
+      "passed": true,
+      "output": "PASS: no app/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "python-no-future-annotations",
+      "passed": true,
+      "output": "PASS: no app/api/routes/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "react-fsd-imports",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "spec-alignment",
+      "passed": true,
+      "output": "No spec references provided — skipping alignment check",
+      "duration_seconds": 0.9,
+      "detail": {
+        "skipped": true
+      }
+    },
+    {
+      "name": "terraform-dangling-resources",
+      "passed": true,
+      "output": "PASS: No dangling resource references detected.",
+      "duration_seconds": 0.1,
+      "detail": {
+        "errors": 0
+      }
+    },
+    {
+      "name": "terraform-external-iam",
+      "passed": true,
+      "output": "PASS: No wildcard IAM principals found.",
+      "duration_seconds": 0.1,
+      "detail": null
+    },
+    {
+      "name": "terraform-format",
+      "passed": true,
+      "output": "SKIP: No infra/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "terraform-glacier-public",
+      "passed": true,
+      "output": "PASS: No public Glacier vault access detected.",
+      "duration_seconds": 0.1,
+      "detail": null
+    },
+    {
+      "name": "terraform-paravirt-ec2",
+      "passed": true,
+      "output": "PASS: No paravirtualized instance types found.",
+      "duration_seconds": 0.1,
+      "detail": null
+    },
+    {
+      "name": "terraform-public-ami",
+      "passed": true,
+      "output": "PASS: AMI usage checks passed.",
+      "duration_seconds": 0.1,
+      "detail": {
+        "errors": 0
+      }
+    },
+    {
+      "name": "terraform-security",
+      "passed": true,
+      "output": "SKIP: No infra/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "terraform-tagging",
+      "passed": true,
+      "output": "SKIP: No infra/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "dotnet-test",
+      "passed": true,
+      "output": "Determining projects to restore...\n  Restored C:\\Users\\yoava\\Projects\\ole-extractor\\ExtractorOle\\ExtractorOLE.StressHarness\\ExtractorOLE.StressHarness.csproj (in 227 ms).\n  Restored C:\\Users\\yoava\\Projects\\ole-extractor\\ExtractorOle\\ExtractorOLE.Tests\\ExtractorOLE.Tests.csproj (in 227 ms).\n  6 of 8 projects are up-to-date for restore.\n  SampleGenerator -> C:\\Users\\yoava\\Projects\\ole-extractor\\SampleGenerator\\bin\\Debug\\net8.0\\SampleGenerator.dll\n  b2xtranslator -> C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\bin\\Debug\\net8.0\\b2xtranslator.dll\n  NPOI.Core -> C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\npoi\\solution\\Debug\\net8.0\\NPOI.Core.dll\n  b2xtranslator.doc -> C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Doc\\bin\\Debug\\net8.0\\b2xtranslator.doc.dll\n  b2xtranslator.ppt -> C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Ppt\\bin\\Debug\\net8.0\\b2xtranslator.ppt.dll\n  ExtractorOLE -> C:\\Users\\yoava\\Projects\\ole-extractor\\ExtractorOle\\ExtractorOLE\\bin\\Debug\\net8.0\\ExtractorOLE.dll\n  ExtractorOLE.StressHarness -> C:\\Users\\yoava\\Projects\\ole-extractor\\ExtractorOle\\ExtractorOLE.StressHarness\\bin\\Debug\\net8.0\\ExtractorOLE.StressHarness.dll\n  ExtractorOLE.Tests -> C:\\Users\\yoava\\Projects\\ole-extractor\\ExtractorOle\\ExtractorOLE.Tests\\bin\\Debug\\net8.0\\ExtractorOLE.Tests.dll\nTest run for C:\\Users\\yoava\\Projects\\ole-extractor\\ExtractorOle\\ExtractorOLE.Tests\\bin\\Debug\\net8.0\\ExtractorOLE.Tests.dll (.NETCoreApp,Version=v8.0)\nA total of 1 test files matched the specified pattern.\n\nPassed!  - Failed:     0, Passed:   213, Skipped:     0, Total:   213, Duration: 13 s - ExtractorOLE.Tests.dll (net8.0)",
+      "duration_seconds": 21.5,
+      "detail": {
+        "target": "C:\\Users\\yoava\\Projects\\ole-extractor\\ExtractorOle\\ExtractorOLE.Tests\\ExtractorOLE.Tests.csproj",
+        "failed": 0,
+        "passed_count": 213
+      }
+    },
+    {
+      "name": "tests-pytest",
+      "passed": true,
+      "output": "No 'tests/' directory found — skipped (non-Python project?)",
+      "duration_seconds": 0.0,
+      "detail": null
+    }
+  ],
+  "all_passed": true,
+  "total_duration_seconds": 7.9
+}
