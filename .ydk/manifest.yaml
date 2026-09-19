@@ -968,7 +968,7 @@ tasks:
   T-f8ccfe08:
     title: Retarget b2xtranslator Doc module to net8.0 and wire .doc body-text extraction
     story: S-32677db6
-    status: open
+    status: done
     dependencies:
     - task_id: T-c4123b53
       type: discovered-from

@@ -2,7 +2,7 @@
 id: T-f8ccfe08
 title: Retarget b2xtranslator Doc module to net8.0 and wire .doc body-text extraction
 story: S-32677db6
-status: open
+status: done
 assignee: null
 labels: []
 dependencies:
@@ -24,7 +24,7 @@ acceptance_criteria:
     and feeds it through the existing OpenXml docx extraction path; unconvertible/corrupt
     .doc input degrades gracefully (no crash, documented behavior); wired into DI/FormatDispatchRegistry
     following T-517f89c5's PptOpenStrategy pattern
-  done: false
+  done: true
 milestone: null
 complexity: null
 gates:
@@ -36,7 +36,7 @@ gates:
     issue_url: https://github.com/yoavarad/b2xtranslator/issues/10
   resolved_at: '2026-09-19T07:12:10Z'
 created: '2026-09-16T20:03:25Z'
-updated: '2026-09-19T07:12:12Z'
+updated: '2026-09-19T07:48:37Z'
 ---
 
 ## Description
