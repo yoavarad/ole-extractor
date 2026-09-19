@@ -98,7 +98,7 @@ namespace ExtractorOLE.Helpers.MimeDetection
         // bytes the file's own FAT claims to describe, without letting OpenMcdf walk
         // the structure first. OpenMcdf's header type is internal, so this reads the
         // documented fixed-offset fields directly.
-        private static bool TryGetDeclaredCfbTotalSize(byte[] bytes, out ulong declaredTotalBytes, out uint fatSectorCount, out int sectorSize)
+        internal static bool TryGetDeclaredCfbTotalSize(byte[] bytes, out ulong declaredTotalBytes, out uint fatSectorCount, out int sectorSize)
         {
             declaredTotalBytes = 0;
             fatSectorCount = 0;

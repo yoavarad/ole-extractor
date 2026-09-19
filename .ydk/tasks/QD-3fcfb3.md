@@ -1,20 +1,20 @@
 ---
-id: QD-9e3c89
-title: 'Fix stale bookkeeping: reconcile T-3b4e70f4, T-f8ccfe08, T-a8b6b4ec, QD-7d3f72,
-  QD-17b2a5 with merged PRs and remove leftover worktrees'
-status: done
+id: QD-3fcfb3
+title: Unblock T-b62ffe04, add sample-generation subtask T-f0963fc3, finalize QD-9e3c89
+status: in-review
 type: quickdev
-updated: '2026-09-19T16:27:53Z'
-labels: []
+updated: '2026-09-19T16:42:05Z'
+labels:
+- in-review
 ---
 
-Fix stale bookkeeping: mark T-3b4e70f4 done (PR #107 merged) and remove its leftover worktree
-### 2026-09-19T08:14:08Z (UTC)
+Unblock T-b62ffe04, add sample-generation subtask T-f0963fc3, finalize QD-9e3c89
+### 2026-09-19T16:42:05Z (UTC)
 ## Verification Proof
 
-OK dotnet-build (10.9s)
-OK dotnet-format (32.4s)
-OK dotnet-quality (34.3s)
+OK dotnet-build (0.1s)
+OK dotnet-format (0.1s)
+OK dotnet-quality (0.4s)
 OK ai-code-review (0.0s)
 OK cli-error-handling (0.0s)
 OK cli-output-format (0.0s)
@@ -41,16 +41,16 @@ OK nextjs-sse-abort-controller (0.0s)
 OK python-file-length (0.0s)
 OK python-no-future-annotations (0.0s)
 OK react-fsd-imports (0.0s)
-OK spec-alignment (0.9s)
-OK terraform-dangling-resources (0.1s)
-OK terraform-external-iam (0.1s)
+OK spec-alignment (1.7s)
+OK terraform-dangling-resources (0.0s)
+OK terraform-external-iam (0.0s)
 OK terraform-format (0.0s)
-OK terraform-glacier-public (0.1s)
-OK terraform-paravirt-ec2 (0.1s)
-OK terraform-public-ami (0.1s)
+OK terraform-glacier-public (0.0s)
+OK terraform-paravirt-ec2 (0.0s)
+OK terraform-public-ami (0.0s)
 OK terraform-security (0.0s)
 OK terraform-tagging (0.0s)
-OK dotnet-test (21.5s)
+OK dotnet-test (0.1s)
 OK tests-pytest (0.0s)
 
-PR: https://github.com/yoavarad/ole-extractor/pull/109
+PR: https://github.com/yoavarad/ole-extractor/pull/113
