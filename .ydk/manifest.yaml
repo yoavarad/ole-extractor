@@ -650,7 +650,7 @@ tasks:
     title: Implement unsupported-format rejection and null-argument validation in
       Extract
     story: S-51d277f1
-    status: open
+    status: done
     dependencies:
     - T-3b4e70f4
     component_refs:

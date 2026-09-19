@@ -2,7 +2,7 @@
 id: T-a2b91dc6
 title: Implement unsupported-format rejection and null-argument validation in Extract
 story: S-51d277f1
-status: open
+status: done
 assignee: null
 labels: []
 dependencies:
@@ -30,7 +30,7 @@ milestone: null
 complexity: null
 gates: []
 created: '2026-08-19T12:42:59Z'
-updated: '2026-08-19T12:43:00Z'
+updated: '2026-09-19T16:38:08Z'
 ---
 
 ## Description
