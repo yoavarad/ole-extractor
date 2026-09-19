@@ -51,7 +51,10 @@ namespace ExtractorOLE
         /// A null request or null required field throws <see cref="ArgumentNullException"/>
         /// first; then the pre-parse guardrails reject file-too-large and
         /// oversized-nested-content input; then a mime type that is not one of the six
-        /// supported formats throws <see cref="Exceptions.UnsupportedFormatException"/>.
+        /// supported formats throws <see cref="Exceptions.UnsupportedFormatException"/>;
+        /// then a parse-time preflight and open raise the specific
+        /// password-protected / truncated-container / corrupt-file errors instead of
+        /// returning an empty result.
         /// </summary>
         public DocumentExtractionResult Extract(ExtractionRequest request)
         {
@@ -61,8 +64,8 @@ namespace ExtractorOLE
             var format = ResolveFormat(request.DetectedMimeType)
                          ?? throw new Exceptions.UnsupportedFormatException(request.DetectedMimeType);
 
-            var result = _registry.GetOpenStrategy(format)?.Open(request.FileBytes)
-                         ?? new DocumentExtractionResult();
+            ParseTimeErrorGuard.Preflight(request.FileBytes, IsOoxml(format));
+            var result = ParseTimeErrorGuard.OpenOrThrow(_registry.GetOpenStrategy(format), request.FileBytes, request.DetectedMimeType);
             result.MimeType = request.DetectedMimeType;
 
             var extractor = _registry.GetTextExtractor(format);
@@ -82,6 +85,9 @@ namespace ExtractorOLE
             if (request.FileName == null) throw new ArgumentNullException(nameof(request.FileName));
             if (request.DetectedMimeType == null) throw new ArgumentNullException(nameof(request.DetectedMimeType));
         }
+
+        private static bool IsOoxml(OfficeMimeTypeEnum format) =>
+            format is OfficeMimeTypeEnum.Word or OfficeMimeTypeEnum.Excel or OfficeMimeTypeEnum.PowerPoint;
 
         // Reverse of IExtractionHelper.MimeFor over the six supported formats.
         private OfficeMimeTypeEnum? ResolveFormat(string? mime)
