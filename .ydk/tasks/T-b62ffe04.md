@@ -32,7 +32,7 @@ milestone: null
 complexity: null
 gates: []
 created: '2026-08-19T12:47:23Z'
-updated: '2026-09-19T21:56:04Z'
+updated: '2026-09-19T21:58:06Z'
 ---
 
 ## Description
@@ -96,3 +96,5 @@ OK dotnet-test (58.0s)
 OK tests-pytest (0.0s)
 
 PR: https://github.com/yoavarad/ole-extractor/pull/119
+### 2026-09-19T21:58:06Z (UTC)
+PR https://github.com/yoavarad/ole-extractor/pull/119. Benchmarks for 6 formats x 10MB/~100MB run against Extract(ExtractionRequest); all 12 cases met P95 targets (10MB max 174.78 ms xls; 100MB max 2461 ms xls vs 5 s). Alloc B/input B: doc 1.29, docx 8.61, xlsx 5.82, pptx 6.07, ppt 14.83, xls 39.48 (10MB tier; 100MB tier ~same). Caveats: doc/ppt samples are padded fixtures with tiny extracted text (283/74 chars) so they measure container open only; 100MB tier uses 15 iterations (P95 near max); earlier ~14s xls one-off not reproduced (cold 2.38s, warm mean 2.04s). Results in .ydk/proofs/T-b62ffe04/benchmark-results.md.
