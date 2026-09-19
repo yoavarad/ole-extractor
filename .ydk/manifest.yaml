@@ -203,6 +203,7 @@ stories:
     - T-d91b2a46
     - T-4b624fef
     - T-f96fa73d
+    - T-b856b14e
   S-da936361:
     title: Curated real-world samples (2 per format)
     epic: E-c2846232
@@ -953,10 +954,11 @@ tasks:
     dependencies: []
     component_refs: []
   T-07571b32:
-    title: Generate remaining 10 legacy-format samples once ADR-001 lands
+    title: Generate remaining 10 legacy-format samples (doc/xls/ppt)
     story: S-6bc8566f
-    status: blocked-by-ADR-001
-    dependencies: []
+    status: open
+    dependencies:
+    - T-b856b14e
     component_refs:
     - ydk:nfr:extraction/nesting-depth-guard
   T-48110fcb:
@@ -986,3 +988,10 @@ tasks:
     - ydk:nfr:extraction/extraction-latency
     - ydk:nfr:extraction/memory-ceiling
     - ydk:nfr:extraction/max-file-size
+  T-b856b14e:
+    title: Implement legacy-format generators in SampleGenerator (.doc/.xls/.ppt)
+    story: S-41ebb945
+    status: open
+    dependencies: []
+    component_refs:
+    - ydk:req:extraction/unicode-fidelity
