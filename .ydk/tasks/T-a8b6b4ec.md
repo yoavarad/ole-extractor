@@ -4,8 +4,7 @@ title: Implement doc flat-text extraction with unicode fidelity
 story: S-32677db6
 status: done
 assignee: null
-labels:
-- in-review
+labels: []
 dependencies:
 - T-c4123b53
 - T-94570c2b
@@ -20,18 +19,18 @@ test_strategy: 'Corpus-sample-backed: unit test against a hand-crafted multiling
   corpus exists.'
 acceptance_criteria:
 - text: ExtractedText is empty string (never null) for a .doc with no body text
-  done: false
+  done: true
 - text: ExtractedText for a multilingual .doc fixture matches the expected Unicode
     string exactly, byte-for-byte, per the NPOI i18n validation findings from T-94570c2b
-  done: false
+  done: true
 - text: No Unicode normalization form is applied that changes the source character
     sequence
-  done: false
+  done: true
 milestone: null
 complexity: null
 gates: []
 created: '2026-08-19T12:42:56Z'
-updated: '2026-09-18T21:31:33Z'
+updated: '2026-09-19T08:09:17Z'
 ---
 
 ## Description
@@ -101,3 +100,5 @@ OK dotnet-test (16.2s)
 OK tests-pytest (0.0s)
 
 PR: https://github.com/yoavarad/ole-extractor/pull/102
+### 2026-09-19T08:09:17Z (UTC)
+**Resolved:** The 2026-09-18T19:55:07Z 'push denied' block is obsolete. The b2xtranslator net8.0 retarget merged upstream (yoavarad/b2xtranslator#11) and the submodule is pinned to master (PR #96, #106). PR #102 merged; T-f8ccfe08 was closed as delivered by this task (PR #108). All 3 acceptance criteria confirmed by ExtractorOLE.Tests/Doc/DocTextExtractorTests.cs (empty-not-null, exact multilingual match, no normalization); DocTextExtractorTests + MainExtractorExtractRequestTests pass (21/21) on main.
