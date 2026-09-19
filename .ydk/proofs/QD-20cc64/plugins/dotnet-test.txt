@@ -1,0 +1,20 @@
+PASSED (25.9s)
+
+Determining projects to restore...
+  Restored C:\Users\yoava\Projects\ole-extractor\.ydk\worktrees\status-sync\ExtractorOle\ExtractorOLE.Tests\ExtractorOLE.Tests.csproj (in 251 ms).
+  Restored C:\Users\yoava\Projects\ole-extractor\.ydk\worktrees\status-sync\ExtractorOle\ExtractorOLE.StressHarness\ExtractorOLE.StressHarness.csproj (in 251 ms).
+  6 of 8 projects are up-to-date for restore.
+  b2xtranslator -> C:\Users\yoava\Projects\ole-extractor\.ydk\worktrees\status-sync\third_party\b2xtranslator\Common\bin\Debug\net8.0\b2xtranslator.dll
+  NPOI.Core -> C:\Users\yoava\Projects\ole-extractor\.ydk\worktrees\status-sync\third_party\npoi\solution\Debug\net8.0\NPOI.Core.dll
+  b2xtranslator.ppt -> C:\Users\yoava\Projects\ole-extractor\.ydk\worktrees\status-sync\third_party\b2xtranslator\Ppt\bin\Debug\net8.0\b2xtranslator.ppt.dll
+  b2xtranslator.doc -> C:\Users\yoava\Projects\ole-extractor\.ydk\worktrees\status-sync\third_party\b2xtranslator\Doc\bin\Debug\net8.0\b2xtranslator.doc.dll
+  SampleGenerator -> C:\Users\yoava\Projects\ole-extractor\.ydk\worktrees\status-sync\SampleGenerator\bin\Debug\net8.0\SampleGenerator.dll
+  ExtractorOLE -> C:\Users\yoava\Projects\ole-extractor\.ydk\worktrees\status-sync\ExtractorOle\ExtractorOLE\bin\Debug\net8.0\ExtractorOLE.dll
+  ExtractorOLE.StressHarness -> C:\Users\yoava\Projects\ole-extractor\.ydk\worktrees\status-sync\ExtractorOle\ExtractorOLE.StressHarness\bin\Debug\net8.0\ExtractorOLE.StressHarness.dll
+  ExtractorOLE.Tests -> C:\Users\yoava\Projects\ole-extractor\.ydk\worktrees\status-sync\ExtractorOle\ExtractorOLE.Tests\bin\Debug\net8.0\ExtractorOLE.Tests.dll
+Test run for C:\Users\yoava\Projects\ole-extractor\.ydk\worktrees\status-sync\ExtractorOle\ExtractorOLE.Tests\bin\Debug\net8.0\ExtractorOLE.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:13.49]     ExtractorOLE.Tests.SampleGeneration.BenchmarkSampleGeneratorTests.GeneratedBenchmarkSample_MatchesManifestAndExtractsNonEmptyText [SKIP]
+  Skipped ExtractorOLE.Tests.SampleGeneration.BenchmarkSampleGeneratorTests.GeneratedBenchmarkSample_MatchesManifestAndExtractsNonEmptyText [1 ms]
+
+Passed!  - Failed:     0, Passed:   271, Skipped:     1, Total:   272, Duration: 17 s - ExtractorOLE.Tests.dll (net8.0)
