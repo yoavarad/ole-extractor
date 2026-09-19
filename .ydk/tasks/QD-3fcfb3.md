@@ -4,8 +4,7 @@ title: Unblock T-b62ffe04, add sample-generation subtask T-f0963fc3, finalize QD
 status: done
 type: quickdev
 updated: '2026-09-19T16:42:05Z'
-labels:
-- in-review
+labels: []
 ---
 
 Unblock T-b62ffe04, add sample-generation subtask T-f0963fc3, finalize QD-9e3c89
