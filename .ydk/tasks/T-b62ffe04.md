@@ -2,9 +2,10 @@
 id: T-b62ffe04
 title: Implement Extract() latency/allocation benchmarks per format
 story: S-709fe2de
-status: open
+status: in-review
 assignee: null
-labels: []
+labels:
+- in-review
 dependencies:
 - T-fb06300e
 - T-71ab3bc0
@@ -21,17 +22,17 @@ test_strategy: "No test \u2014 this task IS the profiling mechanism referenced b
 acceptance_criteria:
 - text: BenchmarkDotNet project runs Extract() against a fixed 10MB and a fixed ~100MB
     sample for each of the 6 formats
-  done: false
+  done: true
 - text: Each run reports P50/P95 latency and allocated-bytes-per-input-byte
-  done: false
+  done: true
 - text: 10MB benchmarks target P95 < 500ms and 100MB benchmarks target P95 < 5s, per
     extraction-latency's target
-  done: false
+  done: true
 milestone: null
 complexity: null
 gates: []
 created: '2026-08-19T12:47:23Z'
-updated: '2026-09-19T16:26:56Z'
+updated: '2026-09-19T21:56:04Z'
 ---
 
 ## Description
@@ -50,3 +51,48 @@ Implement BenchmarkDotNet benchmarks running Extract() against a fixed 10MB and 
 2. Dependency on the Extract guardrail/error tasks T-3335d397 / T-a2b91dc6 / T-61477563: NOT added; no spec text justifies it. Neither testing-strategy.md nor ADR-002 mention them, and a benchmark only exercises the success path. Risk, recorded so the implementer does not time the wrong thing: `MainExtractor.Extract(ExtractionRequest)` on main trusts `DetectedMimeType` and runs no size check at all today; T-3335d397 will add file-too-large before parsing at `MimeDetectionLimits.MaxFileSizeBytes` = 104,857,600 bytes (strictly `>`) and oversized-nested-content at 2 GiB declared size. So the "~100MB" sample must be <= 104,857,600 bytes and must not declare > 2 GiB uncompressed (avoid highly compressible padding), otherwise the benchmark would silently time a rejection path once those tasks land. Also note the existing ExtractionBenchmarks.cs stub calls the legacy `Extract(byte[])` overload, not the `Extract(ExtractionRequest)` facade; the benchmark should target the facade with DetectedMimeType set. Downstream T-2e13ee4b (committed baseline) is best done after the guardrail tasks merge so the baseline includes their pre-parse overhead; that ordering is not enforced here.
 
 **New dependency added:** T-f0963fc3 (Generate fixed 10MB and ~100MB benchmark samples for all 6 formats). The acceptance criteria need 12 fixed inputs; `samples/` has no file above 6.8MB and the benchmark project is a single-docx stub. Direction is T-b62ffe04 depends on T-f0963fc3 (no cycle; `ydk task validate-dag` clean). Acceptance criteria of this task are unchanged.
+### 2026-09-19T21:56:04Z (UTC)
+## Verification Proof
+
+OK dotnet-build (9.6s)
+OK dotnet-format (71.3s)
+OK dotnet-quality (81.5s)
+OK ai-code-review (0.0s)
+OK cli-error-handling (0.0s)
+OK cli-output-format (0.0s)
+OK fastapi-adapter-isolation (0.0s)
+OK fastapi-core-purity (0.0s)
+OK fastapi-no-mocks-e2e (0.0s)
+OK fastapi-no-mocks-integration (0.0s)
+OK fastapi-route-delegation (0.0s)
+OK fastapi-route-splitting (0.0s)
+OK fastapi-service-sync (0.0s)
+OK nextjs-file-sizes (0.0s)
+OK nextjs-fsd-imports (0.0s)
+OK nextjs-fsd-layers (0.0s)
+OK nextjs-module-density (0.0s)
+OK nextjs-no-direct-env (0.0s)
+OK nextjs-no-direct-fetch (0.0s)
+OK nextjs-no-direct-ui-imports (0.0s)
+OK nextjs-no-query-key-strings (0.0s)
+OK nextjs-no-useeffect-fetch (0.0s)
+OK nextjs-no-zustand-module-level (0.0s)
+OK nextjs-page-purity (0.0s)
+OK nextjs-server-client-boundary (0.0s)
+OK nextjs-sse-abort-controller (0.0s)
+OK python-file-length (0.0s)
+OK python-no-future-annotations (0.0s)
+OK react-fsd-imports (0.0s)
+OK spec-alignment (1.6s)
+OK terraform-dangling-resources (0.1s)
+OK terraform-external-iam (0.1s)
+OK terraform-format (0.0s)
+OK terraform-glacier-public (0.2s)
+OK terraform-paravirt-ec2 (0.2s)
+OK terraform-public-ami (0.1s)
+OK terraform-security (0.0s)
+OK terraform-tagging (0.0s)
+OK dotnet-test (58.0s)
+OK tests-pytest (0.0s)
+
+PR: https://github.com/yoavarad/ole-extractor/pull/119
