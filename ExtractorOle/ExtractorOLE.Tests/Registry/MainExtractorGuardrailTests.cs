@@ -141,6 +141,27 @@ namespace ExtractorOLE.Tests.Registry
             Assert.Throws<FileTooLargeException>(() => extractor.Extract(Request(new byte[11])));
         }
 
+        // ---- ordering: null checks -> guardrails -> format resolution ----
+
+        [Fact]
+        public void Extract_NullFileBytes_ThrowsArgumentNull_NotSilentlyPassingGuard()
+        {
+            var (extractor, spy, _) = Build();
+            var request = new ExtractionRequest { FileBytes = null!, FileName = "a.docx", DetectedMimeType = DocxMime };
+
+            Assert.Throws<ArgumentNullException>(() => extractor.Extract(request));
+            Assert.Equal(0, spy.Lookups);
+        }
+
+        [Fact]
+        public void Extract_OversizedInputWithUnsupportedMime_ThrowsGuardrailNotUnsupportedFormat()
+        {
+            var (extractor, spy, _) = Build(new MimeDetectionLimits { MaxFileSizeBytes = 10 });
+
+            Assert.Throws<FileTooLargeException>(() => extractor.Extract(Request(new byte[11], "application/x-unsupported")));
+            Assert.Equal(0, spy.Lookups);
+        }
+
         // ---- oversized-nested-content ----
 
         [Fact]
