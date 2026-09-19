@@ -627,7 +627,7 @@ tasks:
   T-3335d397:
     title: Implement pre-parse guardrail errors in Extract (file-too-large, oversized-nested-content)
     story: S-51d277f1
-    status: open
+    status: done
     dependencies:
     - T-3b4e70f4
     component_refs:
