@@ -640,7 +640,7 @@ tasks:
     title: Implement parse-time error handling in Extract (password-protected, corrupt-file,
       truncated-container)
     story: S-51d277f1
-    status: in-review
+    status: done
     dependencies:
     - T-3b4e70f4
     component_refs:
