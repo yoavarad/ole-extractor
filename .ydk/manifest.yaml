@@ -248,6 +248,7 @@ stories:
     - T-fb06300e
     - T-b62ffe04
     - T-2e13ee4b
+    - T-f0963fc3
   S-d88f514b:
     title: Concurrent-load stress harness
     epic: E-c2544f52
@@ -858,10 +859,11 @@ tasks:
   T-b62ffe04:
     title: Implement Extract() latency/allocation benchmarks per format
     story: S-709fe2de
-    status: blocked-by-dependency-gap
+    status: open
     dependencies:
     - T-fb06300e
     - T-71ab3bc0
+    - T-f0963fc3
     component_refs:
     - ydk:nfr:extraction/extraction-latency
     - ydk:nfr:extraction/memory-ceiling
@@ -975,3 +977,12 @@ tasks:
     component_refs:
     - ydk:entity:extraction/FileMetadata
     - ydk:entity:extraction/ExtractionResult
+  T-f0963fc3:
+    title: Generate fixed 10MB and ~100MB benchmark samples for all 6 formats
+    story: S-709fe2de
+    status: open
+    dependencies: []
+    component_refs:
+    - ydk:nfr:extraction/extraction-latency
+    - ydk:nfr:extraction/memory-ceiling
+    - ydk:nfr:extraction/max-file-size
