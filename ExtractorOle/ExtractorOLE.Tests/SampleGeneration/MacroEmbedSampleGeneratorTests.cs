@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using DocumentFormat.OpenXml.Packaging;
+using ExtractorOLE.DTOs;
 using SampleGenerator.Abstractions;
 using SampleGenerator.Fixtures;
 using SampleGenerator.Generators;
@@ -16,8 +17,8 @@ namespace ExtractorOLE.Tests.SampleGeneration
     // storage) and at least one first-layer embedding. This is also the
     // fixture the macro-variant-misclassification test scenario exercises -
     // docm/xlsm/pptm must be detected as their base format, not as a
-    // separate format. Also documents the known, intentional doc/xls/ppt
-    // gap (ADR-001: NPOI not yet wired into this build).
+    // separate format. The legacy doc/xls/ppt generators (T-b856b14e, ADR-005)
+    // author the same scenario as one binary file each.
     public class MacroEmbedSampleGeneratorTests
     {
         private static readonly SampleSpec Spec = MacroEmbedSampleSpecs.Build();
@@ -82,16 +83,26 @@ namespace ExtractorOLE.Tests.SampleGeneration
         }
 
         [Theory]
-        [InlineData(typeof(DocSampleGenerator))]
-        [InlineData(typeof(XlsSampleGenerator))]
-        [InlineData(typeof(PptSampleGenerator))]
-        public void LegacyFormat_MacroEmbedSpec_ThrowsNotSupported_KnownAdr001Gap(Type generatorType)
+        [InlineData(typeof(DocSampleGenerator), OfficeMimeTypeEnum.WordLegacy)]
+        [InlineData(typeof(XlsSampleGenerator), OfficeMimeTypeEnum.ExcelLegacy)]
+        [InlineData(typeof(PptSampleGenerator), OfficeMimeTypeEnum.PowerPointLegacy)]
+        public void LegacyFormat_MacroEmbedSpec_ProducesMacroFileWithEmbeddingThatExtractsBack(
+            Type generatorType, OfficeMimeTypeEnum format)
         {
             var generator = (ISampleGenerator)Activator.CreateInstance(generatorType)!;
 
-            var ex = Assert.Throws<NotSupportedException>(() => generator.Generate(Spec));
+            var sample = generator.Generate(Spec);
+            var result = DocSampleGeneratorTests.Extract(sample.Content, format);
 
-            Assert.Contains("ADR-001", ex.Message);
+            Assert.NotEmpty(result.EmbeddedFiles);
+            var hasMacros = result.FormatMetadata switch
+            {
+                WordFormatMetadata w => w.HasMacros,
+                ExcelFormatMetadata e => e.HasMacros,
+                PowerPointFormatMetadata p => p.HasMacros,
+                _ => false,
+            };
+            Assert.True(hasMacros);
         }
     }
 }
