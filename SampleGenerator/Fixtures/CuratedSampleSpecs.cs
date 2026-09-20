@@ -5,9 +5,10 @@ namespace SampleGenerator.Fixtures
 {
     /// <summary>
     /// docs/specs/dataset-curation.md's "curated real-world-style samples" composition
-    /// rule: 2 self-authored samples per format. Scoped down to docx/xlsx/pptx here (a
-    /// product-owner decision) - doc/xls/ppt curated samples are follow-up work now that the
-    /// legacy generators exist (ADR-005; tracked by T-07571b32).
+    /// rule: 2 self-authored samples per format. Scoped down to docx/xlsx/pptx (a
+    /// product-owner decision), plus one legacy .doc nested-embedding sample now that the
+    /// legacy generators exist (ADR-005; T-07571b32). Curated xls/ppt samples remain
+    /// out of scope.
     ///
     /// Each of the 3 formats gets:
     /// - one NESTED-embedding sample: 2+ genuine nesting levels (outer embeds a real
@@ -40,6 +41,7 @@ namespace SampleGenerator.Fixtures
     {
         private const string DocxMimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
         private const string XlsxMimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+        private const string XlsMimeType = "application/vnd.ms-excel";
 
         // Single shared 1x1 placeholder PNG for every logo/chart embedding below - these
         // samples exercise embedding structure and body/metadata content, not image
@@ -135,6 +137,53 @@ namespace SampleGenerator.Fixtures
                 new() { FileName = "acme-logo.png", Content = PngPlaceholder, ContentType = "image/png" }
             }
         };
+
+        // ---------------------------------------------------------------
+        // doc / project-proposal-budget.doc - NESTED (doc -> xls -> png)
+        // ---------------------------------------------------------------
+
+        public static readonly string[] ProjectProposalBudgetLines =
+        {
+            "Project Proposal: Warehouse Automation Pilot",
+            "Prepared by: Facilities Engineering, Acme Logistics",
+            "Date: April 6, 2026",
+            "Summary: This proposal requests funding for a 6-month pilot of automated guided vehicles at the Dayton distribution center.",
+            "Scope: Two vehicles, one charging dock, integration with the existing warehouse management system.",
+            "Timeline: Procurement in May, installation in June, live pilot July through December 2026.",
+            "See attached workbook for the itemized pilot budget."
+        };
+
+        private static readonly string[] PilotBudgetLines =
+        {
+            "Warehouse Automation Pilot - Itemized Budget",
+            "Automated guided vehicles (2): $96,000",
+            "Charging dock and installation: $14,500",
+            "WMS integration: $22,000",
+            "Contingency (10%): $13,250",
+            "Total: $145,750"
+        };
+
+        public static SampleSpec BuildProjectProposalBudget()
+        {
+            var innerXlsSpec = new SampleSpec
+            {
+                BodyText = string.Join("\n", PilotBudgetLines),
+                Embeddings = new List<EmbeddedContentSpec>
+                {
+                    new() { FileName = "budget-chart.png", Content = PngPlaceholder, ContentType = "image/png" }
+                }
+            };
+            var innerXls = new XlsSampleGenerator().Generate(innerXlsSpec);
+
+            return new SampleSpec
+            {
+                BodyText = string.Join("\n", ProjectProposalBudgetLines),
+                Embeddings = new List<EmbeddedContentSpec>
+                {
+                    new() { FileName = "pilot-budget.xls", Content = innerXls.Content, ContentType = XlsMimeType }
+                }
+            };
+        }
 
         // ---------------------------------------------------------------
         // xlsx / project-status-report.xlsx - NESTED (xlsx -> docx -> png)
