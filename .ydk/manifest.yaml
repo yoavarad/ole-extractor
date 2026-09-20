@@ -860,7 +860,7 @@ tasks:
   T-b62ffe04:
     title: Implement Extract() latency/allocation benchmarks per format
     story: S-709fe2de
-    status: in-review
+    status: done
     dependencies:
     - T-fb06300e
     - T-71ab3bc0

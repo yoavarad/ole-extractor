@@ -2,7 +2,7 @@
 id: T-b62ffe04
 title: Implement Extract() latency/allocation benchmarks per format
 story: S-709fe2de
-status: in-review
+status: done
 assignee: null
 labels:
 - in-review
@@ -32,7 +32,7 @@ milestone: null
 complexity: null
 gates: []
 created: '2026-08-19T12:47:23Z'
-updated: '2026-09-19T21:58:06Z'
+updated: '2026-09-20T08:10:38Z'
 ---
 
 ## Description
