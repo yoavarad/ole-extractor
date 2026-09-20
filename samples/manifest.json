@@ -107,14 +107,14 @@
       },
       "expectedSubfileCount": 4,
       "expectedSubfiles": [
-        { "fileName": "embedded_object_1.png", "contentType": "image/png", "sizeInBytes": 68, "packagePath": "/xl/media/image.png" },
-        { "fileName": "embedded_object_2.png", "contentType": "image/png", "sizeInBytes": 68, "packagePath": "/xl/media/image2.png" },
+        { "fileName": "slide_image_1.png", "contentType": "image/png", "sizeInBytes": 68, "packagePath": "/xl/media/image.png" },
+        { "fileName": "slide_image_2.png", "contentType": "image/png", "sizeInBytes": 68, "packagePath": "/xl/media/image2.png" },
         { "fileName": "embedded_object_3.bin", "contentType": "application/octet-stream", "sizeInBytes": 8, "packagePath": "/xl/worksheets/embeddings/embeddedObject.bin" },
         { "fileName": "embedded_object_4.bin", "contentType": "application/octet-stream", "sizeInBytes": 9, "packagePath": "/xl/worksheets/embeddings/embeddedObject2.bin" }
       ],
       "detectable": false,
       "verifiedBy": "ExtractorOle/ExtractorOLE.Tests/MultiEmbedding/MultiEmbeddingSampleTests.cs :: Xlsx_MultiEmbeddingSample_PlacesFourEmbeddingsOfTwoKindsOnWorksheetPart (structural check only, not end-to-end detection)",
-      "notes": "All 4 embeddings are correctly placed on the WorksheetPart (WorkbookPart cannot hold ImagePart/EmbeddedObjectPart directly). NOT yet detected end-to-end: the production path wired into MainExtractor for xlsx is ExtractorOLE.Helpers.FileTypeStrategy.ExcelOpenStrategy, which calls the shared ExtractionHelper.ExtractFirstLayerEmbedded -- that method only scans WorkbookPart.Parts, not WorksheetPart.Parts, so it currently finds 0 embeddings here. A different, currently-unused code path (ExtractorOLE.Old.Excel.ExcelExtractor) was fixed for this exact gap on the not-yet-merged branch for task T-02637847, but that class is not referenced by ServiceRegistration/MainExtractor, so its fix does not (by itself) make this sample detectable through the real extraction pipeline. expectedSubfiles above use ExtractionHelper's embedded_object_N naming/index scheme (the path that actually needs the WorksheetPart scan added) so this entry is ready to flip to detectable:true once that scan is added there, mirroring the fix already applied to the pptx slide scan in this same task."
+      "notes": "All 4 embeddings are correctly placed on the WorksheetPart (WorkbookPart cannot hold ImagePart/EmbeddedObjectPart directly). NOT yet detected end-to-end: the production path wired into MainExtractor for xlsx is ExtractorOLE.Helpers.FileTypeStrategy.ExcelOpenStrategy, which calls the shared ExtractionHelper.ExtractFirstLayerEmbedded -- that method only scans WorkbookPart.Parts, not WorksheetPart.Parts, so it currently finds 0 embeddings here. A different, currently-unused code path (ExtractorOLE.Old.Excel.ExcelExtractor) was fixed for this exact gap on the not-yet-merged branch for task T-02637847, but that class is not referenced by ServiceRegistration/MainExtractor, so its fix does not (by itself) make this sample detectable through the real extraction pipeline. expectedSubfiles above use ExtractionHelper's slide_image_N (image parts) / embedded_object_N (OLE objects) naming/index scheme (the path that actually needs the WorksheetPart scan added) so this entry is ready to flip to detectable:true once that scan is added there, mirroring the fix already applied to the pptx slide scan in this same task."
     },
     {
       "format": "docx",
@@ -436,7 +436,7 @@
       },
       "expectedSubfileCount": 1,
       "expectedSubfiles": [
-        { "fileName": "embedded_object_1.png", "contentType": "image/png", "sizeInBytes": 68, "packagePath": "/xl/media/image.png" }
+        { "fileName": "slide_image_1.png", "contentType": "image/png", "sizeInBytes": 68, "packagePath": "/xl/media/image.png" }
       ],
       "detectable": false,
       "verifiedBy": null,

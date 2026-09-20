@@ -44,11 +44,11 @@ namespace ExtractorOLE.Tests.Integration
         };
 
         // Extractor-generated subfile names are "<prefix>_<index><ext>" with prefix embedded_object
-        // (parts hosted directly on the root/level-1 part) or slide_image (image parts one hop
-        // down). The prefix is not compared: the manifest's two xlsx entries record
-        // "embedded_object_N" for image parts the extractor names "slide_image_N".
+        // or slide_image (rule: docs/specs/extraction.md, Subfiles). Manifest entries recording that
+        // scheme are compared to the extractor's names exactly; this only tells them apart from
+        // curated third-party entries that record the raw part file name (image1.png).
         private static readonly Regex ExtractorFileName =
-            new(@"^(?:embedded_object|slide_image)_(\d+)(\.\w+)$", RegexOptions.Compiled);
+            new(@"^(?:embedded_object|slide_image)_\d+\.\w+$", RegexOptions.Compiled);
 
         // The two curated third-party pptx decks record expectedSubfileCount as the raw count of
         // package parts under ppt/media/ (+ ppt/embeddings/) -- their manifest notes say the value
@@ -279,13 +279,13 @@ namespace ExtractorOLE.Tests.Integration
                 expected.Select(e => (e.GetProperty("packagePath").GetString()!, e.GetProperty("sizeInBytes").GetInt64())).OrderBy(t => t).ToList(),
                 actual.Select(a => (a.PackagePath, a.SizeInBytes)).OrderBy(t => t).ToList());
 
-            // File names are compared (in order) when the manifest records extractor-scheme names;
-            // curated third-party entries record the raw part file name (image1.png) instead.
+            // File names are compared exactly, prefix included, and in order when the manifest records
+            // extractor-scheme names; curated third-party entries record the raw part file name
+            // (image1.png) instead.
             var expectedNames = expected.Select(e => e.GetProperty("fileName").GetString()!).ToList();
             if (expectedNames.All(n => ExtractorFileName.IsMatch(n)))
             {
-                string Suffix(string name) { var m = ExtractorFileName.Match(name); return m.Groups[1].Value + m.Groups[2].Value; }
-                Assert.Equal(expectedNames.Select(Suffix).ToList(), actual.Select(a => Suffix(a.FileName)).ToList());
+                Assert.Equal(expectedNames, actual.Select(a => a.FileName).ToList());
             }
         }
     }

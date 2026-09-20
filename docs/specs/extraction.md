@@ -26,6 +26,8 @@ The flattened plain-text body is empty, never null, when there's nothing to extr
 
 The subfiles list holds one entry per first-layer OLE-embedded object and inline media item, per [ydk:req:extraction/subfile-scope] — binary, filename, and size for each. Internal package structure that isn't an embedding or media item (the exhaustive exclusion list is in [ydk:req:extraction/subfile-scope]) is never listed as a subfile. A subfile that is itself a container (e.g. an embedded spreadsheet inside a document) is returned as one opaque item — its own contents are not recursively unpacked in v1.
 
+OOXML (docx/xlsx/pptx and macro variants) subfile `FileName` is `<prefix>_<N><ext>`, where `<N>` is the 1-based position in the returned list and `<ext>` the item's file extension: the prefix is `slide_image` for an image part hosted one hop below the main part (a slide or worksheet, in pptx and xlsx) and `embedded_object` for every other item (OLE/package embeddings at any level, and image parts related directly to the main part, as in docx) — the prefix follows where the part sits in the package, not the document kind, so an xlsx image is `slide_image_N`; `samples/manifest.json` records these exact names.
+
 If an individual embedded item cannot be read (its own bytes are corrupt while the surrounding document is fine), it is omitted from the subfiles list and the omission is logged — this does not fail the overall extraction call. A single bad embedding shouldn't deny access to an otherwise-good document.
 
 ## Error Handling
