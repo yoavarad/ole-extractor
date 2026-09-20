@@ -6,6 +6,7 @@ using ExtractorOLE.Registry;
 using NPOI.HSSF.UserModel;
 using NPOI.POIFS.FileSystem;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -93,65 +94,49 @@ namespace ExtractorOLE.Helpers
             }
         }
 
+        // A subfile is a distinct package part ([ydk:req:extraction/subfile-scope] speaks of
+        // embeddings/ and media parts, not relationships): every image / OLE-embedding part
+        // reachable from the root is listed exactly once by part URI, however many hosts relate
+        // to it. The walk is breadth-first so the parts directly on the root come first, then
+        // parts one hop down (slides, worksheets, headers), then deeper hosts (slide layouts,
+        // vmlDrawing OLE previews). Only containers are descended into; an embedding is never
+        // unpacked. The visited set also breaks relationship cycles (slide <-> layout <-> master).
         public void ExtractFirstLayerEmbedded(DocumentExtractionResult result, OpenXmlPart rootPart)
         {
             int index = 1;
-            var containersToScan = new List<OpenXmlPart>();
+            var seen = new HashSet<Uri> { rootPart.Uri };
+            var hosts = new List<OpenXmlPart> { rootPart };
+            bool isRootLevel = true;
 
-            // Phase 1: direct children of rootPart.
-            foreach (var partPair in rootPart.Parts)
+            while (hosts.Count > 0)
             {
-                var nestedPart = partPair.OpenXmlPart;
-                if (nestedPart is EmbeddedObjectPart || nestedPart is EmbeddedPackagePart || nestedPart is ImagePart)
+                var nextHosts = new List<OpenXmlPart>();
+                foreach (var host in hosts)
                 {
-                    try
+                    foreach (var partPair in host.Parts)
                     {
-                        ExtractPartData(nestedPart, result.EmbeddedFiles, ref index, "embedded_object");
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Skipping unreadable embedded part '{nestedPart.Uri}': {ex.Message}");
-                    }
-                }
-                else
-                {
-                    containersToScan.Add(nestedPart);
-                }
-            }
+                        var nestedPart = partPair.OpenXmlPart;
+                        if (!seen.Add(nestedPart.Uri)) continue;
 
-            // Phase 2: children of every non-matching level-1 part. Some formats (e.g. pptx SlidePart,
-            // xlsx WorksheetPart) don't accept embeddings directly on the root part - the OpenXml SDK
-            // rejects EmbeddedObjectPart/EmbeddedPackagePart/ImagePart there - so embeddings live one
-            // hop down. This scan is generic and unconditional across all container parts.
-            foreach (var container in containersToScan)
-            {
-                foreach (var partPair in container.Parts)
-                {
-                    var nestedPart = partPair.OpenXmlPart;
-
-                    if (nestedPart is ImagePart)
-                    {
-                        try
+                        if (nestedPart is ImagePart)
                         {
-                            ExtractPartData(nestedPart, result.EmbeddedFiles, ref index, "slide_image");
+                            // Images directly on the root keep the embedded_object prefix; images
+                            // one or more hops down are slide_image.
+                            ExtractPartData(nestedPart, result.EmbeddedFiles, ref index, isRootLevel ? "embedded_object" : "slide_image");
                         }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine($"Skipping unreadable embedded part '{nestedPart.Uri}': {ex.Message}");
-                        }
-                    }
-                    else if (nestedPart is EmbeddedObjectPart || nestedPart is EmbeddedPackagePart)
-                    {
-                        try
+                        else if (nestedPart is EmbeddedObjectPart || nestedPart is EmbeddedPackagePart)
                         {
                             ExtractPartData(nestedPart, result.EmbeddedFiles, ref index, "embedded_object");
                         }
-                        catch (Exception ex)
+                        else
                         {
-                            Console.WriteLine($"Skipping unreadable embedded part '{nestedPart.Uri}': {ex.Message}");
+                            nextHosts.Add(nestedPart);
                         }
                     }
                 }
+
+                hosts = nextHosts;
+                isRootLevel = false;
             }
         }
 
