@@ -169,6 +169,7 @@ stories:
     - T-f653c5fb
     - T-30f2c1b8
     - T-02637847
+    - T-009db62b
   S-37c18545:
     title: pptx extraction completeness
     epic: E-46875bcf
@@ -177,6 +178,8 @@ stories:
     - T-b792f8e5
     - T-505f5b14
     - T-c3f1ec05
+    - T-205594d7
+    - T-afb7e032
   S-072bfdf6:
     title: Wire the DetectMimeType public facade to the registry
     epic: E-bd43bc02
@@ -233,6 +236,8 @@ stories:
     - T-e0a5bfec
     - T-7916a198
     - T-f4ed5c8f
+    - T-fa8b3ed9
+    - T-2462e4c3
   S-814fa928:
     title: Unit tests for unit-test-backed scenarios
     epic: E-5717c1fe
@@ -258,6 +263,7 @@ stories:
     - T-0055ec7c
     - T-96b5181b
     - T-113fe4b2
+    - T-5080b00a
 tasks:
   T-eeb6684b:
     title: Downgrade ExtractorOLE.csproj to net8.0
@@ -995,3 +1001,56 @@ tasks:
     dependencies: []
     component_refs:
     - ydk:req:extraction/unicode-fidelity
+  T-205594d7:
+    title: Reconcile pptx subfile counts between manifest and extractor (NOAA 58 vs
+      59, ORNL 83 vs 58)
+    story: S-37c18545
+    status: open
+    dependencies:
+    - T-7916a198
+    component_refs:
+    - ydk:req:extraction/subfile-scope
+    - ydk:entity:extraction/SubfileItem
+  T-afb7e032:
+    title: Extract pptx text in deck slide order instead of relationship order
+    story: S-37c18545
+    status: open
+    dependencies: []
+    component_refs:
+    - ydk:contract:extraction/extract
+  T-009db62b:
+    title: Align xlsx image subfile naming (slide_image_N vs embedded_object_N) with
+      the spec
+    story: S-8d6146f0
+    status: open
+    dependencies:
+    - T-7916a198
+    component_refs:
+    - ydk:entity:extraction/SubfileItem
+    - ydk:req:extraction/subfile-scope
+  T-fa8b3ed9:
+    title: Add Subject, Comments, RevisionNumber, LastPrinted and EditingDuration
+      to FileMetadata or record why not
+    story: S-f6d7124a
+    status: open
+    dependencies:
+    - T-7916a198
+    component_refs:
+    - ydk:entity:extraction/FileMetadata
+  T-2462e4c3:
+    title: Strengthen pptx text spot-check to assert full ordered slide text in deck
+      order
+    story: S-f6d7124a
+    status: open
+    dependencies:
+    - T-afb7e032
+    - T-7916a198
+    component_refs:
+    - ydk:contract:extraction/extract
+    - ydk:req:extraction/unicode-fidelity
+  T-5080b00a:
+    title: Fix flaky LoadGeneratorTests Concurrency500 test with deterministic concurrency
+    story: S-d88f514b
+    status: open
+    dependencies: []
+    component_refs: []
