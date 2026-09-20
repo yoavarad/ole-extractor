@@ -799,7 +799,7 @@ tasks:
   T-7916a198:
     title: 'Integration tests: Extract against every corpus manifest sample'
     story: S-f6d7124a
-    status: open
+    status: in-review
     dependencies:
     - T-3335d397
     - T-61477563
