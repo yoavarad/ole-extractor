@@ -15,9 +15,9 @@ namespace ExtractorOLE.Tests.Excel
     /// and emoji must round-trip exactly, with no mojibake, no truncation,
     /// and no implicit Unicode normalization.
     ///
-    /// Fixtures are hand-built directly via NPOI's HSSFWorkbook API (rather
-    /// than SampleGenerator.Generators.XlsSampleGenerator, which is a stub -
-    /// legacy .xls authoring wasn't wired into that project yet) - the same
+    /// Fixtures are hand-built directly via NPOI's HSSFWorkbook API (these
+    /// tests predate SampleGenerator.Generators.XlsSampleGenerator, which
+    /// SampleGeneration/XlsSampleGeneratorTests now covers) - the same
     /// approach XlsOpenStrategyTests already uses.
     /// </summary>
     public class XlsTextExtractorTests

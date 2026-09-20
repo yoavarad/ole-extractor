@@ -6,11 +6,8 @@ namespace SampleGenerator.Fixtures
     /// <summary>
     /// docs/specs/dataset-curation.md's "curated real-world-style samples" composition
     /// rule: 2 self-authored samples per format. Scoped down to docx/xlsx/pptx here (a
-    /// product-owner decision) - doc/xls/ppt curated authoring is blocked because
-    /// DocSampleGenerator/XlsSampleGenerator/PptSampleGenerator are stub
-    /// throw-NotSupportedException placeholders pending NPOI-compiled-from-source being
-    /// wired into SampleGenerator.csproj (ADR-001; tracked by T-517f89c5, T-c4123b53,
-    /// T-a5f1d074, T-bac988f5 - not this task's job to fix).
+    /// product-owner decision) - doc/xls/ppt curated samples are follow-up work now that the
+    /// legacy generators exist (ADR-005; tracked by T-07571b32).
     ///
     /// Each of the 3 formats gets:
     /// - one NESTED-embedding sample: 2+ genuine nesting levels (outer embeds a real

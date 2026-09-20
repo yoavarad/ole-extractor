@@ -997,7 +997,7 @@ tasks:
   T-b856b14e:
     title: Implement legacy-format generators in SampleGenerator (.doc/.xls/.ppt)
     story: S-41ebb945
-    status: open
+    status: in-review
     dependencies: []
     component_refs:
     - ydk:req:extraction/unicode-fidelity

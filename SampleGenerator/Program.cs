@@ -58,9 +58,9 @@ foreach (var (format, generator) in generators)
 // (macro-enabled-with-embedding): a macro-enabled variant (docm/xlsm/pptm)
 // with at least one macro/VBA storage and at least one first-layer
 // embedding, plus multilingual/mixed-script text and emoji in body text
-// and at least 2 metadata fields. Legacy doc/xls/ppt macro authoring is a
-// known, intentional gap (ADR-001; NPOI not yet wired into this build) -
-// see DocSampleGenerator/XlsSampleGenerator/PptSampleGenerator.
+// and at least 2 metadata fields. The legacy doc/xls/ppt generators
+// (ADR-005) author the macro storage as a "Macros" / "_VBA_PROJECT_CUR"
+// storage inside the same binary file.
 var macroEmbedOutputDir = Path.Combine("samples", "synthetic", "macro-embed");
 Directory.CreateDirectory(macroEmbedOutputDir);
 var macroEmbedSpec = MacroEmbedSampleSpecs.Build();
