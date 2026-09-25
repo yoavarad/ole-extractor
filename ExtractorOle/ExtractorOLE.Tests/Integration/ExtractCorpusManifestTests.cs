@@ -50,20 +50,6 @@ namespace ExtractorOLE.Tests.Integration
         private static readonly Regex ExtractorFileName =
             new(@"^(?:embedded_object|slide_image)_\d+\.\w+$", RegexOptions.Compiled);
 
-        // The two curated third-party pptx decks record expectedSubfileCount as the raw count of
-        // package parts under ppt/media/ (+ ppt/embeddings/) -- their manifest notes say the value
-        // was never run against the extractor (detectable=false "pending that verification") and
-        // carry no expectedSubfiles list. The extractor emits one item per image/OLE relationship
-        // hosted by the presentation's level-1 parts (slides, masters), counting a part shared by
-        // two slides twice. Asserting the raw part count would fail for a reason unrelated to
-        // extraction correctness, so these pin the count the extractor currently returns. Whether
-        // the manifest or the extractor's counting rule should change is an open product decision.
-        private static readonly Dictionary<string, int> ExtractorObservedSubfileCounts = new()
-        {
-            ["samples/curated/pptx/noaa-transition-team-briefing-2008.pptx"] = 59,           // manifest: 58 parts
-            ["samples/curated/pptx/ornl-quasi-elastic-neutron-scattering-introduction.pptx"] = 58, // manifest: 83 parts
-        };
-
         private static string FindRepoRootFile(string relativePath)
         {
             var dir = new DirectoryInfo(AppContext.BaseDirectory);
@@ -264,9 +250,7 @@ namespace ExtractorOLE.Tests.Integration
 
         private static void AssertSubfiles(string path, JsonElement entry, List<EmbeddedFileItem> actual)
         {
-            var expectedCount = ExtractorObservedSubfileCounts.TryGetValue(path, out var observed)
-                ? observed
-                : entry.GetProperty("expectedSubfileCount").GetInt32();
+            var expectedCount = entry.GetProperty("expectedSubfileCount").GetInt32();
             Assert.Equal(expectedCount, actual.Count);
 
             var expected = entry.GetProperty("expectedSubfiles").EnumerateArray().ToList();
