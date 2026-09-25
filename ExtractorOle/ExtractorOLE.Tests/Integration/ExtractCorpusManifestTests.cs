@@ -235,6 +235,18 @@ namespace ExtractorOLE.Tests.Integration
                 return;
             }
 
+            // Real third-party decks: expectedSlides lists every slide's text lines in deck (p:sldIdLst)
+            // order, slide body then its notes, read from the source XML rather than extractor output.
+            // Compared exactly (only platform line endings normalized), so a swapped slide fails.
+            if (body.TryGetProperty("expectedSlides", out var slides))
+            {
+                var expectedLines = slides.EnumerateArray()
+                    .SelectMany(slide => slide.EnumerateArray().Select(l => l.GetString()!))
+                    .ToArray();
+                Assert.Equal(expectedLines, Lines(actualText));
+                return;
+            }
+
             // Real third-party documents: the manifest records only verbatim-confirmed substrings,
             // read from the source XML text runs. A substring can span two runs/paragraphs (the
             // extractor emits one line per run/paragraph), so line breaks and runs of whitespace
