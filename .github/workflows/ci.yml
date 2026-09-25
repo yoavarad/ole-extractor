@@ -47,10 +47,12 @@ jobs:
         run: dotnet restore ${{ env.SOLUTION }}
 
       # The stress harness is not in the .slnx; build it too so it can't silently rot.
+      # CiWarningsAsErrors turns warnings into errors for this repo's projects only
+      # (Directory.Build.props excludes the vendored third_party/ submodules).
       - name: Build
         run: |
-          dotnet build ${{ env.SOLUTION }} -c Release --no-restore
-          dotnet build ExtractorOle/ExtractorOLE.StressHarness/ExtractorOLE.StressHarness.csproj -c Release
+          dotnet build ${{ env.SOLUTION }} -c Release --no-restore -p:CiWarningsAsErrors=true
+          dotnet build ExtractorOle/ExtractorOLE.StressHarness/ExtractorOLE.StressHarness.csproj -c Release -p:CiWarningsAsErrors=true
 
       # Same targets as the local ydk dotnet-format gate: production projects only.
       # Windows only, because that is where the local gate has always run (line endings).
