@@ -1059,7 +1059,7 @@ tasks:
     title: Add Subject, Comments, RevisionNumber, LastPrinted and EditingDuration
       to FileMetadata or record why not
     story: S-f6d7124a
-    status: open
+    status: done
     dependencies:
     - T-7916a198
     component_refs:

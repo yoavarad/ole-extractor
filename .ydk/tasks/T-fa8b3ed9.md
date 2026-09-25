@@ -3,7 +3,7 @@ id: T-fa8b3ed9
 title: Add Subject, Comments, RevisionNumber, LastPrinted and EditingDuration to FileMetadata
   or record why not
 story: S-f6d7124a
-status: open
+status: done
 assignee: null
 labels: []
 dependencies:
@@ -44,7 +44,7 @@ milestone: null
 complexity: null
 gates: []
 created: '2026-09-20T08:12:33Z'
-updated: '2026-09-20T08:12:33Z'
+updated: '2026-09-25T11:34:21Z'
 ---
 
 ## Description
