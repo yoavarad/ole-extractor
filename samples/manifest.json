@@ -1,6 +1,6 @@
 {
   "$note": "Corpus manifest per docs/specs/dataset-curation.md 'Corpus Manifest'. Each entry records the exact expected Unicode content and exact expected subfile count/filenames for one generated/curated sample -- this is the ground truth the (future) integration test suite asserts against.",
-  "$curatedSamplesNote": "T-c573e72e audit (2026-09-13): all 11 curated samples under samples/curated/ (format=docx x4, xlsx x2, pptx x4, doc x1) have complete manifest entries below -- format, compositionRule, expectedDetectedFormat, exact expected bodyText/bodyTextLines + metadata, expectedSubfileCount/expectedSubfiles, and provenance (self-generated vs third-party) were all recorded inline by the sourcing tasks that authored each sample (T-6f033869, T-0834290d, T-0c83ff28, T-270c32fe), not deferred to a separate recording step. License basis for every third-party entry is recorded as prose in that entry's 'notes' field (no dedicated 'license' key exists in this schema, since none of the self-generated entries need one). The 2+-level-nested-embedding samples (meeting-minutes-boardroom.docx, project-status-report.xlsx, product-launch-deck.pptx) and the genuine multi-user revision-history samples (the 5 third-party entries) are each individually identifiable via their compositionRule text. Original spec math (docs/specs/dataset-curation.md: 2 per format x 6 formats = 12) is not met literally -- doc/xls/ppt per-format curated authoring was formally descoped by T-6f033869's acceptance criteria ('doc/xls/ppt curated authoring stays out of scope (zero generator infra, no Office/LibreOffice binary in sandbox)'); the single doc sample present was added as a T-0c83ff28 exception, and xlsx's revision-history slot was separately scoped out by product-owner decision in T-270c32fe (real Excel does not populate cp:revision). 11 is therefore the correct, fully-recorded total under current project scope, not a gap. T-07571b32 (2026-09-20) update: one further curated sample, samples/curated/doc/project-proposal-budget.doc (self-generated doc -> xls -> png nested embedding, ADR-005 generators), was added, bringing curated to 12 (doc x2: this one plus the third-party revision-history doc); curated xls/ppt remain unauthored. The counts in the audit sentence above are as of T-c573e72e.",
+  "$curatedSamplesNote": "T-c573e72e audit (2026-09-13): all 11 curated samples under samples/curated/ (format=docx x4, xlsx x2, pptx x4, doc x1) have complete manifest entries below -- format, compositionRule, expectedDetectedFormat, exact expected bodyText/bodyTextLines + metadata, expectedSubfileCount/expectedSubfiles, and provenance (self-generated vs third-party) were all recorded inline by the sourcing tasks that authored each sample (T-6f033869, T-0834290d, T-0c83ff28, T-270c32fe), not deferred to a separate recording step. License basis for every third-party entry is recorded as prose in that entry's 'notes' field (no dedicated 'license' key exists in this schema, since none of the self-generated entries need one). The 2+-level-nested-embedding samples (meeting-minutes-boardroom.docx, project-status-report.xlsx, product-launch-deck.pptx) and the genuine multi-user revision-history samples (the 5 third-party entries) are each individually identifiable via their compositionRule text. Original spec math (docs/specs/dataset-curation.md: 2 per format x 6 formats = 12) is not met literally -- doc/xls/ppt per-format curated authoring was formally descoped by T-6f033869's acceptance criteria ('doc/xls/ppt curated authoring stays out of scope (zero generator infra, no Office/LibreOffice binary in sandbox)'); the single doc sample present was added as a T-0c83ff28 exception, and xlsx's revision-history slot was separately scoped out by product-owner decision in T-270c32fe (real Excel does not populate cp:revision). 11 is therefore the correct, fully-recorded total under current project scope, not a gap. T-07571b32 (2026-09-20) update: one further curated sample, samples/curated/doc/project-proposal-budget.doc (self-generated doc -> xls -> png nested embedding, ADR-005 generators), was added, bringing curated to 12 (doc x2: this one plus the third-party revision-history doc); curated xls/ppt remain unauthored (until T-ec4dc427, below). The counts in the audit sentence above are as of T-c573e72e. T-ec4dc427 update: two further self-generated nested-embedding samples were added, samples/curated/xls/inventory-forecast.xls (xls -> xlsx -> png) and samples/curated/ppt/quarterly-review-deck.ppt (ppt -> xls -> png), bringing curated to 14 (one nested-embedding sample per legacy format).",
   "samples": [
     {
       "format": "docx",
@@ -1469,6 +1469,61 @@
       "detectable": true,
       "verifiedBy": "ExtractorOle/ExtractorOLE.Tests/MultiEmbedding/CuratedNestedEmbeddingSampleTests.cs :: Doc_ProjectProposalBudget_NestedXlsEmbedding_IsOneOpaqueSubfile_InnerPngNotUnpacked; also ExtractorOle/ExtractorOLE.Tests/Integration/ExtractCorpusManifestTests.cs (Extract over this entry: exact text, metadata, subfile list) and DetectMimeTypeCorpusManifestTests.cs (detected format); values also confirmed empirically by running MainExtractor.Extract on the committed file",
       "notes": "Legacy files are authored by SampleGenerator per ADR-005 (docs/adrs/005-legacy-doc-ppt-authoring.md) and read back only by ExtractorOLE's own readers; openability in real Microsoft Office/LibreOffice is UNVERIFIED. A second embedding layer exists inside the first-layer embedded object: the inner xls (pilot-budget.xls, held in the Ole10Native stream of ObjectPool/_1) itself embeds a PNG chart image and would require recursive extraction to reach -- out of scope here. The non-recursive rule (outer embedding listed as one opaque subfile, inner PNG never separately surfaced) is verified by the test named above. sizeInBytes (6144) is the size of the re-serialized ObjectPool storage, not of the inner xls. No metadata is set (the revision-history half of the doc pair is the third-party samples/curated/doc/us-dept-of-education-teacher-quality-grantees-1999-2000.doc). This is the only legacy curated sample authored here: curated xls/ppt samples remain out of scope."
+    },
+    {
+      "format": "xls",
+      "status": "generated",
+      "path": "samples/curated/xls/inventory-forecast.xls",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator.Fixtures.CuratedSampleSpecs.BuildInventoryForecast() via SampleGenerator/Program.cs (XlsSampleGenerator; inner embedding generated via XlsxSampleGenerator.Generate())",
+      "compositionRule": "docs/specs/dataset-curation.md Corpus Composition curated-samples bullet -- 2+ levels of nested embedding: the xls embeds a real inner-generated xlsx (OLE package object), and that inner xlsx itself embeds a PNG chart image, for 2 genuine nesting levels.",
+      "expectedDetectedFormat": {
+        "enum": "Xls",
+        "mimeType": "application/vnd.ms-excel"
+      },
+      "bodyTextLines": [
+        "Inventory Forecast: Q3 2026",
+        "Prepared by: Supply Planning, Acme Logistics",
+        "Warehouse: Dayton distribution center",
+        "Forecast basis: trailing 12-month demand, seasonally adjusted",
+        "See embedded workbook for reorder thresholds by product family."
+      ],
+      "metadata": {},
+      "expectedSubfileCount": 2,
+      "expectedSubfiles": [
+        { "fileName": "embedded_object_1.bin", "contentType": "application/octet-stream", "sizeInBytes": 5120, "packagePath": "embedded_object_1" },
+        { "fileName": "picture_2.png", "contentType": "image/png", "sizeInBytes": 70, "packagePath": "picture_2" }
+      ],
+      "detectable": true,
+      "verifiedBy": "ExtractorOle/ExtractorOLE.Tests/MultiEmbedding/CuratedNestedEmbeddingSampleTests.cs :: Xls_InventoryForecast_NestedXlsxEmbedding_IsOneOpaqueSubfile_InnerPngNotUnpacked; also ExtractorOle/ExtractorOLE.Tests/Integration/ExtractCorpusManifestTests.cs (Extract over this entry: exact text, metadata, subfile list) and DetectMimeTypeCorpusManifestTests.cs (detected format)",
+      "notes": "Legacy files are authored by SampleGenerator per ADR-005 and read back only by ExtractorOLE's own readers; openability in real Microsoft Office/LibreOffice is UNVERIFIED. The inner xlsx (reorder-thresholds.xlsx, held in the Ole10Native stream of the embedded object) itself embeds a PNG chart and would require recursive extraction to reach -- out of scope. The non-recursive rule is verified by the named test. The xls generator also adds a shared 1x1 icon picture for the OLE object, which ExtractorOLE reports as a second (picture) subfile. No metadata is set."
+    },
+    {
+      "format": "ppt",
+      "status": "generated",
+      "path": "samples/curated/ppt/quarterly-review-deck.ppt",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator.Fixtures.CuratedSampleSpecs.BuildQuarterlyReviewDeck() via SampleGenerator/Program.cs (PptSampleGenerator; inner embedding generated via XlsSampleGenerator.Generate())",
+      "compositionRule": "docs/specs/dataset-curation.md Corpus Composition curated-samples bullet -- 2+ levels of nested embedding: the ppt embeds a real inner-generated xls (Embedding1 storage), and that inner xls itself embeds a PNG chart image, for 2 genuine nesting levels.",
+      "expectedDetectedFormat": {
+        "enum": "Ppt",
+        "mimeType": "application/vnd.ms-powerpoint"
+      },
+      "bodyTextLines": [
+        "Quarterly Business Review: Q2 2026",
+        "Presenter: Regional Operations, Acme Logistics",
+        "Highlights: on-time delivery up 4 points, cost per parcel down 6 percent",
+        "Next steps: expand automation pilot to two more sites",
+        "See attached workbook for the regional KPI table."
+      ],
+      "metadata": {},
+      "expectedSubfileCount": 1,
+      "expectedSubfiles": [
+        { "fileName": "Embedding1", "contentType": "application/octet-stream", "sizeInBytes": 6144, "packagePath": "Embedding1" }
+      ],
+      "detectable": true,
+      "verifiedBy": "ExtractorOle/ExtractorOLE.Tests/MultiEmbedding/CuratedNestedEmbeddingSampleTests.cs :: Ppt_QuarterlyReviewDeck_NestedXlsEmbedding_IsOneOpaqueSubfile_InnerPngNotUnpacked; also ExtractorOle/ExtractorOLE.Tests/Integration/ExtractCorpusManifestTests.cs (Extract over this entry: exact text, metadata, subfile list) and DetectMimeTypeCorpusManifestTests.cs (detected format)",
+      "notes": "Legacy files are authored by SampleGenerator per ADR-005 and read back only by ExtractorOLE's own readers; openability in real Microsoft Office/LibreOffice is UNVERIFIED. The inner xls (regional-kpis.xls, held in the Ole10Native stream of Embedding1) itself embeds a PNG chart and would require recursive extraction to reach -- out of scope. The non-recursive rule is verified by the named test. No metadata is set."
     }
   ],
   "$benchmarkSamplesNote": "T-f0963fc3: the 12 fixed benchmark samples (10MB tier: target 10,000,000 bytes; ~100MB tier: target 102,400,000 bytes = 97.66 MiB, under the 104,857,600-byte MaxFileSizeBytes cap; each file lands in [0.99 x target, target]). They are gitignored (samples/benchmark/) and regenerated on demand with `dotnet run --project SampleGenerator -- --benchmark`, which rewrites the files and compares each SHA-256 with this list (exit code 1 on mismatch). They live under 'benchmarkSamples', not 'samples', because the committed-corpus tests (DetectMimeTypeCorpusManifestTests) read every 'samples' entry from disk. sha256 values depend on the deflate output of the .NET runtime that built them (net8.0 target, built here on the .NET 8 runtime via the .NET 9 SDK), so a different runtime's zlib could change the docx/xlsx/pptx hashes; ExtractorOLE.Tests.SampleGeneration.BenchmarkSampleGeneratorTests validates size, SHA-256 and Extract() text for each present file.",

@@ -128,6 +128,8 @@ foreach (var (format, generator) in generators)
 var curatedSamples = new (SampleFormat Format, string FileName, SampleSpec Spec)[]
 {
     (SampleFormat.Doc, "project-proposal-budget.doc", CuratedSampleSpecs.BuildProjectProposalBudget()),
+    (SampleFormat.Xls, "inventory-forecast.xls", CuratedSampleSpecs.BuildInventoryForecast()),
+    (SampleFormat.Ppt, "quarterly-review-deck.ppt", CuratedSampleSpecs.BuildQuarterlyReviewDeck()),
     (SampleFormat.Docx, "meeting-minutes-boardroom.docx", CuratedSampleSpecs.BuildMeetingMinutesBoardroom()),
     (SampleFormat.Docx, "invoice-acme-corp.docx", CuratedSampleSpecs.BuildInvoiceAcmeCorp()),
     (SampleFormat.Xlsx, "project-status-report.xlsx", CuratedSampleSpecs.BuildProjectStatusReport()),
