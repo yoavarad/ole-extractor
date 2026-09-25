@@ -1,0 +1,59 @@
+name: Stress harness
+
+# On demand only. Runs the hand-rolled concurrent-load harness (ADR-002) against the committed
+# sample corpus; the job fails if the harness detects shared-mutable-state corruption.
+
+on:
+  workflow_dispatch:
+    inputs:
+      concurrency:
+        description: Concurrent callers
+        default: '50'
+      iterations:
+        description: Iterations per function
+        default: '200'
+      os:
+        description: Runner OS
+        type: choice
+        options: [ubuntu-latest, windows-latest]
+        default: ubuntu-latest
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  stress:
+    runs-on: ${{ inputs.os }}
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+          dotnet-version: 8.0.x
+
+      - name: Run stress harness
+        shell: bash
+        run: |
+          set -o pipefail
+          dotnet run -c Release --project ExtractorOle/ExtractorOLE.StressHarness -- \
+            "${{ inputs.concurrency }}" "${{ inputs.iterations }}" samples | tee stress-report.txt
+
+      - name: Add report to job summary
+        if: always()
+        shell: bash
+        run: |
+          { echo '```text'; cat stress-report.txt 2>/dev/null; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: stress-report-${{ inputs.os }}
+          path: stress-report.txt

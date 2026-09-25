@@ -163,7 +163,7 @@ It has about 10 entries for 89 tasks. The real history is in the per-task activi
 
 **Follow-ups: this repo**
 - [x] Close the 4 stale QD tasks (§6).
-- [ ] Add a CI workflow running `dotnet build` + `dotnet test` on PRs. Optionally add the benchmark P95 comparison as a separate manual/nightly job.
+- [x] Add CI: `ci.yml` (PR gate: build, format, test, vulnerable packages on ubuntu + windows); `benchmarks.yml` and `stress.yml` on demand only.
 - [ ] Run `/graphify --update` after this lands (per CLAUDE.md).
 
 **Follow-ups: YDK (separate repo)**
