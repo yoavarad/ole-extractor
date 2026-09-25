@@ -37,6 +37,7 @@ namespace ExtractorOLE.Tests.Integration
         {
             "Title", "Author", "LastModifiedBy", "Created", "Modified",
             "Subject", "Comments", "RevisionNumber", "LastPrinted", "EditingDurationMinutes",
+            "Keywords", "ApplicationName",
         };
 
         // Extractor-generated subfile names are "<prefix>_<index><ext>" with prefix embedded_object
@@ -179,6 +180,8 @@ namespace ExtractorOLE.Tests.Integration
             // The manifest records these only when the sample's native properties were captured;
             // a curated sample can carry more than it records, so they are asserted when recorded.
             if (metadata.TryGetProperty("Subject", out _)) Assert.Equal(Text("Subject"), actual.Subject);
+            if (metadata.TryGetProperty("Keywords", out _)) Assert.Equal(Text("Keywords"), actual.Keywords);
+            if (metadata.TryGetProperty("ApplicationName", out _)) Assert.Equal(Text("ApplicationName"), actual.ApplicationName);
             if (metadata.TryGetProperty("Comments", out _)) Assert.Equal(Text("Comments"), actual.Comments);
             if (metadata.TryGetProperty("LastPrinted", out _)) AssertInstant(Text("LastPrinted"), actual.LastPrinted, "LastPrinted");
             if (metadata.TryGetProperty("RevisionNumber", out _)) Assert.Equal(Int("RevisionNumber"), actual.RevisionNumber);

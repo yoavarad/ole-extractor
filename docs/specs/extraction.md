@@ -8,6 +8,8 @@
 
 [ydk:entity:extraction/FileMetadata] carries the fields common across all six formats — title, author, last-modified-by, subject, keywords, comments, created/modified timestamps, application name, revision number, cumulative editing duration, and last-printed timestamp — sourced from each format's native document-properties store. A field the source format doesn't provide is null, never a placeholder string.
 
+Implementation naming: the C# `FileMetadata` DTO uses `Creator` (entity `Author`), `Created` (entity `CreatedAt`) and `Modified` (entity `ModifiedAt`); the other fields keep the entity names, and `EditingDurationMinutes` is whole minutes for both OLE EditTime and OOXML TotalTime. The sample manifest uses the entity name `Author` and maps it to `Creator`.
+
 ## Format-Specific Metadata
 
 Exactly one metadata shape populates the result, chosen by format kind (Word, Excel, or PowerPoint — distinct from format family, which is the container technology; see `glossary.md`):
