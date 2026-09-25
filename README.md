@@ -20,8 +20,8 @@ See `docs/specs/overview.md` for the full problem statement, success criteria, a
 | `.xlsx` (incl. `.xlsm`) | OOXML | Supported — via `DocumentFormat.OpenXml` |
 | `.pptx` (incl. `.pptm`) | OOXML | Supported — via `DocumentFormat.OpenXml` |
 | `.xls` | Legacy OLE/CFB | Supported — via self-compiled NPOI (`HSSFWorkbook`) |
-| `.doc` | Legacy OLE/CFB | Not yet implemented — planned via `b2xtranslator` (doc→docx), see [ADR-004](docs/adrs/004-legacy-doc-ppt-parsing.md) |
-| `.ppt` | Legacy OLE/CFB | Not yet implemented — planned via `b2xtranslator` (ppt→pptx), see [ADR-004](docs/adrs/004-legacy-doc-ppt-parsing.md) |
+| `.doc` | Legacy OLE/CFB | Supported — via self-compiled `b2xtranslator` (doc→docx), see [ADR-004](docs/adrs/004-legacy-doc-ppt-parsing.md) |
+| `.ppt` | Legacy OLE/CFB | Supported — via self-compiled `b2xtranslator` (ppt→pptx), see [ADR-004](docs/adrs/004-legacy-doc-ppt-parsing.md) |
 
 A macro-enabled file (`docm`/`xlsm`/`pptm`) is detected as its base format (`Docx`/`Xlsx`/`Pptx`)
 rather than as a separate enum value — macro presence surfaces as a flag on the format-specific
@@ -61,6 +61,7 @@ ole-extractor/
 ├── SampleGenerator/                  # Generates synthetic/curated test-corpus samples
 ├── samples/                          # Curated + generated sample corpus + manifest.json
 ├── third_party/npoi/                 # Git submodule: NPOI, self-compiled from Apache-2.0 source
+├── third_party/b2xtranslator/        # Git submodule: b2xtranslator, self-compiled (legacy .doc/.ppt)
 ├── docs/
 │   ├── specs/                        # Overview, extraction, mime-detection, testing-strategy, ...
 │   ├── adrs/                         # Architecture decision records
@@ -74,7 +75,7 @@ ole-extractor/
 |---|---|---|
 | OOXML (docx/xlsx/pptx) | `DocumentFormat.OpenXml` (MIT) | [ADR-001](docs/adrs/001-extraction-library-stack.md) |
 | Legacy OLE — `.xls` | `NPOI` (Apache-2.0, self-compiled — see below) | [ADR-001](docs/adrs/001-extraction-library-stack.md) |
-| Legacy OLE — `.doc`/`.ppt` (planned) | `b2xtranslator` (BSD-3-Clause) | [ADR-004](docs/adrs/004-legacy-doc-ppt-parsing.md) |
+| Legacy OLE — `.doc`/`.ppt` | `b2xtranslator` (BSD-3-Clause, self-compiled — see below) | [ADR-004](docs/adrs/004-legacy-doc-ppt-parsing.md) |
 | CFB introspection / mime-sniffing | `OpenMcdf` ≥3.1.3 (MPL-2.0) | [ADR-001](docs/adrs/001-extraction-library-stack.md) |
 | Time profiling | `BenchmarkDotNet` | [ADR-002](docs/adrs/002-profiling-and-stress-testing.md) |
 | Stress testing | Hand-rolled harness | [ADR-002](docs/adrs/002-profiling-and-stress-testing.md) |
@@ -85,12 +86,13 @@ Apache-2.0 source instead, via the `third_party/npoi` git submodule (pinned to t
 `2.7.6-rc1`) referenced as a `ProjectReference`. Only NPOI's `main` tree is used (gives
 `.xls`/HSSF, plus format-agnostic HPSF/POIFS for cross-format legacy metadata and subfile
 discovery) — NPOI's `.doc`/`.ppt` readers live only in an unshipped `scratchpad` tree, which
-is why those two formats use a different library instead (see ADR-004).
+is why those two formats use a different library instead (see ADR-004). `b2xtranslator` is
+likewise compiled from source, via the `third_party/b2xtranslator` git submodule.
 
 ## Build & test
 
 Prerequisites: [.NET 8 SDK](https://dotnet.microsoft.com/download) or later, and the
-`third_party/npoi` git submodule checked out.
+`third_party/npoi` and `third_party/b2xtranslator` git submodules checked out.
 
 ```bash
 # Clone with submodules (or run submodule update after a plain clone)
@@ -126,6 +128,7 @@ testing approach and `docs/specs/dataset-curation.md` for how the corpus itself 
   - [ADR-002](docs/adrs/002-profiling-and-stress-testing.md) — profiling and stress-testing approach
   - [ADR-003](docs/adrs/003-manual-spec-review-in-place-of-bedrock.md) — manual LLM spec review in place of `ydk spec verify`
   - [ADR-004](docs/adrs/004-legacy-doc-ppt-parsing.md) — legacy `.doc`/`.ppt` body-text parsing via `b2xtranslator`
+  - [ADR-005](docs/adrs/005-legacy-doc-ppt-authoring.md) — authoring legacy `.doc`/`.ppt`/`.xls` test samples in SampleGenerator
 - [`docs/project-rules.md`](docs/project-rules.md) — conventions, brownfield constraints, and known gotchas
 - [`docs/research/`](docs/research/) — research spikes backing the ADRs above
 
