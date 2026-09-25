@@ -4,75 +4,75 @@ last_epic_id: 0
 epics:
   E-a2efe648:
     title: Library Setup & Validation
-    status: open
+    status: done
     stories:
     - S-e496f356
     - S-418e5f1b
   E-d4ac3268:
     title: Project Restructure
-    status: open
+    status: done
     stories:
     - S-d01346bc
     - S-43c41d4a
     - S-fe24ecff
   E-6728ee81:
     title: CFB / Legacy Mime Detection
-    status: open
+    status: done
     stories:
     - S-3bc6b929
   E-a7ddf85b:
     title: Legacy OLE Extraction
-    status: open
+    status: done
     stories:
     - S-32677db6
     - S-0602557d
     - S-23b8b734
   E-b54e8704:
     title: OOXML Mime Detection Hardening
-    status: open
+    status: done
     stories:
     - S-7d040ba7
   E-46875bcf:
     title: OOXML Extraction Completeness
-    status: open
+    status: done
     stories:
     - S-156ec71a
     - S-8d6146f0
     - S-37c18545
   E-bd43bc02:
     title: Public API Surface
-    status: open
+    status: done
     stories:
     - S-072bfdf6
     - S-51d277f1
   E-c2846232:
     title: Dataset Curation
-    status: open
+    status: done
     stories:
     - S-41ebb945
     - S-da936361
     - S-6bc8566f
   E-5717c1fe:
     title: Test Suite
-    status: open
+    status: done
     stories:
     - S-f6d7124a
     - S-814fa928
   E-3ffdc4d5:
     title: Time Profiling
-    status: open
+    status: done
     stories:
     - S-709fe2de
   E-c2544f52:
     title: Stress Test Harness
-    status: open
+    status: done
     stories:
     - S-d88f514b
 stories:
   S-e496f356:
     title: Wire self-compiled NPOI and OpenMcdf into the build
     epic: E-a2efe648
-    status: open
+    status: done
     tasks:
     - T-d7c81051
     - T-d6de875f
@@ -82,13 +82,13 @@ stories:
   S-418e5f1b:
     title: Empirically validate NPOI i18n fidelity on the legacy OLE path
     epic: E-a2efe648
-    status: open
+    status: done
     tasks:
     - T-94570c2b
   S-d01346bc:
     title: Downgrade to net8.0 and fix enum typo
     epic: E-d4ac3268
-    status: open
+    status: done
     tasks:
     - T-eeb6684b
     - T-2ac2f140
@@ -97,20 +97,20 @@ stories:
   S-43c41d4a:
     title: Generalize embedded-subfile walk and wire DI registry for format dispatch
     epic: E-d4ac3268
-    status: open
+    status: done
     tasks:
     - T-05bd14c7
     - T-90924b6d
   S-fe24ecff:
     title: Wire Program.cs to invoke both public functions on a real file
     epic: E-d4ac3268
-    status: open
+    status: done
     tasks:
     - T-07188baf
   S-3bc6b929:
     title: CFB directory-based detection for legacy formats
     epic: E-6728ee81
-    status: open
+    status: done
     tasks:
     - T-fd49ef39
     - T-f667e540
@@ -118,7 +118,7 @@ stories:
   S-32677db6:
     title: doc extraction (Word legacy)
     epic: E-a7ddf85b
-    status: open
+    status: done
     tasks:
     - T-c4123b53
     - T-3f3dab44
@@ -128,7 +128,7 @@ stories:
   S-0602557d:
     title: xls extraction (Excel legacy)
     epic: E-a7ddf85b
-    status: open
+    status: done
     tasks:
     - T-c2a60f06
     - T-40ac397c
@@ -137,7 +137,7 @@ stories:
   S-23b8b734:
     title: ppt extraction (PowerPoint legacy)
     epic: E-a7ddf85b
-    status: open
+    status: done
     tasks:
     - T-517f89c5
     - T-2c3440d2
@@ -146,7 +146,7 @@ stories:
   S-7d040ba7:
     title: Harden OOXML detection, including macro-enabled variants
     epic: E-b54e8704
-    status: open
+    status: done
     tasks:
     - T-44812a03
     - T-ef11e30d
@@ -155,7 +155,7 @@ stories:
   S-156ec71a:
     title: docx extraction completeness
     epic: E-46875bcf
-    status: open
+    status: done
     tasks:
     - T-9fac8963
     - T-47fea79d
@@ -163,7 +163,7 @@ stories:
   S-8d6146f0:
     title: xlsx extraction completeness
     epic: E-46875bcf
-    status: open
+    status: done
     tasks:
     - T-30e939fe
     - T-f653c5fb
@@ -173,7 +173,7 @@ stories:
   S-37c18545:
     title: pptx extraction completeness
     epic: E-46875bcf
-    status: open
+    status: done
     tasks:
     - T-b792f8e5
     - T-505f5b14
@@ -183,14 +183,14 @@ stories:
   S-072bfdf6:
     title: Wire the DetectMimeType public facade to the registry
     epic: E-bd43bc02
-    status: open
+    status: done
     tasks:
     - T-ef73861f
     - T-fb89c6f3
   S-51d277f1:
     title: Wire the Extract public facade with full error handling
     epic: E-bd43bc02
-    status: open
+    status: done
     tasks:
     - T-3b4e70f4
     - T-3335d397
@@ -199,7 +199,7 @@ stories:
   S-41ebb945:
     title: Synthetic sample generator (3 per format)
     epic: E-c2846232
-    status: open
+    status: done
     tasks:
     - T-5e9dbd18
     - T-d657bb2a
@@ -210,7 +210,7 @@ stories:
   S-da936361:
     title: Curated real-world samples (2 per format)
     epic: E-c2846232
-    status: open
+    status: done
     tasks:
     - T-6f033869
     - T-0834290d
@@ -221,7 +221,7 @@ stories:
   S-6bc8566f:
     title: Shared adversarial set and corpus manifest
     epic: E-c2846232
-    status: open
+    status: done
     tasks:
     - T-3bddbe75
     - T-83b4a029
@@ -234,7 +234,7 @@ stories:
   S-f6d7124a:
     title: Integration tests against the corpus manifest
     epic: E-5717c1fe
-    status: open
+    status: done
     tasks:
     - T-e0a5bfec
     - T-7916a198
@@ -244,7 +244,7 @@ stories:
   S-814fa928:
     title: Unit tests for unit-test-backed scenarios
     epic: E-5717c1fe
-    status: open
+    status: done
     tasks:
     - T-9a4ff765
     - T-5e489191
@@ -252,7 +252,7 @@ stories:
   S-709fe2de:
     title: BenchmarkDotNet profiling project
     epic: E-3ffdc4d5
-    status: open
+    status: done
     tasks:
     - T-fb06300e
     - T-b62ffe04
@@ -261,7 +261,7 @@ stories:
   S-d88f514b:
     title: Concurrent-load stress harness
     epic: E-c2544f52
-    status: open
+    status: done
     tasks:
     - T-0055ec7c
     - T-96b5181b

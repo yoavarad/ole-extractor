@@ -1,22 +1,22 @@
 ---
-id: QD-66bea6
-title: Register T-ec4dc427, T-6e7423e5, T-ffa97099 in manifest and commit QD-437c92
-  proof artifacts
+id: QD-e02ee3
+title: Refresh graphify graph and land QD-66bea6 proof artifacts after PR 128-129
+  merge
 status: done
 type: quickdev
-updated: '2026-09-25T12:00:36Z'
+updated: '2026-09-25T12:00:45Z'
 labels:
 - in-review
 ---
 
-Register T-ec4dc427, T-6e7423e5, T-ffa97099 in manifest and commit QD-437c92 proof artifacts
-### 2026-09-25T10:58:28Z (UTC)
+Refresh graphify graph and land QD-66bea6 proof artifacts after PR 128-129 merge
+### 2026-09-25T11:03:32Z (UTC)
 ## Verification Proof
 
-OK dotnet-build (15.0s)
-OK dotnet-format (74.3s)
-OK dotnet-quality (136.1s)
-OK ai-code-review (16.6s)
+OK dotnet-build (10.9s)
+OK dotnet-format (32.4s)
+OK dotnet-quality (34.3s)
+OK ai-code-review (0.0s)
 OK cli-error-handling (0.0s)
 OK cli-output-format (0.0s)
 OK fastapi-adapter-isolation (0.0s)
@@ -42,16 +42,16 @@ OK nextjs-sse-abort-controller (0.0s)
 OK python-file-length (0.0s)
 OK python-no-future-annotations (0.0s)
 OK react-fsd-imports (0.0s)
-OK spec-alignment (1.4s)
-OK terraform-dangling-resources (0.4s)
-OK terraform-external-iam (0.4s)
+OK spec-alignment (0.9s)
+OK terraform-dangling-resources (0.1s)
+OK terraform-external-iam (0.1s)
 OK terraform-format (0.0s)
-OK terraform-glacier-public (0.3s)
-OK terraform-paravirt-ec2 (0.4s)
-OK terraform-public-ami (0.4s)
+OK terraform-glacier-public (0.1s)
+OK terraform-paravirt-ec2 (0.1s)
+OK terraform-public-ami (0.1s)
 OK terraform-security (0.0s)
 OK terraform-tagging (0.0s)
-OK dotnet-test (32.8s)
+OK dotnet-test (21.5s)
 OK tests-pytest (0.0s)
 
-PR: https://github.com/yoavarad/ole-extractor/pull/129
+PR: https://github.com/yoavarad/ole-extractor/pull/130
