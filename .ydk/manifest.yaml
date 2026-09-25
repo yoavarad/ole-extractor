@@ -880,7 +880,7 @@ tasks:
   T-2e13ee4b:
     title: Establish committed baseline and CI regression documentation
     story: S-709fe2de
-    status: open
+    status: done
     dependencies:
     - T-b62ffe04
     component_refs:
@@ -1041,7 +1041,7 @@ tasks:
     title: Extend SampleGenerator so doc/ppt multi-embedding samples embed 2 different
       kinds
     story: S-6bc8566f
-    status: open
+    status: done
     dependencies:
     - T-07571b32
     component_refs: []
@@ -1068,7 +1068,7 @@ tasks:
     title: Strengthen pptx text spot-check to assert full ordered slide text in deck
       order
     story: S-f6d7124a
-    status: open
+    status: done
     dependencies:
     - T-afb7e032
     - T-7916a198
