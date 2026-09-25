@@ -1,0 +1,11 @@
+<Project>
+  <!--
+    CI sets -p:CiWarningsAsErrors=true (.github/workflows/ci.yml) to fail the build on compiler
+    warnings in this repo's own projects. Vendored submodules under third_party/ (NPOI,
+    b2xtranslator) are excluded: their warnings are upstream code we don't maintain.
+    Local builds are unaffected unless the property is passed.
+  -->
+  <PropertyGroup Condition="'$(CiWarningsAsErrors)' == 'true' and !$(MSBuildProjectDirectory.Replace('\', '/').Contains('/third_party/'))">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+</Project>
