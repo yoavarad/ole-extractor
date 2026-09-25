@@ -19,9 +19,10 @@ namespace ExtractorOLE.Tests.Integration
     //                                  confirmedSubstrings), exact metadata, exact subfile list.
     // Nothing here asserts only "text is non-empty".
     //
-    // Manifest metadata keys with no field on FileMetadata (Subject, Comments, RevisionNumber,
-    // LastPrinted, EditingDurationMinutes) cannot be asserted through Extract's result; any other
-    // unknown key fails the test so a new manifest key never goes silently unasserted.
+    // Every manifest metadata key is asserted against FileMetadata; an unknown key fails the test
+    // so a new manifest key never goes silently unasserted. Manifest names map to FileMetadata as:
+    // Author -> Creator, Created -> Created, Modified -> Modified (entity CreatedAt/ModifiedAt/Author
+    // are the spec names), EditingDurationMinutes -> EditingDurationMinutes, LastPrinted -> LastPrinted.
     public class ExtractCorpusManifestTests
     {
         private static readonly Lazy<MainExtractor> Extractor = new(() =>
@@ -35,11 +36,6 @@ namespace ExtractorOLE.Tests.Integration
         private static readonly HashSet<string> MappedMetadataKeys = new()
         {
             "Title", "Author", "LastModifiedBy", "Created", "Modified",
-        };
-
-        // Manifest metadata keys the DocumentExtractionResult has no field for.
-        private static readonly HashSet<string> UnmappedMetadataKeys = new()
-        {
             "Subject", "Comments", "RevisionNumber", "LastPrinted", "EditingDurationMinutes",
         };
 
@@ -152,12 +148,18 @@ namespace ExtractorOLE.Tests.Integration
             var metadata = entry.GetProperty("metadata");
             foreach (var key in metadata.EnumerateObject().Select(p => p.Name))
             {
-                Assert.True(MappedMetadataKeys.Contains(key) || UnmappedMetadataKeys.Contains(key),
-                    $"Manifest metadata key '{key}' is neither asserted nor known to be unmappable");
+                Assert.True(MappedMetadataKeys.Contains(key),
+                    $"Manifest metadata key '{key}' is not asserted");
             }
 
             string? Text(string key) =>
                 metadata.TryGetProperty(key, out var v) ? v.GetString() : null;
+
+            int? Int(string key)
+            {
+                if (!metadata.TryGetProperty(key, out var v)) return null;
+                return v.ValueKind == JsonValueKind.String ? int.Parse(v.GetString()!, CultureInfo.InvariantCulture) : v.GetInt32();
+            }
 
             // Third-party entries record their title in bodyText rather than metadata.
             var expectedTitle = Text("Title");
@@ -174,6 +176,13 @@ namespace ExtractorOLE.Tests.Integration
             Assert.Equal(Text("LastModifiedBy"), actual.LastModifiedBy);
             AssertInstant(Text("Created"), actual.Created, "Created");
             AssertInstant(Text("Modified"), actual.Modified, "Modified");
+            // The manifest records these only when the sample's native properties were captured;
+            // a curated sample can carry more than it records, so they are asserted when recorded.
+            if (metadata.TryGetProperty("Subject", out _)) Assert.Equal(Text("Subject"), actual.Subject);
+            if (metadata.TryGetProperty("Comments", out _)) Assert.Equal(Text("Comments"), actual.Comments);
+            if (metadata.TryGetProperty("LastPrinted", out _)) AssertInstant(Text("LastPrinted"), actual.LastPrinted, "LastPrinted");
+            if (metadata.TryGetProperty("RevisionNumber", out _)) Assert.Equal(Int("RevisionNumber"), actual.RevisionNumber);
+            if (metadata.TryGetProperty("EditingDurationMinutes", out _)) Assert.Equal(Int("EditingDurationMinutes"), actual.EditingDurationMinutes);
         }
 
         private static void AssertInstant(string? expectedUtc, DateTime? actual, string field)

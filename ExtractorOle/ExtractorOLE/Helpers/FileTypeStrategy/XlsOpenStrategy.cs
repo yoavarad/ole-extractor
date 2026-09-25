@@ -30,11 +30,7 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
                     var summary = workbook.SummaryInformation;
                     if (summary != null)
                     {
-                        result.Metadata.Title = summary.Title;
-                        result.Metadata.Creator = summary.Author;
-                        result.Metadata.Created = summary.CreateDateTime;
-                        result.Metadata.Modified = summary.LastSaveDateTime;
-                        result.Metadata.LastModifiedBy = summary.LastAuthor;
+                        MetadataConversions.Apply(summary, result.Metadata);
                     }
 
                     result.FormatMetadata = BuildExcelFormatMetadata(workbook);

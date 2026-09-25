@@ -31,6 +31,11 @@ namespace ExtractorOLE.DTOs
         public DateTime? Created { get; set; }
         public DateTime? Modified { get; set; }
         public string? LastModifiedBy { get; set; }
+        public string? Subject { get; set; }
+        public string? Comments { get; set; }
+        public int? RevisionNumber { get; set; }
+        public DateTime? LastPrinted { get; set; }
+        public int? EditingDurationMinutes { get; set; }
     }
 
     public class EmbeddedFileItem

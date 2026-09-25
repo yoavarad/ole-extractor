@@ -116,11 +116,7 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
                 var summary = propsDoc.SummaryInformation;
                 if (summary != null)
                 {
-                    metadata.Title = summary.Title;
-                    metadata.Creator = summary.Author;
-                    metadata.Created = summary.CreateDateTime;
-                    metadata.Modified = summary.LastSaveDateTime;
-                    metadata.LastModifiedBy = summary.LastAuthor;
+                    MetadataConversions.Apply(summary, metadata);
                 }
 
                 bool hasMacros = fs.Root.HasEntryCaseInsensitive(MacrosStorageName);

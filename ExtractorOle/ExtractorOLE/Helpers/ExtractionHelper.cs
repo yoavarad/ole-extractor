@@ -67,8 +67,7 @@ namespace ExtractorOLE.Helpers
             var extendedPropsPart = package.GetPartsOfType<ExtendedFilePropertiesPart>().FirstOrDefault();
             if (extendedPropsPart?.Properties != null)
             {
-                //todo: add extra metadata fields
-                Console.WriteLine("got extended props");
+                result.Metadata.EditingDurationMinutes = MetadataConversions.ParseInt(extendedPropsPart.Properties.TotalTime?.Text);
             }
 
             var corePart = package.GetPartsOfType<CoreFilePropertiesPart>().FirstOrDefault();
@@ -81,6 +80,10 @@ namespace ExtractorOLE.Helpers
                 result.Metadata.Created = props.Created;
                 result.Metadata.Modified = props.Modified;
                 result.Metadata.LastModifiedBy = props.LastModifiedBy;
+                result.Metadata.Subject = MetadataConversions.NullIfEmpty(props.Subject);
+                result.Metadata.Comments = MetadataConversions.NullIfEmpty(props.Description);
+                result.Metadata.RevisionNumber = MetadataConversions.ParseInt(props.Revision);
+                result.Metadata.LastPrinted = props.LastPrinted;
 
                 if (string.IsNullOrEmpty(result.MimeType) && !string.IsNullOrEmpty(corePart.ContentType))
                 {
