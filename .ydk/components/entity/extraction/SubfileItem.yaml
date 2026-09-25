@@ -17,7 +17,10 @@ fields:
     description: >
       Best-available name for the item. OOXML containers provide a real part
       name/extension; legacy OLE storages are named by their CFB storage/stream
-      name, which is used as-is when no better name is recoverable.
+      name, which is used as-is when no better name is recoverable. OOXML names are
+      "<prefix>_<N><ext>" (N = 1-based list position): prefix slide_image for an image
+      part hosted one hop below the main part (pptx slide, xlsx worksheet), embedded_object
+      for every other item (see docs/specs/extraction.md, Subfiles).
   SizeBytes:
     type: long
     required: true
