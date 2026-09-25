@@ -56,7 +56,13 @@ namespace SampleGenerator.Generators
                 fs.Root.CreateDocument("PowerPoint Document", new MemoryStream(document));
                 fs.Root.CreateDocument("Current User", new MemoryStream(currentUser));
                 LegacyCfbHelper.WriteSummaryInformation(fs, spec.Metadata);
-                LegacyCfbHelper.AddEmbeddedObjects(fs.Root, spec.Embeddings, "Embedding");
+                var images = spec.Embeddings.Where(e => e.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase)).ToList();
+                LegacyCfbHelper.AddEmbeddedObjects(fs.Root, spec.Embeddings.Except(images), "Embedding");
+                if (images.Count > 0)
+                {
+                    // Real .ppt files keep every slide image concatenated in one root "Pictures" stream.
+                    fs.Root.CreateDocument("Pictures", new MemoryStream(images.SelectMany(i => i.Content).ToArray()));
+                }
                 if (spec.VbaProject is { } vbaProject)
                 {
                     LegacyCfbHelper.AddVbaProject(fs.Root, vbaProject, LegacyCfbHelper.WordPptMacrosStorage);
