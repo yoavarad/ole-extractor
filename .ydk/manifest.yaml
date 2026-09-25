@@ -1014,7 +1014,7 @@ tasks:
   T-afb7e032:
     title: Extract pptx text in deck slide order instead of relationship order
     story: S-37c18545
-    status: open
+    status: in-review
     dependencies: []
     component_refs:
     - ydk:contract:extraction/extract
