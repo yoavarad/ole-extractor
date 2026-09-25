@@ -44,11 +44,39 @@ namespace ExtractorOLE.Tests.StressHarness
             var samples = MakeSamples(10);
             var options = new LoadGenerationOptions(Concurrency: 500, Iterations: 1000);
 
+            // Root cause of the old flakiness: the operation used to overlap
+            // callers via Thread.Sleep(200) alone, betting that all 500
+            // worker threads would get scheduled and increment
+            // LoadGenerator's in-flight counter within that 200ms window.
+            // Under CPU contention (busy machine, parallel test runs) the
+            // ThreadPool can take longer than that to actually get all 500
+            // threads running, so early callers could finish (and decrement
+            // the counter) before the last callers ever started -- making
+            // the observed peak flaky (494/357/287 instead of 500).
+            //
+            // Fix: block on a Barrier with exactly `Concurrency` (500)
+            // participants instead of a fixed sleep. LoadGenerator increments
+            // its peak-tracking counter for a call *before* invoking this
+            // operation and only decrements it *after* the operation
+            // returns. A Barrier cannot release any waiting participant
+            // until all 500 have signaled, so no call can complete (and free
+            // a concurrency slot) until every one of the 500 concurrent
+            // callers has already been counted. That makes reaching a peak
+            // of exactly 500 deterministic regardless of how slowly the
+            // scheduler gets around to running each thread -- it removes the
+            // wall-clock race entirely. A bounded timeout fails the test
+            // with a clear message instead of hanging if fewer than 500
+            // callers ever actually run concurrently.
+            using var barrier = new Barrier(options.Concurrency);
+
             Func<byte[], int> op = bytes =>
             {
-                // Wide enough sleep window that all 500 worker threads have time
-                // to spin up and overlap before the earliest ones complete.
-                Thread.Sleep(200);
+                if (!barrier.SignalAndWait(TimeSpan.FromSeconds(30)))
+                {
+                    throw new TimeoutException(
+                        "Fewer than 500 operations were running concurrently within the 30s timeout.");
+                }
+
                 return bytes.Length;
             };
 
