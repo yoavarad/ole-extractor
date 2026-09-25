@@ -819,7 +819,7 @@ tasks:
   T-f4ed5c8f:
     title: Integration tests for corpus-sample-backed adversarial scenarios
     story: S-f6d7124a
-    status: open
+    status: done
     dependencies:
     - T-e0a5bfec
     - T-7916a198
@@ -841,7 +841,7 @@ tasks:
   T-5e489191:
     title: Unit tests for null request/field validation on Extract
     story: S-814fa928
-    status: open
+    status: done
     dependencies:
     - T-a2b91dc6
     component_refs:

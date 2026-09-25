@@ -2,7 +2,7 @@
 id: T-f4ed5c8f
 title: Integration tests for corpus-sample-backed adversarial scenarios
 story: S-f6d7124a
-status: open
+status: done
 assignee: null
 labels: []
 dependencies:
@@ -36,7 +36,7 @@ milestone: null
 complexity: null
 gates: []
 created: '2026-08-19T12:47:22Z'
-updated: '2026-08-19T12:47:24Z'
+updated: '2026-09-25T11:53:17Z'
 ---
 
 ## Description
@@ -45,3 +45,5 @@ Integration tests covering every corpus-sample-backed adversarial scenario from 
 
 
 ## Activity Log
+### 2026-09-25T11:53:17Z (UTC)
+Closed without its own PR. Delivered by: T-7916a198 | Reason: Already satisfied: ExtractCorpusManifestTests covers corpus adversarial/nesting/macro samples (38 pass); delivered by T-7916a198 and T-e0a5bfec.
