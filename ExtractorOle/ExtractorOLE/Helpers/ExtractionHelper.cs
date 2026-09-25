@@ -68,6 +68,7 @@ namespace ExtractorOLE.Helpers
             if (extendedPropsPart?.Properties != null)
             {
                 result.Metadata.EditingDurationMinutes = MetadataConversions.ParseInt(extendedPropsPart.Properties.TotalTime?.Text);
+                result.Metadata.ApplicationName = MetadataConversions.NullIfEmpty(extendedPropsPart.Properties.Application?.Text);
             }
 
             var corePart = package.GetPartsOfType<CoreFilePropertiesPart>().FirstOrDefault();
@@ -84,6 +85,7 @@ namespace ExtractorOLE.Helpers
                 result.Metadata.Comments = MetadataConversions.NullIfEmpty(props.Description);
                 result.Metadata.RevisionNumber = MetadataConversions.ParseInt(props.Revision);
                 result.Metadata.LastPrinted = props.LastPrinted;
+                result.Metadata.Keywords = MetadataConversions.NullIfEmpty(props.Keywords);
 
                 if (string.IsNullOrEmpty(result.MimeType) && !string.IsNullOrEmpty(corePart.ContentType))
                 {

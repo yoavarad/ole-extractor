@@ -36,6 +36,8 @@ namespace ExtractorOLE.DTOs
         public int? RevisionNumber { get; set; }
         public DateTime? LastPrinted { get; set; }
         public int? EditingDurationMinutes { get; set; }
+        public string? Keywords { get; set; }
+        public string? ApplicationName { get; set; }
     }
 
     public class EmbeddedFileItem

@@ -33,6 +33,8 @@ namespace ExtractorOLE.Helpers
             metadata.RevisionNumber = ParseInt(summary.RevNumber);
             metadata.LastPrinted = ToUtcOrNull(summary.LastPrinted);
             metadata.EditingDurationMinutes = EditTimeToMinutes(summary.EditTime);
+            metadata.Keywords = NullIfEmpty(summary.Keywords);
+            metadata.ApplicationName = NullIfEmpty(summary.ApplicationName);
         }
     }
 }
