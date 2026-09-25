@@ -2,7 +2,7 @@
 id: T-afb7e032
 title: Extract pptx text in deck slide order instead of relationship order
 story: S-37c18545
-status: in-review
+status: done
 assignee: null
 labels:
 - bug
@@ -37,7 +37,7 @@ milestone: null
 complexity: null
 gates: []
 created: '2026-09-20T08:12:32Z'
-updated: '2026-09-20T10:29:59Z'
+updated: '2026-09-25T10:23:54Z'
 ---
 
 ## Description
