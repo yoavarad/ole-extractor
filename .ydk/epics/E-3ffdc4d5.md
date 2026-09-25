@@ -1,7 +1,7 @@
 ---
 id: E-3ffdc4d5
 title: Time Profiling
-status: open
+status: done
 release: ''
 spec_refs:
 - docs/specs/testing-strategy.md

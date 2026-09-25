@@ -2,7 +2,7 @@
 id: S-072bfdf6
 title: Wire the DetectMimeType public facade to the registry
 epic: E-bd43bc02
-status: open
+status: done
 spec_refs:
 - docs/specs/overview.md
 - docs/specs/mime-detection.md

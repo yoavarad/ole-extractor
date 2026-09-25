@@ -1,7 +1,7 @@
 ---
 id: E-a2efe648
 title: Library Setup & Validation
-status: open
+status: done
 release: ''
 spec_refs:
 - docs/adrs/001-extraction-library-stack.md

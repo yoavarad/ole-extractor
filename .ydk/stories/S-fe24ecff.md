@@ -2,7 +2,7 @@
 id: S-fe24ecff
 title: Wire Program.cs to invoke both public functions on a real file
 epic: E-d4ac3268
-status: open
+status: done
 spec_refs:
 - docs/specs/overview.md
 acceptance_criteria:

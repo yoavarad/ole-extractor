@@ -1,7 +1,7 @@
 ---
 id: E-a7ddf85b
 title: Legacy OLE Extraction
-status: open
+status: done
 release: ''
 spec_refs:
 - docs/specs/extraction.md
