@@ -49,14 +49,26 @@ store kept drifting from reality:
 - One source of truth for task status: the GitHub issue's open/closed state and labels.
   No more manifest/frontmatter drift or sync commits.
 - Task IDs share numbering with PRs.
-- Known gaps in ydk's github backend (in the ydk repo, not fixed here):
+- Known gaps in ydk's github backend (in the ydk repo, not fixed here). Each is tracked on
+  `yoavarad/ydk` with label `github-backend`:
   - `ydk task add-gate` / `check-gates`: gates are never parsed back from the issue.
-  - `ydk task tdd`: the TDD stage is dropped.
+    https://github.com/yoavarad/ydk/issues/184
+  - `ydk task tdd`: the TDD stage is dropped. https://github.com/yoavarad/ydk/issues/185
   - `ydk task archive-done`: rewrites the issue body. Do not use.
+    https://github.com/yoavarad/ydk/issues/190
   - `ydk task list --status in-progress|done` and `ydk task list --epic` return empty. Use
-    `gh issue list --label ...` instead.
+    `gh issue list --label ...` instead. https://github.com/yoavarad/ydk/issues/186,
+    https://github.com/yoavarad/ydk/issues/187
   - `ydk task list` shows only `task`-labelled issues (no epics or stories).
+    https://github.com/yoavarad/ydk/issues/192
   - `ydk task quick` writes local files (see Decision).
+    https://github.com/yoavarad/ydk/issues/183
+  - Also tracked: epic/story metadata dropped (https://github.com/yoavarad/ydk/issues/188),
+    `session_id` (https://github.com/yoavarad/ydk/issues/189), ID parsing
+    (https://github.com/yoavarad/ydk/issues/191), migration command
+    (https://github.com/yoavarad/ydk/issues/193), doctor/labels
+    (https://github.com/yoavarad/ydk/issues/194), dependency types
+    (https://github.com/yoavarad/ydk/issues/195).
 - `.claude/hooks/check-task-complete.sh:12` reads `['task_id']`, but `active-task.json` has
   the shape `{"tasks": {...}}`. So the SubagentStop hook never finds a task and is effectively
   dead. This is noted here and not fixed by this change.
