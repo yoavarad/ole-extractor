@@ -22,12 +22,18 @@ Results land in `BenchmarkDotNet.Artifacts/results/` (git-ignored). To refresh t
 `*-report.csv` and `*-report-github.md` files into `docs/benchmarks/baseline/` in a dedicated PR that
 explains why the baseline moved (intentional performance change, new runtime, new reference hardware).
 
-## CI regression rule
+## Regression rule
 
-The CI profiling task fails if the P95 of any sample regresses by more than 20% against the committed
-baseline (`P95_new > 1.20 * P95_baseline`, compared per `Sample` row in the CSV). Baseline numbers are
-hardware-dependent, so the comparison is only meaningful on the same CI runner class used to capture
-the baseline; re-baseline when the runner class changes.
+A sample regresses when its P95 grows by more than 20% against the committed baseline
+(`P95_new > 1.20 * P95_baseline`, compared per `Sample` row in the CSV). Baseline numbers are
+hardware-dependent, so the comparison is only meaningful on the machine class used to capture
+the baseline; re-baseline when that changes.
+
+The `Benchmarks` workflow (`.github/workflows/benchmarks.yml`) runs on demand only
+(Actions → Benchmarks → Run workflow). It regenerates the samples, runs the benchmarks, uploads the
+results, and applies this rule via `.github/scripts/compare_benchmarks.py` — as **warnings**, not
+failures, because GitHub-hosted runners are noisier than, and differ from, the machine the baseline
+was captured on. Treat a warning as a prompt to re-run locally against the baseline.
 
 ## Separate from the test gate
 
