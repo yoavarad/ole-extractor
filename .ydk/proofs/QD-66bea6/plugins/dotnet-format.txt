@@ -1,0 +1,6 @@
+PASSED (74.3s)
+
+=== C:\Users\yoava\Projects\ole-extractor\ExtractorOle\ExtractorOLE\ExtractorOLE.csproj ===
+
+
+=== C:\Users\yoava\Projects\ole-extractor\SampleGenerator\SampleGenerator.csproj ===

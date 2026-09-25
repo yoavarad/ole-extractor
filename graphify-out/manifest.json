@@ -762,9 +762,9 @@
     "semantic_hash": ""
   },
   ".ydk/manifest.yaml": {
-    "mtime": 1790332573.9077368,
-    "seen": 1790332624.292012,
-    "ast_hash": "441c06f9adc0cd14b86a9e368c5e39c4",
+    "mtime": 1790334112.9031537,
+    "seen": 1790334152.7809434,
+    "ast_hash": "c14428d420e2d3b3fd6475dd86e4df40",
     "semantic_hash": ""
   },
   ".ydk/proofs/T-6ac3f215/plugins/ai-code-review.txt": {
@@ -4650,9 +4650,9 @@
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.Tests/StressHarness/LoadGeneratorTests.cs": {
-    "mtime": 1789503474.4321382,
-    "seen": 1790332624.2913094,
-    "ast_hash": "91a119a177d74480975b87934377cf1f",
+    "mtime": 1790334112.9257817,
+    "seen": 1790334152.7211585,
+    "ast_hash": "9b9c5070e9dbde3ad20edb64c3396774",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE/DTOs/PowerPointFormatMetadata.cs": {
@@ -8220,9 +8220,9 @@
     "semantic_hash": ""
   },
   ".claude/skills/ydk/docs/stages/03-execution/aspects/verification.md": {
-    "mtime": 1789899963.5146568,
-    "seen": 1790332624.2918262,
-    "ast_hash": "b61a3cb9acdf52e5f302575005e05daa",
+    "mtime": 1790333788.50319,
+    "seen": 1790334152.7624493,
+    "ast_hash": "8b307deebd7042b72f5cb4f0418040b5",
     "semantic_hash": ""
   },
   ".claude/skills/ydk/docs/stages/03-execution/glossary.md": {
@@ -13674,9 +13674,9 @@
     "semantic_hash": ""
   },
   ".ydk/tasks/T-5080b00a.md": {
-    "mtime": 1789898452.257242,
-    "seen": 1790332624.2977383,
-    "ast_hash": "14d9f274826e6735758cc344c2d064f9",
+    "mtime": 1790334112.9257817,
+    "seen": 1790334153.493994,
+    "ast_hash": "169d1bc47d6e9aaafff57d0fdab464eb",
     "semantic_hash": ""
   },
   ".ydk/tasks/T-afb7e032.md": {
@@ -13707,6 +13707,528 @@
     "mtime": 1789898452.2762902,
     "seen": 1790332624.297846,
     "ast_hash": "60eed782b8c7f6c5dde25e7a9796b26a",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-437c92/verification-report.json": {
+    "mtime": 1790334112.9235415,
+    "seen": 1790334152.6826649,
+    "ast_hash": "766ae8e6f68ee03d0f91303fc31bcb1d",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-66bea6/verification-report.json": {
+    "mtime": 1790333901.87779,
+    "seen": 1790334152.6826756,
+    "ast_hash": "7bb38cdd8f665a861fe45d94066222c2",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-437c92/plugins/ai-code-review.txt": {
+    "mtime": 1790334112.9042132,
+    "seen": 1790334152.8549426,
+    "ast_hash": "de4372cf54d62b8a8da0df114ed24429",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-437c92/plugins/cli-error-handling.txt": {
+    "mtime": 1790334112.904597,
+    "seen": 1790334152.8549507,
+    "ast_hash": "36ce08fca6a349913a03a75a4fec3023",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-437c92/plugins/cli-output-format.txt": {
+    "mtime": 1790334112.904597,
+    "seen": 1790334152.854955,
+    "ast_hash": "36ce08fca6a349913a03a75a4fec3023",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-437c92/plugins/dotnet-build.txt": {
+    "mtime": 1790334112.904597,
+    "seen": 1790334152.8549597,
+    "ast_hash": "eb4a490952bf61172c238e59fe46d5b5",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-437c92/plugins/dotnet-format.txt": {
+    "mtime": 1790334112.904597,
+    "seen": 1790334152.8549652,
+    "ast_hash": "00a5511b5f262a8b9a44134360bf666a",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-437c92/plugins/dotnet-quality.txt": {
+    "mtime": 1790334112.904597,
+    "seen": 1790334152.8549697,
+    "ast_hash": "86d6397dbe00a7f5457b6017acc3b586",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-437c92/plugins/dotnet-test.txt": {
+    "mtime": 1790334112.904597,
+    "seen": 1790334152.8549738,
+    "ast_hash": "21523086d01528821e88a75e759572fb",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-437c92/plugins/fastapi-adapter-isolation.txt": {
+    "mtime": 1790334112.904597,
+    "seen": 1790334152.8549771,
+    "ast_hash": "71642a03f17dbeb433a7fed94ffd2f45",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-437c92/plugins/fastapi-core-purity.txt": {
+    "mtime": 1790334112.904597,
+    "seen": 1790334152.8549805,
+    "ast_hash": "08e49d11a0457ce8a5bdcafa94b7f113",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-437c92/plugins/fastapi-no-mocks-e2e.txt": {
+    "mtime": 1790334112.904597,
+    "seen": 1790334152.8549843,
+    "ast_hash": "c933df2499d960d5572db1249cb837c9",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-437c92/plugins/fastapi-no-mocks-integration.txt": {
+    "mtime": 1790334112.904597,
+    "seen": 1790334152.8549876,
+    "ast_hash": "11aaa752bfbda80c70bfe506f62253e2",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-437c92/plugins/fastapi-route-delegation.txt": {
+    "mtime": 1790334112.904597,
+    "seen": 1790334152.8549917,
+    "ast_hash": "0242eb28ebb7c5d67478c41c4b2847ca",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-437c92/plugins/fastapi-route-splitting.txt": {
+    "mtime": 1790334112.904597,
+    "seen": 1790334152.854996,
+    "ast_hash": "0242eb28ebb7c5d67478c41c4b2847ca",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-437c92/plugins/fastapi-service-sync.txt": {
+    "mtime": 1790334112.904597,
+    "seen": 1790334152.855,
+    "ast_hash": "de8de5bb5ec0ad1e0f29e5e2a0e04915",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-437c92/plugins/nextjs-file-sizes.txt": {
+    "mtime": 1790334112.904597,
+    "seen": 1790334152.8550029,
+    "ast_hash": "cd4e8b0e16946d59b11d650102319cae",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-437c92/plugins/nextjs-fsd-imports.txt": {
+    "mtime": 1790334112.904597,
+    "seen": 1790334152.8550072,
+    "ast_hash": "cd4e8b0e16946d59b11d650102319cae",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-437c92/plugins/nextjs-fsd-layers.txt": {
+    "mtime": 1790334112.904597,
+    "seen": 1790334152.8550117,
+    "ast_hash": "c2946755d0cc19a543d80ec70aa6da40",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-437c92/plugins/nextjs-module-density.txt": {
+    "mtime": 1790334112.904597,
+    "seen": 1790334152.8550158,
+    "ast_hash": "cd4e8b0e16946d59b11d650102319cae",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-437c92/plugins/nextjs-no-direct-env.txt": {
+    "mtime": 1790334112.904597,
+    "seen": 1790334152.8550215,
+    "ast_hash": "cd4e8b0e16946d59b11d650102319cae",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-437c92/plugins/nextjs-no-direct-fetch.txt": {
+    "mtime": 1790334112.904597,
+    "seen": 1790334152.8550253,
+    "ast_hash": "cd4e8b0e16946d59b11d650102319cae",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-437c92/plugins/nextjs-no-direct-ui-imports.txt": {
+    "mtime": 1790334112.904597,
+    "seen": 1790334152.855029,
+    "ast_hash": "cd4e8b0e16946d59b11d650102319cae",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-437c92/plugins/nextjs-no-query-key-strings.txt": {
+    "mtime": 1790334112.904597,
+    "seen": 1790334152.855033,
+    "ast_hash": "cd4e8b0e16946d59b11d650102319cae",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-437c92/plugins/nextjs-no-useeffect-fetch.txt": {
+    "mtime": 1790334112.904597,
+    "seen": 1790334152.8550375,
+    "ast_hash": "cd4e8b0e16946d59b11d650102319cae",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-437c92/plugins/nextjs-no-zustand-module-level.txt": {
+    "mtime": 1790334112.904597,
+    "seen": 1790334152.855042,
+    "ast_hash": "cd4e8b0e16946d59b11d650102319cae",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-437c92/plugins/nextjs-page-purity.txt": {
+    "mtime": 1790334112.9152021,
+    "seen": 1790334152.855046,
+    "ast_hash": "6810b2f8132f6aa85f27df29813ecc28",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-437c92/plugins/nextjs-server-client-boundary.txt": {
+    "mtime": 1790334112.9152021,
+    "seen": 1790334152.8550503,
+    "ast_hash": "cd4e8b0e16946d59b11d650102319cae",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-437c92/plugins/nextjs-sse-abort-controller.txt": {
+    "mtime": 1790334112.9152021,
+    "seen": 1790334152.8550546,
+    "ast_hash": "cd4e8b0e16946d59b11d650102319cae",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-437c92/plugins/python-file-length.txt": {
+    "mtime": 1790334112.9152021,
+    "seen": 1790334152.855059,
+    "ast_hash": "2f9c144c5c12405a9c78d43789754db5",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-437c92/plugins/python-no-future-annotations.txt": {
+    "mtime": 1790334112.9152021,
+    "seen": 1790334152.855062,
+    "ast_hash": "0242eb28ebb7c5d67478c41c4b2847ca",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-437c92/plugins/react-fsd-imports.txt": {
+    "mtime": 1790334112.9152021,
+    "seen": 1790334152.8550665,
+    "ast_hash": "cd4e8b0e16946d59b11d650102319cae",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-437c92/plugins/spec-alignment.txt": {
+    "mtime": 1790334112.9152021,
+    "seen": 1790334152.85507,
+    "ast_hash": "2eaa8e5e7cdba79239db36d7b0a0fb1b",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-437c92/plugins/terraform-dangling-resources.txt": {
+    "mtime": 1790334112.9152021,
+    "seen": 1790334152.855075,
+    "ast_hash": "a4325c90048fc5437b33e196346c18d9",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-437c92/plugins/terraform-external-iam.txt": {
+    "mtime": 1790334112.919982,
+    "seen": 1790334152.85508,
+    "ast_hash": "e12bed253d0fec244a95cf44e0638cc4",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-437c92/plugins/terraform-format.txt": {
+    "mtime": 1790334112.919982,
+    "seen": 1790334152.855084,
+    "ast_hash": "3ad81c857c4f6111f03eab64889f4252",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-437c92/plugins/terraform-glacier-public.txt": {
+    "mtime": 1790334112.9214702,
+    "seen": 1790334152.855087,
+    "ast_hash": "4b46117a499a5ffd39e119198c7400be",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-437c92/plugins/terraform-paravirt-ec2.txt": {
+    "mtime": 1790334112.9214702,
+    "seen": 1790334152.8550904,
+    "ast_hash": "1ea994658ff196a59d5cf19f284f499b",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-437c92/plugins/terraform-public-ami.txt": {
+    "mtime": 1790334112.9214702,
+    "seen": 1790334152.8550954,
+    "ast_hash": "e809d55ee51ebe58a890b8f037c2d3eb",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-437c92/plugins/terraform-security.txt": {
+    "mtime": 1790334112.9214702,
+    "seen": 1790334152.8551006,
+    "ast_hash": "3ad81c857c4f6111f03eab64889f4252",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-437c92/plugins/terraform-tagging.txt": {
+    "mtime": 1790334112.9214702,
+    "seen": 1790334152.8551052,
+    "ast_hash": "3ad81c857c4f6111f03eab64889f4252",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-437c92/plugins/tests-pytest.txt": {
+    "mtime": 1790334112.9235415,
+    "seen": 1790334152.8551092,
+    "ast_hash": "05569dde45cb2f1252c71901c19270f5",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-66bea6/plugins/ai-code-review.txt": {
+    "mtime": 1790333901.829922,
+    "seen": 1790334152.855113,
+    "ast_hash": "0cb0eed0ba07f4cf4be1e88dd112e304",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-66bea6/plugins/cli-error-handling.txt": {
+    "mtime": 1790333901.829922,
+    "seen": 1790334152.8551173,
+    "ast_hash": "36ce08fca6a349913a03a75a4fec3023",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-66bea6/plugins/cli-output-format.txt": {
+    "mtime": 1790333901.829922,
+    "seen": 1790334152.855122,
+    "ast_hash": "36ce08fca6a349913a03a75a4fec3023",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-66bea6/plugins/dotnet-build.txt": {
+    "mtime": 1790333901.829922,
+    "seen": 1790334152.855126,
+    "ast_hash": "6ac0587d62356792af3bbc3fa407f3b3",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-66bea6/plugins/dotnet-format.txt": {
+    "mtime": 1790333901.829922,
+    "seen": 1790334152.8551302,
+    "ast_hash": "757ca1a85c288c93c28b0fe0a4842161",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-66bea6/plugins/dotnet-quality.txt": {
+    "mtime": 1790333901.829922,
+    "seen": 1790334152.8551338,
+    "ast_hash": "879b4c6f6350dd8f08b9a7e6d40291f2",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-66bea6/plugins/dotnet-test.txt": {
+    "mtime": 1790333901.87779,
+    "seen": 1790334152.8551369,
+    "ast_hash": "3653bd207222e7b8bfd38ec8186dae95",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-66bea6/plugins/fastapi-adapter-isolation.txt": {
+    "mtime": 1790333901.829922,
+    "seen": 1790334152.8551407,
+    "ast_hash": "71642a03f17dbeb433a7fed94ffd2f45",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-66bea6/plugins/fastapi-core-purity.txt": {
+    "mtime": 1790333901.829922,
+    "seen": 1790334152.8551445,
+    "ast_hash": "08e49d11a0457ce8a5bdcafa94b7f113",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-66bea6/plugins/fastapi-no-mocks-e2e.txt": {
+    "mtime": 1790333901.829922,
+    "seen": 1790334152.8551483,
+    "ast_hash": "c933df2499d960d5572db1249cb837c9",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-66bea6/plugins/fastapi-no-mocks-integration.txt": {
+    "mtime": 1790333901.8458738,
+    "seen": 1790334152.8551533,
+    "ast_hash": "11aaa752bfbda80c70bfe506f62253e2",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-66bea6/plugins/fastapi-route-delegation.txt": {
+    "mtime": 1790333901.8458738,
+    "seen": 1790334152.8551576,
+    "ast_hash": "0242eb28ebb7c5d67478c41c4b2847ca",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-66bea6/plugins/fastapi-route-splitting.txt": {
+    "mtime": 1790333901.8458738,
+    "seen": 1790334152.855162,
+    "ast_hash": "0242eb28ebb7c5d67478c41c4b2847ca",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-66bea6/plugins/fastapi-service-sync.txt": {
+    "mtime": 1790333901.8458738,
+    "seen": 1790334152.855165,
+    "ast_hash": "de8de5bb5ec0ad1e0f29e5e2a0e04915",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-66bea6/plugins/nextjs-file-sizes.txt": {
+    "mtime": 1790333901.8458738,
+    "seen": 1790334152.855169,
+    "ast_hash": "cd4e8b0e16946d59b11d650102319cae",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-66bea6/plugins/nextjs-fsd-imports.txt": {
+    "mtime": 1790333901.8458738,
+    "seen": 1790334152.8551729,
+    "ast_hash": "cd4e8b0e16946d59b11d650102319cae",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-66bea6/plugins/nextjs-fsd-layers.txt": {
+    "mtime": 1790333901.8458738,
+    "seen": 1790334152.8551757,
+    "ast_hash": "c2946755d0cc19a543d80ec70aa6da40",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-66bea6/plugins/nextjs-module-density.txt": {
+    "mtime": 1790333901.8458738,
+    "seen": 1790334152.8551795,
+    "ast_hash": "cd4e8b0e16946d59b11d650102319cae",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-66bea6/plugins/nextjs-no-direct-env.txt": {
+    "mtime": 1790333901.8458738,
+    "seen": 1790334152.8551831,
+    "ast_hash": "cd4e8b0e16946d59b11d650102319cae",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-66bea6/plugins/nextjs-no-direct-fetch.txt": {
+    "mtime": 1790333901.8458738,
+    "seen": 1790334152.8551867,
+    "ast_hash": "cd4e8b0e16946d59b11d650102319cae",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-66bea6/plugins/nextjs-no-direct-ui-imports.txt": {
+    "mtime": 1790333901.8458738,
+    "seen": 1790334152.8551905,
+    "ast_hash": "cd4e8b0e16946d59b11d650102319cae",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-66bea6/plugins/nextjs-no-query-key-strings.txt": {
+    "mtime": 1790333901.8458738,
+    "seen": 1790334152.855195,
+    "ast_hash": "cd4e8b0e16946d59b11d650102319cae",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-66bea6/plugins/nextjs-no-useeffect-fetch.txt": {
+    "mtime": 1790333901.8458738,
+    "seen": 1790334152.8551993,
+    "ast_hash": "cd4e8b0e16946d59b11d650102319cae",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-66bea6/plugins/nextjs-no-zustand-module-level.txt": {
+    "mtime": 1790333901.8458738,
+    "seen": 1790334152.8553746,
+    "ast_hash": "cd4e8b0e16946d59b11d650102319cae",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-66bea6/plugins/nextjs-page-purity.txt": {
+    "mtime": 1790333901.8458738,
+    "seen": 1790334152.8553874,
+    "ast_hash": "6810b2f8132f6aa85f27df29813ecc28",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-66bea6/plugins/nextjs-server-client-boundary.txt": {
+    "mtime": 1790333901.8619063,
+    "seen": 1790334152.8553922,
+    "ast_hash": "cd4e8b0e16946d59b11d650102319cae",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-66bea6/plugins/nextjs-sse-abort-controller.txt": {
+    "mtime": 1790333901.8619063,
+    "seen": 1790334152.8553963,
+    "ast_hash": "cd4e8b0e16946d59b11d650102319cae",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-66bea6/plugins/python-file-length.txt": {
+    "mtime": 1790333901.8619063,
+    "seen": 1790334152.8554006,
+    "ast_hash": "2f9c144c5c12405a9c78d43789754db5",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-66bea6/plugins/python-no-future-annotations.txt": {
+    "mtime": 1790333901.8619063,
+    "seen": 1790334152.8554044,
+    "ast_hash": "0242eb28ebb7c5d67478c41c4b2847ca",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-66bea6/plugins/react-fsd-imports.txt": {
+    "mtime": 1790333901.8619063,
+    "seen": 1790334152.855408,
+    "ast_hash": "cd4e8b0e16946d59b11d650102319cae",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-66bea6/plugins/spec-alignment.txt": {
+    "mtime": 1790333901.8619063,
+    "seen": 1790334152.8554106,
+    "ast_hash": "c1448cb0076712f6a37164cc4246dee7",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-66bea6/plugins/terraform-dangling-resources.txt": {
+    "mtime": 1790333901.8619063,
+    "seen": 1790334152.855414,
+    "ast_hash": "f8cc11adf179bc5a40f8ccb8898d0864",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-66bea6/plugins/terraform-external-iam.txt": {
+    "mtime": 1790333901.8619063,
+    "seen": 1790334152.8554163,
+    "ast_hash": "2dd2e414dff0bc5f58438051ba82bc1d",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-66bea6/plugins/terraform-format.txt": {
+    "mtime": 1790333901.8619063,
+    "seen": 1790334152.8554194,
+    "ast_hash": "3ad81c857c4f6111f03eab64889f4252",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-66bea6/plugins/terraform-glacier-public.txt": {
+    "mtime": 1790333901.8619063,
+    "seen": 1790334152.8554235,
+    "ast_hash": "104aff95d5194ecf4aba700fd3dd06c9",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-66bea6/plugins/terraform-paravirt-ec2.txt": {
+    "mtime": 1790333901.8619063,
+    "seen": 1790334152.8554263,
+    "ast_hash": "1b87d3315f4f73461b87ee4cc611b313",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-66bea6/plugins/terraform-public-ami.txt": {
+    "mtime": 1790333901.8619063,
+    "seen": 1790334152.8554306,
+    "ast_hash": "44e481482d24842263b276959ae95308",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-66bea6/plugins/terraform-security.txt": {
+    "mtime": 1790333901.8619063,
+    "seen": 1790334152.8554335,
+    "ast_hash": "3ad81c857c4f6111f03eab64889f4252",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-66bea6/plugins/terraform-tagging.txt": {
+    "mtime": 1790333901.8619063,
+    "seen": 1790334152.8554368,
+    "ast_hash": "3ad81c857c4f6111f03eab64889f4252",
+    "semantic_hash": ""
+  },
+  ".ydk/proofs/QD-66bea6/plugins/tests-pytest.txt": {
+    "mtime": 1790333901.87779,
+    "seen": 1790334152.8554404,
+    "ast_hash": "05569dde45cb2f1252c71901c19270f5",
+    "semantic_hash": ""
+  },
+  ".ydk/tasks/QD-437c92.md": {
+    "mtime": 1790334112.9257817,
+    "seen": 1790334153.47453,
+    "ast_hash": "96abe36e47bf6d60ce4a6af136f52ade",
+    "semantic_hash": ""
+  },
+  ".ydk/tasks/QD-66bea6.md": {
+    "mtime": 1790333908.8531578,
+    "seen": 1790334153.4745376,
+    "ast_hash": "c2666922aec6215ed13feda975a6b642",
+    "semantic_hash": ""
+  },
+  ".ydk/tasks/T-6e7423e5.md": {
+    "mtime": 1790334112.9257817,
+    "seen": 1790334153.4957345,
+    "ast_hash": "7e0831c7bdebaac3bbe7eb8239446263",
+    "semantic_hash": ""
+  },
+  ".ydk/tasks/T-ec4dc427.md": {
+    "mtime": 1790334112.9257817,
+    "seen": 1790334153.5058842,
+    "ast_hash": "b72e10ec738f4ce9dc24e5f23fb65a41",
+    "semantic_hash": ""
+  },
+  ".ydk/tasks/T-ffa97099.md": {
+    "mtime": 1790334112.9257817,
+    "seen": 1790334153.5093224,
+    "ast_hash": "317a1d0d81bdc91cd52583a483f72b9c",
     "semantic_hash": ""
   }
 }
