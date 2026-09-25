@@ -60,11 +60,7 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
                         var summary = ReadSummaryInformation(fs.Root);
                         if (summary != null)
                         {
-                            result.Metadata.Title = summary.Title;
-                            result.Metadata.Creator = summary.Author;
-                            result.Metadata.Created = summary.CreateDateTime;
-                            result.Metadata.Modified = summary.LastSaveDateTime;
-                            result.Metadata.LastModifiedBy = summary.LastAuthor;
+                            MetadataConversions.Apply(summary, result.Metadata);
                         }
 
                         var docSummary = ReadDocumentSummaryInformation(fs.Root);
