@@ -1,0 +1,341 @@
+{
+  "task_id": null,
+  "timestamp": "2026-09-25T10:58:21Z",
+  "checks": [
+    {
+      "name": "dotnet-build",
+      "passed": true,
+      "output": "=== C:\\Users\\yoava\\Projects\\ole-extractor\\ExtractorOle\\ExtractorOLE\\ExtractorOLE.csproj ===\nDetermining projects to restore...\n  All projects are up-to-date for restore.\n  NPOI.Core -> C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\npoi\\solution\\Debug\\net8.0\\NPOI.Core.dll\n  b2xtranslator -> C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\bin\\Debug\\net8.0\\b2xtranslator.dll\n  b2xtranslator.ppt -> C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Ppt\\bin\\Debug\\net8.0\\b2xtranslator.ppt.dll\n  b2xtranslator.doc -> C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Doc\\bin\\Debug\\net8.0\\b2xtranslator.doc.dll\n  ExtractorOLE -> C:\\Users\\yoava\\Projects\\ole-extractor\\ExtractorOle\\ExtractorOLE\\bin\\Debug\\net8.0\\ExtractorOLE.dll\n\nBuild succeeded.\n    0 Warning(s)\n    0 Error(s)\n\nTime Elapsed 00:00:07.62\n\n=== C:\\Users\\yoava\\Projects\\ole-extractor\\SampleGenerator\\SampleGenerator.csproj ===\nDetermining projects to restore...\n  Restored C:\\Users\\yoava\\Projects\\ole-extractor\\SampleGenerator\\SampleGenerator.csproj (in 453 ms).\n  1 of 2 projects are up-to-date for restore.\n  NPOI.Core -> C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\npoi\\solution\\Debug\\net8.0\\NPOI.Core.dll\nC:\\Users\\yoava\\Projects\\ole-extractor\\SampleGenerator\\Generators\\LegacyCfbHelper.cs(29,27): warning CS0618: 'PropertySetFactory.CreateSummaryInformation()' is obsolete: 'Removed POI 3.17' [C:\\Users\\yoava\\Projects\\ole-extractor\\SampleGenerator\\SampleGenerator.csproj]\n  SampleGenerator -> C:\\Users\\yoava\\Projects\\ole-extractor\\SampleGenerator\\bin\\Debug\\net8.0\\SampleGenerator.dll\n\nBuild succeeded.\n\nC:\\Users\\yoava\\Projects\\ole-extractor\\SampleGenerator\\Generators\\LegacyCfbHelper.cs(29,27): warning CS0618: 'PropertySetFactory.CreateSummaryInformation()' is obsolete: 'Removed POI 3.17' [C:\\Users\\yoava\\Projects\\ole-extractor\\SampleGenerator\\SampleGenerator.csproj]\n    1 Warning(s)\n    0 Error(s)\n\nTime Elapsed 00:00:05.94",
+      "duration_seconds": 15.0,
+      "detail": {
+        "targets": [
+          "C:\\Users\\yoava\\Projects\\ole-extractor\\ExtractorOle\\ExtractorOLE\\ExtractorOLE.csproj",
+          "C:\\Users\\yoava\\Projects\\ole-extractor\\SampleGenerator\\SampleGenerator.csproj"
+        ]
+      }
+    },
+    {
+      "name": "dotnet-format",
+      "passed": true,
+      "output": "=== C:\\Users\\yoava\\Projects\\ole-extractor\\ExtractorOle\\ExtractorOLE\\ExtractorOLE.csproj ===\n\n\n=== C:\\Users\\yoava\\Projects\\ole-extractor\\SampleGenerator\\SampleGenerator.csproj ===\n",
+      "duration_seconds": 74.3,
+      "detail": {
+        "targets": [
+          "C:\\Users\\yoava\\Projects\\ole-extractor\\ExtractorOle\\ExtractorOLE\\ExtractorOLE.csproj",
+          "C:\\Users\\yoava\\Projects\\ole-extractor\\SampleGenerator\\SampleGenerator.csproj"
+        ]
+      }
+    },
+    {
+      "name": "dotnet-quality",
+      "passed": true,
+      "output": "[dotnet-build] === C:\\Users\\yoava\\Projects\\ole-extractor\\ExtractorOle\\ExtractorOLE\\ExtractorOLE.csproj ===\nDetermining projects to restore...\n  All projects are up-to-date for restore.\n  NPOI.Core -> C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\npoi\\solution\\Debug\\net8.0\\NPOI.Core.dll\n  b2xtranslator -> C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\bin\\Debug\\net8.0\\b2xtranslator.dll\n  b2xtranslator.ppt -> C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Ppt\\bin\\Debug\\net8.0\\b2xtranslator.ppt.dll\n  b2xtranslator.doc -> C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Doc\\bin\\Debug\\net8.0\\b2xtranslator.doc.dll\n  ExtractorOLE -> C:\\Users\\yoava\\Projects\\ole-extractor\\ExtractorOle\\ExtractorOLE\\bin\\Debug\\net8.0\\ExtractorOLE.dll\n\nBuild succeeded.\n    0 Warning(s)\n    0 Error(s)\n\nTime Elapsed 00:00:04.38\n\n=== C:\\Users\\yoava\\Projects\\ole-extractor\\SampleGenerator\\SampleGenerator.csproj ===\nDetermining projects to restore...\n  All projects are up-to-date for restore.\n  NPOI.Core -> C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\npoi\\solution\\Debug\\net8.0\\NPOI.Core.dll\n  SampleGenerator -> C:\\Users\\yoava\\Projects\\ole-extractor\\SampleGenerator\\bin\\Debug\\net8.0\\SampleGenerator.dll\n\nBuild succeeded.\n    0 Warning(s)\n    0 Error(s)\n\nTime Elapsed 00:00:03.32\n[dotnet-format] === C:\\Users\\yoava\\Projects\\ole-extractor\\ExtractorOle\\ExtractorOLE\\ExtractorOLE.csproj ===\n\n\n=== C:\\Users\\yoava\\Projects\\ole-extractor\\SampleGenerator\\SampleGenerator.csproj ===\n",
+      "duration_seconds": 136.1,
+      "detail": {
+        "checks": [
+          "dotnet-build",
+          "dotnet-format"
+        ],
+        "results": {
+          "dotnet-build": {
+            "name": "dotnet-build",
+            "passed": true,
+            "output": "=== C:\\Users\\yoava\\Projects\\ole-extractor\\ExtractorOle\\ExtractorOLE\\ExtractorOLE.csproj ===\nDetermining projects to restore...\n  All projects are up-to-date for restore.\n  NPOI.Core -> C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\npoi\\solution\\Debug\\net8.0\\NPOI.Core.dll\n  b2xtranslator -> C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\bin\\Debug\\net8.0\\b2xtranslator.dll\n  b2xtranslator.ppt -> C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Ppt\\bin\\Debug\\net8.0\\b2xtranslator.ppt.dll\n  b2xtranslator.doc -> C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Doc\\bin\\Debug\\net8.0\\b2xtranslator.doc.dll\n  ExtractorOLE -> C:\\Users\\yoava\\Projects\\ole-extractor\\ExtractorOle\\ExtractorOLE\\bin\\Debug\\net8.0\\ExtractorOLE.dll\n\nBuild succeeded.\n    0 Warning(s)\n    0 Error(s)\n\nTime Elapsed 00:00:04.38\n\n=== C:\\Users\\yoava\\Projects\\ole-extractor\\SampleGenerator\\SampleGenerator.csproj ===\nDetermining projects to restore...\n  All projects are up-to-date for restore.\n  NPOI.Core -> C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\npoi\\solution\\Debug\\net8.0\\NPOI.Core.dll\n  SampleGenerator -> C:\\Users\\yoava\\Projects\\ole-extractor\\SampleGenerator\\bin\\Debug\\net8.0\\SampleGenerator.dll\n\nBuild succeeded.\n    0 Warning(s)\n    0 Error(s)\n\nTime Elapsed 00:00:03.32",
+            "duration_seconds": 9.3,
+            "detail": {
+              "targets": [
+                "C:\\Users\\yoava\\Projects\\ole-extractor\\ExtractorOle\\ExtractorOLE\\ExtractorOLE.csproj",
+                "C:\\Users\\yoava\\Projects\\ole-extractor\\SampleGenerator\\SampleGenerator.csproj"
+              ]
+            }
+          },
+          "dotnet-format": {
+            "name": "dotnet-format",
+            "passed": true,
+            "output": "=== C:\\Users\\yoava\\Projects\\ole-extractor\\ExtractorOle\\ExtractorOLE\\ExtractorOLE.csproj ===\n\n\n=== C:\\Users\\yoava\\Projects\\ole-extractor\\SampleGenerator\\SampleGenerator.csproj ===\n",
+            "duration_seconds": 126.4,
+            "detail": {
+              "targets": [
+                "C:\\Users\\yoava\\Projects\\ole-extractor\\ExtractorOle\\ExtractorOLE\\ExtractorOLE.csproj",
+                "C:\\Users\\yoava\\Projects\\ole-extractor\\SampleGenerator\\SampleGenerator.csproj"
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "ai-code-review",
+      "passed": true,
+      "output": "No changed files to review",
+      "duration_seconds": 16.6,
+      "detail": {
+        "skipped": true
+      }
+    },
+    {
+      "name": "cli-error-handling",
+      "passed": true,
+      "output": "PASS: no src/commands/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "cli-output-format",
+      "passed": true,
+      "output": "PASS: no src/commands/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "fastapi-adapter-isolation",
+      "passed": true,
+      "output": "PASS: no app/adapters/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "fastapi-core-purity",
+      "passed": true,
+      "output": "PASS: no app/core/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "fastapi-no-mocks-e2e",
+      "passed": true,
+      "output": "PASS: no tests/e2e/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "fastapi-no-mocks-integration",
+      "passed": true,
+      "output": "PASS: no tests/integration/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "fastapi-route-delegation",
+      "passed": true,
+      "output": "PASS: no app/api/routes/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "fastapi-route-splitting",
+      "passed": true,
+      "output": "PASS: no app/api/routes/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "fastapi-service-sync",
+      "passed": true,
+      "output": "PASS: no app/core/services/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-file-sizes",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-fsd-imports",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-fsd-layers",
+      "passed": true,
+      "output": "WARN: node_modules not installed -- skipping FSD layer check. Run: bun install",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-module-density",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-no-direct-env",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-no-direct-fetch",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-no-direct-ui-imports",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-no-query-key-strings",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-no-useeffect-fetch",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-no-zustand-module-level",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-page-purity",
+      "passed": true,
+      "output": "PASS: no src/app/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-server-client-boundary",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "nextjs-sse-abort-controller",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "python-file-length",
+      "passed": true,
+      "output": "PASS: no app/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "python-no-future-annotations",
+      "passed": true,
+      "output": "PASS: no app/api/routes/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "react-fsd-imports",
+      "passed": true,
+      "output": "PASS: no src/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "spec-alignment",
+      "passed": true,
+      "output": "No changed files to evaluate",
+      "duration_seconds": 1.4,
+      "detail": {
+        "skipped": true
+      }
+    },
+    {
+      "name": "terraform-dangling-resources",
+      "passed": true,
+      "output": "PASS: No dangling resource references detected.",
+      "duration_seconds": 0.4,
+      "detail": {
+        "errors": 0
+      }
+    },
+    {
+      "name": "terraform-external-iam",
+      "passed": true,
+      "output": "PASS: No wildcard IAM principals found.",
+      "duration_seconds": 0.4,
+      "detail": null
+    },
+    {
+      "name": "terraform-format",
+      "passed": true,
+      "output": "SKIP: No infra/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "terraform-glacier-public",
+      "passed": true,
+      "output": "PASS: No public Glacier vault access detected.",
+      "duration_seconds": 0.3,
+      "detail": null
+    },
+    {
+      "name": "terraform-paravirt-ec2",
+      "passed": true,
+      "output": "PASS: No paravirtualized instance types found.",
+      "duration_seconds": 0.4,
+      "detail": null
+    },
+    {
+      "name": "terraform-public-ami",
+      "passed": true,
+      "output": "PASS: AMI usage checks passed.",
+      "duration_seconds": 0.4,
+      "detail": {
+        "errors": 0
+      }
+    },
+    {
+      "name": "terraform-security",
+      "passed": true,
+      "output": "SKIP: No infra/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "terraform-tagging",
+      "passed": true,
+      "output": "SKIP: No infra/ directory found",
+      "duration_seconds": 0.0,
+      "detail": null
+    },
+    {
+      "name": "dotnet-test",
+      "passed": true,
+      "output": "Determining projects to restore...\n  Restored C:\\Users\\yoava\\Projects\\ole-extractor\\ExtractorOle\\ExtractorOLE.Tests\\ExtractorOLE.Tests.csproj (in 430 ms).\n  7 of 8 projects are up-to-date for restore.\n  b2xtranslator -> C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Common\\bin\\Debug\\net8.0\\b2xtranslator.dll\n  NPOI.Core -> C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\npoi\\solution\\Debug\\net8.0\\NPOI.Core.dll\n  b2xtranslator.ppt -> C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Ppt\\bin\\Debug\\net8.0\\b2xtranslator.ppt.dll\n  b2xtranslator.doc -> C:\\Users\\yoava\\Projects\\ole-extractor\\third_party\\b2xtranslator\\Doc\\bin\\Debug\\net8.0\\b2xtranslator.doc.dll\n  SampleGenerator -> C:\\Users\\yoava\\Projects\\ole-extractor\\SampleGenerator\\bin\\Debug\\net8.0\\SampleGenerator.dll\n  ExtractorOLE -> C:\\Users\\yoava\\Projects\\ole-extractor\\ExtractorOle\\ExtractorOLE\\bin\\Debug\\net8.0\\ExtractorOLE.dll\n  ExtractorOLE.StressHarness -> C:\\Users\\yoava\\Projects\\ole-extractor\\ExtractorOle\\ExtractorOLE.StressHarness\\bin\\Debug\\net8.0\\ExtractorOLE.StressHarness.dll\n  ExtractorOLE.Tests -> C:\\Users\\yoava\\Projects\\ole-extractor\\ExtractorOle\\ExtractorOLE.Tests\\bin\\Debug\\net8.0\\ExtractorOLE.Tests.dll\nTest run for C:\\Users\\yoava\\Projects\\ole-extractor\\ExtractorOle\\ExtractorOLE.Tests\\bin\\Debug\\net8.0\\ExtractorOLE.Tests.dll (.NETCoreApp,Version=v8.0)\nA total of 1 test files matched the specified pattern.\n[xUnit.net 00:00:12.61]     ExtractorOLE.Tests.SampleGeneration.BenchmarkSampleGeneratorTests.GeneratedBenchmarkSample_MatchesManifestAndExtractsNonEmptyText [SKIP]\n  Skipped ExtractorOLE.Tests.SampleGeneration.BenchmarkSampleGeneratorTests.GeneratedBenchmarkSample_MatchesManifestAndExtractsNonEmptyText [1 ms]\n\nPassed!  - Failed:     0, Passed:   379, Skipped:     1, Total:   380, Duration: 18 s - ExtractorOLE.Tests.dll (net8.0)",
+      "duration_seconds": 32.8,
+      "detail": {
+        "target": "C:\\Users\\yoava\\Projects\\ole-extractor\\ExtractorOle\\ExtractorOLE.Tests\\ExtractorOLE.Tests.csproj",
+        "failed": 0,
+        "passed_count": 379
+      }
+    },
+    {
+      "name": "tests-pytest",
+      "passed": true,
+      "output": "No 'tests/' directory found — skipped (non-Python project?)",
+      "duration_seconds": 0.0,
+      "detail": null
+    }
+  ],
+  "all_passed": true,
+  "total_duration_seconds": 32.8
+}

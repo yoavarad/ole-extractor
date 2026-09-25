@@ -1,0 +1,32 @@
+PASSED (136.1s)
+
+[dotnet-build] === C:\Users\yoava\Projects\ole-extractor\ExtractorOle\ExtractorOLE\ExtractorOLE.csproj ===
+Determining projects to restore...
+  All projects are up-to-date for restore.
+  NPOI.Core -> C:\Users\yoava\Projects\ole-extractor\third_party\npoi\solution\Debug\net8.0\NPOI.Core.dll
+  b2xtranslator -> C:\Users\yoava\Projects\ole-extractor\third_party\b2xtranslator\Common\bin\Debug\net8.0\b2xtranslator.dll
+  b2xtranslator.ppt -> C:\Users\yoava\Projects\ole-extractor\third_party\b2xtranslator\Ppt\bin\Debug\net8.0\b2xtranslator.ppt.dll
+  b2xtranslator.doc -> C:\Users\yoava\Projects\ole-extractor\third_party\b2xtranslator\Doc\bin\Debug\net8.0\b2xtranslator.doc.dll
+  ExtractorOLE -> C:\Users\yoava\Projects\ole-extractor\ExtractorOle\ExtractorOLE\bin\Debug\net8.0\ExtractorOLE.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:04.38
+
+=== C:\Users\yoava\Projects\ole-extractor\SampleGenerator\SampleGenerator.csproj ===
+Determining projects to restore...
+  All projects are up-to-date for restore.
+  NPOI.Core -> C:\Users\yoava\Projects\ole-extractor\third_party\npoi\solution\Debug\net8.0\NPOI.Core.dll
+  SampleGenerator -> C:\Users\yoava\Projects\ole-extractor\SampleGenerator\bin\Debug\net8.0\SampleGenerator.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:03.32
+[dotnet-format] === C:\Users\yoava\Projects\ole-extractor\ExtractorOle\ExtractorOLE\ExtractorOLE.csproj ===
+
+
+=== C:\Users\yoava\Projects\ole-extractor\SampleGenerator\SampleGenerator.csproj ===
