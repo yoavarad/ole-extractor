@@ -1,7 +1,7 @@
 ---
 id: E-bd43bc02
 title: Public API Surface
-status: open
+status: done
 release: ''
 spec_refs:
 - docs/specs/overview.md

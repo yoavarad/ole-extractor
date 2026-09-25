@@ -2,7 +2,7 @@
 id: S-709fe2de
 title: BenchmarkDotNet profiling project
 epic: E-3ffdc4d5
-status: open
+status: done
 spec_refs:
 - docs/specs/testing-strategy.md
 - docs/adrs/002-profiling-and-stress-testing.md
