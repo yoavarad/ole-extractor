@@ -34,3 +34,11 @@ ai:
     reasoning: claude-opus-4-6
 anthropic:
   api_key_env: ANTHROPIC_API_KEY
+verification:
+  enabled:
+  - dotnet-build
+  - dotnet-format
+  - dotnet-test
+  - dotnet-quality
+  - dotnet-tdd-guard
+  - pr-body-validation
