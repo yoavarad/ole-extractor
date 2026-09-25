@@ -1,6 +1,6 @@
 {
   "$note": "Corpus manifest per docs/specs/dataset-curation.md 'Corpus Manifest'. Each entry records the exact expected Unicode content and exact expected subfile count/filenames for one generated/curated sample -- this is the ground truth the (future) integration test suite asserts against.",
-  "$curatedSamplesNote": "T-c573e72e audit (2026-09-13): all 11 curated samples under samples/curated/ (format=docx x4, xlsx x2, pptx x4, doc x1) have complete manifest entries below -- format, compositionRule, expectedDetectedFormat, exact expected bodyText/bodyTextLines + metadata, expectedSubfileCount/expectedSubfiles, and provenance (self-generated vs third-party) were all recorded inline by the sourcing tasks that authored each sample (T-6f033869, T-0834290d, T-0c83ff28, T-270c32fe), not deferred to a separate recording step. License basis for every third-party entry is recorded as prose in that entry's 'notes' field (no dedicated 'license' key exists in this schema, since none of the self-generated entries need one). The 2+-level-nested-embedding samples (meeting-minutes-boardroom.docx, project-status-report.xlsx, product-launch-deck.pptx) and the genuine multi-user revision-history samples (the 5 third-party entries) are each individually identifiable via their compositionRule text. Original spec math (docs/specs/dataset-curation.md: 2 per format x 6 formats = 12) is not met literally -- doc/xls/ppt per-format curated authoring was formally descoped by T-6f033869's acceptance criteria ('doc/xls/ppt curated authoring stays out of scope (zero generator infra, no Office/LibreOffice binary in sandbox)'); the single doc sample present was added as a T-0c83ff28 exception, and xlsx's revision-history slot was separately scoped out by product-owner decision in T-270c32fe (real Excel does not populate cp:revision). 11 is therefore the correct, fully-recorded total under current project scope, not a gap.",
+  "$curatedSamplesNote": "T-c573e72e audit (2026-09-13): all 11 curated samples under samples/curated/ (format=docx x4, xlsx x2, pptx x4, doc x1) have complete manifest entries below -- format, compositionRule, expectedDetectedFormat, exact expected bodyText/bodyTextLines + metadata, expectedSubfileCount/expectedSubfiles, and provenance (self-generated vs third-party) were all recorded inline by the sourcing tasks that authored each sample (T-6f033869, T-0834290d, T-0c83ff28, T-270c32fe), not deferred to a separate recording step. License basis for every third-party entry is recorded as prose in that entry's 'notes' field (no dedicated 'license' key exists in this schema, since none of the self-generated entries need one). The 2+-level-nested-embedding samples (meeting-minutes-boardroom.docx, project-status-report.xlsx, product-launch-deck.pptx) and the genuine multi-user revision-history samples (the 5 third-party entries) are each individually identifiable via their compositionRule text. Original spec math (docs/specs/dataset-curation.md: 2 per format x 6 formats = 12) is not met literally -- doc/xls/ppt per-format curated authoring was formally descoped by T-6f033869's acceptance criteria ('doc/xls/ppt curated authoring stays out of scope (zero generator infra, no Office/LibreOffice binary in sandbox)'); the single doc sample present was added as a T-0c83ff28 exception, and xlsx's revision-history slot was separately scoped out by product-owner decision in T-270c32fe (real Excel does not populate cp:revision). 11 is therefore the correct, fully-recorded total under current project scope, not a gap. T-07571b32 (2026-09-20) update: one further curated sample, samples/curated/doc/project-proposal-budget.doc (self-generated doc -> xls -> png nested embedding, ADR-005 generators), was added, bringing curated to 12 (doc x2: this one plus the third-party revision-history doc); curated xls/ppt remain unauthored. The counts in the audit sentence above are as of T-c573e72e.",
   "samples": [
     {
       "format": "docx",
@@ -889,6 +889,586 @@
       "detectable": false,
       "verifiedBy": null,
       "notes": "detectable=false pending empirical verification against a running ExtractorOLE build, per this task's (T-3bddbe75) test_strategy: 'No test -- infra/tooling task'. T-71ab3bc0 note: expectedDetectedFormat empirically confirmed (consistent with this entry's own expectedBehavior.outcome) via a standalone harness copying OoxmlMimeDetector/CfbMimeDetector production logic byte-for-byte and run against this exact 0-byte file: both detectors' zero-length guard returns UnknownResult() immediately (Unknown/application-octet-stream) without attempting any structural parse."
+    },
+    {
+      "format": "doc",
+      "status": "generated",
+      "path": "samples/synthetic/multi-embedding/sample.doc",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator.Fixtures.MultiEmbeddingSampleSpecs.Build() via SampleGenerator/Program.cs (DocSampleGenerator)",
+      "compositionRule": "docs/specs/dataset-curation.md Corpus Composition rule #1 (multi-embedding: 3+ first-layer embedded objects/media of 2+ kinds, multilingual/emoji body text and metadata)",
+      "expectedDetectedFormat": {
+        "enum": "Doc",
+        "mimeType": "application/msword"
+      },
+      "bodyTextLines": [
+        "שלום עולם, זהו טקסט לדוגמה בעברית.",
+        "مرحبا بالعالم، هذا نص عربي تجريبي.",
+        "سلام دنیا، این یک متن نمونه فارسی است.",
+        "Привет, мир! Это пример текста на русском языке.",
+        "Hello, world! This is a sample sentence in English.",
+        "你好，世界。こんにちは世界。안녕하세요, 세계.",
+        "😀🎉🚀 👨‍👩‍👧‍👦 👍🏽 🏳️‍🌈"
+      ],
+      "metadata": {
+        "Title": "שלום עולם, זהו טקסט לדוגמה בעברית.",
+        "Author": "مرحبا بالعالم، هذا نص عربي تجريبي.",
+        "Subject": "你好，世界。こんにちは世界。안녕하세요, 세계.",
+        "Comments": "😀🎉🚀 👨‍👩‍👧‍👦 👍🏽 🏳️‍🌈",
+        "LastModifiedBy": "Привет, мир! Это пример текста на русском языке."
+      },
+      "expectedSubfileCount": 4,
+      "expectedSubfiles": [
+        {
+          "fileName": "_3",
+          "contentType": "application/octet-stream",
+          "sizeInBytes": 2560,
+          "packagePath": "ObjectPool/_3"
+        },
+        {
+          "fileName": "_4",
+          "contentType": "application/octet-stream",
+          "sizeInBytes": 2560,
+          "packagePath": "ObjectPool/_4"
+        },
+        {
+          "fileName": "_2",
+          "contentType": "application/octet-stream",
+          "sizeInBytes": 2560,
+          "packagePath": "ObjectPool/_2"
+        },
+        {
+          "fileName": "_1",
+          "contentType": "application/octet-stream",
+          "sizeInBytes": 2560,
+          "packagePath": "ObjectPool/_1"
+        }
+      ],
+      "detectable": true,
+      "verifiedBy": "ExtractorOle/ExtractorOLE.Tests/Integration/ExtractCorpusManifestTests.cs (Extract over this entry: exact text, metadata, subfile list) and DetectMimeTypeCorpusManifestTests.cs (detected format); values also confirmed empirically by running MainExtractor.Extract on the committed file",
+      "notes": "Legacy files are authored by SampleGenerator per ADR-005 (docs/adrs/005-legacy-doc-ppt-authoring.md) and read back only by ExtractorOLE's own readers; openability in real Microsoft Office/LibreOffice is UNVERIFIED. All 4 embeddings (2 png + 2 bin at authoring time) are written as opaque ObjectPool/_N storages, each holding one Ole10Native stream; DocSampleGenerator does not author images as pictures, so the extractor sees 4 first-layer objects of ONE kind (the 2-kinds mix exists only in the input spec). sizeInBytes is the size of the re-serialized storage (2560), not of the payload. Subfile order is the order the extractor walks the CFB ObjectPool directory (_3, _4, _2, _1), recorded as observed. contentType is descriptive (the extractor reports no content type for legacy objects). Created/Modified are not set by this spec, so are absent from metadata."
+    },
+    {
+      "format": "xls",
+      "status": "generated",
+      "path": "samples/synthetic/multi-embedding/sample.xls",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator.Fixtures.MultiEmbeddingSampleSpecs.Build() via SampleGenerator/Program.cs (XlsSampleGenerator)",
+      "compositionRule": "docs/specs/dataset-curation.md Corpus Composition rule #1 (multi-embedding: 3+ first-layer embedded objects/media of 2+ kinds, multilingual/emoji body text and metadata)",
+      "expectedDetectedFormat": {
+        "enum": "Xls",
+        "mimeType": "application/vnd.ms-excel"
+      },
+      "bodyTextLines": [
+        "שלום עולם, זהו טקסט לדוגמה בעברית.",
+        "مرحبا بالعالم، هذا نص عربي تجريبي.",
+        "سلام دنیا، این یک متن نمونه فارسی است.",
+        "Привет, мир! Это пример текста на русском языке.",
+        "Hello, world! This is a sample sentence in English.",
+        "你好，世界。こんにちは世界。안녕하세요, 세계.",
+        "😀🎉🚀 👨‍👩‍👧‍👦 👍🏽 🏳️‍🌈"
+      ],
+      "metadata": {
+        "Title": "שלום עולם, זהו טקסט לדוגמה בעברית.",
+        "Author": "مرحبا بالعالم، هذا نص عربي تجريبي.",
+        "Subject": "你好，世界。こんにちは世界。안녕하세요, 세계.",
+        "Comments": "😀🎉🚀 👨‍👩‍👧‍👦 👍🏽 🏳️‍🌈",
+        "LastModifiedBy": "Привет, мир! Это пример текста на русском языке."
+      },
+      "expectedSubfileCount": 5,
+      "expectedSubfiles": [
+        {
+          "fileName": "embedded_object_1.bin",
+          "contentType": "application/octet-stream",
+          "sizeInBytes": 2560,
+          "packagePath": "embedded_object_1"
+        },
+        {
+          "fileName": "embedded_object_2.bin",
+          "contentType": "application/octet-stream",
+          "sizeInBytes": 2560,
+          "packagePath": "embedded_object_2"
+        },
+        {
+          "fileName": "picture_3.png",
+          "contentType": "image/png",
+          "sizeInBytes": 68,
+          "packagePath": "picture_3"
+        },
+        {
+          "fileName": "picture_4.png",
+          "contentType": "image/png",
+          "sizeInBytes": 68,
+          "packagePath": "picture_4"
+        },
+        {
+          "fileName": "picture_5.png",
+          "contentType": "image/png",
+          "sizeInBytes": 70,
+          "packagePath": "picture_5"
+        }
+      ],
+      "detectable": true,
+      "verifiedBy": "ExtractorOle/ExtractorOLE.Tests/Integration/ExtractCorpusManifestTests.cs (Extract over this entry: exact text, metadata, subfile list) and DetectMimeTypeCorpusManifestTests.cs (detected format); values also confirmed empirically by running MainExtractor.Extract on the committed file",
+      "notes": "Legacy files are authored by SampleGenerator per ADR-005 (docs/adrs/005-legacy-doc-ppt-authoring.md) and read back only by ExtractorOLE's own readers; openability in real Microsoft Office/LibreOffice is UNVERIFIED. Body text is one cell per line in column A of one sheet. The 2 binary embeddings become embedded OLE package objects (embedded_object_1/2.bin, 2560 bytes each), the 2 png embeddings become inline pictures (picture_3/4.png, 68 bytes each), and one extra shared 1x1 icon picture (picture_5.png, 70 bytes) is registered because embedded OLE objects need an icon (ADR-005), so the extractor reports 5 subfiles although the spec has 4 embeddings. Two genuinely different kinds (OLE object, picture) are extracted. contentType is descriptive (the extractor reports no content type for legacy objects). Created/Modified are not set by this spec, so are absent from metadata."
+    },
+    {
+      "format": "ppt",
+      "status": "generated",
+      "path": "samples/synthetic/multi-embedding/sample.ppt",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator.Fixtures.MultiEmbeddingSampleSpecs.Build() via SampleGenerator/Program.cs (PptSampleGenerator)",
+      "compositionRule": "docs/specs/dataset-curation.md Corpus Composition rule #1 (multi-embedding: 3+ first-layer embedded objects/media of 2+ kinds, multilingual/emoji body text and metadata)",
+      "expectedDetectedFormat": {
+        "enum": "Ppt",
+        "mimeType": "application/vnd.ms-powerpoint"
+      },
+      "bodyTextLines": [
+        "שלום עולם, זהו טקסט לדוגמה בעברית.",
+        "مرحبا بالعالم، هذا نص عربي تجريبي.",
+        "سلام دنیا، این یک متن نمونه فارسی است.",
+        "Привет, мир! Это пример текста на русском языке.",
+        "Hello, world! This is a sample sentence in English.",
+        "你好，世界。こんにちは世界。안녕하세요, 세계.",
+        "😀🎉🚀 👨‍👩‍👧‍👦 👍🏽 🏳️‍🌈"
+      ],
+      "metadata": {
+        "Title": "שלום עולם, זהו טקסט לדוגמה בעברית.",
+        "Author": "مرحبا بالعالم، هذا نص عربي تجريبي.",
+        "Subject": "你好，世界。こんにちは世界。안녕하세요, 세계.",
+        "Comments": "😀🎉🚀 👨‍👩‍👧‍👦 👍🏽 🏳️‍🌈",
+        "LastModifiedBy": "Привет, мир! Это пример текста на русском языке."
+      },
+      "expectedSubfileCount": 4,
+      "expectedSubfiles": [
+        {
+          "fileName": "Embedding4",
+          "contentType": "application/octet-stream",
+          "sizeInBytes": 2560,
+          "packagePath": "Embedding4"
+        },
+        {
+          "fileName": "Embedding3",
+          "contentType": "application/octet-stream",
+          "sizeInBytes": 2560,
+          "packagePath": "Embedding3"
+        },
+        {
+          "fileName": "Embedding2",
+          "contentType": "application/octet-stream",
+          "sizeInBytes": 2560,
+          "packagePath": "Embedding2"
+        },
+        {
+          "fileName": "Embedding1",
+          "contentType": "application/octet-stream",
+          "sizeInBytes": 2560,
+          "packagePath": "Embedding1"
+        }
+      ],
+      "detectable": true,
+      "verifiedBy": "ExtractorOle/ExtractorOLE.Tests/Integration/ExtractCorpusManifestTests.cs (Extract over this entry: exact text, metadata, subfile list) and DetectMimeTypeCorpusManifestTests.cs (detected format); values also confirmed empirically by running MainExtractor.Extract on the committed file",
+      "notes": "Legacy files are authored by SampleGenerator per ADR-005 (docs/adrs/005-legacy-doc-ppt-authoring.md) and read back only by ExtractorOLE's own readers; openability in real Microsoft Office/LibreOffice is UNVERIFIED. All 4 embeddings (2 png + 2 bin at authoring time) are written as opaque root storages Embedding1..4 (each holding one Ole10Native stream); PptSampleGenerator does not author images as pictures, so the extractor sees 4 first-layer objects of ONE kind (the 2-kinds mix exists only in the input spec). sizeInBytes is the size of the re-serialized storage (2560). Subfile order is the order the extractor walks the root directory (Embedding4, 3, 2, 1), recorded as observed. contentType is descriptive. Created/Modified are not set by this spec, so are absent from metadata."
+    },
+    {
+      "format": "doc",
+      "status": "generated",
+      "path": "samples/synthetic/large-body/large-body.doc",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator/Program.cs large-body block (DocSampleGenerator), body text from SampleGenerator.Fixtures.MultilingualFixtures.ComposeLargeBody(105_000)",
+      "compositionRule": "docs/specs/dataset-curation.md Corpus Composition rule #1 (large-body: a text body exceeding 100,000 words, multilingual/mixed-script body text and metadata)",
+      "expectedDetectedFormat": {
+        "enum": "Doc",
+        "mimeType": "application/msword"
+      },
+      "bodyText": {
+        "wordCount": 105000,
+        "wordsPerLine": 400,
+        "lineCount": 263,
+        "deterministic": true,
+        "generatedBy": "SampleGenerator.Fixtures.MultilingualFixtures.ComposeLargeBody(105_000) -- no RNG; stable across regenerations",
+        "algorithm": "word[i] = wordPool[i % 43] for i in [0, 105000). wordPool is, in order, every whitespace-split token of the 6 AllScripts sentences (Hebrew, Arabic, Persian, Russian, Latin, Cjk, in that order) followed by the 4 AllEmoji fixtures (EmojiSimple, EmojiFamilyZwj, EmojiSkinTone, EmojiFlagZwj). Words are grouped into lines of 400 (final line has 200), each line is words joined with a single space, and lines are joined with Environment.NewLine.",
+        "wordPool": [
+          "שלום",
+          "עולם,",
+          "זהו",
+          "טקסט",
+          "לדוגמה",
+          "בעברית.",
+          "مرحبا",
+          "بالعالم،",
+          "هذا",
+          "نص",
+          "عربي",
+          "تجريبي.",
+          "سلام",
+          "دنیا،",
+          "این",
+          "یک",
+          "متن",
+          "نمونه",
+          "فارسی",
+          "است.",
+          "Привет,",
+          "мир!",
+          "Это",
+          "пример",
+          "текста",
+          "на",
+          "русском",
+          "языке.",
+          "Hello,",
+          "world!",
+          "This",
+          "is",
+          "a",
+          "sample",
+          "sentence",
+          "in",
+          "English.",
+          "你好，世界。こんにちは世界。안녕하세요,",
+          "세계.",
+          "😀🎉🚀",
+          "👨‍👩‍👧‍👦",
+          "👍🏽",
+          "🏳️‍🌈"
+        ],
+        "notes": "Full 105,000-word text is not pasted verbatim here (impractical size); it is exactly and deterministically reconstructible from wordPool + this algorithm, or simply by calling MultilingualFixtures.ComposeLargeBody(105_000) directly -- the same shared, checked-in method both the generator and any verifying test must use."
+      },
+      "metadata": {
+        "Title": "שלום עולם, זהו טקסט לדוגמה בעברית.",
+        "Author": "مرحبا بالعالم، هذا نص عربي تجريبي.",
+        "Subject": "你好，世界。こんにちは世界。안녕하세요, 세계.",
+        "Comments": "😀🎉🚀 👨‍👩‍👧‍👦 👍🏽 🏳️‍🌈"
+      },
+      "expectedSubfileCount": 0,
+      "expectedSubfiles": [],
+      "detectable": true,
+      "verifiedBy": "ExtractorOle/ExtractorOLE.Tests/Integration/ExtractCorpusManifestTests.cs (Extract over this entry: exact text, metadata, subfile list) and DetectMimeTypeCorpusManifestTests.cs (detected format); values also confirmed empirically by running MainExtractor.Extract on the committed file",
+      "notes": "Legacy files are authored by SampleGenerator per ADR-005 (docs/adrs/005-legacy-doc-ppt-authoring.md) and read back only by ExtractorOLE's own readers; openability in real Microsoft Office/LibreOffice is UNVERIFIED. .doc: one paragraph per line in a single UTF-16LE piece (1.3 MB file). No first-layer embeddings in this spec. Body text is recorded as the deterministic generator spec (see bodyText); ExtractedText read back through Extract equals it exactly (263 lines, 649,777 characters). LastModifiedBy/Created/Modified are not set by this spec, so are absent from metadata."
+    },
+    {
+      "format": "xls",
+      "status": "generated",
+      "path": "samples/synthetic/large-body/large-body.xls",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator/Program.cs large-body block (XlsSampleGenerator), body text from SampleGenerator.Fixtures.MultilingualFixtures.ComposeLargeBody(105_000)",
+      "compositionRule": "docs/specs/dataset-curation.md Corpus Composition rule #1 (large-body: a text body exceeding 100,000 words, multilingual/mixed-script body text and metadata)",
+      "expectedDetectedFormat": {
+        "enum": "Xls",
+        "mimeType": "application/vnd.ms-excel"
+      },
+      "bodyText": {
+        "wordCount": 105000,
+        "wordsPerLine": 400,
+        "lineCount": 263,
+        "deterministic": true,
+        "generatedBy": "SampleGenerator.Fixtures.MultilingualFixtures.ComposeLargeBody(105_000) -- no RNG; stable across regenerations",
+        "algorithm": "word[i] = wordPool[i % 43] for i in [0, 105000). wordPool is, in order, every whitespace-split token of the 6 AllScripts sentences (Hebrew, Arabic, Persian, Russian, Latin, Cjk, in that order) followed by the 4 AllEmoji fixtures (EmojiSimple, EmojiFamilyZwj, EmojiSkinTone, EmojiFlagZwj). Words are grouped into lines of 400 (final line has 200), each line is words joined with a single space, and lines are joined with Environment.NewLine.",
+        "wordPool": [
+          "שלום",
+          "עולם,",
+          "זהו",
+          "טקסט",
+          "לדוגמה",
+          "בעברית.",
+          "مرحبا",
+          "بالعالم،",
+          "هذا",
+          "نص",
+          "عربي",
+          "تجريبي.",
+          "سلام",
+          "دنیا،",
+          "این",
+          "یک",
+          "متن",
+          "نمونه",
+          "فارسی",
+          "است.",
+          "Привет,",
+          "мир!",
+          "Это",
+          "пример",
+          "текста",
+          "на",
+          "русском",
+          "языке.",
+          "Hello,",
+          "world!",
+          "This",
+          "is",
+          "a",
+          "sample",
+          "sentence",
+          "in",
+          "English.",
+          "你好，世界。こんにちは世界。안녕하세요,",
+          "세계.",
+          "😀🎉🚀",
+          "👨‍👩‍👧‍👦",
+          "👍🏽",
+          "🏳️‍🌈"
+        ],
+        "notes": "Full 105,000-word text is not pasted verbatim here (impractical size); it is exactly and deterministically reconstructible from wordPool + this algorithm, or simply by calling MultilingualFixtures.ComposeLargeBody(105_000) directly -- the same shared, checked-in method both the generator and any verifying test must use."
+      },
+      "metadata": {
+        "Title": "שלום עולם, זהו טקסט לדוגמה בעברית.",
+        "Author": "مرحبا بالعالم، هذا نص عربي تجريبي.",
+        "Subject": "你好，世界。こんにちは世界。안녕하세요, 세계.",
+        "Comments": "😀🎉🚀 👨‍👩‍👧‍👦 👍🏽 🏳️‍🌈"
+      },
+      "expectedSubfileCount": 0,
+      "expectedSubfiles": [],
+      "detectable": true,
+      "verifiedBy": "ExtractorOle/ExtractorOLE.Tests/Integration/ExtractCorpusManifestTests.cs (Extract over this entry: exact text, metadata, subfile list) and DetectMimeTypeCorpusManifestTests.cs (detected format); values also confirmed empirically by running MainExtractor.Extract on the committed file",
+      "notes": "Legacy files are authored by SampleGenerator per ADR-005 (docs/adrs/005-legacy-doc-ppt-authoring.md) and read back only by ExtractorOLE's own readers; openability in real Microsoft Office/LibreOffice is UNVERIFIED. .xls: one cell per line in column A (230 KB file). No first-layer embeddings in this spec. Body text is recorded as the deterministic generator spec (see bodyText); ExtractedText read back through Extract equals it exactly (263 lines, 649,777 characters). LastModifiedBy/Created/Modified are not set by this spec, so are absent from metadata."
+    },
+    {
+      "format": "ppt",
+      "status": "generated",
+      "path": "samples/synthetic/large-body/large-body.ppt",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator/Program.cs large-body block (PptSampleGenerator), body text from SampleGenerator.Fixtures.MultilingualFixtures.ComposeLargeBody(105_000)",
+      "compositionRule": "docs/specs/dataset-curation.md Corpus Composition rule #1 (large-body: a text body exceeding 100,000 words, multilingual/mixed-script body text and metadata)",
+      "expectedDetectedFormat": {
+        "enum": "Ppt",
+        "mimeType": "application/vnd.ms-powerpoint"
+      },
+      "bodyText": {
+        "wordCount": 105000,
+        "wordsPerLine": 400,
+        "lineCount": 263,
+        "deterministic": true,
+        "generatedBy": "SampleGenerator.Fixtures.MultilingualFixtures.ComposeLargeBody(105_000) -- no RNG; stable across regenerations",
+        "algorithm": "word[i] = wordPool[i % 43] for i in [0, 105000). wordPool is, in order, every whitespace-split token of the 6 AllScripts sentences (Hebrew, Arabic, Persian, Russian, Latin, Cjk, in that order) followed by the 4 AllEmoji fixtures (EmojiSimple, EmojiFamilyZwj, EmojiSkinTone, EmojiFlagZwj). Words are grouped into lines of 400 (final line has 200), each line is words joined with a single space, and lines are joined with Environment.NewLine.",
+        "wordPool": [
+          "שלום",
+          "עולם,",
+          "זהו",
+          "טקסט",
+          "לדוגמה",
+          "בעברית.",
+          "مرحبا",
+          "بالعالم،",
+          "هذا",
+          "نص",
+          "عربي",
+          "تجريبي.",
+          "سلام",
+          "دنیا،",
+          "این",
+          "یک",
+          "متن",
+          "نمونه",
+          "فارسی",
+          "است.",
+          "Привет,",
+          "мир!",
+          "Это",
+          "пример",
+          "текста",
+          "на",
+          "русском",
+          "языке.",
+          "Hello,",
+          "world!",
+          "This",
+          "is",
+          "a",
+          "sample",
+          "sentence",
+          "in",
+          "English.",
+          "你好，世界。こんにちは世界。안녕하세요,",
+          "세계.",
+          "😀🎉🚀",
+          "👨‍👩‍👧‍👦",
+          "👍🏽",
+          "🏳️‍🌈"
+        ],
+        "notes": "Full 105,000-word text is not pasted verbatim here (impractical size); it is exactly and deterministically reconstructible from wordPool + this algorithm, or simply by calling MultilingualFixtures.ComposeLargeBody(105_000) directly -- the same shared, checked-in method both the generator and any verifying test must use."
+      },
+      "metadata": {
+        "Title": "שלום עולם, זהו טקסט לדוגמה בעברית.",
+        "Author": "مرحبا بالعالم، هذا نص عربي تجريبي.",
+        "Subject": "你好，世界。こんにちは世界。안녕하세요, 세계.",
+        "Comments": "😀🎉🚀 👨‍👩‍👧‍👦 👍🏽 🏳️‍🌈"
+      },
+      "expectedSubfileCount": 0,
+      "expectedSubfiles": [],
+      "detectable": true,
+      "verifiedBy": "ExtractorOle/ExtractorOLE.Tests/Integration/ExtractCorpusManifestTests.cs (Extract over this entry: exact text, metadata, subfile list) and DetectMimeTypeCorpusManifestTests.cs (detected format); values also confirmed empirically by running MainExtractor.Extract on the committed file",
+      "notes": "Legacy files are authored by SampleGenerator per ADR-005 (docs/adrs/005-legacy-doc-ppt-authoring.md) and read back only by ExtractorOLE's own readers; openability in real Microsoft Office/LibreOffice is UNVERIFIED. .ppt: one slide with one text box per line (1.3 MB file). No first-layer embeddings in this spec. Body text is recorded as the deterministic generator spec (see bodyText); ExtractedText read back through Extract equals it exactly (263 lines, 649,777 characters). LastModifiedBy/Created/Modified are not set by this spec, so are absent from metadata."
+    },
+    {
+      "format": "doc",
+      "status": "generated",
+      "path": "samples/synthetic/macro-embed/sample.doc",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator.Fixtures.MacroEmbedSampleSpecs.Build() via SampleGenerator/Program.cs (DocSampleGenerator)",
+      "compositionRule": "docs/specs/dataset-curation.md Corpus Composition rule #1 (macro-embed: a macro-enabled variant with at least one first-layer embedding, multilingual/mixed-script body text and metadata)",
+      "expectedDetectedFormat": {
+        "enum": "Doc",
+        "mimeType": "application/msword"
+      },
+      "bodyTextLines": [
+        "שלום עולם, זהו טקסט לדוגמה בעברית.",
+        "مرحبا بالعالم، هذا نص عربي تجريبي.",
+        "سلام دنیا، این یک متن نمونه فارسی است.",
+        "Привет, мир! Это пример текста на русском языке.",
+        "Hello, world! This is a sample sentence in English.",
+        "你好，世界。こんにちは世界。안녕하세요, 세계.",
+        "😀🎉🚀 👨‍👩‍👧‍👦 👍🏽 🏳️‍🌈"
+      ],
+      "metadata": {
+        "Title": "שלום עולם, זהו טקסט לדוגמה בעברית.",
+        "Author": "مرحبا بالعالم، هذا نص عربي تجريبي.",
+        "Subject": "你好，世界。こんにちは世界。안녕하세요, 세계.",
+        "Comments": "😀🎉🚀 👨‍👩‍👧‍👦 👍🏽 🏳️‍🌈",
+        "LastModifiedBy": "Привет, мир! Это пример текста на русском языке."
+      },
+      "expectedFormatMetadata": {
+        "hasMacros": true
+      },
+      "expectedSubfileCount": 1,
+      "expectedSubfiles": [
+        {
+          "fileName": "_1",
+          "contentType": "application/octet-stream",
+          "sizeInBytes": 2560,
+          "packagePath": "ObjectPool/_1"
+        }
+      ],
+      "detectable": true,
+      "verifiedBy": "ExtractorOle/ExtractorOLE.Tests/Integration/ExtractCorpusManifestTests.cs (Extract over this entry: exact text, metadata, subfile list) and DetectMimeTypeCorpusManifestTests.cs (detected format); values also confirmed empirically by running MainExtractor.Extract on the committed file",
+      "notes": "Legacy files are authored by SampleGenerator per ADR-005 (docs/adrs/005-legacy-doc-ppt-authoring.md) and read back only by ExtractorOLE's own readers; openability in real Microsoft Office/LibreOffice is UNVERIFIED. Macro variant: the 63-byte placeholder VBA project is written as a root \"Macros\" storage (the location DocOpenStrategy checks), which is NOT counted as a subfile. The one png embedding is an opaque ObjectPool/_1 storage (2560 bytes; kind is opaque object, not picture). contentType is descriptive."
+    },
+    {
+      "format": "xls",
+      "status": "generated",
+      "path": "samples/synthetic/macro-embed/sample.xls",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator.Fixtures.MacroEmbedSampleSpecs.Build() via SampleGenerator/Program.cs (XlsSampleGenerator)",
+      "compositionRule": "docs/specs/dataset-curation.md Corpus Composition rule #1 (macro-embed: a macro-enabled variant with at least one first-layer embedding, multilingual/mixed-script body text and metadata)",
+      "expectedDetectedFormat": {
+        "enum": "Xls",
+        "mimeType": "application/vnd.ms-excel"
+      },
+      "bodyTextLines": [
+        "שלום עולם, זהו טקסט לדוגמה בעברית.",
+        "مرحبا بالعالم، هذا نص عربي تجريبي.",
+        "سلام دنیا، این یک متن نمونه فارسی است.",
+        "Привет, мир! Это пример текста на русском языке.",
+        "Hello, world! This is a sample sentence in English.",
+        "你好，世界。こんにちは世界。안녕하세요, 세계.",
+        "😀🎉🚀 👨‍👩‍👧‍👦 👍🏽 🏳️‍🌈"
+      ],
+      "metadata": {
+        "Title": "שלום עולם, זהו טקסט לדוגמה בעברית.",
+        "Author": "مرحبا بالعالم، هذا نص عربي تجريبي.",
+        "Subject": "你好，世界。こんにちは世界。안녕하세요, 세계.",
+        "Comments": "😀🎉🚀 👨‍👩‍👧‍👦 👍🏽 🏳️‍🌈",
+        "LastModifiedBy": "Привет, мир! Это пример текста на русском языке."
+      },
+      "expectedFormatMetadata": {
+        "hasMacros": true
+      },
+      "expectedSubfileCount": 1,
+      "expectedSubfiles": [
+        {
+          "fileName": "picture_1.png",
+          "contentType": "image/png",
+          "sizeInBytes": 68,
+          "packagePath": "picture_1"
+        }
+      ],
+      "detectable": true,
+      "verifiedBy": "ExtractorOle/ExtractorOLE.Tests/Integration/ExtractCorpusManifestTests.cs (Extract over this entry: exact text, metadata, subfile list) and DetectMimeTypeCorpusManifestTests.cs (detected format); values also confirmed empirically by running MainExtractor.Extract on the committed file",
+      "notes": "Legacy files are authored by SampleGenerator per ADR-005 (docs/adrs/005-legacy-doc-ppt-authoring.md) and read back only by ExtractorOLE's own readers; openability in real Microsoft Office/LibreOffice is UNVERIFIED. Macro variant: the placeholder VBA project is written as a root \"_VBA_PROJECT_CUR\" storage (the location XlsOpenStrategy checks), which is NOT counted as a subfile. The one png embedding is an inline picture (picture_1.png, 68 bytes)."
+    },
+    {
+      "format": "ppt",
+      "status": "generated",
+      "path": "samples/synthetic/macro-embed/sample.ppt",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator.Fixtures.MacroEmbedSampleSpecs.Build() via SampleGenerator/Program.cs (PptSampleGenerator)",
+      "compositionRule": "docs/specs/dataset-curation.md Corpus Composition rule #1 (macro-embed: a macro-enabled variant with at least one first-layer embedding, multilingual/mixed-script body text and metadata)",
+      "expectedDetectedFormat": {
+        "enum": "Ppt",
+        "mimeType": "application/vnd.ms-powerpoint"
+      },
+      "bodyTextLines": [
+        "שלום עולם, זהו טקסט לדוגמה בעברית.",
+        "مرحبا بالعالم، هذا نص عربي تجريبي.",
+        "سلام دنیا، این یک متن نمونه فارسی است.",
+        "Привет, мир! Это пример текста на русском языке.",
+        "Hello, world! This is a sample sentence in English.",
+        "你好，世界。こんにちは世界。안녕하세요, 세계.",
+        "😀🎉🚀 👨‍👩‍👧‍👦 👍🏽 🏳️‍🌈"
+      ],
+      "metadata": {
+        "Title": "שלום עולם, זהו טקסט לדוגמה בעברית.",
+        "Author": "مرحبا بالعالم، هذا نص عربي تجريبي.",
+        "Subject": "你好，世界。こんにちは世界。안녕하세요, 세계.",
+        "Comments": "😀🎉🚀 👨‍👩‍👧‍👦 👍🏽 🏳️‍🌈",
+        "LastModifiedBy": "Привет, мир! Это пример текста на русском языке."
+      },
+      "expectedFormatMetadata": {
+        "hasMacros": true
+      },
+      "expectedSubfileCount": 2,
+      "expectedSubfiles": [
+        {
+          "fileName": "Embedding1",
+          "contentType": "application/octet-stream",
+          "sizeInBytes": 2560,
+          "packagePath": "Embedding1"
+        },
+        {
+          "fileName": "Macros",
+          "contentType": "application/octet-stream",
+          "sizeInBytes": 2560,
+          "packagePath": "Macros"
+        }
+      ],
+      "detectable": true,
+      "verifiedBy": "ExtractorOle/ExtractorOLE.Tests/Integration/ExtractCorpusManifestTests.cs (Extract over this entry: exact text, metadata, subfile list) and DetectMimeTypeCorpusManifestTests.cs (detected format); values also confirmed empirically by running MainExtractor.Extract on the committed file",
+      "notes": "Legacy files are authored by SampleGenerator per ADR-005 (docs/adrs/005-legacy-doc-ppt-authoring.md) and read back only by ExtractorOLE's own readers; openability in real Microsoft Office/LibreOffice is UNVERIFIED. Macro variant: the placeholder VBA project is written as a root \"Macros\" storage. PptOpenStrategy reports every top-level storage as an embedded object (ADR-005), so the Macros storage IS counted: 2 subfiles for 1 spec embedding (Embedding1 = the png as an opaque storage, Macros = the VBA storage; 2560 bytes each). This differs from the docm/xlsm/pptm entries, where the VBA part is not counted. contentType is descriptive."
+    },
+    {
+      "format": "doc",
+      "status": "generated",
+      "path": "samples/curated/doc/project-proposal-budget.doc",
+      "provenance": "self-generated",
+      "generatedBy": "SampleGenerator.Fixtures.CuratedSampleSpecs.BuildProjectProposalBudget() via SampleGenerator/Program.cs (DocSampleGenerator; inner embedding generated via XlsSampleGenerator.Generate())",
+      "compositionRule": "docs/specs/dataset-curation.md Corpus Composition curated-samples bullet (2 curated real-world-style samples per format, self-authored or checked-license) -- satisfies the 'at least one with 2+ levels of nested embedding (an embedded object that itself contains an embedded object)' half of that bullet: the doc embeds a real inner-generated xls (ObjectPool storage), and that inner xls itself embeds a PNG chart image, for 2 genuine nesting levels.",
+      "expectedDetectedFormat": {
+        "enum": "Doc",
+        "mimeType": "application/msword"
+      },
+      "bodyTextLines": [
+        "Project Proposal: Warehouse Automation Pilot",
+        "Prepared by: Facilities Engineering, Acme Logistics",
+        "Date: April 6, 2026",
+        "Summary: This proposal requests funding for a 6-month pilot of automated guided vehicles at the Dayton distribution center.",
+        "Scope: Two vehicles, one charging dock, integration with the existing warehouse management system.",
+        "Timeline: Procurement in May, installation in June, live pilot July through December 2026.",
+        "See attached workbook for the itemized pilot budget."
+      ],
+      "metadata": {},
+      "expectedSubfileCount": 1,
+      "expectedSubfiles": [
+        {
+          "fileName": "_1",
+          "contentType": "application/octet-stream",
+          "sizeInBytes": 6144,
+          "packagePath": "ObjectPool/_1"
+        }
+      ],
+      "detectable": true,
+      "verifiedBy": "ExtractorOle/ExtractorOLE.Tests/MultiEmbedding/CuratedNestedEmbeddingSampleTests.cs :: Doc_ProjectProposalBudget_NestedXlsEmbedding_IsOneOpaqueSubfile_InnerPngNotUnpacked; also ExtractorOle/ExtractorOLE.Tests/Integration/ExtractCorpusManifestTests.cs (Extract over this entry: exact text, metadata, subfile list) and DetectMimeTypeCorpusManifestTests.cs (detected format); values also confirmed empirically by running MainExtractor.Extract on the committed file",
+      "notes": "Legacy files are authored by SampleGenerator per ADR-005 (docs/adrs/005-legacy-doc-ppt-authoring.md) and read back only by ExtractorOLE's own readers; openability in real Microsoft Office/LibreOffice is UNVERIFIED. A second embedding layer exists inside the first-layer embedded object: the inner xls (pilot-budget.xls, held in the Ole10Native stream of ObjectPool/_1) itself embeds a PNG chart image and would require recursive extraction to reach -- out of scope here. The non-recursive rule (outer embedding listed as one opaque subfile, inner PNG never separately surfaced) is verified by the test named above. sizeInBytes (6144) is the size of the re-serialized ObjectPool storage, not of the inner xls. No metadata is set (the revision-history half of the doc pair is the third-party samples/curated/doc/us-dept-of-education-teacher-quality-grantees-1999-2000.doc). This is the only legacy curated sample authored here: curated xls/ppt samples remain out of scope."
     }
   ],
   "$benchmarkSamplesNote": "T-f0963fc3: the 12 fixed benchmark samples (10MB tier: target 10,000,000 bytes; ~100MB tier: target 102,400,000 bytes = 97.66 MiB, under the 104,857,600-byte MaxFileSizeBytes cap; each file lands in [0.99 x target, target]). They are gitignored (samples/benchmark/) and regenerated on demand with `dotnet run --project SampleGenerator -- --benchmark`, which rewrites the files and compares each SHA-256 with this list (exit code 1 on mismatch). They live under 'benchmarkSamples', not 'samples', because the committed-corpus tests (DetectMimeTypeCorpusManifestTests) read every 'samples' entry from disk. sha256 values depend on the deflate output of the .NET runtime that built them (net8.0 target, built here on the .NET 8 runtime via the .NET 9 SDK), so a different runtime's zlib could change the docx/xlsx/pptx hashes; ExtractorOLE.Tests.SampleGeneration.BenchmarkSampleGeneratorTests validates size, SHA-256 and Extract() text for each present file.",

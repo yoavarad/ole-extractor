@@ -123,11 +123,11 @@ foreach (var (format, generator) in generators)
 // docs/specs/dataset-curation.md's "curated real-world-style samples" composition rule
 // (2 per format: one with 2+ levels of nested embedding, one with a
 // authorship/revision-history property chain). Scoped down to docx/xlsx/pptx here (a
-// product-owner decision) - doc/xls/ppt curated authoring is blocked on the same
-// NPOI-compiled-from-source gap as the legacy generators above. See
-// CuratedSampleSpecs for full rationale.
+// product-owner decision), plus one legacy .doc nested-embedding sample now that the
+// legacy generators exist (ADR-005; T-07571b32). See CuratedSampleSpecs for full rationale.
 var curatedSamples = new (SampleFormat Format, string FileName, SampleSpec Spec)[]
 {
+    (SampleFormat.Doc, "project-proposal-budget.doc", CuratedSampleSpecs.BuildProjectProposalBudget()),
     (SampleFormat.Docx, "meeting-minutes-boardroom.docx", CuratedSampleSpecs.BuildMeetingMinutesBoardroom()),
     (SampleFormat.Docx, "invoice-acme-corp.docx", CuratedSampleSpecs.BuildInvoiceAcmeCorp()),
     (SampleFormat.Xlsx, "project-status-report.xlsx", CuratedSampleSpecs.BuildProjectStatusReport()),
