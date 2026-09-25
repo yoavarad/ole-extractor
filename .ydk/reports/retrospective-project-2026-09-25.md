@@ -162,7 +162,7 @@ It has about 10 entries for 89 tasks. The real history is in the per-task activi
 - [x] All 11 `.ydk/epics/*.md` and 22 `.ydk/stories/*.md` set to `status: done`, matching `manifest.yaml`.
 
 **Follow-ups: this repo**
-- [ ] Close the 4 stale QD tasks (§6).
+- [x] Close the 4 stale QD tasks (§6).
 - [ ] Add a CI workflow running `dotnet build` + `dotnet test` on PRs. Optionally add the benchmark P95 comparison as a separate manual/nightly job.
 - [ ] Run `/graphify --update` after this lands (per CLAUDE.md).
 
