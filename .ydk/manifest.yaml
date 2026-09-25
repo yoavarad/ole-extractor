@@ -1005,7 +1005,7 @@ tasks:
     title: Reconcile pptx subfile counts between manifest and extractor (NOAA 58 vs
       59, ORNL 83 vs 58)
     story: S-37c18545
-    status: in-review
+    status: done
     dependencies:
     - T-7916a198
     component_refs:
