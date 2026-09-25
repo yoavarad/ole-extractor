@@ -1033,7 +1033,7 @@ tasks:
   T-ec4dc427:
     title: Add curated nested-embedding samples for xls and ppt (parallel to project-proposal-budget.doc)
     story: S-da936361
-    status: open
+    status: done
     dependencies:
     - T-07571b32
     component_refs: []
@@ -1049,7 +1049,7 @@ tasks:
     title: Reconcile sample subfile counts with spec's literal embedding count where
       they deviate
     story: S-6bc8566f
-    status: open
+    status: done
     dependencies:
     - T-205594d7
     component_refs:

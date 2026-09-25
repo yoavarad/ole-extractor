@@ -4,7 +4,7 @@ title: Add curated nested-embedding samples for xls and ppt (parallel to project
 story: As a developer verifying nested-embedding extraction across all legacy formats,
   I want curated xls and ppt samples with a real nested embedding (like the existing
   doc sample), so corpus coverage isn't doc-only.
-status: open
+status: done
 assignee: null
 labels: []
 dependencies: []
@@ -22,7 +22,7 @@ milestone: null
 complexity: null
 gates: []
 created: '2026-09-25T10:44:36Z'
-updated: '2026-09-25T10:44:36Z'
+updated: '2026-09-25T11:39:55Z'
 ---
 
 ## Description
