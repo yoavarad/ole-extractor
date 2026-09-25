@@ -962,7 +962,7 @@ tasks:
   T-07571b32:
     title: Generate remaining 10 legacy-format samples (doc/xls/ppt)
     story: S-6bc8566f
-    status: open
+    status: done
     dependencies:
     - T-b856b14e
     component_refs:
