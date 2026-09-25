@@ -1022,7 +1022,7 @@ tasks:
     title: Align xlsx image subfile naming (slide_image_N vs embedded_object_N) with
       the spec
     story: S-8d6146f0
-    status: in-review
+    status: done
     dependencies:
     - T-7916a198
     component_refs:
