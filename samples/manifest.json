@@ -946,7 +946,7 @@
       ],
       "detectable": true,
       "verifiedBy": "ExtractorOle/ExtractorOLE.Tests/Integration/ExtractCorpusManifestTests.cs (Extract over this entry: exact text, metadata, subfile list) and DetectMimeTypeCorpusManifestTests.cs (detected format); values also confirmed empirically by running MainExtractor.Extract on the committed file",
-      "notes": "Legacy files are authored by SampleGenerator per ADR-005 (docs/adrs/005-legacy-doc-ppt-authoring.md) and read back only by ExtractorOLE's own readers; openability in real Microsoft Office/LibreOffice is UNVERIFIED. All 4 embeddings (2 png + 2 bin at authoring time) are written as opaque ObjectPool/_N storages, each holding one Ole10Native stream; DocSampleGenerator does not author images as pictures, so the extractor sees 4 first-layer objects of ONE kind (the 2-kinds mix exists only in the input spec). sizeInBytes is the size of the re-serialized storage (2560), not of the payload. Subfile order is the order the extractor walks the CFB ObjectPool directory (_3, _4, _2, _1), recorded as observed. contentType is descriptive (the extractor reports no content type for legacy objects). Created/Modified are not set by this spec, so are absent from metadata."
+      "notes": "Legacy files are authored by SampleGenerator per ADR-005 (docs/adrs/005-legacy-doc-ppt-authoring.md) and read back only by ExtractorOLE's own readers; openability in real Microsoft Office/LibreOffice is UNVERIFIED. All 4 embeddings (2 png + 2 bin at authoring time) are written as opaque ObjectPool/_N storages, each holding one Ole10Native stream; the 2 png embeddings are stored with a plain CONTENTS stream and the 2 bin embeddings with an Ole10Native stream (2 distinct kinds of object storage in the file), but the extractor reports each ObjectPool child as an opaque re-serialized storage with no kind information, so subfile names/sizes are identical for both kinds. sizeInBytes is the size of the re-serialized storage (2560), not of the payload. Subfile order is the order the extractor walks the CFB ObjectPool directory (_3, _4, _2, _1), recorded as observed. contentType is descriptive (the extractor reports no content type for legacy objects). Created/Modified are not set by this spec, so are absent from metadata."
     },
     {
       "format": "xls",
@@ -1039,20 +1039,8 @@
         "Comments": "😀🎉🚀 👨‍👩‍👧‍👦 👍🏽 🏳️‍🌈",
         "LastModifiedBy": "Привет, мир! Это пример текста на русском языке."
       },
-      "expectedSubfileCount": 4,
+      "expectedSubfileCount": 3,
       "expectedSubfiles": [
-        {
-          "fileName": "Embedding4",
-          "contentType": "application/octet-stream",
-          "sizeInBytes": 2560,
-          "packagePath": "Embedding4"
-        },
-        {
-          "fileName": "Embedding3",
-          "contentType": "application/octet-stream",
-          "sizeInBytes": 2560,
-          "packagePath": "Embedding3"
-        },
         {
           "fileName": "Embedding2",
           "contentType": "application/octet-stream",
@@ -1064,11 +1052,17 @@
           "contentType": "application/octet-stream",
           "sizeInBytes": 2560,
           "packagePath": "Embedding1"
+        },
+        {
+          "fileName": "Pictures",
+          "contentType": "image/png",
+          "sizeInBytes": 136,
+          "packagePath": "Pictures"
         }
       ],
       "detectable": true,
       "verifiedBy": "ExtractorOle/ExtractorOLE.Tests/Integration/ExtractCorpusManifestTests.cs (Extract over this entry: exact text, metadata, subfile list) and DetectMimeTypeCorpusManifestTests.cs (detected format); values also confirmed empirically by running MainExtractor.Extract on the committed file",
-      "notes": "Legacy files are authored by SampleGenerator per ADR-005 (docs/adrs/005-legacy-doc-ppt-authoring.md) and read back only by ExtractorOLE's own readers; openability in real Microsoft Office/LibreOffice is UNVERIFIED. All 4 embeddings (2 png + 2 bin at authoring time) are written as opaque root storages Embedding1..4 (each holding one Ole10Native stream); PptSampleGenerator does not author images as pictures, so the extractor sees 4 first-layer objects of ONE kind (the 2-kinds mix exists only in the input spec). sizeInBytes is the size of the re-serialized storage (2560). Subfile order is the order the extractor walks the root directory (Embedding4, 3, 2, 1), recorded as observed. contentType is descriptive. Created/Modified are not set by this spec, so are absent from metadata."
+      "notes": "Legacy files are authored by SampleGenerator per ADR-005 (docs/adrs/005-legacy-doc-ppt-authoring.md) and read back only by ExtractorOLE's own readers; openability in real Microsoft Office/LibreOffice is UNVERIFIED. The 2 bin embeddings are written as opaque root storages Embedding1..2 (each holding one Ole10Native stream) and the 2 png embeddings are concatenated into the root Pictures stream (one subfile, 136 bytes, as in a real .ppt), so the extractor sees 3 first-layer objects of 2 kinds (OLE storage, Pictures stream). sizeInBytes is the size of the re-serialized storage (2560). Subfile order is the order the extractor walks the root directory (Embedding2, 1), then the Pictures stream, recorded as observed. contentType is descriptive. Created/Modified are not set by this spec, so are absent from metadata."
     },
     {
       "format": "doc",

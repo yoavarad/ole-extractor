@@ -63,7 +63,11 @@ namespace SampleGenerator.Generators
             foreach (var embedding in embeddings)
             {
                 var storage = parent.CreateDirectory($"{namePrefix}{index++}");
-                storage.CreateDocument("\u0001Ole10Native", new MemoryStream(embedding.Content));
+                // Two kinds of object storage: image content as a plain "CONTENTS" stream,
+                // anything else as an OLE 1.0 package ("\u0001Ole10Native").
+                var streamName = embedding.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase)
+                    ? "CONTENTS" : "\u0001Ole10Native";
+                storage.CreateDocument(streamName, new MemoryStream(embedding.Content));
             }
         }
 
