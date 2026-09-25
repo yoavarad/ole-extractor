@@ -186,6 +186,94 @@ namespace SampleGenerator.Fixtures
         }
 
         // ---------------------------------------------------------------
+        // xls / inventory-forecast.xls - NESTED (xls -> xlsx -> png)
+        // ---------------------------------------------------------------
+
+        public static readonly string[] InventoryForecastLines =
+        {
+            "Inventory Forecast: Q3 2026",
+            "Prepared by: Supply Planning, Acme Logistics",
+            "Warehouse: Dayton distribution center",
+            "Forecast basis: trailing 12-month demand, seasonally adjusted",
+            "See embedded workbook for reorder thresholds by product family."
+        };
+
+        private static readonly string[] ReorderThresholdsLines =
+        {
+            "Reorder Thresholds by Product Family",
+            "Pallet racking: 40 units",
+            "Conveyor parts: 120 units",
+            "Battery packs: 75 units",
+            "Packaging supplies: 900 units"
+        };
+
+        public static SampleSpec BuildInventoryForecast()
+        {
+            var innerXlsxSpec = new SampleSpec
+            {
+                BodyText = string.Join("\n", ReorderThresholdsLines),
+                Embeddings = new List<EmbeddedContentSpec>
+                {
+                    new() { FileName = "threshold-chart.png", Content = PngPlaceholder, ContentType = "image/png" }
+                }
+            };
+            var innerXlsx = new XlsxSampleGenerator().Generate(innerXlsxSpec);
+
+            return new SampleSpec
+            {
+                BodyText = string.Join("\n", InventoryForecastLines),
+                Embeddings = new List<EmbeddedContentSpec>
+                {
+                    new() { FileName = "reorder-thresholds.xlsx", Content = innerXlsx.Content, ContentType = XlsxMimeType }
+                }
+            };
+        }
+
+        // ---------------------------------------------------------------
+        // ppt / quarterly-review-deck.ppt - NESTED (ppt -> xls -> png)
+        // ---------------------------------------------------------------
+
+        public static readonly string[] QuarterlyReviewDeckLines =
+        {
+            "Quarterly Business Review: Q2 2026",
+            "Presenter: Regional Operations, Acme Logistics",
+            "Highlights: on-time delivery up 4 points, cost per parcel down 6 percent",
+            "Next steps: expand automation pilot to two more sites",
+            "See attached workbook for the regional KPI table."
+        };
+
+        private static readonly string[] RegionalKpiLines =
+        {
+            "Regional KPI Table - Q2 2026",
+            "Midwest: 96.1% on-time",
+            "Northeast: 94.8% on-time",
+            "South: 95.5% on-time",
+            "West: 97.0% on-time"
+        };
+
+        public static SampleSpec BuildQuarterlyReviewDeck()
+        {
+            var innerXlsSpec = new SampleSpec
+            {
+                BodyText = string.Join("\n", RegionalKpiLines),
+                Embeddings = new List<EmbeddedContentSpec>
+                {
+                    new() { FileName = "kpi-chart.png", Content = PngPlaceholder, ContentType = "image/png" }
+                }
+            };
+            var innerXls = new XlsSampleGenerator().Generate(innerXlsSpec);
+
+            return new SampleSpec
+            {
+                BodyText = string.Join("\n", QuarterlyReviewDeckLines),
+                Embeddings = new List<EmbeddedContentSpec>
+                {
+                    new() { FileName = "regional-kpis.xls", Content = innerXls.Content, ContentType = XlsMimeType }
+                }
+            };
+        }
+
+        // ---------------------------------------------------------------
         // xlsx / project-status-report.xlsx - NESTED (xlsx -> docx -> png)
         // ---------------------------------------------------------------
 

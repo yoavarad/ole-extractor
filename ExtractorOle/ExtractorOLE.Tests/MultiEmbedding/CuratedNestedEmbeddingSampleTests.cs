@@ -91,5 +91,71 @@ namespace ExtractorOLE.Tests.MultiEmbedding
 
             Assert.DoesNotContain(result.EmbeddedFiles, f => f.FileName.EndsWith(".png"));
         }
+
+        [Fact]
+        public void Xls_InventoryForecast_NestedXlsxEmbedding_IsOneOpaqueSubfile_InnerPngNotUnpacked()
+        {
+            var spec = CuratedSampleSpecs.BuildInventoryForecast();
+            var innerXlsxBytes = spec.Embeddings.Single(e => e.FileName == "reorder-thresholds.xlsx").Content;
+
+            var generated = new XlsSampleGenerator().Generate(spec);
+
+            var strategy = new XlsOpenStrategy(new ExtractionHelper());
+            var result = strategy.Open(generated.Content);
+
+            Assert.NotNull(result);
+
+            // xls reports the embedded OLE package as one opaque object; the generator's shared 1x1 icon
+            // picture (70 bytes) accompanies it. The inner xlsx's own PNG chart is never surfaced.
+            var subfile = Assert.Single(result!.EmbeddedFiles, f => f.FileName.EndsWith(".bin"));
+            var fs = new NPOIFSFileSystem(new MemoryStream(subfile.BinaryData));
+            try
+            {
+                var stream = fs.CreateDocumentInputStream("Ole10Native");
+                var content = new byte[stream.Length];
+                stream.Read(content, 0, content.Length);
+                // NPOI wraps the payload in an Ole10Native header, so match the inner xlsx bytes within the stream.
+                Assert.True(content.AsSpan().IndexOf(innerXlsxBytes) >= 0);
+            }
+            finally
+            {
+                fs.Close();
+            }
+
+            Assert.Equal(2, result.EmbeddedFiles.Count);
+            Assert.DoesNotContain(result.EmbeddedFiles, f => f.FileName.EndsWith(".xlsx"));
+            Assert.DoesNotContain(result.EmbeddedFiles, f => f.FileName == "threshold-chart.png");
+        }
+
+        [Fact]
+        public void Ppt_QuarterlyReviewDeck_NestedXlsEmbedding_IsOneOpaqueSubfile_InnerPngNotUnpacked()
+        {
+            var spec = CuratedSampleSpecs.BuildQuarterlyReviewDeck();
+            var innerXlsBytes = spec.Embeddings.Single(e => e.FileName == "regional-kpis.xls").Content;
+
+            var generated = new PptSampleGenerator().Generate(spec);
+
+            var strategy = new PptOpenStrategy(new ExtractionHelper());
+            var result = strategy.Open(generated.Content);
+
+            Assert.NotNull(result);
+            var subfile = Assert.Single(result!.EmbeddedFiles);
+
+            // The legacy subfile is the whole ObjectPool-style storage; its Ole10Native stream holds the inner .xls.
+            var fs = new NPOIFSFileSystem(new MemoryStream(subfile.BinaryData));
+            try
+            {
+                var stream = fs.CreateDocumentInputStream("Ole10Native");
+                var content = new byte[stream.Length];
+                stream.Read(content, 0, content.Length);
+                Assert.Equal(innerXlsBytes, content);
+            }
+            finally
+            {
+                fs.Close();
+            }
+
+            Assert.DoesNotContain(result.EmbeddedFiles, f => f.FileName.EndsWith(".png"));
+        }
     }
 }
