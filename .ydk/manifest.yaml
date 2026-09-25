@@ -217,6 +217,7 @@ stories:
     - T-0c83ff28
     - T-c573e72e
     - T-270c32fe
+    - T-ec4dc427
   S-6bc8566f:
     title: Shared adversarial set and corpus manifest
     epic: E-c2846232
@@ -227,6 +228,8 @@ stories:
     - T-7cdaeceb
     - T-71ab3bc0
     - T-07571b32
+    - T-6e7423e5
+    - T-ffa97099
     - T-48110fcb
   S-f6d7124a:
     title: Integration tests against the corpus manifest
@@ -1025,6 +1028,30 @@ tasks:
     status: done
     dependencies:
     - T-7916a198
+    component_refs:
+    - ydk:entity:extraction/SubfileItem
+  T-ec4dc427:
+    title: Add curated nested-embedding samples for xls and ppt (parallel to project-proposal-budget.doc)
+    story: S-da936361
+    status: open
+    dependencies:
+    - T-07571b32
+    component_refs: []
+  T-6e7423e5:
+    title: Extend SampleGenerator so doc/ppt multi-embedding samples embed 2 different
+      kinds
+    story: S-6bc8566f
+    status: open
+    dependencies:
+    - T-07571b32
+    component_refs: []
+  T-ffa97099:
+    title: Reconcile sample subfile counts with spec's literal embedding count where
+      they deviate
+    story: S-6bc8566f
+    status: open
+    dependencies:
+    - T-205594d7
     component_refs:
     - ydk:entity:extraction/SubfileItem
     - ydk:req:extraction/subfile-scope
