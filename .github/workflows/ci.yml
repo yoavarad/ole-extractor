@@ -1,0 +1,94 @@
+name: CI
+
+# PR gate: build, format, test and vulnerable-package check on every PR and push to main.
+# Libraries target net8.0; the SDK comes from global.json (SDK 9, which understands the .slnx
+# solution file that the .NET 8 SDK rejects with MSB4068).
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  SOLUTION: ExtractorOle/ExtractorOle.slnx
+
+jobs:
+  build-test:
+    name: Build & test (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    steps:
+      - name: Checkout (with NPOI + b2xtranslator submodules)
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup .NET (SDK from global.json + net8.0 runtime)
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+          dotnet-version: 8.0.x
+
+      - name: Restore
+        run: dotnet restore ${{ env.SOLUTION }}
+
+      # The stress harness is not in the .slnx; build it too so it can't silently rot.
+      # CiWarningsAsErrors turns warnings into errors for this repo's projects only
+      # (Directory.Build.props excludes the vendored third_party/ submodules).
+      - name: Build
+        run: |
+          dotnet build ${{ env.SOLUTION }} -c Release --no-restore -p:CiWarningsAsErrors=true
+          dotnet build ExtractorOle/ExtractorOLE.StressHarness/ExtractorOLE.StressHarness.csproj -c Release -p:CiWarningsAsErrors=true
+
+      # Same targets as the local ydk dotnet-format gate: production projects only.
+      # Windows only, because that is where the local gate has always run (line endings).
+      - name: Format check
+        if: runner.os == 'Windows'
+        run: |
+          dotnet format ExtractorOle/ExtractorOLE/ExtractorOLE.csproj --verify-no-changes --no-restore
+          dotnet format SampleGenerator/SampleGenerator.csproj --verify-no-changes --no-restore
+
+      # Unit + corpus integration tests. Benchmark-sample tests skip themselves when
+      # samples/benchmark/ has not been generated.
+      - name: Test
+        run: dotnet test ExtractorOle/ExtractorOLE.Tests/ExtractorOLE.Tests.csproj -c Release --no-build --logger "trx;LogFileName=results.trx" --results-directory TestResults
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.os }}
+          path: TestResults
+
+      # Fails on High/Critical advisories in direct or transitive packages (cf. NU1903 via NPOI).
+      - name: Vulnerable package check
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          set -o pipefail
+          status=0
+          for proj in ExtractorOle/ExtractorOLE/ExtractorOLE.csproj SampleGenerator/SampleGenerator.csproj ExtractorOle/ExtractorOLE.Tests/ExtractorOLE.Tests.csproj; do
+            echo "::group::$proj"
+            out=$(dotnet list "$proj" package --vulnerable --include-transitive)
+            echo "$out"
+            echo "::endgroup::"
+            if echo "$out" | grep -Eq '\b(High|Critical)\b'; then
+              echo "::error::High/Critical vulnerable package in $proj"
+              status=1
+            fi
+          done
+          exit $status

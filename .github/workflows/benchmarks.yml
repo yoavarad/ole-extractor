@@ -1,0 +1,57 @@
+name: Benchmarks
+
+# On demand only. GitHub-hosted runners are too noisy for a hard P95 gate, and the committed
+# baseline (docs/benchmarks/baseline/) was captured on a Windows dev machine, so the comparison
+# against it is reported as warnings, not failures. See docs/benchmarks/README.md.
+
+on:
+  workflow_dispatch:
+    inputs:
+      filter:
+        description: BenchmarkDotNet --filter (e.g. '*10Mb*' for the 10MB tier only)
+        default: '*'
+      os:
+        description: Runner OS
+        type: choice
+        options: [windows-latest, ubuntu-latest]
+        default: windows-latest
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  benchmark:
+    runs-on: ${{ inputs.os }}
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+          dotnet-version: 8.0.x
+
+      # Writes the 12 fixed 10MB/~100MB samples to the gitignored samples/benchmark/ and
+      # checks each SHA-256 against samples/manifest.json (exit 1 on mismatch).
+      - name: Generate benchmark samples
+        run: dotnet run -c Release --project SampleGenerator -- --benchmark
+
+      - name: Run benchmarks
+        run: dotnet run -c Release --project ExtractorOle/ExtractorOLE.Benchmarks -- --filter "${{ inputs.filter }}"
+
+      - name: Compare P95 against committed baseline (warnings only)
+        if: always()
+        run: python .github/scripts/compare_benchmarks.py docs/benchmarks/baseline BenchmarkDotNet.Artifacts/results
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results-${{ inputs.os }}
+          path: BenchmarkDotNet.Artifacts/results
