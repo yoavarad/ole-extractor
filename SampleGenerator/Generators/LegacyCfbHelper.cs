@@ -26,7 +26,7 @@ namespace SampleGenerator.Generators
         {
             if (metadata.Count == 0) return;
 
-            var summary = PropertySetFactory.CreateSummaryInformation();
+            var summary = new SummaryInformation();
             foreach (var (key, value) in metadata)
             {
                 switch (key)
