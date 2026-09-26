@@ -66,7 +66,7 @@ ole-extractor/
 │   ├── specs/                        # Overview, extraction, mime-detection, testing-strategy, ...
 │   ├── adrs/                         # Architecture decision records
 │   └── research/                     # Library/tooling research spikes backing the ADRs
-└── .ydk/                             # YDK dev-workflow state (tasks, epics, manifest, etc.)
+└── .ydk/                             # YDK dev-workflow state (config, reports, proofs, etc.)
 ```
 
 ## Library stack
@@ -135,5 +135,5 @@ testing approach and `docs/specs/dataset-curation.md` for how the corpus itself 
 ## Development workflow
 
 This project follows the YDK development lifecycle (brainstorming → ignition → task
-management → execution → learning); workflow state (tasks, epics, manifest, reports) lives
-under `.ydk/`.
+management → execution → learning); workflow state (config, reports, proofs) lives under
+`.ydk/`; epics, stories and tasks are GitHub Issues.

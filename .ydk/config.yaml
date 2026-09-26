@@ -3,7 +3,7 @@ project:
   spec_location: docs/specs
   adrs_location: docs/adrs
   research_location: docs/research
-  remote: local
+  remote: github
 hooks:
   pre_push:
     spec_check: false
