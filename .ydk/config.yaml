@@ -9,7 +9,7 @@ hooks:
     spec_check: false
     task_check: false
 spec_check:
-  model: claude-sonnet-4-6
+  model: claude-sonnet-5-5
   timeout: 60
   global_timeout: 120
   concurrency: 10
@@ -29,9 +29,9 @@ execution:
 ai:
   provider: anthropic
   model_tiers:
-    smart: claude-sonnet-4-6
-    fast: claude-sonnet-4-6
-    reasoning: claude-opus-4-6
+    smart: claude-sonnet-5-5
+    fast: claude-sonnet-5-5
+    reasoning: claude-opus-5-5
 anthropic:
   api_key_env: ANTHROPIC_API_KEY
 verification:
