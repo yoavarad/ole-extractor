@@ -1,3 +1,0 @@
-PASSED (1.7s)
-
-No spec references provided — skipping alignment check

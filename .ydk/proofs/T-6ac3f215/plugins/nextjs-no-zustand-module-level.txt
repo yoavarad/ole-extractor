@@ -1,3 +1,0 @@
-PASSED (0.0s)
-
-PASS: no src/ directory found

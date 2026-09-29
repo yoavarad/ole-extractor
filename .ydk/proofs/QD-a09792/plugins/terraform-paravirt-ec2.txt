@@ -1,3 +1,0 @@
-PASSED (0.3s)
-
-PASS: No paravirtualized instance types found.

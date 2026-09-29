@@ -1,3 +1,0 @@
-PASSED (0.0s)
-
-SKIPPED: plugin error — AsyncMessages.stream() got an unexpected keyword argument 'temperature'
