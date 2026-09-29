@@ -1,3 +1,0 @@
-PASSED (0.2s)
-
-PASS: No dangling resource references detected.

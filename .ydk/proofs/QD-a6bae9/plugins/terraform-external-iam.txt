@@ -1,3 +1,0 @@
-PASSED (0.6s)
-
-PASS: No wildcard IAM principals found.

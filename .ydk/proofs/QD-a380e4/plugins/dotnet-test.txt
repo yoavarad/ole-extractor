@@ -1,3 +1,0 @@
-PASSED (0.1s)
-
-No test project (*Test*.csproj) or .sln found — skipped

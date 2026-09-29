@@ -1,1 +1,0 @@
-Fork nissl-lab/npoi to yoavarad/npoi and repoint the third_party/npoi submodule url at the fork, keeping upstream as a remote for future syncing. Enables direct edits to NPOI source when needed.

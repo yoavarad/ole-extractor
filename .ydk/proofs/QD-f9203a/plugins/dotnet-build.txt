@@ -1,3 +1,0 @@
-PASSED (0.0s)
-
-No .sln/.csproj found — skipped (non-.NET project?)

@@ -1,3 +1,0 @@
-PASSED (0.5s)
-
-PASS: AMI usage checks passed.

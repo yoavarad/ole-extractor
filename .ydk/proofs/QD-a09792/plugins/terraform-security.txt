@@ -1,3 +1,0 @@
-PASSED (0.0s)
-
-SKIP: No infra/ directory found

@@ -1,3 +1,0 @@
-PASSED (0.0s)
-
-No 'tests/' directory found — skipped (non-Python project?)
