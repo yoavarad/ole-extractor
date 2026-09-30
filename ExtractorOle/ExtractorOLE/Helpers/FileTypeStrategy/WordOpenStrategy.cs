@@ -15,25 +15,26 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
 
         public DocumentExtractionResult? Open(byte[] fileBytes)
         {
+            WordprocessingDocument? word = null;
             try
             {
                 var result = new DocumentExtractionResult();
-                using (var ms = new MemoryStream(fileBytes))
-                using (var word = WordprocessingDocument.Open(ms, false))
+                word = OpenXmlPackages.OpenWord(fileBytes);
+                _helper.ExtractMetadataAndEmbedded(word, word.MainDocumentPart, result);
+                if (string.IsNullOrEmpty(result.MimeType) && word.CoreFilePropertiesPart != null)
                 {
-                    _helper.ExtractMetadataAndEmbedded(word, word.MainDocumentPart, result);
-                    if (string.IsNullOrEmpty(result.MimeType) && word.CoreFilePropertiesPart != null)
-                    {
-                        result.MimeType = word.CoreFilePropertiesPart.ContentType ?? string.Empty;
-                    }
-
-                    result.FormatMetadata = BuildWordFormatMetadata(word);
-
-                    return result;
+                    result.MimeType = word.CoreFilePropertiesPart.ContentType ?? string.Empty;
                 }
+
+                result.FormatMetadata = BuildWordFormatMetadata(word);
+
+                // Kept open for DocxTextExtractor (#167); MainExtractor disposes it.
+                result.ParsedDocument = word;
+                return result;
             }
             catch
             {
+                word?.Dispose();
                 return null;
             }
         }

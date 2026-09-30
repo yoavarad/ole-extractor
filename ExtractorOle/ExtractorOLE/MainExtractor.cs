@@ -72,15 +72,21 @@ namespace ExtractorOLE
             DocumentExtractionResult result;
             using (ExtractionTelemetry.Stage("open", mime, size))
                 result = ParseTimeErrorGuard.OpenOrThrow(_registry.GetOpenStrategy(format), request.FileBytes, request.DetectedMimeType);
-            result.MimeType = request.DetectedMimeType;
-
-            using var textScope = ExtractionTelemetry.Stage("extract_text", mime, size);
-            var extractor = _registry.GetTextExtractor(format);
-            if (extractor != null)
+            try
             {
-                result.ExtractedText = ExtractText(extractor, result, request.FileBytes);
+                result.MimeType = request.DetectedMimeType;
+
+                using var textScope = ExtractionTelemetry.Stage("extract_text", mime, size);
+                var extractor = _registry.GetTextExtractor(format);
+                if (extractor != null)
+                {
+                    result.ExtractedText = ExtractText(extractor, result, request.FileBytes);
+                }
             }
-            result.ParsedDocument = null;
+            finally
+            {
+                ReleaseParsedDocument(result);
+            }
 
             return result;
         }
@@ -135,61 +141,75 @@ namespace ExtractorOLE
                 }
             }
 
-            // Determine final mime: priority to coreMime, then package type, then magic
-            OfficeMimeTypeEnum finalMimeType = OfficeMimeTypeEnum.OpenXmlUnknown;
-            if (packageType != OfficeMimeTypeEnum.OpenXmlUnknown)
+            try
             {
-                finalMimeType = packageType;
-
-            }
-            else if (!string.IsNullOrEmpty(coreMime))
-            {
-                finalMimeType = _helper.ParseOfficeMimeType(coreMime);
-            }
-            else
-            {
-                // fallback via magic bytes
-                var magic = _helper.DetectMimeFromMagicBytes(fileBytes);
-                finalMimeType = _helper.ParseOfficeMimeType(magic);
-            }
-
-            string finalMime = _helper.MimeFor(finalMimeType) ?? coreMime ?? "application/octet-stream";
-
-            result.MimeType = finalMime;
-
-            // Text extraction via registry (enum keyed)
-            var extractor = FindHandlerForMime(finalMimeType);
-            if (extractor != null)
-            {
-                try
+                // Determine final mime: priority to coreMime, then package type, then magic
+                OfficeMimeTypeEnum finalMimeType = OfficeMimeTypeEnum.OpenXmlUnknown;
+                if (packageType != OfficeMimeTypeEnum.OpenXmlUnknown)
                 {
-                    result.ExtractedText = ExtractText(extractor, result, fileBytes);
+                    finalMimeType = packageType;
+
                 }
-                catch (Exception ex)
+                else if (!string.IsNullOrEmpty(coreMime))
                 {
-                    Console.WriteLine($"Text extraction failed: {ex.Message}");
+                    finalMimeType = _helper.ParseOfficeMimeType(coreMime);
+                }
+                else
+                {
+                    // fallback via magic bytes
+                    var magic = _helper.DetectMimeFromMagicBytes(fileBytes);
+                    finalMimeType = _helper.ParseOfficeMimeType(magic);
+                }
+
+                string finalMime = _helper.MimeFor(finalMimeType) ?? coreMime ?? "application/octet-stream";
+
+                result.MimeType = finalMime;
+
+                // Text extraction via registry (enum keyed)
+                var extractor = FindHandlerForMime(finalMimeType);
+                if (extractor != null)
+                {
+                    try
+                    {
+                        result.ExtractedText = ExtractText(extractor, result, fileBytes);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Text extraction failed: {ex.Message}");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"No text extractor registered for MIME '{finalMime}'");
                 }
             }
-            else
+            finally
             {
-                Console.WriteLine($"No text extractor registered for MIME '{finalMime}'");
+                ReleaseParsedDocument(result);
             }
 
-            result.ParsedDocument = null;
             return result;
         }
 
-        // Reuses what the open strategy already parsed (#168) when the extractor can take it;
-        // otherwise extracts from the raw bytes.
+        // Reuses what the open strategy already parsed (#168, #167) when the extractor can take
+        // it; otherwise extracts from the raw bytes.
         private static string ExtractText(ITextExtractor extractor, DocumentExtractionResult result, byte[] fileBytes)
         {
             object? parsed = result.ParsedDocument;
-            result.ParsedDocument = null;
 
             string? text = parsed != null && extractor is IParsedDocumentTextExtractor parsedExtractor
                 ? parsedExtractor.ExtractText(parsed)
                 : null;
             return text ?? extractor.ExtractText(fileBytes) ?? string.Empty;
+        }
+
+        // MainExtractor owns the handed-off parsed document: an open OOXML package (#167) is
+        // disposed here, after text extraction, whether or not an extractor consumed it.
+        private static void ReleaseParsedDocument(DocumentExtractionResult result)
+        {
+            var parsed = result.ParsedDocument;
+            result.ParsedDocument = null;
+            (parsed as IDisposable)?.Dispose();
         }
 
         private ITextExtractor? FindHandlerForMime(OfficeMimeTypeEnum mimeType)

@@ -17,23 +17,25 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
 
         public DocumentExtractionResult? Open(byte[] fileBytes)
         {
+            PresentationDocument? pres = null;
             try
             {
                 var result = new DocumentExtractionResult();
-                using (var ms = new MemoryStream(fileBytes))
-                using (var pres = PresentationDocument.Open(ms, false))
+                pres = OpenXmlPackages.OpenPresentation(fileBytes);
+                _helper.ExtractMetadataAndEmbedded(pres, pres.PresentationPart, result);
+                result.FormatMetadata = BuildPowerPointFormatMetadata(pres.PresentationPart);
+                if (string.IsNullOrEmpty(result.MimeType) && pres.CoreFilePropertiesPart != null)
                 {
-                    _helper.ExtractMetadataAndEmbedded(pres, pres.PresentationPart, result);
-                    result.FormatMetadata = BuildPowerPointFormatMetadata(pres.PresentationPart);
-                    if (string.IsNullOrEmpty(result.MimeType) && pres.CoreFilePropertiesPart != null)
-                    {
-                        result.MimeType = pres.CoreFilePropertiesPart.ContentType ?? string.Empty;
-                    }
-                    return result;
+                    result.MimeType = pres.CoreFilePropertiesPart.ContentType ?? string.Empty;
                 }
+
+                // Kept open for PptxTextExtractor (#167); MainExtractor disposes it.
+                result.ParsedDocument = pres;
+                return result;
             }
             catch
             {
+                pres?.Dispose();
                 return null;
             }
         }
