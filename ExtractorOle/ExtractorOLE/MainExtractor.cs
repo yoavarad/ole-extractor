@@ -59,15 +59,22 @@ namespace ExtractorOLE
         public DocumentExtractionResult Extract(ExtractionRequest request)
         {
             ValidateRequest(request);
+            var mime = request.DetectedMimeType;
+            var size = request.FileBytes.LongLength;
+            using (ExtractionTelemetry.Stage("guardrails", mime, size))
             _guardrails.Enforce(request); // after null checks, before any parsing/dispatch (T-3335d397)
 
             var format = ResolveFormat(request.DetectedMimeType)
                          ?? throw new Exceptions.UnsupportedFormatException(request.DetectedMimeType);
 
+            using (ExtractionTelemetry.Stage("preflight", mime, size))
             ParseTimeErrorGuard.Preflight(request.FileBytes, IsOoxml(format));
-            var result = ParseTimeErrorGuard.OpenOrThrow(_registry.GetOpenStrategy(format), request.FileBytes, request.DetectedMimeType);
+            DocumentExtractionResult result;
+            using (ExtractionTelemetry.Stage("open", mime, size))
+            result = ParseTimeErrorGuard.OpenOrThrow(_registry.GetOpenStrategy(format), request.FileBytes, request.DetectedMimeType);
             result.MimeType = request.DetectedMimeType;
 
+            using var textScope = ExtractionTelemetry.Stage("extract_text", mime, size);
             var extractor = _registry.GetTextExtractor(format);
             if (extractor != null)
             {
