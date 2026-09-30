@@ -23,7 +23,12 @@ namespace ExtractorOLE.Helpers.MimeDetection
 
         // Test-observability only: proves guards below short-circuit before
         // Package.Open's own ZIP central-directory walk runs.
-        public static int PackageOpenAttemptCount;
+        private static readonly AttemptCounter s_packageOpenAttempts = new();
+        public static int PackageOpenAttemptCount
+        {
+            get => s_packageOpenAttempts.Value;
+            set => s_packageOpenAttempts.Value = value;
+        }
 
         public OoxmlMimeDetector() : this(new MimeDetectionLimits()) { }
 
@@ -58,7 +63,7 @@ namespace ExtractorOLE.Helpers.MimeDetection
             {
                 // Test-observability only: proves guards above short-circuit before
                 // Package.Open's own ZIP central-directory walk runs.
-                PackageOpenAttemptCount++;
+                s_packageOpenAttempts.Increment();
 
                 using var stream = new MemoryStream(request.FileBytes);
                 using var package = Package.Open(stream, FileMode.Open, FileAccess.Read);

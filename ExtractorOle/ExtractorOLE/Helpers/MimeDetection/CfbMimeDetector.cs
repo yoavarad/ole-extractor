@@ -26,7 +26,12 @@ namespace ExtractorOLE.Helpers.MimeDetection
 
         // Test-observability only: proves guards below short-circuit before
         // OpenMcdf's own FAT/directory walk runs.
-        public static int OpenMcdfParseAttemptCount;
+        private static readonly AttemptCounter s_openMcdfParseAttempts = new();
+        public static int OpenMcdfParseAttemptCount
+        {
+            get => s_openMcdfParseAttempts.Value;
+            set => s_openMcdfParseAttempts.Value = value;
+        }
 
         public CfbMimeDetector() : this(new MimeDetectionLimits()) { }
 
@@ -61,7 +66,7 @@ namespace ExtractorOLE.Helpers.MimeDetection
             {
                 // Test-observability only: proves guards above short-circuit before
                 // OpenMcdf's own FAT/directory walk runs.
-                OpenMcdfParseAttemptCount++;
+                s_openMcdfParseAttempts.Increment();
 
                 using var stream = new MemoryStream(request.FileBytes);
                 using var root = RootStorage.Open(stream);

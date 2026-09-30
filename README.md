@@ -116,6 +116,14 @@ multi-embedding scenarios, and format-dispatch-registry integration, backed by t
 generated sample corpus under `samples/`. See `docs/specs/testing-strategy.md` for the full
 testing approach and `docs/specs/dataset-curation.md` for how the corpus itself is built.
 
+### Concurrency
+
+`MainExtractor.Extract()` is safe for concurrent callers: no shared mutable state is touched on the
+extraction path (the detectors' test-observability counters are atomic and scoped per async flow).
+`ExtractorOle/ExtractorOLE.StressHarness` (50 callers x 200 iterations over `samples/`) reports 0
+cross-call mismatches against the single-threaded baseline. Samples that are deliberately rejected
+(e.g. oversized-FAT guard fixtures) fail identically in serial and concurrent runs.
+
 ## Documentation
 
 - [`docs/specs/overview.md`](docs/specs/overview.md) — problem statement, success criteria, public API, scope
