@@ -27,12 +27,14 @@ namespace SampleGenerator.Generators
     ///   SDK output embeds wall-clock entry times.
     /// - xls: NPOI HSSFWorkbook, one line-numbered multilingual text row per
     ///   line, row count fitted to the target (BIFF text is not compressed).
-    /// - doc/ppt: no legacy writer exists in the repo (ADR-004), so the
-    ///   Word-authored multilingual.doc / PowerPoint-authored with_textbox.ppt
-    ///   test fixtures are the extractable content and are padded with the
-    ///   stream real large files are dominated by: "Data" (doc) and "Pictures"
-    ///   (ppt, valid JPEG BLIP records) filled with the same fixed-seed bytes.
-    ///   Only the small template text is extracted from these two formats.
+    /// - doc: <see cref="DocSampleGenerator"/> (ADR-005) with the same numbered
+    ///   body and first-layer padding embeddings as docx (#165: the earlier
+    ///   fixture-plus-"Data"-stream padding extracted a flat 283 chars).
+    /// - ppt: no legacy writer exists in the repo (ADR-004), so the
+    ///   PowerPoint-authored with_textbox.ppt test fixture is the extractable
+    ///   content, padded with a "Pictures" stream of valid JPEG BLIP records
+    ///   filled with the same fixed-seed bytes. Only its small template text
+    ///   is extracted.
     ///
     /// The size fit lands in [<see cref="MinFillRatio"/> x target, target].
     /// </summary>
@@ -63,8 +65,7 @@ namespace SampleGenerator.Generators
             SampleFormat.Xlsx => GenerateOoxml(new XlsxSampleGenerator(), targetBytes),
             SampleFormat.Pptx => GenerateOoxml(new PptxSampleGenerator(), targetBytes),
             SampleFormat.Xls => GenerateXls(targetBytes),
-            SampleFormat.Doc => GenerateLegacyPadded(
-                "ExtractorOle/ExtractorOLE.Tests/Doc/Fixtures/multilingual.doc", "Data", targetBytes, DataPadding),
+            SampleFormat.Doc => GenerateDoc(targetBytes),
             SampleFormat.Ppt => GenerateLegacyPadded(
                 "ExtractorOle/ExtractorOLE.Tests/PowerPoint/Fixtures/with_textbox.ppt", "Pictures", targetBytes, BlipPadding),
             _ => throw new ArgumentOutOfRangeException(nameof(format)),
@@ -265,6 +266,19 @@ namespace SampleGenerator.Generators
 
         // ---- doc / ppt ----
 
+        // Same composition as docx: the ~target/20-word numbered body plus first-layer padding
+        // embeddings (ObjectPool storages), so Extract() cost scales with the target (#165).
+        private static byte[] GenerateDoc(long target)
+        {
+            var body = NumberedBody((int)(target / TargetBytesPerWord));
+            var generator = new DocSampleGenerator();
+            return Fit(target, 0, PadChunkBytes, pad => generator.Generate(new SampleSpec
+            {
+                BodyText = body,
+                Embeddings = PaddingParts(pad),
+            }).Content);
+        }
+
         private static byte[] GenerateLegacyPadded(
             string templateRepoPath, string streamName, long target, Func<long, byte[]> padding)
         {
@@ -287,8 +301,6 @@ namespace SampleGenerator.Generators
                 }
             });
         }
-
-        private static byte[] DataPadding(long length) => PseudoRandomBytes((int)length, 0);
 
         // A "Pictures" stream is a run of OfficeArt BLIP records. Each is a JPEG BLIP
         // (recInstance 0x46A, recType 0xF01D): 8-byte header + 16-byte UID + 1-byte tag + payload.

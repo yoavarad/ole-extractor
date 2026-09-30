@@ -50,6 +50,16 @@ namespace ExtractorOLE.Benchmarks
                 FileName = Path.GetFileName(path),
                 DetectedMimeType = helper.MimeFor(BenchmarkSamples.MimeFor(Sample)),
             };
+
+            // Sanity check (#165): a sample whose extraction silently yields nothing makes its row
+            // meaningless, so fail the setup loudly instead of timing an empty result.
+            var result = _extractor.Extract(_request);
+            if (string.IsNullOrWhiteSpace(result.ExtractedText))
+                throw new InvalidOperationException(
+                    $"Benchmark sample '{Sample}' ({path}) extracted no text; the benchmark would measure nothing. " +
+                    $"Regenerate with: {BenchmarkSamples.RegenerateCommand}");
+            Console.WriteLine(
+                $"// Sample {Sample}: {result.ExtractedText.Length} text chars, {result.EmbeddedFiles.Count} embedded files");
         }
 
         [Benchmark]
