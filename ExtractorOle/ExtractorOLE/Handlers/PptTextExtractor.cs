@@ -15,7 +15,7 @@ namespace ExtractorOLE.Handlers
     // ([ydk:req:extraction/unicode-fidelity]).
     //
     // Returns string.Empty (never null) when the file has no textual content or cannot be converted.
-    internal class PptTextExtractor : ITextExtractor
+    internal class PptTextExtractor : IParsedDocumentTextExtractor
     {
         private readonly PptxTextExtractor _pptxTextExtractor = new PptxTextExtractor();
 
@@ -24,6 +24,22 @@ namespace ExtractorOLE.Handlers
             try
             {
                 return _pptxTextExtractor.ExtractText(PptToPptxConverter.Convert(fileBytes));
+            }
+            catch (Exception)
+            {
+                // swallow and return empty text on failure
+            }
+
+            return string.Empty;
+        }
+
+        // parsedDocument is the converted .pptx bytes PptOpenStrategy already produced (#168).
+        public string? ExtractText(object parsedDocument)
+        {
+            if (parsedDocument is not byte[] pptxBytes) return null;
+            try
+            {
+                return _pptxTextExtractor.ExtractText(pptxBytes);
             }
             catch (Exception)
             {

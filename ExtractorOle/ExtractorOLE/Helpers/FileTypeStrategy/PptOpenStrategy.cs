@@ -132,6 +132,7 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
         private void PopulateBodyContent(byte[] fileBytes, DocumentExtractionResult result)
         {
             byte[] pptxBytes = PptToPptxConverter.Convert(fileBytes);
+            result.ParsedDocument = pptxBytes; // reused by PptTextExtractor (#168)
             using var pptxStream = new MemoryStream(pptxBytes);
             using var pres = PresentationDocument.Open(pptxStream, false);
 

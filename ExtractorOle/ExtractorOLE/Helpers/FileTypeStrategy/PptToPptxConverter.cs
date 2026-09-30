@@ -17,8 +17,14 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
     // decide whether that is fatal (PptOpenStrategy: best-effort, PptTextExtractor: empty text).
     internal static class PptToPptxConverter
     {
+        // Test hook (#168): counts Convert calls on the current thread, so a test can assert one
+        // conversion per Extract() without racing tests running in parallel on other threads.
+        [ThreadStatic]
+        internal static int ConvertCallCount;
+
         public static byte[] Convert(byte[] pptBytes)
         {
+            ConvertCallCount++;
             string tempPptxPath = Path.Combine(Path.GetTempPath(), $"ole-extractor-ppt2x-{Guid.NewGuid():N}.pptx");
             try
             {

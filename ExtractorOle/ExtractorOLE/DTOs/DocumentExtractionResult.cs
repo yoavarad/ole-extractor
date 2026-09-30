@@ -22,6 +22,11 @@ namespace ExtractorOLE.DTOs
 
         // Requirement #4: A list of the first-layer embedded files
         public List<EmbeddedFileItem> EmbeddedFiles { get; set; } = new();
+
+        // Per-request handoff (#168): what the open strategy already parsed/converted, for the
+        // matching IParsedDocumentTextExtractor to reuse instead of re-parsing the input bytes.
+        // Internal so it is not part of the public result; MainExtractor clears it after use.
+        internal object? ParsedDocument { get; set; }
     }
 
     public class FileMetadata

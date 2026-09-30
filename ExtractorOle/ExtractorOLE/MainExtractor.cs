@@ -71,8 +71,9 @@ namespace ExtractorOLE
             var extractor = _registry.GetTextExtractor(format);
             if (extractor != null)
             {
-                result.ExtractedText = extractor.ExtractText(request.FileBytes) ?? string.Empty;
+                result.ExtractedText = ExtractText(extractor, result, request.FileBytes);
             }
+            result.ParsedDocument = null;
 
             return result;
         }
@@ -155,7 +156,7 @@ namespace ExtractorOLE
             {
                 try
                 {
-                    result.ExtractedText = extractor.ExtractText(fileBytes) ?? string.Empty;
+                    result.ExtractedText = ExtractText(extractor, result, fileBytes);
                 }
                 catch (Exception ex)
                 {
@@ -167,7 +168,21 @@ namespace ExtractorOLE
                 Console.WriteLine($"No text extractor registered for MIME '{finalMime}'");
             }
 
+            result.ParsedDocument = null;
             return result;
+        }
+
+        // Reuses what the open strategy already parsed (#168) when the extractor can take it;
+        // otherwise extracts from the raw bytes.
+        private static string ExtractText(ITextExtractor extractor, DocumentExtractionResult result, byte[] fileBytes)
+        {
+            object? parsed = result.ParsedDocument;
+            result.ParsedDocument = null;
+
+            string? text = parsed != null && extractor is IParsedDocumentTextExtractor parsedExtractor
+                ? parsedExtractor.ExtractText(parsed)
+                : null;
+            return text ?? extractor.ExtractText(fileBytes) ?? string.Empty;
         }
 
         private ITextExtractor? FindHandlerForMime(OfficeMimeTypeEnum mimeType)
