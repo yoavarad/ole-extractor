@@ -173,6 +173,29 @@ namespace ExtractorOLE.Tests.PowerPoint
         }
 
         [Fact]
+        public void MainExtractor_ExtractRequest_ConvertsPptToPptxExactlyOnce()
+        {
+            // #168: the open strategy's converted pptx is handed to the text extractor instead of
+            // converting the same .ppt a second time.
+            var services = new ServiceCollection();
+            ServiceRegistration.Register(services);
+            var extractor = services.BuildServiceProvider().GetRequiredService<MainExtractor>();
+            var request = new ExtractionRequest
+            {
+                FileBytes = LoadBaseFixture(),
+                FileName = "with_textbox.ppt",
+                DetectedMimeType = "application/vnd.ms-powerpoint",
+            };
+
+            PptToPptxConverter.ConvertCallCount = 0;
+            var result = extractor.Extract(request);
+
+            Assert.Equal(1, PptToPptxConverter.ConvertCallCount);
+            Assert.Equal(1, Assert.IsType<PowerPointFormatMetadata>(result.FormatMetadata).SlideCount);
+            Assert.Equal(Lines(OriginalText1, OriginalText2, OriginalText3, OriginalText4.TrimEnd()), result.ExtractedText);
+        }
+
+        [Fact]
         public void PptOpenStrategy_RealPptFixture_ConvertsBodyAndReportsSlideCount()
         {
             // Regression for the shared .ppt -> .pptx conversion: real .ppt bodies previously failed
