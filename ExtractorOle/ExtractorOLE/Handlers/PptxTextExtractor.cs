@@ -1,35 +1,23 @@
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Drawing;
+using ExtractorOLE.Helpers.FileTypeStrategy;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 
 namespace ExtractorOLE.Handlers
 {
-    internal class PptxTextExtractor : ITextExtractor
+    internal class PptxTextExtractor : IParsedDocumentTextExtractor
     {
         public string ExtractText(byte[] fileBytes)
         {
             try
             {
-                using (var ms = new MemoryStream(fileBytes))
-                using (var ppt = PresentationDocument.Open(ms, false))
+                using (var ppt = OpenXmlPackages.OpenPresentation(fileBytes))
                 {
-                    var presentationPart = ppt.PresentationPart;
-                    if (presentationPart == null) return string.Empty;
-
-                    StringBuilder sb = new StringBuilder();
-
-                    foreach (var slidePart in GetSlidePartsInDeckOrder(presentationPart))
-                    {
-                        AppendTextLines(sb, slidePart.Slide);
-                        AppendTextLines(sb, slidePart.NotesSlidePart?.NotesSlide);
-                    }
-
-                    return sb.ToString().Trim();
+                    return ExtractText(ppt);
                 }
             }
             catch (Exception)
@@ -38,6 +26,38 @@ namespace ExtractorOLE.Handlers
             }
 
             return string.Empty;
+        }
+
+        // parsedDocument is the package PowerPointOpenStrategy already opened (#167); caller owns it.
+        public string? ExtractText(object parsedDocument)
+        {
+            if (parsedDocument is not PresentationDocument ppt) return null;
+            try
+            {
+                return ExtractText(ppt);
+            }
+            catch (Exception)
+            {
+                // swallow and return empty on failure
+            }
+
+            return string.Empty;
+        }
+
+        private static string ExtractText(PresentationDocument ppt)
+        {
+            var presentationPart = ppt.PresentationPart;
+            if (presentationPart == null) return string.Empty;
+
+            StringBuilder sb = new StringBuilder();
+
+            foreach (var slidePart in GetSlidePartsInDeckOrder(presentationPart))
+            {
+                AppendTextLines(sb, slidePart.Slide);
+                AppendTextLines(sb, slidePart.NotesSlidePart?.NotesSlide);
+            }
+
+            return sb.ToString().Trim();
         }
 
         // Deck order is p:sldIdLst in presentation.xml, not the package relationship order

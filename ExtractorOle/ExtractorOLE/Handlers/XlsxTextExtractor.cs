@@ -1,8 +1,8 @@
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
+using ExtractorOLE.Helpers.FileTypeStrategy;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace ExtractorOLE.Handlers
@@ -22,46 +22,15 @@ namespace ExtractorOLE.Handlers
     /// text content is UTF-8 in the package) - no additional encoding
     /// conversion or Unicode normalization is applied here.
     /// </summary>
-    internal class XlsxTextExtractor : ITextExtractor
+    internal class XlsxTextExtractor : IParsedDocumentTextExtractor
     {
         public string ExtractText(byte[] fileBytes)
         {
             try
             {
-                using (var ms = new MemoryStream(fileBytes))
-                using (var doc = SpreadsheetDocument.Open(ms, false))
+                using (var doc = OpenXmlPackages.OpenSpreadsheet(fileBytes))
                 {
-                    var workbookPart = doc.WorkbookPart;
-                    if (workbookPart == null) return string.Empty;
-
-                    var sharedStrings = BuildSharedStringLookup(workbookPart);
-                    var lines = new List<string>();
-
-                    foreach (var worksheetPart in workbookPart.WorksheetParts)
-                    {
-                        var sheetData = worksheetPart.Worksheet?.Elements<SheetData>().FirstOrDefault();
-                        if (sheetData == null) continue;
-
-                        foreach (var row in sheetData.Elements<Row>())
-                        {
-                            var cellTexts = new List<string>();
-                            foreach (var cell in row.Elements<Cell>())
-                            {
-                                string? text = GetCellText(cell, sharedStrings);
-                                if (!string.IsNullOrEmpty(text))
-                                {
-                                    cellTexts.Add(text);
-                                }
-                            }
-
-                            if (cellTexts.Count > 0)
-                            {
-                                lines.Add(string.Join(" ", cellTexts));
-                            }
-                        }
-                    }
-
-                    return string.Join(Environment.NewLine, lines);
+                    return ExtractText(doc);
                 }
             }
             catch (Exception)
@@ -70,6 +39,57 @@ namespace ExtractorOLE.Handlers
             }
 
             return string.Empty;
+        }
+
+        // parsedDocument is the package ExcelOpenStrategy already opened (#167); caller owns it.
+        public string? ExtractText(object parsedDocument)
+        {
+            if (parsedDocument is not SpreadsheetDocument doc) return null;
+            try
+            {
+                return ExtractText(doc);
+            }
+            catch (Exception)
+            {
+                // swallow and return empty
+            }
+
+            return string.Empty;
+        }
+
+        private static string ExtractText(SpreadsheetDocument doc)
+        {
+            var workbookPart = doc.WorkbookPart;
+            if (workbookPart == null) return string.Empty;
+
+            var sharedStrings = BuildSharedStringLookup(workbookPart);
+            var lines = new List<string>();
+
+            foreach (var worksheetPart in workbookPart.WorksheetParts)
+            {
+                var sheetData = worksheetPart.Worksheet?.Elements<SheetData>().FirstOrDefault();
+                if (sheetData == null) continue;
+
+                foreach (var row in sheetData.Elements<Row>())
+                {
+                    var cellTexts = new List<string>();
+                    foreach (var cell in row.Elements<Cell>())
+                    {
+                        string? text = GetCellText(cell, sharedStrings);
+                        if (!string.IsNullOrEmpty(text))
+                        {
+                            cellTexts.Add(text);
+                        }
+                    }
+
+                    if (cellTexts.Count > 0)
+                    {
+                        lines.Add(string.Join(" ", cellTexts));
+                    }
+                }
+            }
+
+            return string.Join(Environment.NewLine, lines);
         }
 
         private static List<string> BuildSharedStringLookup(WorkbookPart workbookPart)

@@ -18,23 +18,25 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
 
         public DocumentExtractionResult? Open(byte[] fileBytes)
         {
+            SpreadsheetDocument? excel = null;
             try
             {
                 var result = new DocumentExtractionResult();
-                using (var ms = new MemoryStream(fileBytes))
-                using (var excel = SpreadsheetDocument.Open(ms, false))
+                excel = OpenXmlPackages.OpenSpreadsheet(fileBytes);
+                _helper.ExtractMetadataAndEmbedded(excel, excel.WorkbookPart, result);
+                result.FormatMetadata = BuildExcelFormatMetadata(excel.WorkbookPart);
+                if (string.IsNullOrEmpty(result.MimeType) && excel.CoreFilePropertiesPart != null)
                 {
-                    _helper.ExtractMetadataAndEmbedded(excel, excel.WorkbookPart, result);
-                    result.FormatMetadata = BuildExcelFormatMetadata(excel.WorkbookPart);
-                    if (string.IsNullOrEmpty(result.MimeType) && excel.CoreFilePropertiesPart != null)
-                    {
-                        result.MimeType = excel.CoreFilePropertiesPart.ContentType ?? string.Empty;
-                    }
-                    return result;
+                    result.MimeType = excel.CoreFilePropertiesPart.ContentType ?? string.Empty;
                 }
+
+                // Kept open for XlsxTextExtractor (#167); MainExtractor disposes it.
+                result.ParsedDocument = excel;
+                return result;
             }
             catch
             {
+                excel?.Dispose();
                 return null;
             }
         }
