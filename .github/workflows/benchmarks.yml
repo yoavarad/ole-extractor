@@ -1,10 +1,12 @@
 name: Benchmarks
 
-# On demand only. GitHub-hosted runners are too noisy for a hard P95 gate, and the committed
+# Nightly (schedule) plus on demand. GitHub-hosted runners are too noisy for a hard P95 gate, and the committed
 # baseline (docs/benchmarks/baseline/) was captured on a Windows dev machine, so the comparison
 # against it is reported as warnings, not failures. See docs/benchmarks/README.md.
 
 on:
+  schedule:
+    - cron: '0 2 * * *'
   workflow_dispatch:
     inputs:
       filter:
@@ -18,6 +20,7 @@ on:
 
 permissions:
   contents: read
+  issues: write
 
 env:
   DOTNET_NOLOGO: true
@@ -25,7 +28,7 @@ env:
 
 jobs:
   benchmark:
-    runs-on: ${{ inputs.os }}
+    runs-on: ${{ inputs.os || 'windows-latest' }}
     timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
@@ -43,15 +46,38 @@ jobs:
         run: dotnet run -c Release --project SampleGenerator -- --benchmark
 
       - name: Run benchmarks
-        run: dotnet run -c Release --project ExtractorOle/ExtractorOLE.Benchmarks -- --filter "${{ inputs.filter }}"
+        run: dotnet run -c Release --project ExtractorOle/ExtractorOLE.Benchmarks -- --filter "${{ inputs.filter || '*' }}"
 
-      - name: Compare P95 against committed baseline (warnings only)
+      - name: Compare P95 against committed baseline (summary + warnings)
         if: always()
-        run: python .github/scripts/compare_benchmarks.py docs/benchmarks/baseline BenchmarkDotNet.Artifacts/results
+        run: python .github/scripts/compare_benchmarks.py docs/benchmarks/baseline BenchmarkDotNet.Artifacts/results BenchmarkDotNet.Artifacts/regressions.md
+        shell: bash
+
+      # Scheduled runs only: one tracking issue (label perf-regression), created or updated.
+      - name: Open or update perf-regression issue
+        if: always() && github.event_name == 'schedule' && hashFiles('BenchmarkDotNet.Artifacts/regressions.md') != ''
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create perf-regression --color B60205 --description "Nightly benchmark P95 regression" || true
+          {
+            echo "Nightly benchmark run ${{ github.run_id }} found P95 > 1.20x baseline."
+            echo
+            cat BenchmarkDotNet.Artifacts/regressions.md
+            echo
+            echo "Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          } > "$RUNNER_TEMP/body.md"
+          n=$(gh issue list --label perf-regression --state open --json number --jq '.[0].number // empty')
+          if [ -n "$n" ]; then
+            gh issue comment "$n" --body-file "$RUNNER_TEMP/body.md"
+          else
+            gh issue create --title "Nightly benchmark P95 regression" --label perf-regression --body-file "$RUNNER_TEMP/body.md"
+          fi
 
       - name: Upload results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: benchmark-results-${{ inputs.os }}
+          name: benchmark-results-${{ inputs.os || 'windows-latest' }}
           path: BenchmarkDotNet.Artifacts/results

@@ -29,9 +29,11 @@ A sample regresses when its P95 grows by more than 20% against the committed bas
 hardware-dependent, so the comparison is only meaningful on the machine class used to capture
 the baseline; re-baseline when that changes.
 
-The `Benchmarks` workflow (`.github/workflows/benchmarks.yml`) runs on demand only
+The `Benchmarks` workflow (`.github/workflows/benchmarks.yml`) runs nightly (02:00 UTC) and on demand
 (Actions → Benchmarks → Run workflow). It regenerates the samples, runs the benchmarks, uploads the
-results, and applies this rule via `.github/scripts/compare_benchmarks.py` — as **warnings**, not
+results, and applies this rule via `.github/scripts/compare_benchmarks.py`, writing a per-sample table
+(baseline P95, current P95, ratio, pass/regress) to the run summary. On a scheduled run with a regression it
+opens or comments on a single open issue labelled `perf-regression`. Regressions are **warnings**, not
 failures, because GitHub-hosted runners are noisier than, and differ from, the machine the baseline
 was captured on. Treat a warning as a prompt to re-run locally against the baseline.
 
