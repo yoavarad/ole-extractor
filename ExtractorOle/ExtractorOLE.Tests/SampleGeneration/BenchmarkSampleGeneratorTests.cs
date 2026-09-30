@@ -62,6 +62,20 @@ namespace ExtractorOLE.Tests.SampleGeneration
             Assert.False(string.IsNullOrWhiteSpace(result.ExtractedText));
         }
 
+        // #165: the doc sample used to be the 283-char multilingual.doc fixture padded with an unread
+        // "Data" stream, so Extract() cost stayed flat (~37ms at 100MB) and the doc rows measured
+        // nothing. The body text must scale with the target like the other text formats.
+        [Fact]
+        public void Generate_Doc_ExtractedTextScalesWithTarget()
+        {
+            var bytes = BenchmarkSampleGenerator.Generate(SampleFormat.Doc, SmallTarget);
+
+            var result = ExtractThroughPublicContract(bytes, BenchmarkSampleGenerator.FileName(SampleFormat.Doc, "small"));
+
+            Assert.True(result.ExtractedText.Length >= SmallTarget / 20,
+                $"doc sample of {bytes.Length} bytes extracted only {result.ExtractedText.Length} chars");
+        }
+
         [Fact]
         public void Tiers_StayWithinExtractGuardrails()
         {

@@ -3115,11 +3115,11 @@
       "path": "samples/benchmark/benchmark-10mb.doc",
       "provenance": "self-generated",
       "generatedBy": "SampleGenerator.Generators.BenchmarkSampleGenerator via `dotnet run --project SampleGenerator -- --benchmark` (T-f0963fc3)",
-      "compositionRule": "No legacy .doc writer exists in the repo (ADR-004), so the Word-authored ExtractorOLE.Tests/Doc/Fixtures/multilingual.doc is the extractable content and its CFB container is padded with an opaque 'Data' stream (fixed-seed SplitMix64 bytes, unreferenced by any sprm), sized so the file lands in [0.99 x target, target]. Extracted text is only the template's small multilingual body; the bulk is padding.",
+      "compositionRule": "SampleGenerator.Generators.DocSampleGenerator (ADR-005) authors the same line-numbered multilingual body as the docx sample (about target/20 words, stored as one UTF-16 piece) plus first-layer ObjectPool padding embeddings of fixed-seed SplitMix64 bytes, sized so the file lands in [0.99 x target, target]. Replaced the earlier multilingual.doc + opaque 'Data' stream padding, which extracted a flat 283 chars at every size (#165).",
       "sizeTier": "10mb",
       "targetBytes": 10000000,
-      "sizeBytes": 9951232,
-      "sha256": "f5105613d9db1a49e03de8b0d323c64cd4a45c0b2662fb6e42f184c379f7fd3c",
+      "sizeBytes": 9947136,
+      "sha256": "266fb6dd19dd3460927c9bb373f5f1311a37ed59f5716584bd1c748db457e2fa",
       "expectedDetectedFormat": {
         "enum": "Doc",
         "mimeType": "application/msword"
@@ -3217,11 +3217,11 @@
       "path": "samples/benchmark/benchmark-100mb.doc",
       "provenance": "self-generated",
       "generatedBy": "SampleGenerator.Generators.BenchmarkSampleGenerator via `dotnet run --project SampleGenerator -- --benchmark` (T-f0963fc3)",
-      "compositionRule": "No legacy .doc writer exists in the repo (ADR-004), so the Word-authored ExtractorOLE.Tests/Doc/Fixtures/multilingual.doc is the extractable content and its CFB container is padded with an opaque 'Data' stream (fixed-seed SplitMix64 bytes, unreferenced by any sprm), sized so the file lands in [0.99 x target, target]. Extracted text is only the template's small multilingual body; the bulk is padding.",
+      "compositionRule": "SampleGenerator.Generators.DocSampleGenerator (ADR-005) authors the same line-numbered multilingual body as the docx sample (about target/20 words, stored as one UTF-16 piece) plus first-layer ObjectPool padding embeddings of fixed-seed SplitMix64 bytes, sized so the file lands in [0.99 x target, target]. Replaced the earlier multilingual.doc + opaque 'Data' stream padding, which extracted a flat 283 chars at every size (#165).",
       "sizeTier": "100mb",
       "targetBytes": 102400000,
-      "sizeBytes": 101900288,
-      "sha256": "e240b6dd08b9229e2cfb2f2bb238f5a7228d327dca20a446d9d14b4034d3af21",
+      "sizeBytes": 101894144,
+      "sha256": "a538c819fa84945aedea788b2ddc163081b5c8cf717152fe5765e33b13cc1eb1",
       "expectedDetectedFormat": {
         "enum": "Doc",
         "mimeType": "application/msword"
