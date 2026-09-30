@@ -1,4 +1,5 @@
 using B2xPresentationDocument = b2xtranslator.OpenXmlLib.PresentationML.PresentationDocument;
+using b2xtranslator.OpenXmlLib;
 using b2xtranslator.PptFileFormat;
 using b2xtranslator.PresentationMLMapping;
 using b2xtranslator.StructuredStorage.Reader;
@@ -12,9 +13,10 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
     // and embedded-file discovery) and PptTextExtractor (flat body text) so both read the same
     // converted package through the project's existing DocumentFormat.OpenXml path.
     //
-    // b2xtranslator's Pptx writer only targets a file path, so the conversion goes through a temp
-    // file that is always deleted before returning. Throws on any conversion failure -- callers
-    // decide whether that is fatal (PptOpenStrategy: best-effort, PptTextExtractor: empty text).
+    // The conversion runs entirely in memory (#169): b2xtranslator's public Create() only targets a
+    // file path, so InMemoryPresentationDocument overrides the package's Close() to serialize into a
+    // MemoryStream instead. Throws on any conversion failure -- callers decide whether that is fatal
+    // (PptOpenStrategy: best-effort, PptTextExtractor: empty text).
     internal static class PptToPptxConverter
     {
         // Test hook (#168): counts Convert calls on the current thread, so a test can assert one
@@ -25,29 +27,38 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
         public static byte[] Convert(byte[] pptBytes)
         {
             ConvertCallCount++;
-            string tempPptxPath = Path.Combine(Path.GetTempPath(), $"ole-extractor-ppt2x-{Guid.NewGuid():N}.pptx");
-            try
+            var output = new MemoryStream();
+            using (var reader = new StructuredStorageReader(new MemoryStream(pptBytes)))
             {
-                using (var reader = new StructuredStorageReader(new MemoryStream(pptBytes)))
-                {
-                    var ppt = new PowerpointDocument(reader);
-                    var outType = Converter.DetectOutputType(ppt);
+                var ppt = new PowerpointDocument(reader);
+                var outType = Converter.DetectOutputType(ppt);
 
-                    // No `using` here: Converter.Convert disposes (closes) the package itself, and a
-                    // second Close() rewrites every zip entry a second time, producing a package
-                    // System.IO.Packaging rejects as malformed.
-                    var pptx = B2xPresentationDocument.Create(tempPptxPath, outType);
-                    Converter.Convert(ppt, pptx);
-                }
-
-                return File.ReadAllBytes(tempPptxPath);
+                // No `using` here: Converter.Convert disposes (closes) the package itself, and a
+                // second Close() would serialize the package a second time.
+                var pptx = new InMemoryPresentationDocument(output, outType);
+                Converter.Convert(ppt, pptx);
             }
-            finally
+
+            // The zip archive disposes `output` on close; ToArray() still works on a disposed MemoryStream.
+            return output.ToArray();
+        }
+
+        private sealed class InMemoryPresentationDocument : B2xPresentationDocument
+        {
+            private readonly Stream _output;
+
+            public InMemoryPresentationDocument(Stream output, DocumentType type)
+                : base(string.Empty, type)
             {
-                if (File.Exists(tempPptxPath))
-                {
-                    File.Delete(tempPptxPath);
-                }
+                _output = output;
+            }
+
+            public override void Close()
+            {
+                var writer = new OpenXmlWriter();
+                writer.Open(_output);
+                WritePackage(writer);
+                writer.Close();
             }
         }
     }

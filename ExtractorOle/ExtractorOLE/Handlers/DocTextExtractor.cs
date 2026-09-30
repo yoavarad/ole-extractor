@@ -1,4 +1,5 @@
 using b2xtranslator.DocFileFormat;
+using b2xtranslator.OpenXmlLib;
 using b2xtranslator.StructuredStorage.Reader;
 using b2xtranslator.WordprocessingMLMapping;
 using System;
@@ -42,40 +43,43 @@ namespace ExtractorOLE.Handlers
             }
         }
 
-        // b2xtranslator's WordprocessingDocument.Create only writes to a file path (no stream
-        // overload), so the conversion goes through a temp file that is always cleaned up.
+        // Runs entirely in memory (#169): b2xtranslator's public Create() only targets a file path,
+        // so InMemoryWordprocessingDocument overrides the package's Close() to serialize into a
+        // MemoryStream instead.
         private static byte[] ConvertToDocx(byte[] docBytes)
         {
-            string tempPath = Path.Combine(Path.GetTempPath(), $"ole-extractor-doc2x-{Guid.NewGuid():N}.docx");
-            string? writtenPath = null;
-            try
+            var output = new MemoryStream();
+            using (var reader = new StructuredStorageReader(new MemoryStream(docBytes)))
             {
-                using (var reader = new StructuredStorageReader(new MemoryStream(docBytes)))
-                {
-                    var doc = new WordDocument(reader);
-                    var outType = Converter.DetectOutputType(doc);
+                var doc = new WordDocument(reader);
+                var outType = Converter.DetectOutputType(doc);
 
-                    // A macro-enabled/template document is written under its own extension
-                    // (.docm/.dotx/.dotm) - track the real path so cleanup and read-back match.
-                    writtenPath = Converter.GetConformFilename(tempPath, outType);
-                    // Converter.Convert disposes (closes) the output package itself, so no `using`
-                    // here - a second Close would append a duplicate copy of every zip entry and
-                    // leave a package the OpenXml SDK rejects as malformed.
-                    var docx = B2xWordprocessingDocument.Create(writtenPath, outType);
-                    Converter.Convert(doc, docx);
-                }
-
-                return File.ReadAllBytes(writtenPath);
+                // Converter.Convert disposes (closes) the output package itself, so no `using`
+                // here - a second Close would serialize the package a second time.
+                var docx = new InMemoryWordprocessingDocument(output, outType);
+                Converter.Convert(doc, docx);
             }
-            finally
+
+            // The zip archive disposes `output` on close; ToArray() still works on a disposed MemoryStream.
+            return output.ToArray();
+        }
+
+        private sealed class InMemoryWordprocessingDocument : B2xWordprocessingDocument
+        {
+            private readonly Stream _output;
+
+            public InMemoryWordprocessingDocument(Stream output, DocumentType type)
+                : base(string.Empty, type)
             {
-                foreach (var path in new[] { tempPath, writtenPath })
-                {
-                    if (path != null && File.Exists(path))
-                    {
-                        File.Delete(path);
-                    }
-                }
+                _output = output;
+            }
+
+            public override void Close()
+            {
+                var writer = new OpenXmlWriter();
+                writer.Open(_output);
+                WritePackage(writer);
+                writer.Close();
             }
         }
     }
