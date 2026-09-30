@@ -1,6 +1,9 @@
 """Compare BenchmarkDotNet P95 results against the committed baseline.
 
-Usage: python compare_benchmarks.py <baseline_dir> <results_dir>
+Usage: python compare_benchmarks.py <baseline_dir> <results_dir> [regressions_file]
+
+If regressions_file is given and any sample regressed, the markdown table is written there
+(used by the scheduled workflow to open/update the tracking issue).
 
 Implements the rule in docs/benchmarks/README.md (P95_new > 1.20 * P95_baseline, per Sample row
 of the *-report.csv files) but only emits GitHub ::warning annotations: hosted runners differ from
@@ -37,29 +40,37 @@ def load(directory: Path) -> dict[str, float]:
     return p95
 
 
+def build_table(baseline: dict[str, float], current: dict[str, float]) -> tuple[str, list[str]]:
+    lines = ["| Sample | Baseline P95 (ms) | Current P95 (ms) | Ratio | Status |", "|---|---|---|---|---|"]
+    regressed: list[str] = []
+    for sample in sorted(current):
+        now = current[sample]
+        base = baseline.get(sample)
+        if base is None:
+            lines.append(f"| {sample} | n/a | {now:.2f} | n/a | no baseline |")
+            continue
+        ratio = now / base
+        status = "regress" if ratio > THRESHOLD else "pass"
+        lines.append(f"| {sample} | {base:.2f} | {now:.2f} | {ratio:.2f} | {status} |")
+        if ratio > THRESHOLD:
+            regressed.append(sample)
+            print(f"::warning::{sample}: P95 {now:.2f} ms vs baseline {base:.2f} ms ({ratio:.2f}x > {THRESHOLD}x)")
+    return "\n".join(lines), regressed
+
+
 def main() -> int:
     baseline, current = load(Path(sys.argv[1])), load(Path(sys.argv[2]))
     if not current:
         print("::warning::No benchmark results found to compare.")
         return 0
-    lines = ["| Sample | Baseline P95 (ms) | Current P95 (ms) | Ratio |", "|---|---|---|---|"]
-    for sample in sorted(current):
-        now = current[sample]
-        base = baseline.get(sample)
-        if base is None:
-            lines.append(f"| {sample} | n/a | {now:.2f} | n/a |")
-            continue
-        ratio = now / base
-        flag = " ⚠️" if ratio > THRESHOLD else ""
-        lines.append(f"| {sample} | {base:.2f} | {now:.2f} | {ratio:.2f}{flag} |")
-        if ratio > THRESHOLD:
-            print(f"::warning::{sample}: P95 {now:.2f} ms vs baseline {base:.2f} ms ({ratio:.2f}x > {THRESHOLD}x)")
-    table = "\n".join(lines)
+    table, regressed = build_table(baseline, current)
     print(table)
-    summary = Path(os.environ.get("GITHUB_STEP_SUMMARY", ""))
-    if summary.name:
-        with summary.open("a", encoding="utf-8") as fh:
+    summary = os.environ.get("GITHUB_STEP_SUMMARY")
+    if summary:
+        with open(summary, "a", encoding="utf-8") as fh:
             fh.write("## Benchmark P95 vs baseline\n\n" + table + "\n")
+    if regressed and len(sys.argv) > 3:
+        Path(sys.argv[3]).write_text(table + "\n", encoding="utf-8")
     return 0
 
 
