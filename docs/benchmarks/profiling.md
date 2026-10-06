@@ -7,20 +7,22 @@ EventPipe profiler below. All commands run from the repo root and assume the ben
 ## 1. Capture a trace for one sample
 
 ```
-dotnet run -c Release --project ExtractorOle/ExtractorOLE.Benchmarks -- --profile --filter *pptx-10mb*
+dotnet run -c Release --project ExtractorOle/ExtractorOLE.Benchmarks -- --profile --filter "*pptx-10mb*"
 ```
 
 - `--profile` enables `EventPipeProfiler(EventPipeProfile.CpuSampling)`.
 - `--profile-alloc` enables `EventPipeProfiler(EventPipeProfile.GcVerbose)` (GC allocation-tick events).
-  Use it alone or together with `--profile`.
+  Use it alone or together with `--profile`: with both flags each benchmark case is profiled twice, giving two
+  trace pairs that differ only in the timestamp (verified; they do not collide). To tell CPU from allocation traces
+  apart, run the flags separately.
 - Both flags are stripped before BenchmarkDotNet parses the rest of the arguments, so `--filter` etc. work as usual.
-  Filter on the `Sample` param value (e.g. `*xls-100mb*`). Several filters may be given space-separated.
+  Filter on the `Sample` param value (e.g. `"*xls-100mb*"`). Several filters may be given space-separated.
 
-Output lands in `BenchmarkDotNet.Artifacts/` (git-ignored), one pair per benchmark case:
+Output lands in `BenchmarkDotNet.Artifacts/` (git-ignored), one `.nettrace` + `.speedscope.json` pair per profiler per benchmark case (the log file is also written there):
 
 ```
-ExtractorOLE.Benchmarks.Extract10MbBenchmarks.Extract(Sample_ _pptx-10mb_)-<timestamp>.nettrace
-ExtractorOLE.Benchmarks.Extract10MbBenchmarks.Extract(Sample_ _pptx-10mb_)-<timestamp>.speedscope.json
+ExtractorOLE.Benchmarks.Extract10MbBenchmarks.Extract(Sample_ _pptx-10mb_)-<yyyyMMdd-HHmmss>.nettrace
+ExtractorOLE.Benchmarks.Extract10MbBenchmarks.Extract(Sample_ _pptx-10mb_)-<yyyyMMdd-HHmmss>.speedscope.json
 ```
 
 Profiling perturbs timings; do not compare profiled runs against the baseline in `baseline/`.
