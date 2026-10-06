@@ -3,7 +3,7 @@
 Captured 2026-09-30, Windows 11, .NET 8, Release, `--profile` (CpuSampling) on the 100MB samples:
 
 ```
-dotnet run -c Release --project ExtractorOle/ExtractorOLE.Benchmarks -- --profile --filter *xls-100mb* *ppt-100mb* *pptx-100mb*
+dotnet run -c Release --project ExtractorOle/ExtractorOLE.Benchmarks -- --profile --filter "*xls-100mb*" "*ppt-100mb*" "*pptx-100mb*"
 ```
 
 Percentages are self time on the benchmark thread, from the speedscope output. Synthetic
