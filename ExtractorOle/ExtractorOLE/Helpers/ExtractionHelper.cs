@@ -213,6 +213,50 @@ namespace ExtractorOLE.Helpers
             }
         }
 
+        // Reads a stream into an exactly-sized array with a single copy when length is known;
+        // otherwise falls back to a MemoryStream.
+        private static byte[] ReadAllBytes(Stream input, long length)
+        {
+            if (length < 0 || length > Array.MaxLength)
+            {
+                using var ms = new MemoryStream();
+                input.CopyTo(ms);
+                return TakeBytes(ms);
+            }
+
+            var bytes = new byte[length];
+            int read = 0;
+            while (read < bytes.Length)
+            {
+                int n = input.Read(bytes, read, bytes.Length - read);
+                if (n <= 0) break;
+                read += n;
+            }
+
+            if (read == bytes.Length)
+            {
+                return bytes;
+            }
+
+            // Stream shorter than advertised: trim, then drain any remainder defensively.
+            using var tail = new MemoryStream();
+            tail.Write(bytes, 0, read);
+            input.CopyTo(tail);
+            return TakeBytes(tail);
+        }
+
+        // Hands off the MemoryStream's backing array when it is exactly full (no copy);
+        // otherwise copies once.
+        private static byte[] TakeBytes(MemoryStream ms)
+        {
+            if (ms.TryGetBuffer(out var seg) && seg.Offset == 0 && seg.Array!.Length == seg.Count)
+            {
+                return seg.Array;
+            }
+
+            return ms.ToArray();
+        }
+
         // Copies one CFB storage's whole subtree into a standalone POIFS filesystem and
         // serializes it to bytes -- the same opaque, no-recursive-unpacking technique
         // ExtractHssfObjectData uses for .xls embedded objects. Named by the storage's own
@@ -227,7 +271,7 @@ namespace ExtractorOLE.Helpers
                 using (var outStream = new MemoryStream())
                 {
                     target.WriteFileSystem(outStream);
-                    extractedBytes = outStream.ToArray();
+                    extractedBytes = TakeBytes(outStream);
                 }
 
                 fileList.Add(new EmbeddedFileItem
@@ -248,9 +292,7 @@ namespace ExtractorOLE.Helpers
         private void ExtractCfbStream(DocumentEntry stream, List<EmbeddedFileItem> fileList)
         {
             using var input = new DocumentInputStream(stream);
-            using var buffer = new MemoryStream();
-            input.CopyTo(buffer);
-            byte[] extractedBytes = buffer.ToArray();
+            byte[] extractedBytes = ReadAllBytes(input, stream.Size);
 
             fileList.Add(new EmbeddedFileItem
             {
@@ -299,7 +341,7 @@ namespace ExtractorOLE.Helpers
                     using (var outStream = new MemoryStream())
                     {
                         target.WriteFileSystem(outStream);
-                        var extractedBytes = outStream.ToArray();
+                        var extractedBytes = TakeBytes(outStream);
 
                         var item = new EmbeddedFileItem
                         {
@@ -346,7 +388,7 @@ namespace ExtractorOLE.Helpers
                         using (var outStream = new MemoryStream())
                         {
                             target.WriteFileSystem(outStream);
-                            extractedBytes = outStream.ToArray();
+                            extractedBytes = TakeBytes(outStream);
                         }
                     }
                     finally
@@ -410,10 +452,8 @@ namespace ExtractorOLE.Helpers
             try
             {
                 using (Stream partStream = part.GetStream())
-                using (MemoryStream binaryStream = new MemoryStream())
                 {
-                    partStream.CopyTo(binaryStream);
-                    byte[] extractedBytes = binaryStream.ToArray();
+                    byte[] extractedBytes = ReadAllBytes(partStream, partStream.CanSeek ? partStream.Length : -1);
 
                     var item = new EmbeddedFileItem
                     {
