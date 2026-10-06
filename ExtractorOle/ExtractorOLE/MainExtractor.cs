@@ -91,6 +91,44 @@ namespace ExtractorOLE
             return result;
         }
 
+        /// <summary>
+        /// Batch form of <see cref="Extract(ExtractionRequest)"/> (ADR-007). Runs up to
+        /// <paramref name="maxDegreeOfParallelism"/> (default <see cref="Environment.ProcessorCount"/>)
+        /// extractions at once and returns one <see cref="BatchExtractionResult"/> per request, in
+        /// input order. An item's exception is captured in its <see cref="BatchExtractionResult.Error"/>
+        /// and does not fail the batch (except <see cref="OutOfMemoryException"/>, which fails it). Cancellation stops new items from starting and throws
+        /// <see cref="OperationCanceledException"/>.
+        /// </summary>
+        public async Task<IReadOnlyList<BatchExtractionResult>> ExtractManyAsync(
+            IEnumerable<ExtractionRequest> requests,
+            int? maxDegreeOfParallelism = null,
+            CancellationToken cancellationToken = default)
+        {
+            if (requests == null) throw new ArgumentNullException(nameof(requests));
+            var dop = maxDegreeOfParallelism ?? Environment.ProcessorCount;
+            if (dop <= 0) throw new ArgumentOutOfRangeException(nameof(maxDegreeOfParallelism), dop, "Must be positive.");
+
+            var results = new List<BatchExtractionResult>();
+            var options = new ParallelOptions { MaxDegreeOfParallelism = dop, CancellationToken = cancellationToken };
+            await Parallel.ForEachAsync(requests.Select((request, index) => (request, index)), options, (item, _) =>
+            {
+                BatchExtractionResult itemResult;
+                try
+                {
+                    itemResult = new BatchExtractionResult { Index = item.index, FileName = item.request?.FileName, Result = Extract(item.request!) };
+                }
+                catch (Exception ex) when (ex is not OutOfMemoryException)
+                {
+                    itemResult = new BatchExtractionResult { Index = item.index, FileName = item.request?.FileName, Error = ex };
+                }
+                lock (results) results.Add(itemResult);
+                return ValueTask.CompletedTask;
+            }).ConfigureAwait(false);
+
+            results.Sort((a, b) => a.Index.CompareTo(b.Index));
+            return results;
+        }
+
         // Boundary validation: runs before any detection/extraction logic.
         private static void ValidateRequest(ExtractionRequest request)
         {
