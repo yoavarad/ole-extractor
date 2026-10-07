@@ -8,4 +8,12 @@
   <PropertyGroup Condition="'$(CiWarningsAsErrors)' == 'true' and !$(MSBuildProjectDirectory.Replace('\', '/').Contains('/third_party/'))">
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
+  <!--
+    NuGet lock files (packages.lock.json) pin the restore graph and key the setup-dotnet package cache
+    in CI. Only this repo's own projects get one; vendored third_party/ projects are left alone.
+  -->
+  <PropertyGroup Condition="!$(MSBuildProjectDirectory.Replace('\', '/').Contains('/third_party/'))">
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <RestoreLockedMode Condition="'$(CI)' == 'true' or '$(GITHUB_ACTIONS)' == 'true'">true</RestoreLockedMode>
+  </PropertyGroup>
 </Project>
