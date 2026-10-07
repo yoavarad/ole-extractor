@@ -124,6 +124,11 @@ extraction path (the detectors' test-observability counters are atomic and scope
 cross-call mismatches against the single-threaded baseline. Samples that are deliberately rejected
 (e.g. oversized-FAT guard fixtures) fail identically in serial and concurrent runs.
 
+For many files, `MainExtractor.ExtractManyAsync(requests, maxDegreeOfParallelism, cancellationToken)`
+runs `Extract()` with bounded parallelism (default `Environment.ProcessorCount`). It returns one result per request in
+input order. A failing item reports its error on that item and does not fail the batch
+([ADR-007](docs/adrs/007-batch-extraction-api.md)). `StressHarness -- batch [repeat] [samplesDir]` measures its
+throughput.
 ## Documentation
 
 - [`docs/specs/overview.md`](docs/specs/overview.md) — problem statement, success criteria, public API, scope
@@ -137,6 +142,7 @@ cross-call mismatches against the single-threaded baseline. Samples that are del
   - [ADR-003](docs/adrs/003-manual-spec-review-in-place-of-bedrock.md) — manual LLM spec review in place of `ydk spec verify`
   - [ADR-004](docs/adrs/004-legacy-doc-ppt-parsing.md) — legacy `.doc`/`.ppt` body-text parsing via `b2xtranslator`
   - [ADR-005](docs/adrs/005-legacy-doc-ppt-authoring.md) — authoring legacy `.doc`/`.ppt`/`.xls` test samples in SampleGenerator
+  - [ADR-007](docs/adrs/007-batch-extraction-api.md) — batch extraction API with bounded parallelism
 - [`docs/project-rules.md`](docs/project-rules.md) — conventions, brownfield constraints, and known gotchas
 - [`docs/research/`](docs/research/) — research spikes backing the ADRs above
 

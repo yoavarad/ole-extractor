@@ -20,6 +20,7 @@ namespace ExtractorOLE.StressHarness
     /// shared-mutable-state corruption under concurrency.
     ///
     /// Usage: dotnet run --project ExtractorOLE.StressHarness -- [concurrency] [iterations] [samplesDir]
+    ///    or: dotnet run --project ExtractorOLE.StressHarness -- batch [repeat] [samplesDir]  (ADR-007)
     /// All arguments are optional.
     /// </summary>
     internal static class Program
@@ -29,6 +30,12 @@ namespace ExtractorOLE.StressHarness
 
         private static async Task Main(string[] args)
         {
+            if (args.Length > 0 && args[0] == "batch")
+            {
+                await BatchMode.RunAsync(args[1..]);
+                return;
+            }
+
             int concurrency = args.Length > 0 && int.TryParse(args[0], out var c) ? c : DefaultConcurrency;
             int iterations = args.Length > 1 && int.TryParse(args[1], out var i) ? i : DefaultIterations;
             string? samplesDir = args.Length > 2 ? args[2] : null;
@@ -117,7 +124,7 @@ namespace ExtractorOLE.StressHarness
             }
         }
 
-        private static List<byte[]> LoadSamples(string? samplesDir)
+        internal static List<byte[]> LoadSamples(string? samplesDir)
         {
             var samples = new List<byte[]>();
             var directory = !string.IsNullOrWhiteSpace(samplesDir) && Directory.Exists(samplesDir)
