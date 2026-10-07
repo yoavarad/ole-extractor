@@ -23,6 +23,33 @@ env:
   SOLUTION: ExtractorOle/ExtractorOle.slnx
 
 jobs:
+  format:
+    name: Format check
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout (with NPOI + b2xtranslator submodules)
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup .NET (SDK from global.json + net8.0 runtime)
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+          dotnet-version: 8.0.x
+
+      - name: Restore
+        run: |
+          dotnet restore ExtractorOle/ExtractorOLE/ExtractorOLE.csproj
+          dotnet restore SampleGenerator/SampleGenerator.csproj
+
+      # Same targets as the local ydk dotnet-format gate: production projects only.
+      - name: Format check
+        run: |
+          dotnet format ExtractorOle/ExtractorOLE/ExtractorOLE.csproj --verify-no-changes --no-restore
+          dotnet format SampleGenerator/SampleGenerator.csproj --verify-no-changes --no-restore
+
   build-test:
     name: Build & test (${{ matrix.os }})
     strategy:
@@ -53,14 +80,6 @@ jobs:
         run: |
           dotnet build ${{ env.SOLUTION }} -c Release --no-restore -p:CiWarningsAsErrors=true
           dotnet build ExtractorOle/ExtractorOLE.StressHarness/ExtractorOLE.StressHarness.csproj -c Release -p:CiWarningsAsErrors=true
-
-      # Same targets as the local ydk dotnet-format gate: production projects only.
-      # Windows only, because that is where the local gate has always run (line endings).
-      - name: Format check
-        if: runner.os == 'Windows'
-        run: |
-          dotnet format ExtractorOle/ExtractorOLE/ExtractorOLE.csproj --verify-no-changes --no-restore
-          dotnet format SampleGenerator/SampleGenerator.csproj --verify-no-changes --no-restore
 
       # Unit + corpus integration tests. Benchmark-sample tests skip themselves when
       # samples/benchmark/ has not been generated.
