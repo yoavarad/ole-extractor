@@ -3,4 +3,5 @@
   <Project Path="../SampleGenerator/SampleGenerator.csproj" />
   <Project Path="ExtractorOLE.Tests/ExtractorOLE.Tests.csproj" />
   <Project Path="ExtractorOLE.Benchmarks/ExtractorOLE.Benchmarks.csproj" />
+  <Project Path="ExtractorOLE.StressHarness/ExtractorOLE.StressHarness.csproj" />
 </Solution>
