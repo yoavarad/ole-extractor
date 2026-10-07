@@ -1,4 +1,4 @@
-# ADR-007: Stream/file-path input instead of whole-file byte[] (spike #174)
+# ADR-008: Stream/file-path input instead of whole-file byte[] (spike #174)
 
 ## Status
 Proposed: **GO** (phased, OOXML first). Spike for story #161. 2026-10-07.
@@ -26,7 +26,7 @@ Not stream-capable today (our code, not the parsers): `ParseTimeErrorGuard.Prefl
 streaming input does not remove.
 
 ## Measurements
-Harness: `ExtractorOle/ExtractorOLE.Spike174` (throwaway, not in the slnx). One child process
+Harness: a throwaway console app (removed from the PR; see commit history of task 174) One child process
 per mode, 100MB benchmark samples (`SampleGenerator --benchmark`), .NET 8 Release,
 `Process.PeakWorkingSet64` and `GC.GetTotalAllocatedBytes`. Open + minimal text/structure walk
 only; not the full `MainExtractor.Extract` pipeline. Single run each, indicative not statistical.
