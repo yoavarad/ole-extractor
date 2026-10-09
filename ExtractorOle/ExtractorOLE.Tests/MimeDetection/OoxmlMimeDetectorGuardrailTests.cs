@@ -8,11 +8,6 @@ using System.IO;
 using System.IO.Compression;
 using Xunit;
 
-// NOTE: The assembly-level [CollectionBehavior(DisableTestParallelization = true)]
-// needed to keep these guard tests' assertions against the shared static
-// OoxmlMimeDetector.PackageOpenAttemptCount counter race-free is already declared
-// once, in CfbMimeDetectorGuardrailTests.cs, for the whole test assembly.
-
 namespace ExtractorOLE.Tests.MimeDetection
 {
     public class OoxmlMimeDetectorGuardrailTests

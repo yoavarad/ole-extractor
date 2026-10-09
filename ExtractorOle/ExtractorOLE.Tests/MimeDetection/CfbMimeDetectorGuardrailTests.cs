@@ -8,16 +8,6 @@ using System.Buffers.Binary;
 using System.IO;
 using Xunit;
 
-// The guard tests below assert against the shared static
-// CfbMimeDetector.OpenMcdfParseAttemptCount counter. xUnit runs test methods
-// within one class sequentially by default, but different test classes run in
-// separate collections *in parallel* unless told otherwise -- so without this,
-// CfbMimeDetectorTests (which legitimately calls into OpenMcdf) can race with
-// these assertions and increment the shared counter mid-test. Disabling
-// cross-class parallelization keeps the whole assembly's runtime small and
-// avoids introducing per-test locking just for this counter.
-[assembly: CollectionBehavior(DisableTestParallelization = true)]
-
 namespace ExtractorOLE.Tests.MimeDetection
 {
     public class CfbMimeDetectorGuardrailTests
