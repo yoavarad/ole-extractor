@@ -58,6 +58,13 @@ namespace ExtractorOLE.Benchmarks
                 throw new InvalidOperationException(
                     $"Benchmark sample '{Sample}' ({path}) extracted no text; the benchmark would measure nothing. " +
                     $"Regenerate with: {BenchmarkSamples.RegenerateCommand}");
+            // Scaling check (#185): a sample padded with unread bytes extracts a tiny, fixed text, so
+            // its cost would not grow with size. Real samples carry text on the order of size/3.
+            if (result.ExtractedText.Length < _request.FileBytes.Length / 100)
+                throw new InvalidOperationException(
+                    $"Benchmark sample '{Sample}' ({path}) extracted only {result.ExtractedText.Length} text chars from " +
+                    $"{_request.FileBytes.Length} bytes; the size is padding, not content. " +
+                    $"Regenerate with: {BenchmarkSamples.RegenerateCommand}");
             Console.WriteLine(
                 $"// Sample {Sample}: {result.ExtractedText.Length} text chars, {result.EmbeddedFiles.Count} embedded files");
         }
