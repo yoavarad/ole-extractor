@@ -3149,11 +3149,11 @@
       "path": "samples/benchmark/benchmark-10mb.ppt",
       "provenance": "self-generated",
       "generatedBy": "SampleGenerator.Generators.BenchmarkSampleGenerator via `dotnet run --project SampleGenerator -- --benchmark` (T-f0963fc3)",
-      "compositionRule": "No legacy .ppt writer exists in the repo (ADR-004), so the PowerPoint-authored ExtractorOLE.Tests/PowerPoint/Fixtures/with_textbox.ppt is the extractable content and its CFB container gets a 'Pictures' stream of OfficeArt JPEG BLIP records (fixed-seed SplitMix64 payloads, ~1 MiB each, unreferenced by any slide), sized so the file lands in [0.99 x target, target]. Extracted text is only the template's small body; the bulk is padding.",
+      "compositionRule": "PptSampleGenerator (ADR-005) authors one slide of line-numbered multilingual text boxes (about target/20 words, same body as doc/docx) plus first-layer padding embeddings (fixed-seed SplitMix64 root storages, ~1 MiB each), sized so the file lands in [0.99 x target, target]. Extracted text scales with the target (#185).",
       "sizeTier": "10mb",
       "targetBytes": 10000000,
-      "sizeBytes": 9951232,
-      "sha256": "849ce4f6f94eda18d8cd939117d656a597330d2b52d01aa110f0c4a4fec74287",
+      "sizeBytes": 9949696,
+      "sha256": "e165418088ca6a0a8473909b3d52b954db6646e351e5c40c7e68e9d0169123cd",
       "expectedDetectedFormat": {
         "enum": "Ppt",
         "mimeType": "application/vnd.ms-powerpoint"
@@ -3251,11 +3251,11 @@
       "path": "samples/benchmark/benchmark-100mb.ppt",
       "provenance": "self-generated",
       "generatedBy": "SampleGenerator.Generators.BenchmarkSampleGenerator via `dotnet run --project SampleGenerator -- --benchmark` (T-f0963fc3)",
-      "compositionRule": "No legacy .ppt writer exists in the repo (ADR-004), so the PowerPoint-authored ExtractorOLE.Tests/PowerPoint/Fixtures/with_textbox.ppt is the extractable content and its CFB container gets a 'Pictures' stream of OfficeArt JPEG BLIP records (fixed-seed SplitMix64 payloads, ~1 MiB each, unreferenced by any slide), sized so the file lands in [0.99 x target, target]. Extracted text is only the template's small body; the bulk is padding.",
+      "compositionRule": "PptSampleGenerator (ADR-005) authors one slide of line-numbered multilingual text boxes (about target/20 words, same body as doc/docx) plus first-layer padding embeddings (fixed-seed SplitMix64 root storages, ~1 MiB each), sized so the file lands in [0.99 x target, target]. Extracted text scales with the target (#185).",
       "sizeTier": "100mb",
       "targetBytes": 102400000,
-      "sizeBytes": 101900288,
-      "sha256": "9abef1e865b469c20dbe1e93ed425ca56e3f63edab974001965a9c197ed1374f",
+      "sizeBytes": 101873664,
+      "sha256": "0542af9404a222be192d408078ea5c586ec31d76c9384552bb8ba3e6d2c406fd",
       "expectedDetectedFormat": {
         "enum": "Ppt",
         "mimeType": "application/vnd.ms-powerpoint"
