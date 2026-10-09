@@ -35,7 +35,9 @@ namespace ExtractorOLE.Tests.Architecture
         {
             var productDir = FindProductDir();
             return Directory.GetFiles(Path.Combine(productDir, "Handlers"), "*.cs", SearchOption.AllDirectories)
-                .Append(Path.Combine(productDir, "Helpers", "FileTypeStrategy", "PptToPptxConverter.cs"));
+                .Append(Path.Combine(productDir, "Helpers", "FileTypeStrategy", "PptToPptxConverter.cs"))
+                // #190: metroBlob shapes are unzipped in memory inside the b2xtranslator submodule.
+                .Append(Path.Combine(productDir, "..", "..", "third_party", "b2xtranslator", "Ppt", "PresentationMLMapping", "ShapeTreeMapping.cs"));
         }
 
         [Fact]
