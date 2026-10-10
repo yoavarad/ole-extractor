@@ -1,3 +1,4 @@
+using ExtractorOLE.Helpers.FileTypeStrategy;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using System;
@@ -21,7 +22,7 @@ namespace ExtractorOLE.Handlers
     /// fits in the 8-bit range) - no additional encoding conversion or
     /// Unicode normalization is applied here.
     /// </summary>
-    internal class XlsTextExtractor : ITextExtractor
+    internal class XlsTextExtractor : IParsedDocumentTextExtractor
     {
         public string ExtractText(byte[] fileBytes)
         {
@@ -29,33 +30,7 @@ namespace ExtractorOLE.Handlers
             {
                 using (var ms = new MemoryStream(fileBytes))
                 {
-                    var workbook = new HSSFWorkbook(ms);
-                    var lines = new List<string>();
-
-                    for (int sheetIndex = 0; sheetIndex < workbook.NumberOfSheets; sheetIndex++)
-                    {
-                        var sheet = workbook.GetSheetAt(sheetIndex);
-                        foreach (IRow row in sheet)
-                        {
-                            var cellTexts = new List<string>();
-                            foreach (ICell cell in row)
-                            {
-                                if (cell.CellType != CellType.String) continue;
-                                string? text = cell.RichStringCellValue?.String;
-                                if (!string.IsNullOrEmpty(text))
-                                {
-                                    cellTexts.Add(text);
-                                }
-                            }
-
-                            if (cellTexts.Count > 0)
-                            {
-                                lines.Add(string.Join(" ", cellTexts));
-                            }
-                        }
-                    }
-
-                    return string.Join(Environment.NewLine, lines);
+                    return Walk(XlsWorkbooks.Load(ms));
                 }
             }
             catch (Exception)
@@ -64,6 +39,52 @@ namespace ExtractorOLE.Handlers
             }
 
             return string.Empty;
+        }
+
+        // parsedDocument is the workbook XlsOpenStrategy already loaded; caller owns it.
+        public string? ExtractText(object parsedDocument)
+        {
+            if (parsedDocument is not HSSFWorkbook workbook) return null;
+            try
+            {
+                return Walk(workbook);
+            }
+            catch (Exception)
+            {
+                // swallow and return empty text on failure
+            }
+
+            return string.Empty;
+        }
+
+        private static string Walk(HSSFWorkbook workbook)
+        {
+            var lines = new List<string>();
+
+            for (int sheetIndex = 0; sheetIndex < workbook.NumberOfSheets; sheetIndex++)
+            {
+                var sheet = workbook.GetSheetAt(sheetIndex);
+                foreach (IRow row in sheet)
+                {
+                    var cellTexts = new List<string>();
+                    foreach (ICell cell in row)
+                    {
+                        if (cell.CellType != CellType.String) continue;
+                        string? text = cell.RichStringCellValue?.String;
+                        if (!string.IsNullOrEmpty(text))
+                        {
+                            cellTexts.Add(text);
+                        }
+                    }
+
+                    if (cellTexts.Count > 0)
+                    {
+                        lines.Add(string.Join(" ", cellTexts));
+                    }
+                }
+            }
+
+            return string.Join(Environment.NewLine, lines);
         }
     }
 }
