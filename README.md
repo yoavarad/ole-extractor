@@ -82,8 +82,8 @@ ole-extractor/
 
 NPOI's precompiled NuGet package (2.8.0+) ships under a EULA requiring a paid maintenance
 subscription for revenue-generating organizations, so this repo compiles NPOI from its
-Apache-2.0 source instead, via the `third_party/npoi` git submodule (pinned to tag
-`2.7.6-rc1`) referenced as a `ProjectReference`. Only NPOI's `main` tree is used (gives
+Apache-2.0 source instead, via the `third_party/npoi` git submodule (pinned to the
+`yoavarad/npoi` fork's `main`) referenced as a `ProjectReference`. Only NPOI's `main` tree is used (gives
 `.xls`/HSSF, plus format-agnostic HPSF/POIFS for cross-format legacy metadata and subfile
 discovery) — NPOI's `.doc`/`.ppt` readers live only in an unshipped `scratchpad` tree, which
 is why those two formats use a different library instead (see ADR-004). `b2xtranslator` is
