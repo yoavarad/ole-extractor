@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="PowerPoint\Fixtures\with_textbox.ppt" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
