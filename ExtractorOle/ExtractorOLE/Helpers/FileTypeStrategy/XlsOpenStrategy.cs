@@ -26,7 +26,7 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
                 var result = new DocumentExtractionResult();
                 using (var ms = new MemoryStream(fileBytes))
                 {
-                    var workbook = new HSSFWorkbook(ms);
+                    var workbook = XlsWorkbooks.Load(ms);
                     var summary = workbook.SummaryInformation;
                     if (summary != null)
                     {
@@ -36,6 +36,8 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
                     result.FormatMetadata = BuildExcelFormatMetadata(workbook);
 
                     _helper.ExtractFirstLayerEmbedded(result, workbook);
+                    // Handed to XlsTextExtractor so the workbook is parsed once; MainExtractor releases it.
+                    result.ParsedDocument = workbook;
                 }
                 result.MimeType = _helper.MimeFor(OfficeMimeTypeEnum.ExcelLegacy);
                 return result;
