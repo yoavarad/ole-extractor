@@ -45,4 +45,4 @@ path is implemented. See `docs/project-rules.md` (Known Gotchas) for the full de
 
 ## Note (2026-10-10)
 
-We now track the `yoavarad/npoi` fork's `main`, which is upstream master after its switch to SkiaSharp (no more ImageSharp) plus fork fixes. Upstream also added `OSMFEULA.txt`, a paid maintenance-fee EULA that covers the pre-compiled NuGet binary only. The source stays Apache-2.0 and we compile from source, so this ADR's reasoning holds.
+We now track the `yoavarad/npoi` fork's `main`, which tracks upstream master after its switch to SkiaSharp (no more ImageSharp) plus fork fixes. Upstream also added `OSMFEULA.txt`, a paid maintenance-fee EULA that covers the pre-compiled NuGet binary only. The source stays Apache-2.0 and we compile from source, so this ADR's reasoning holds.
