@@ -42,3 +42,7 @@ path is implemented. See `docs/project-rules.md` (Known Gotchas) for the full de
 - Build pipeline needs an NPOI-from-source compile step (new CI/build work, tracked in the Library Evaluation / Project restructure epics).
 - Legacy-path Unicode/RTL/CJK/emoji fidelity is **unverified** in NPOI per the research spike — must be empirically tested against real multilingual samples in the Dataset Curation epic before the i18n requirement can be considered met for legacy formats.
 - Two different libraries now own two different format families (OpenXml for OOXML, NPOI for legacy) — acceptable per the original plan ("different libraries for different subfile types").
+
+## Note (2026-10-10)
+
+We now track the `yoavarad/npoi` fork's `main`, which is upstream master after its switch to SkiaSharp (no more ImageSharp) plus fork fixes. Upstream also added `OSMFEULA.txt`, a paid maintenance-fee EULA that covers the pre-compiled NuGet binary only. The source stays Apache-2.0 and we compile from source, so this ADR's reasoning holds.
