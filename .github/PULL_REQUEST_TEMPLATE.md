@@ -1,11 +1,10 @@
-## Changes
+## Summary
 
+Spec refs:
 
-## Verification Proof
+## Verification Results
+<!-- Paste command output in a ```console block -->
 
-<!-- YDK fills this in automatically -->
-
-## Spec refs
-
+## Test Plan
 
 Closes #
