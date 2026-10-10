@@ -6,7 +6,6 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using NPOI.HSSF.UserModel;
-using NPOI.POIFS.FileSystem;
 using SampleGenerator.Abstractions;
 using SampleGenerator.Fixtures;
 
@@ -30,11 +29,9 @@ namespace SampleGenerator.Generators
     /// - doc: <see cref="DocSampleGenerator"/> (ADR-005) with the same numbered
     ///   body and first-layer padding embeddings as docx (#165: the earlier
     ///   fixture-plus-"Data"-stream padding extracted a flat 283 chars).
-    /// - ppt: no legacy writer exists in the repo (ADR-004), so the
-    ///   PowerPoint-authored with_textbox.ppt test fixture is the extractable
-    ///   content, padded with a "Pictures" stream of valid JPEG BLIP records
-    ///   filled with the same fixed-seed bytes. Only its small template text
-    ///   is extracted.
+    /// - ppt: <see cref="PptSampleGenerator"/> (ADR-005) with the same numbered
+    ///   body and first-layer padding embeddings as doc (#185: the earlier
+    ///   fixture-plus-"Pictures"-stream padding extracted only the template text).
     ///
     /// The size fit lands in [<see cref="MinFillRatio"/> x target, target].
     /// </summary>
@@ -47,7 +44,6 @@ namespace SampleGenerator.Generators
         private const int WordsPerLine = 400;
         private const int TargetBytesPerWord = 20;
         private const int PadChunkBytes = 1 << 20;
-        private const int PaddingStreamMinBytes = 4096;
         private static readonly DateTimeOffset FixedEntryTime = new(2000, 1, 1, 0, 0, 0, TimeSpan.Zero);
 
         public static readonly IReadOnlyList<(string Name, long Bytes)> Tiers = new[]
@@ -66,8 +62,7 @@ namespace SampleGenerator.Generators
             SampleFormat.Pptx => GenerateOoxml(new PptxSampleGenerator(), targetBytes),
             SampleFormat.Xls => GenerateXls(targetBytes),
             SampleFormat.Doc => GenerateDoc(targetBytes),
-            SampleFormat.Ppt => GenerateLegacyPadded(
-                "ExtractorOle/ExtractorOLE.Tests/PowerPoint/Fixtures/with_textbox.ppt", "Pictures", targetBytes, BlipPadding),
+            SampleFormat.Ppt => GeneratePpt(targetBytes),
             _ => throw new ArgumentOutOfRangeException(nameof(format)),
         };
 
@@ -279,46 +274,17 @@ namespace SampleGenerator.Generators
             }).Content);
         }
 
-        private static byte[] GenerateLegacyPadded(
-            string templateRepoPath, string streamName, long target, Func<long, byte[]> padding)
+        // Same composition as doc: one slide of numbered text boxes plus first-layer padding
+        // embeddings (root storages), so Extract() cost scales with the target (#185).
+        private static byte[] GeneratePpt(long target)
         {
-            var template = File.ReadAllBytes(FindRepoFile(templateRepoPath));
-            return Fit(target, 0, PadChunkBytes, pad =>
+            var body = NumberedBody((int)(target / TargetBytesPerWord));
+            var generator = new PptSampleGenerator();
+            return Fit(target, 0, PadChunkBytes, pad => generator.Generate(new SampleSpec
             {
-                if (pad < PaddingStreamMinBytes) return template;
-
-                var fs = new NPOIFSFileSystem(new MemoryStream(template));
-                try
-                {
-                    fs.Root.CreateDocument(streamName, new MemoryStream(padding(pad)));
-                    using var output = new MemoryStream();
-                    fs.WriteFileSystem(output);
-                    return output.ToArray();
-                }
-                finally
-                {
-                    fs.Close();
-                }
-            });
-        }
-
-        // A "Pictures" stream is a run of OfficeArt BLIP records. Each is a JPEG BLIP
-        // (recInstance 0x46A, recType 0xF01D): 8-byte header + 16-byte UID + 1-byte tag + payload.
-        private static byte[] BlipPadding(long length)
-        {
-            const int overhead = 8 + 16 + 1;
-            using var ms = new MemoryStream();
-            foreach (var (index, size) in Chunks(length))
-            {
-                var header = new byte[overhead];
-                BinaryPrimitives.WriteUInt16LittleEndian(header, 0x46A0);
-                BinaryPrimitives.WriteUInt16LittleEndian(header.AsSpan(2), 0xF01D);
-                BinaryPrimitives.WriteUInt32LittleEndian(header.AsSpan(4), (uint)(size - 8));
-                BinaryPrimitives.WriteUInt64LittleEndian(header.AsSpan(8), (ulong)index + 1); // distinct UID per BLIP
-                ms.Write(header);
-                ms.Write(PseudoRandomBytes(size - overhead, (ulong)index));
-            }
-            return ms.ToArray();
+                BodyText = body,
+                Embeddings = PaddingParts(pad),
+            }).Content);
         }
 
         // ---- shared ----
@@ -368,19 +334,6 @@ namespace SampleGenerator.Generators
                 parameter += (long)((aim - bytes.Length) / slope);
             }
             throw new InvalidOperationException($"Could not fit a sample into [{target * MinFillRatio:F0}, {target}] bytes.");
-        }
-
-        private static string FindRepoFile(string relativePath)
-        {
-            foreach (var start in new[] { AppContext.BaseDirectory, Directory.GetCurrentDirectory() })
-            {
-                for (var dir = new DirectoryInfo(start); dir != null; dir = dir.Parent)
-                {
-                    var candidate = Path.Combine(dir.FullName, relativePath);
-                    if (File.Exists(candidate)) return candidate;
-                }
-            }
-            throw new FileNotFoundException($"Could not locate '{relativePath}' from the base or current directory.");
         }
     }
 }

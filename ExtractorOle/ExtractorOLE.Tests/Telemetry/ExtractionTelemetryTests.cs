@@ -36,14 +36,18 @@ namespace ExtractorOLE.Tests.Telemetry
         {
             var bytes = Sample();
             var activities = new List<Activity>();
+            // ActivityListener is process-wide; only count activities from this test's async flow
+            // so concurrently running tests don't add extra stage activities.
+            var inFlow = new AsyncLocal<bool>();
             using var listener = new ActivityListener
             {
                 ShouldListenTo = s => s.Name == ExtractionTelemetry.SourceName,
                 Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded,
-                ActivityStopped = a => { lock (activities) activities.Add(a); },
+                ActivityStopped = a => { if (inFlow.Value) lock (activities) activities.Add(a); },
             };
             ActivitySource.AddActivityListener(listener);
 
+            inFlow.Value = true;
             Build().Extract(new ExtractionRequest { FileBytes = bytes, FileName = "s.docx", DetectedMimeType = DocxMime });
 
             List<Activity> mine;
