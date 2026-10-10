@@ -1,7 +1,7 @@
 name: CI
 
 # PR gate: build, format, test and vulnerable-package check on every PR and push to main.
-# Libraries target net8.0; the SDK comes from global.json (SDK 9, which understands the .slnx
+# Libraries target net10.0; the SDK comes from global.json (SDK 10, which understands the .slnx
 # solution file that the .NET 8 SDK rejects with MSB4068).
 
 on:
@@ -71,7 +71,6 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           global-json-file: global.json
-          dotnet-version: 8.0.x
 
       - name: Restore
         if: env.RUN_CI == 'true'
@@ -126,7 +125,6 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           global-json-file: global.json
-          dotnet-version: 8.0.x
           cache: true
           cache-dependency-path: |
             **/packages.lock.json

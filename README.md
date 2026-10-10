@@ -91,7 +91,7 @@ likewise compiled from source, via the `third_party/b2xtranslator` git submodule
 
 ## Build & test
 
-Prerequisites: [.NET 8 SDK](https://dotnet.microsoft.com/download) or later, and the
+Prerequisites: [.NET 10 SDK](https://dotnet.microsoft.com/download) or later, and the
 `third_party/npoi` and `third_party/b2xtranslator` git submodules checked out.
 
 ```bash

@@ -81,7 +81,7 @@ namespace ExtractorOLE.Tests.MultiEmbedding
             {
                 var stream = fs.CreateDocumentInputStream("\u0001Ole10Native");
                 var content = new byte[stream.Length];
-                stream.Read(content, 0, content.Length);
+                stream.ReadExactly(content, 0, content.Length);
                 Assert.Equal(innerXlsBytes, content);
             }
             finally
@@ -113,7 +113,7 @@ namespace ExtractorOLE.Tests.MultiEmbedding
             {
                 var stream = fs.CreateDocumentInputStream("Ole10Native");
                 var content = new byte[stream.Length];
-                stream.Read(content, 0, content.Length);
+                stream.ReadExactly(content, 0, content.Length);
                 // NPOI wraps the payload in an Ole10Native header, so match the inner xlsx bytes within the stream.
                 Assert.True(content.AsSpan().IndexOf(innerXlsxBytes) >= 0);
             }
@@ -147,7 +147,7 @@ namespace ExtractorOLE.Tests.MultiEmbedding
             {
                 var stream = fs.CreateDocumentInputStream("Ole10Native");
                 var content = new byte[stream.Length];
-                stream.Read(content, 0, content.Length);
+                stream.ReadExactly(content, 0, content.Length);
                 Assert.Equal(innerXlsBytes, content);
             }
             finally

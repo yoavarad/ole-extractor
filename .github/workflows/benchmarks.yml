@@ -38,7 +38,6 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           global-json-file: global.json
-          dotnet-version: 8.0.x
 
       # Writes the 12 fixed 10MB/~100MB samples to the gitignored samples/benchmark/ and
       # checks each SHA-256 against samples/manifest.json (exit 1 on mismatch).
