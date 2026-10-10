@@ -28,26 +28,32 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
 
         private readonly IExtractionHelper _helper;
 
-        public PptOpenStrategy(IExtractionHelper helper)
+        // NPOIFSFileSystem takes ownership of the stream it's given and closes it in its own Close().
+        private static readonly Func<byte[], NPOIFSFileSystem> DefaultOpenFileSystem =
+            bytes => new NPOIFSFileSystem(new MemoryStream(bytes));
+
+        private readonly Func<byte[], NPOIFSFileSystem> _openFileSystem;
+
+        public PptOpenStrategy(IExtractionHelper helper) : this(helper, DefaultOpenFileSystem)
+        {
+        }
+
+        // Test seam: lets tests count how many times the compound file is opened per Open().
+        internal PptOpenStrategy(IExtractionHelper helper, Func<byte[], NPOIFSFileSystem> openFileSystem)
         {
             _helper = helper;
+            _openFileSystem = openFileSystem;
         }
 
         public DocumentExtractionResult? Open(byte[] fileBytes)
         {
             DocumentExtractionResult result;
+            // One NPOIFSFileSystem over the original .ppt bytes serves both the metadata/macro read
+            // and the first-layer embedded walk (each open re-reads the whole compound file).
+            NPOIFSFileSystem fs;
             try
             {
-                var (metadata, hasMacros) = ReadFileMetadataAndMacroFlag(fileBytes);
-                result = new DocumentExtractionResult
-                {
-                    Metadata = metadata,
-                    MimeType = _helper.MimeFor(OfficeMimeTypeEnum.PowerPointLegacy),
-                    // SlideCount/NotesSlideCount are populated below, best-effort, from the
-                    // converted body; HasMacros is already final here since it's sourced from the
-                    // original file directly, independent of whether body conversion succeeds.
-                    FormatMetadata = new PowerPointFormatMetadata { HasMacros = hasMacros },
-                };
+                fs = _openFileSystem(fileBytes);
             }
             catch
             {
@@ -55,17 +61,40 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
                 return null;
             }
 
-            // First-layer embedded objects/media are read directly off the *original* .ppt's raw
-            // CFB structure (T-12dfd045), independent of whether body conversion below succeeds --
-            // same reasoning as FileMetadata above: a walk over POIFS directory entries doesn't
-            // depend on b2xtranslator's Ppt module understanding the file's body records.
             try
             {
-                ExtractFirstLayerEmbedded(fileBytes, result);
+                try
+                {
+                    var (metadata, hasMacros) = ReadFileMetadataAndMacroFlag(fs);
+                    result = new DocumentExtractionResult
+                    {
+                        Metadata = metadata,
+                        MimeType = _helper.MimeFor(OfficeMimeTypeEnum.PowerPointLegacy),
+                        // SlideCount/NotesSlideCount are populated below, best-effort, from the
+                        // converted body; HasMacros is already final here since it's sourced from the
+                        // original file directly, independent of whether body conversion succeeds.
+                        FormatMetadata = new PowerPointFormatMetadata { HasMacros = hasMacros },
+                    };
+                }
+                catch
+                {
+                    return null;
+                }
+
+                // First-layer embedded objects/media are read directly off the *original* .ppt's raw
+                // CFB structure (T-12dfd045), independent of whether body conversion below succeeds.
+                try
+                {
+                    _helper.ExtractFirstLayerEmbedded(result, fs);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Ppt first-layer embedded walk failed: {ex.Message}");
+                }
             }
-            catch (Exception ex)
+            finally
             {
-                Console.WriteLine($"Ppt first-layer embedded walk failed: {ex.Message}");
+                fs.Close();
             }
 
             // Body/slide content is best-effort: b2xtranslator's Ppt module was built against the
@@ -85,48 +114,20 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
             return result;
         }
 
-        // Opens its own short-lived NPOIFSFileSystem over the original .ppt bytes -- separate
-        // from ReadFileMetadataAndMacroFlag's (HPSF/root-storage) and PopulateBodyContent's
-        // (b2xtranslator-owned) readers, matching this method's existing "each step opens what it
-        // needs" shape.
-        private void ExtractFirstLayerEmbedded(byte[] fileBytes, DocumentExtractionResult result)
+        private static (FileMetadata Metadata, bool HasMacros) ReadFileMetadataAndMacroFlag(NPOIFSFileSystem fs)
         {
-            var fs = new NPOIFSFileSystem(new MemoryStream(fileBytes));
-            try
-            {
-                _helper.ExtractFirstLayerEmbedded(result, fs);
-            }
-            finally
-            {
-                fs.Close();
-            }
-        }
+            var propsDoc = new HPSFPropertiesOnlyDocument(fs);
 
-        private static (FileMetadata Metadata, bool HasMacros) ReadFileMetadataAndMacroFlag(byte[] fileBytes)
-        {
-            // NPOIFSFileSystem takes ownership of the stream it's given and closes it as part
-            // of its own Close() (mirrors XlsOpenStrategyTests' raw-POIFS fixture helpers) -- no
-            // separate `using` on the MemoryStream, which would double-dispose it.
-            var fs = new NPOIFSFileSystem(new MemoryStream(fileBytes));
-            try
+            var metadata = new FileMetadata();
+            var summary = propsDoc.SummaryInformation;
+            if (summary != null)
             {
-                var propsDoc = new HPSFPropertiesOnlyDocument(fs);
-
-                var metadata = new FileMetadata();
-                var summary = propsDoc.SummaryInformation;
-                if (summary != null)
-                {
-                    MetadataConversions.Apply(summary, metadata);
-                }
-
-                bool hasMacros = fs.Root.HasEntryCaseInsensitive(MacrosStorageName);
-
-                return (metadata, hasMacros);
+                MetadataConversions.Apply(summary, metadata);
             }
-            finally
-            {
-                fs.Close();
-            }
+
+            bool hasMacros = fs.Root.HasEntryCaseInsensitive(MacrosStorageName);
+
+            return (metadata, hasMacros);
         }
 
         private void PopulateBodyContent(byte[] fileBytes, DocumentExtractionResult result)
