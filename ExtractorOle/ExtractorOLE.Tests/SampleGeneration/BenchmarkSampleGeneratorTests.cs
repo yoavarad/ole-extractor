@@ -76,6 +76,19 @@ namespace ExtractorOLE.Tests.SampleGeneration
                 $"doc sample of {bytes.Length} bytes extracted only {result.ExtractedText.Length} chars");
         }
 
+        // #185: the ppt sample was the with_textbox.ppt fixture padded with an unread "Pictures"
+        // stream, so only the small template text was extracted regardless of size.
+        [Fact]
+        public void Generate_Ppt_ExtractedTextScalesWithTarget()
+        {
+            var bytes = BenchmarkSampleGenerator.Generate(SampleFormat.Ppt, SmallTarget);
+
+            var result = ExtractThroughPublicContract(bytes, BenchmarkSampleGenerator.FileName(SampleFormat.Ppt, "small"));
+
+            Assert.True(result.ExtractedText.Length >= SmallTarget / 20,
+                $"ppt sample of {bytes.Length} bytes extracted only {result.ExtractedText.Length} chars");
+        }
+
         [Fact]
         public void Tiers_StayWithinExtractGuardrails()
         {
