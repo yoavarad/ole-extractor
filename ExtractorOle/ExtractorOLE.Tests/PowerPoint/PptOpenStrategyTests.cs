@@ -141,6 +141,25 @@ namespace ExtractorOLE.Tests.PowerPoint
         }
 
         [Fact]
+        public void Open_OpensNpoifsFileSystemExactlyOnce_AndStillPopulatesMetadataAndMacros()
+        {
+            var bytes = BuildMacroEnabledPptFixtureBytes("Once");
+            int opens = 0;
+            var strategy = new PptOpenStrategy(new ExtractionHelper(), b =>
+            {
+                opens++;
+                return new NPOIFSFileSystem(new MemoryStream(b));
+            });
+
+            var result = strategy.Open(bytes);
+
+            Assert.NotNull(result);
+            Assert.Equal(1, opens);
+            Assert.Equal("Once", result!.Metadata!.Title);
+            Assert.True(((PowerPointFormatMetadata)result.FormatMetadata!).HasMacros);
+        }
+
+        [Fact]
         public void ServiceRegistration_ResolvesPptOpenStrategyViaDiRegistryForPowerPointLegacy()
         {
             var services = new ServiceCollection();
