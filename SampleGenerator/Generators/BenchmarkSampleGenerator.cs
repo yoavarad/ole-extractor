@@ -249,6 +249,10 @@ namespace SampleGenerator.Generators
             {
                 var lines = NumberedBody((int)(rows * WordsPerLine)).Split('\n');
                 using var workbook = new HSSFWorkbook();
+                // NPOI defaults WriteAccess to Environment.UserName; pin it so the bytes do not depend on the user.
+                // (InternalWorkbook.WriteAccess would add a second record, so edit the existing one.)
+                workbook.Workbook.GetWorkbookRecordList().Records
+                    .OfType<NPOI.HSSF.Record.WriteAccessRecord>().Single().Username = "NPOI";
                 var sheet = workbook.CreateSheet("Benchmark");
                 for (var i = 0; i < rows; i++)
                 {

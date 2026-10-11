@@ -3056,7 +3056,7 @@
       "notes": "Legacy files are authored by SampleGenerator per ADR-005 and read back only by ExtractorOLE's own readers; openability in real Microsoft Office/LibreOffice is UNVERIFIED. The inner xls (regional-kpis.xls, held in the Ole10Native stream of Embedding1) itself embeds a PNG chart and would require recursive extraction to reach -- out of scope. The non-recursive rule is verified by the named test. No metadata is set."
     }
   ],
-  "$benchmarkSamplesNote": "T-f0963fc3: the 12 fixed benchmark samples (10MB tier: target 10,000,000 bytes; ~100MB tier: target 102,400,000 bytes = 97.66 MiB, under the 104,857,600-byte MaxFileSizeBytes cap; each file lands in [0.99 x target, target]). They are gitignored (samples/benchmark/) and regenerated on demand with `dotnet run --project SampleGenerator -- --benchmark`, which rewrites the files and compares each SHA-256 with this list (exit code 1 on mismatch). They live under 'benchmarkSamples', not 'samples', because the committed-corpus tests (DetectMimeTypeCorpusManifestTests) read every 'samples' entry from disk. sha256 values depend on the deflate output of the .NET runtime that built them (net8.0 target, built here on the .NET 8 runtime via the .NET 9 SDK), so a different runtime's zlib could change the docx/xlsx/pptx hashes; ExtractorOLE.Tests.SampleGeneration.BenchmarkSampleGeneratorTests validates size, SHA-256 and Extract() text for each present file.",
+  "$benchmarkSamplesNote": "T-f0963fc3: the 12 fixed benchmark samples (10MB tier: target 10,000,000 bytes; ~100MB tier: target 102,400,000 bytes = 97.66 MiB, under the 104,857,600-byte MaxFileSizeBytes cap; each file lands in [0.99 x target, target]). They are gitignored (samples/benchmark/) and regenerated on demand with `dotnet run --project SampleGenerator -- --benchmark`, which rewrites the files and compares each SHA-256 with this list (exit code 1 on mismatch). They live under 'benchmarkSamples', not 'samples', because the committed-corpus tests (DetectMimeTypeCorpusManifestTests) read every 'samples' entry from disk. sha256 values depend on the deflate output of the .NET runtime that built them (net10.0 target, built on the .NET 10 runtime), so a different runtime's zlib could change the docx/xlsx/pptx hashes; ExtractorOLE.Tests.SampleGeneration.BenchmarkSampleGeneratorTests validates size, SHA-256 and Extract() text for each present file.",
   "benchmarkSamples": [
     {
       "format": "docx",
@@ -3067,8 +3067,8 @@
       "compositionRule": "OpenXml DocxSampleGenerator authors a line-numbered multilingual body (MultilingualFixtures.ComposeLargeBody(target/20 words, 400 words/line), every line prefixed with a 7-digit line number) plus first-layer embedded-object padding parts of fixed-seed SplitMix64 bytes (1 MiB chunks, incompressible), sized so the zip lands in [0.99 x target, target]; the zip is rewritten with fixed entry order, timestamps and rId1..n relationship ids. Declared uncompressed size is about file size + text, far under the 2 GiB nested-content cap and the 1 GB per-entry cap.",
       "sizeTier": "10mb",
       "targetBytes": 10000000,
-      "sizeBytes": 9948610,
-      "sha256": "b5725ca8b1c40b57be3400524471e8499ed54914ced2bb05f456994067a13e1b",
+      "sizeBytes": 9948609,
+      "sha256": "47a4c8958c23f3b24139291ad432be51707921ba3b313a551fd7a4803fae1bc3",
       "expectedDetectedFormat": {
         "enum": "Docx",
         "mimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
@@ -3084,8 +3084,8 @@
       "compositionRule": "OpenXml XlsxSampleGenerator authors a line-numbered multilingual body (MultilingualFixtures.ComposeLargeBody(target/20 words, 400 words/line), every line prefixed with a 7-digit line number) plus first-layer embedded-object padding parts of fixed-seed SplitMix64 bytes (1 MiB chunks, incompressible), sized so the zip lands in [0.99 x target, target]; the zip is rewritten with fixed entry order, timestamps and rId1..n relationship ids. Declared uncompressed size is about file size + text, far under the 2 GiB nested-content cap and the 1 GB per-entry cap.",
       "sizeTier": "10mb",
       "targetBytes": 10000000,
-      "sizeBytes": 9947232,
-      "sha256": "ca9cfe8e13a65137b0a8ae9f2cf8e5b4d6aa492b615e2a6fe977a503152f9117",
+      "sizeBytes": 9947263,
+      "sha256": "6a407971e3980d86a75d1c70059ab478162f1087a48d2681705cd180fb0cbfd5",
       "expectedDetectedFormat": {
         "enum": "Xlsx",
         "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -3101,8 +3101,8 @@
       "compositionRule": "OpenXml PptxSampleGenerator authors a line-numbered multilingual body (MultilingualFixtures.ComposeLargeBody(target/20 words, 400 words/line), every line prefixed with a 7-digit line number) plus first-layer embedded-object padding parts of fixed-seed SplitMix64 bytes (1 MiB chunks, incompressible), sized so the zip lands in [0.99 x target, target]; the zip is rewritten with fixed entry order, timestamps and rId1..n relationship ids. Declared uncompressed size is about file size + text, far under the 2 GiB nested-content cap and the 1 GB per-entry cap.",
       "sizeTier": "10mb",
       "targetBytes": 10000000,
-      "sizeBytes": 9949719,
-      "sha256": "cc9d92057a7db712974791c4fb7d6f4733df542d21c4a19d6ab4f66aeb9090e1",
+      "sizeBytes": 9949737,
+      "sha256": "1ea3bf2facb50e65e42b95667143783ed362a4ba7c33b81469331834306fbe49",
       "expectedDetectedFormat": {
         "enum": "Pptx",
         "mimeType": "application/vnd.openxmlformats-officedocument.presentationml.presentation"
@@ -3136,7 +3136,7 @@
       "sizeTier": "10mb",
       "targetBytes": 10000000,
       "sizeBytes": 9973248,
-      "sha256": "e1d8ba6f06a6f6f6681df6b41dbecf214e77e18ab83ec9f821e4f349985278a5",
+      "sha256": "ab30048976b14397d405214989182acdced102c0c36e8cef6091dcc28700e791",
       "expectedDetectedFormat": {
         "enum": "Xls",
         "mimeType": "application/vnd.ms-excel"
@@ -3169,8 +3169,8 @@
       "compositionRule": "OpenXml DocxSampleGenerator authors a line-numbered multilingual body (MultilingualFixtures.ComposeLargeBody(target/20 words, 400 words/line), every line prefixed with a 7-digit line number) plus first-layer embedded-object padding parts of fixed-seed SplitMix64 bytes (1 MiB chunks, incompressible), sized so the zip lands in [0.99 x target, target]; the zip is rewritten with fixed entry order, timestamps and rId1..n relationship ids. Declared uncompressed size is about file size + text, far under the 2 GiB nested-content cap and the 1 GB per-entry cap.",
       "sizeTier": "100mb",
       "targetBytes": 102400000,
-      "sizeBytes": 101871352,
-      "sha256": "5df7f04a441a62c9ee1f6525f314e39fd476b644ea3b60e983de9bd2976b3ec6",
+      "sizeBytes": 102070545,
+      "sha256": "42092d92b029dff9d83da3a10e79143774319d93c46dd3e4f79e09bd92ee4e78",
       "expectedDetectedFormat": {
         "enum": "Docx",
         "mimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
@@ -3186,8 +3186,8 @@
       "compositionRule": "OpenXml XlsxSampleGenerator authors a line-numbered multilingual body (MultilingualFixtures.ComposeLargeBody(target/20 words, 400 words/line), every line prefixed with a 7-digit line number) plus first-layer embedded-object padding parts of fixed-seed SplitMix64 bytes (1 MiB chunks, incompressible), sized so the zip lands in [0.99 x target, target]; the zip is rewritten with fixed entry order, timestamps and rId1..n relationship ids. Declared uncompressed size is about file size + text, far under the 2 GiB nested-content cap and the 1 GB per-entry cap.",
       "sizeTier": "100mb",
       "targetBytes": 102400000,
-      "sizeBytes": 101855624,
-      "sha256": "f7e3484b03699c7808e9991334650fa55502025a982a96753452d32cc7d15f1e",
+      "sizeBytes": 101856005,
+      "sha256": "64c75cd0ab5ac94190d472b7979aaabbb61b53766ec37acb39a0b5fa20ddd4dd",
       "expectedDetectedFormat": {
         "enum": "Xlsx",
         "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -3203,8 +3203,8 @@
       "compositionRule": "OpenXml PptxSampleGenerator authors a line-numbered multilingual body (MultilingualFixtures.ComposeLargeBody(target/20 words, 400 words/line), every line prefixed with a 7-digit line number) plus first-layer embedded-object padding parts of fixed-seed SplitMix64 bytes (1 MiB chunks, incompressible), sized so the zip lands in [0.99 x target, target]; the zip is rewritten with fixed entry order, timestamps and rId1..n relationship ids. Declared uncompressed size is about file size + text, far under the 2 GiB nested-content cap and the 1 GB per-entry cap.",
       "sizeTier": "100mb",
       "targetBytes": 102400000,
-      "sizeBytes": 101883910,
-      "sha256": "8d8b05b218976f790063f2c7fafde7edaa3854eeb03c5e2f2ef094ff69abf4a5",
+      "sizeBytes": 101884118,
+      "sha256": "9c680a86898cc39b47afef06ab87c0509d15aa887f3094afe9e0604d89c24fb9",
       "expectedDetectedFormat": {
         "enum": "Pptx",
         "mimeType": "application/vnd.openxmlformats-officedocument.presentationml.presentation"
@@ -3238,7 +3238,7 @@
       "sizeTier": "100mb",
       "targetBytes": 102400000,
       "sizeBytes": 102129152,
-      "sha256": "4199171436a8465ce80f8e492cb6b8530fbf48b929e19bfdf0afcacdc880ce1d",
+      "sha256": "f680150c95d21be3b0b03aa5eb53c2748106346f2b3d8df79e1b79993079d556",
       "expectedDetectedFormat": {
         "enum": "Xls",
         "mimeType": "application/vnd.ms-excel"

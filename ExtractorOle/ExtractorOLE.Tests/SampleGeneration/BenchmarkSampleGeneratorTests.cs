@@ -51,6 +51,15 @@ namespace ExtractorOLE.Tests.SampleGeneration
             Assert.InRange(first.Length, (long)(SmallTarget * BenchmarkSampleGenerator.MinFillRatio), SmallTarget);
         }
 
+        [Fact]
+        public void Generate_Xls_WriteAccessUsernameIsFixed()
+        {
+            var bytes = BenchmarkSampleGenerator.Generate(SampleFormat.Xls, SmallTarget);
+
+            using var workbook = new NPOI.HSSF.UserModel.HSSFWorkbook(new MemoryStream(bytes));
+            Assert.Equal("NPOI", workbook.Workbook.WriteAccess.Username);
+        }
+
         [Theory]
         [MemberData(nameof(Formats))]
         public void Generate_SmallTarget_ExtractsNonEmptyText(SampleFormat format)
