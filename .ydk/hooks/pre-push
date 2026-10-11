@@ -1,63 +1,22 @@
 #!/bin/sh
-# Skip verification if ydk task done already ran it recently
-VERIFIED_FLAG=".ydk/.verified"
-if [ -f "$VERIFIED_FLAG" ]; then
-  VERIFIED_TS=$(cat "$VERIFIED_FLAG")
-  NOW=$(python -c "import time; print(time.time())")
-  AGE=$(python -c "print(float('$NOW') - float('$VERIFIED_TS'))")
-  EXPIRED=$(python -c "print(1 if float('$AGE') > 300 else 0)")
-  if [ "$EXPIRED" = "0" ]; then
-    echo "Pre-push: skipping verification (ydk task done verified recently)"
-    rm -f "$VERIFIED_FLAG"
-    exit 0
+# Local mirror of the PR gates. Base is the ydk 1.5.0 generated hook (`ydk hooks pre-push`,
+# which runs the git:pre-push plugins and honors the .ydk/.verified flag from `ydk task done`);
+# re-running `ydk init --force` would drop the branch-name check below, so re-add it.
+
+# Branch name: same regex as the "Branch name" job in .github/workflows/ydk-pr-checks.yml.
+# git feeds "<local ref> <local sha> <remote ref> <remote sha>" lines on stdin.
+zero=0000000000000000000000000000000000000000
+while read -r local_ref local_sha remote_ref remote_sha; do
+  case "$remote_ref" in refs/heads/*) ;; *) continue ;; esac
+  branch=${remote_ref#refs/heads/}
+  [ "$branch" = main ] && continue
+  [ "$local_sha" = "$zero" ] && continue
+  if ! echo "$branch" | grep -qE '^(feat|fix|docs|chore|refactor|test|ci|perf|release|task)/[a-z0-9-]+$'; then
+    echo "pre-push: branch '$branch' does not follow convention type/description (ydk-pr-checks would fail)" >&2
+    echo "Valid types: feat fix docs chore refactor test ci perf release task" >&2
+    exit 1
   fi
-  rm -f "$VERIFIED_FLAG"
-fi
-
-# ydk's bundled pre-push plugin catalog is Python/Next.js/Terraform/PR-context
-# oriented and has no per-project stack-scoping yet. This project is C#: the
-# stack-specific plugins (fastapi-*, nextjs-*, terraform-*) trivially pass
-# (no matching files), but two plugins fail unconditionally regardless of
-# project content -- pr-body-validation (expects PR-context JSON on stdin,
-# which a plain `git push` never provides) and tests (pytest, which exits
-# non-zero on "no tests collected" since there is no Python test suite here).
-# Those two are ignored below; every other plugin's result still gates the
-# push.
-#
-# TEMPORARY: dotnet-format is also ignored below. It fails unconditionally
-# (whole-solution scan, not scoped to changed files) on pre-existing
-# WHITESPACE errors in ExtractorOle/ExtractorOLE/Helpers/ExtractionHelper.cs
-# and ExtractorOle/ExtractorOLE/Old/Doc/DocExtractor.cs, unrelated to any
-# single task. Remove this line from IGNORE_LIST once a task runs
-# `dotnet format` (or manually fixes those files) and the gate goes green --
-# leaving it here permanently would silently defeat the point of the gate.
-# (dotnet-build was ignored for the same reason but is fixed as of
-# T-eeb6684b merging the net10.0 -> net8.0 downgrade; no longer ignored.)
-IGNORE_LIST="pr-body-validation
-tests
-dotnet-format"
-
-OUTPUT="$(PYTHONIOENCODING=utf-8 ydk verify run --trigger pre-push 2>&1)"
-STATUS=$?
-printf '%s\n' "$OUTPUT"
-
-if [ $STATUS -eq 0 ]; then
-  exit 0
-fi
-
-FAILED=$(printf '%s\n' "$OUTPUT" | grep -F '✗' | awk '{print $2}')
-REAL_FAIL=""
-for name in $FAILED; do
-  case "$IGNORE_LIST" in
-    *"$name"*) : ;;
-    *) REAL_FAIL="$REAL_FAIL $name" ;;
-  esac
 done
 
-if [ -z "$REAL_FAIL" ]; then
-  echo "pre-push: ignoring known-irrelevant plugin failures ($(echo $FAILED)) for this project -- see .ydk/hooks/pre-push"
-  exit 0
-fi
-
-echo "pre-push: real verification failures:$REAL_FAIL"
-exit 1
+export PYTHONIOENCODING=utf-8
+exec ydk hooks pre-push
