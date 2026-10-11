@@ -3,6 +3,7 @@ using ExtractorOLE.DTOs;
 using ExtractorOLE.Exceptions;
 using ExtractorOLE.Helpers.MimeDetection;
 using System;
+using System.IO;
 
 namespace ExtractorOLE.Helpers
 {
@@ -30,16 +31,19 @@ namespace ExtractorOLE.Helpers
             var bytes = request?.FileBytes;
             if (bytes == null) return;
 
-            Enforce(request!.FileName, bytes.LongLength, () => bytes);
+            Enforce(request!.FileName, bytes.LongLength, () => new MemoryStream(bytes, writable: false));
         }
 
-        // Stream/path input (#192): the size check uses the stream length, so an over-limit file is
-        // rejected before anything is buffered. The declared-size header checks still read a byte[]
-        // (ExtractionInput.Bytes) until #193 moves them onto the stream.
+        // Stream/path input (#192, #193): the size check uses the stream length, so an over-limit
+        // file is rejected before anything is read; the declared-size header checks then read only
+        // the headers they need from the stream, never buffering the whole file.
         internal void Enforce(ExtractionRequest request, ExtractionInput input) =>
-            Enforce(request.FileName, input.Length, () => input.Bytes);
+            Enforce(request.FileName, input.Length, () => input.OriginalBytes != null
+                ? new MemoryStream(input.OriginalBytes, writable: false)
+                : input.Stream!);
 
-        private void Enforce(string fileName, long length, Func<byte[]> readBytes)
+        // openStream is only called once the length check passes; a byte[] is wrapped without copying.
+        private void Enforce(string fileName, long length, Func<Stream> openStream)
         {
             if (length > _limits.MaxFileSizeBytes)
             {
@@ -47,12 +51,12 @@ namespace ExtractorOLE.Helpers
                 throw new FileTooLargeException(length, _limits.MaxFileSizeBytes);
             }
 
-            var bytes = readBytes();
+            var stream = openStream();
 
             string? metric = null;
             long limit = 0;
 
-            if (OoxmlMimeDetector.TryGetDeclaredZipTotalSize(bytes, out var zipTotal, out var entries, out var largestEntry))
+            if (OoxmlMimeDetector.TryGetDeclaredZipTotalSize(stream, out var zipTotal, out var entries, out var largestEntry))
             {
                 if (largestEntry > (ulong)_limits.MaxDeclaredEntryBytes)
                 {
@@ -65,7 +69,7 @@ namespace ExtractorOLE.Helpers
                     metric = $"ZIP local file header(s) ({entries} {(entries == 1 ? "entry" : "entries")}) declare {zipTotal} bytes total uncompressed (limit {limit})";
                 }
             }
-            else if (CfbMimeDetector.TryGetDeclaredCfbTotalSize(bytes, out var cfbTotal, out var fatSectors, out var sectorSize)
+            else if (CfbMimeDetector.TryGetDeclaredCfbTotalSize(stream, out var cfbTotal, out var fatSectors, out var sectorSize)
                      && cfbTotal > (ulong)_limits.MaxDeclaredNestedContentBytes)
             {
                 limit = _limits.MaxDeclaredNestedContentBytes;

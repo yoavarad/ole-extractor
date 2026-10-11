@@ -105,18 +105,29 @@ namespace ExtractorOLE.Helpers.MimeDetection
         // documented fixed-offset fields directly.
         internal static bool TryGetDeclaredCfbTotalSize(byte[] bytes, out ulong declaredTotalBytes, out uint fatSectorCount, out int sectorSize)
         {
+            using var stream = new MemoryStream(bytes, writable: false);
+            return TryGetDeclaredCfbTotalSize(stream, out declaredTotalBytes, out fatSectorCount, out sectorSize);
+        }
+
+        // Stream form (#193): reads only the first 0x30 header bytes from position 0.
+        internal static bool TryGetDeclaredCfbTotalSize(Stream stream, out ulong declaredTotalBytes, out uint fatSectorCount, out int sectorSize)
+        {
             declaredTotalBytes = 0;
             fatSectorCount = 0;
             sectorSize = 0;
 
             const int HeaderMinLength = 0x30; // through end of FAT-sector-count field at 0x2C-0x2F
-            if (bytes.Length < HeaderMinLength) return false;
+            if (stream.Length < HeaderMinLength) return false;
+
+            Span<byte> header = stackalloc byte[HeaderMinLength];
+            stream.Position = 0;
+            stream.ReadExactly(header);
 
             ReadOnlySpan<byte> cfbSignature = stackalloc byte[] { 0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0x1A, 0xE1 };
-            if (!bytes.AsSpan(0, 8).SequenceEqual(cfbSignature)) return false;
+            if (!header.Slice(0, 8).SequenceEqual(cfbSignature)) return false;
 
-            ushort sectorShift = BinaryPrimitives.ReadUInt16LittleEndian(bytes.AsSpan(0x1E, 2));
-            fatSectorCount = BinaryPrimitives.ReadUInt32LittleEndian(bytes.AsSpan(0x2C, 4));
+            ushort sectorShift = BinaryPrimitives.ReadUInt16LittleEndian(header.Slice(0x1E, 2));
+            fatSectorCount = BinaryPrimitives.ReadUInt32LittleEndian(header.Slice(0x2C, 4));
 
             // MS-CFB only defines sector shift 9 (512B, v3) or 12 (4096B, v4). Any other
             // value is forged/invalid -- treat it as maximally oversized rather than let

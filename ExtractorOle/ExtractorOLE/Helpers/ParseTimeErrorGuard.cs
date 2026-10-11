@@ -28,19 +28,33 @@ namespace ExtractorOLE.Helpers
         /// </summary>
         public static void Preflight(byte[] fileBytes, bool isOoxmlFormat)
         {
-            if (fileBytes.Length == 0)
+            using var stream = new MemoryStream(fileBytes, writable: false);
+            Preflight(stream, isOoxmlFormat);
+        }
+
+        // Stream form (#193): reads only the signature, the ZIP tail, or the CFB header and its
+        // listed FAT sectors, at absolute offsets (0 = start of content); never buffers the whole
+        // file. The stream is left open; its position afterwards is unspecified.
+        internal static void Preflight(Stream stream, bool isOoxmlFormat)
+        {
+            var length = stream.Length;
+            if (length == 0)
             {
                 throw new TruncatedContainerException(isOoxmlFormat ? ZipEocdLength : CfbHeaderLength, 0);
             }
 
-            if (fileBytes.AsSpan().StartsWith(ZipLocalHeaderSignature))
+            Span<byte> signature = stackalloc byte[CfbSignature.Length];
+            signature = signature.Slice(0, (int)Math.Min(signature.Length, length));
+            ReadAt(stream, 0, signature);
+
+            if (signature.StartsWith(ZipLocalHeaderSignature))
             {
-                CheckZipNotTruncated(fileBytes);
+                CheckZipNotTruncated(stream, length);
             }
-            else if (fileBytes.AsSpan().StartsWith(CfbSignature))
+            else if (signature.StartsWith(CfbSignature))
             {
-                CheckCfbNotTruncated(fileBytes);
-                CheckCfbNotEncrypted(fileBytes);
+                CheckCfbNotTruncated(stream, length);
+                CheckCfbNotEncrypted(stream);
             }
         }
 
@@ -76,24 +90,33 @@ namespace ExtractorOLE.Helpers
         // An EOCD record that declares a central directory ending past where the EOCD itself
         // sits means bytes are missing. An absent EOCD is a destroyed structure, not a
         // shortfall we can measure, so it is left to the format library (corrupt-file).
-        private static void CheckZipNotTruncated(byte[] bytes)
+        // Only the tail that can hold the EOCD (22 bytes + max comment length) is read.
+        private static void CheckZipNotTruncated(Stream stream, long length)
         {
-            var searchFloor = Math.Max(0, bytes.Length - ZipEocdLength - ushort.MaxValue);
-            for (var pos = bytes.Length - ZipEocdLength; pos >= searchFloor; pos--)
+            if (length < ZipEocdLength) return;
+
+            var tailLength = (int)Math.Min(length, ZipEocdLength + ushort.MaxValue);
+            var tailStart = length - tailLength;
+            var tail = new byte[tailLength];
+            ReadAt(stream, tailStart, tail);
+
+            // pos is an absolute offset; its index in tail is pos - tailStart.
+            for (var pos = length - ZipEocdLength; pos >= tailStart; pos--)
             {
-                if (BinaryPrimitives.ReadUInt32LittleEndian(bytes.AsSpan(pos, 4)) != ZipEocdSignature) continue;
+                var i = (int)(pos - tailStart);
+                if (BinaryPrimitives.ReadUInt32LittleEndian(tail.AsSpan(i, 4)) != ZipEocdSignature) continue;
 
-                var commentLength = BinaryPrimitives.ReadUInt16LittleEndian(bytes.AsSpan(pos + 20, 2));
-                if (pos + ZipEocdLength + commentLength > bytes.Length) continue;
+                var commentLength = BinaryPrimitives.ReadUInt16LittleEndian(tail.AsSpan(i + 20, 2));
+                if (pos + ZipEocdLength + commentLength > length) continue;
 
-                var centralDirSize = BinaryPrimitives.ReadUInt32LittleEndian(bytes.AsSpan(pos + 12, 4));
-                var centralDirOffset = BinaryPrimitives.ReadUInt32LittleEndian(bytes.AsSpan(pos + 16, 4));
+                var centralDirSize = BinaryPrimitives.ReadUInt32LittleEndian(tail.AsSpan(i + 12, 4));
+                var centralDirOffset = BinaryPrimitives.ReadUInt32LittleEndian(tail.AsSpan(i + 16, 4));
                 if (centralDirOffset == uint.MaxValue) return; // zip64: real offset lives elsewhere
 
                 var declaredEnd = (long)centralDirOffset + centralDirSize;
                 if (declaredEnd > pos)
                 {
-                    throw new TruncatedContainerException(declaredEnd + ZipEocdLength + commentLength, bytes.Length);
+                    throw new TruncatedContainerException(declaredEnd + ZipEocdLength + commentLength, length);
                 }
                 return;
             }
@@ -101,20 +124,24 @@ namespace ExtractorOLE.Helpers
 
         // MS-CFB header: the directory's first sector and every FAT sector listed in the header
         // DIFAT must lie wholly inside the file. Sector n occupies [(n+1)*size, (n+2)*size).
-        private static void CheckCfbNotTruncated(byte[] bytes)
+        // Reads the 512-byte header, then each listed FAT sector that lies inside the file.
+        private static void CheckCfbNotTruncated(Stream stream, long length)
         {
-            if (bytes.Length < CfbHeaderLength)
+            if (length < CfbHeaderLength)
             {
-                throw new TruncatedContainerException(CfbHeaderLength, bytes.Length);
+                throw new TruncatedContainerException(CfbHeaderLength, length);
             }
 
-            var sectorShift = BinaryPrimitives.ReadUInt16LittleEndian(bytes.AsSpan(0x1E, 2));
+            var header = new byte[CfbHeaderLength];
+            ReadAt(stream, 0, header);
+
+            var sectorShift = BinaryPrimitives.ReadUInt16LittleEndian(header.AsSpan(0x1E, 2));
             if (sectorShift != 9 && sectorShift != 12) return; // not a valid CFB header: corrupt-file
 
             long sectorSize = 1L << sectorShift;
-            if (bytes.Length < sectorSize)
+            if (length < sectorSize)
             {
-                throw new TruncatedContainerException(sectorSize, bytes.Length);
+                throw new TruncatedContainerException(sectorSize, length);
             }
 
             long expected = 0;
@@ -124,14 +151,14 @@ namespace ExtractorOLE.Helpers
                 expected = Math.Max(expected, ((long)sectorId + 2) * sectorSize);
             }
 
-            Require(BinaryPrimitives.ReadUInt32LittleEndian(bytes.AsSpan(0x30, 4)));
+            Require(BinaryPrimitives.ReadUInt32LittleEndian(header.AsSpan(0x30, 4)));
 
-            var fatSectorCount = BinaryPrimitives.ReadUInt32LittleEndian(bytes.AsSpan(0x2C, 4));
+            var fatSectorCount = BinaryPrimitives.ReadUInt32LittleEndian(header.AsSpan(0x2C, 4));
             var listed = (int)Math.Min(fatSectorCount, 109);
             var fatSectorIds = new uint[listed];
             for (var i = 0; i < listed; i++)
             {
-                fatSectorIds[i] = BinaryPrimitives.ReadUInt32LittleEndian(bytes.AsSpan(0x4C + i * 4, 4));
+                fatSectorIds[i] = BinaryPrimitives.ReadUInt32LittleEndian(header.AsSpan(0x4C + i * 4, 4));
                 Require(fatSectorIds[i]);
             }
 
@@ -139,15 +166,16 @@ namespace ExtractorOLE.Helpers
             // the file (a short final sector is tolerated). Only FAT sectors present in the file
             // are read; a missing one was already accounted for above.
             var entriesPerFatSector = (int)(sectorSize / 4);
+            var fatSector = new byte[sectorSize];
             long highestAllocated = -1;
             for (var i = 0; i < listed; i++)
             {
-                if (fatSectorIds[i] >= 0xFFFFFFFA || ((long)fatSectorIds[i] + 2) * sectorSize > bytes.Length) continue;
+                if (fatSectorIds[i] >= 0xFFFFFFFA || ((long)fatSectorIds[i] + 2) * sectorSize > length) continue;
 
-                var fatOffset = ((long)fatSectorIds[i] + 1) * sectorSize;
+                ReadAt(stream, ((long)fatSectorIds[i] + 1) * sectorSize, fatSector);
                 for (var j = 0; j < entriesPerFatSector; j++)
                 {
-                    if (BinaryPrimitives.ReadUInt32LittleEndian(bytes.AsSpan((int)fatOffset + j * 4, 4)) != 0xFFFFFFFF)
+                    if (BinaryPrimitives.ReadUInt32LittleEndian(fatSector.AsSpan(j * 4, 4)) != 0xFFFFFFFF)
                     {
                         highestAllocated = Math.Max(highestAllocated, (long)i * entriesPerFatSector + j);
                     }
@@ -158,21 +186,24 @@ namespace ExtractorOLE.Helpers
                 expected = Math.Max(expected, (highestAllocated + 1) * sectorSize + 1);
             }
 
-            if (expected > bytes.Length)
+            if (expected > length)
             {
-                throw new TruncatedContainerException(expected, bytes.Length);
+                throw new TruncatedContainerException(expected, length);
             }
         }
 
         // MS-OFFCRYPTO: an encrypted OOXML package is a CFB whose root holds EncryptionInfo and
         // EncryptedPackage streams. If OpenMcdf cannot read the CFB, defer to the format library.
-        private static void CheckCfbNotEncrypted(byte[] bytes)
+        // The stream is the caller's (or ExtractionInput's) and is read again on open. OpenMcdf
+        // flushes to a writable stream on dispose, so it gets a read-only view that it cannot
+        // write to or close.
+        private static void CheckCfbNotEncrypted(Stream stream)
         {
             bool encrypted;
             try
             {
-                using var stream = new MemoryStream(bytes);
-                using var root = RootStorage.Open(stream);
+                stream.Position = 0;
+                using var root = RootStorage.Open(new ReadOnlyView(stream), StorageModeFlags.LeaveOpen);
                 encrypted = root.EnumerateEntries()
                     .Any(e => e.Name == "EncryptionInfo" || e.Name == "EncryptedPackage");
             }
@@ -182,6 +213,30 @@ namespace ExtractorOLE.Helpers
             }
 
             if (encrypted) throw new PasswordProtectedException();
+        }
+
+        // Read-only, non-owning view of a seekable stream.
+        private sealed class ReadOnlyView : Stream
+        {
+            private readonly Stream _inner;
+            public ReadOnlyView(Stream inner) => _inner = inner;
+            public override bool CanRead => true;
+            public override bool CanSeek => true;
+            public override bool CanWrite => false;
+            public override long Length => _inner.Length;
+            public override long Position { get => _inner.Position; set => _inner.Position = value; }
+            public override int Read(byte[] buffer, int offset, int count) => _inner.Read(buffer, offset, count);
+            public override int Read(Span<byte> buffer) => _inner.Read(buffer);
+            public override long Seek(long offset, SeekOrigin origin) => _inner.Seek(offset, origin);
+            public override void Flush() { }
+            public override void SetLength(long value) => throw new NotSupportedException();
+            public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
+        }
+
+        private static void ReadAt(Stream stream, long offset, Span<byte> buffer)
+        {
+            stream.Position = offset;
+            stream.ReadExactly(buffer);
         }
     }
 }
