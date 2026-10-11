@@ -49,14 +49,21 @@ namespace ExtractorOLE.Helpers
         /// the container (open strategies swallow library exceptions and return null), which is
         /// corrupt-file; a library-level encrypted-document exception is password-protected.
         /// </summary>
-        public static DocumentExtractionResult OpenOrThrow(IOpenStrategy? strategy, byte[] fileBytes, string detectedMimeType)
+        public static DocumentExtractionResult OpenOrThrow(IOpenStrategy? strategy, byte[] fileBytes, string detectedMimeType) =>
+            OpenOrThrow(strategy, s => s.Open(fileBytes), detectedMimeType);
+
+        // Byte[] input keeps calling Open(byte[]); stream/path input calls Open(Stream) (#192).
+        internal static DocumentExtractionResult OpenOrThrow(IOpenStrategy? strategy, ExtractionInput input, string detectedMimeType) =>
+            OpenOrThrow(strategy, s => input.OriginalBytes != null ? s.Open(input.OriginalBytes) : s.Open(input.Stream!), detectedMimeType);
+
+        private static DocumentExtractionResult OpenOrThrow(IOpenStrategy? strategy, Func<IOpenStrategy, DocumentExtractionResult?> open, string detectedMimeType)
         {
             if (strategy == null) return new DocumentExtractionResult();
 
             DocumentExtractionResult? result;
             try
             {
-                result = strategy.Open(fileBytes);
+                result = open(strategy);
             }
             catch (NPOI.EncryptedDocumentException)
             {

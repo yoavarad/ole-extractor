@@ -13,13 +13,16 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
             _helper = helper;
         }
 
-        public DocumentExtractionResult? Open(byte[] fileBytes)
+        public DocumentExtractionResult? Open(byte[] fileBytes) => Open(new MemoryStream(fileBytes, false));
+
+        // Reads the seekable stream lazily (#192, ADR-008); the caller owns and disposes it.
+        public DocumentExtractionResult? Open(Stream input)
         {
             WordprocessingDocument? word = null;
             try
             {
                 var result = new DocumentExtractionResult();
-                word = OpenXmlPackages.OpenWord(fileBytes);
+                word = OpenXmlPackages.OpenWord(input);
                 _helper.ExtractMetadataAndEmbedded(word, word.MainDocumentPart, result);
                 if (string.IsNullOrEmpty(result.MimeType) && word.CoreFilePropertiesPart != null)
                 {

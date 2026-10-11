@@ -16,13 +16,16 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
             _helper = helper;
         }
 
-        public DocumentExtractionResult? Open(byte[] fileBytes)
+        public DocumentExtractionResult? Open(byte[] fileBytes) => Open(new MemoryStream(fileBytes, false));
+
+        // Reads the seekable stream lazily (#192, ADR-008); the caller owns and disposes it.
+        public DocumentExtractionResult? Open(Stream input)
         {
             SpreadsheetDocument? excel = null;
             try
             {
                 var result = new DocumentExtractionResult();
-                excel = OpenXmlPackages.OpenSpreadsheet(fileBytes);
+                excel = OpenXmlPackages.OpenSpreadsheet(input);
                 _helper.ExtractMetadataAndEmbedded(excel, excel.WorkbookPart, result);
                 result.FormatMetadata = BuildExcelFormatMetadata(excel.WorkbookPart);
                 if (string.IsNullOrEmpty(result.MimeType) && excel.CoreFilePropertiesPart != null)

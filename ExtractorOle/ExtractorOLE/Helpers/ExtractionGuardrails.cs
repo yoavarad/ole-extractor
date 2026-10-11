@@ -30,11 +30,24 @@ namespace ExtractorOLE.Helpers
             var bytes = request?.FileBytes;
             if (bytes == null) return;
 
-            if (bytes.Length > _limits.MaxFileSizeBytes)
+            Enforce(request!.FileName, bytes.LongLength, () => bytes);
+        }
+
+        // Stream/path input (#192): the size check uses the stream length, so an over-limit file is
+        // rejected before anything is buffered. The declared-size header checks still read a byte[]
+        // (ExtractionInput.Bytes) until #193 moves them onto the stream.
+        internal void Enforce(ExtractionRequest request, ExtractionInput input) =>
+            Enforce(request.FileName, input.Length, () => input.Bytes);
+
+        private void Enforce(string fileName, long length, Func<byte[]> readBytes)
+        {
+            if (length > _limits.MaxFileSizeBytes)
             {
-                _log($"[Extract] file-too-large: fileName='{request!.FileName}', actualBytes={bytes.Length}, limitBytes={_limits.MaxFileSizeBytes}");
-                throw new FileTooLargeException(bytes.Length, _limits.MaxFileSizeBytes);
+                _log($"[Extract] file-too-large: fileName='{fileName}', actualBytes={length}, limitBytes={_limits.MaxFileSizeBytes}");
+                throw new FileTooLargeException(length, _limits.MaxFileSizeBytes);
             }
+
+            var bytes = readBytes();
 
             string? metric = null;
             long limit = 0;
@@ -61,7 +74,7 @@ namespace ExtractorOLE.Helpers
 
             if (metric != null)
             {
-                _log($"[Extract] oversized-nested-content: fileName='{request!.FileName}', fileBytes={bytes.Length}, limitBytes={limit}, {metric}");
+                _log($"[Extract] oversized-nested-content: fileName='{fileName}', fileBytes={length}, limitBytes={limit}, {metric}");
                 throw new OversizedNestedContentException(metric);
             }
         }
