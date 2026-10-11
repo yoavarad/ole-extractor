@@ -59,19 +59,25 @@ namespace ExtractorOLE
         public DocumentExtractionResult Extract(ExtractionRequest request)
         {
             ValidateRequest(request);
+            // Owns the FileStream opened for FilePath; disposed after ReleaseParsedDocument below,
+            // because an OOXML package opened from it reads the stream lazily (ADR-008).
+            using var input = ExtractionInput.From(request);
             var mime = request.DetectedMimeType;
-            var size = request.FileBytes.LongLength;
+            var size = input.Length;
             using (ExtractionTelemetry.Stage("guardrails", mime, size))
-                _guardrails.Enforce(request); // after null checks, before any parsing/dispatch (T-3335d397)
+                _guardrails.Enforce(request, input); // after null checks, before any parsing/dispatch (T-3335d397)
 
             var format = ResolveFormat(request.DetectedMimeType)
                          ?? throw new Exceptions.UnsupportedFormatException(request.DetectedMimeType);
 
             using (ExtractionTelemetry.Stage("preflight", mime, size))
-                ParseTimeErrorGuard.Preflight(request.FileBytes, IsOoxml(format));
+                ParseTimeErrorGuard.Preflight(input.Bytes, IsOoxml(format));
+            // Stream/path input: drop the buffer guardrails/preflight needed before the format
+            // library opens the stream (#193 removes that buffer).
+            input.ReleaseBytes();
             DocumentExtractionResult result;
             using (ExtractionTelemetry.Stage("open", mime, size))
-                result = ParseTimeErrorGuard.OpenOrThrow(_registry.GetOpenStrategy(format), request.FileBytes, request.DetectedMimeType);
+                result = ParseTimeErrorGuard.OpenOrThrow(_registry.GetOpenStrategy(format), input, request.DetectedMimeType);
             try
             {
                 result.MimeType = request.DetectedMimeType;
@@ -80,7 +86,7 @@ namespace ExtractorOLE
                 var extractor = _registry.GetTextExtractor(format);
                 if (extractor != null)
                 {
-                    result.ExtractedText = ExtractText(extractor, result, request.FileBytes);
+                    result.ExtractedText = ExtractText(extractor, result, () => input.Bytes);
                 }
             }
             finally
@@ -209,7 +215,7 @@ namespace ExtractorOLE
                 {
                     try
                     {
-                        result.ExtractedText = ExtractText(extractor, result, fileBytes);
+                        result.ExtractedText = ExtractText(extractor, result, () => fileBytes);
                     }
                     catch (Exception ex)
                     {
@@ -230,15 +236,15 @@ namespace ExtractorOLE
         }
 
         // Reuses what the open strategy already parsed (#168, #167) when the extractor can take
-        // it; otherwise extracts from the raw bytes.
-        private static string ExtractText(ITextExtractor extractor, DocumentExtractionResult result, byte[] fileBytes)
+        // it; otherwise extracts from the raw bytes, read only on that fallback.
+        private static string ExtractText(ITextExtractor extractor, DocumentExtractionResult result, Func<byte[]> fileBytes)
         {
             object? parsed = result.ParsedDocument;
 
             string? text = parsed != null && extractor is IParsedDocumentTextExtractor parsedExtractor
                 ? parsedExtractor.ExtractText(parsed)
                 : null;
-            return text ?? extractor.ExtractText(fileBytes) ?? string.Empty;
+            return text ?? extractor.ExtractText(fileBytes()) ?? string.Empty;
         }
 
         // MainExtractor owns the handed-off parsed document: an open OOXML package (#167) is

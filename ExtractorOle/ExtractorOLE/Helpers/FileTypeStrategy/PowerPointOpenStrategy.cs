@@ -15,13 +15,16 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
             _helper = helper;
         }
 
-        public DocumentExtractionResult? Open(byte[] fileBytes)
+        public DocumentExtractionResult? Open(byte[] fileBytes) => Open(new MemoryStream(fileBytes, false));
+
+        // Reads the seekable stream lazily (#192, ADR-008); the caller owns and disposes it.
+        public DocumentExtractionResult? Open(Stream input)
         {
             PresentationDocument? pres = null;
             try
             {
                 var result = new DocumentExtractionResult();
-                pres = OpenXmlPackages.OpenPresentation(fileBytes);
+                pres = OpenXmlPackages.OpenPresentation(input);
                 _helper.ExtractMetadataAndEmbedded(pres, pres.PresentationPart, result);
                 result.FormatMetadata = BuildPowerPointFormatMetadata(pres.PresentationPart);
                 if (string.IsNullOrEmpty(result.MimeType) && pres.CoreFilePropertiesPart != null)
