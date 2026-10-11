@@ -19,26 +19,28 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
             _helper = helper;
         }
 
-        public DocumentExtractionResult? Open(byte[] fileBytes)
+        public DocumentExtractionResult? Open(byte[] fileBytes) => OpenFrom(new MemoryStream(fileBytes));
+
+        // Reads the caller's seekable stream directly (#194, ADR-008): NPOI buffers it once instead of a byte[] bridge plus NPOI's own copy. The caller owns and disposes it.
+        public DocumentExtractionResult? Open(Stream input) => OpenFrom(new NonClosingStream(input));
+
+        private DocumentExtractionResult? OpenFrom(Stream source)
         {
             try
             {
                 var result = new DocumentExtractionResult();
-                using (var ms = new MemoryStream(fileBytes))
+                var workbook = XlsWorkbooks.Load(source);
+                var summary = workbook.SummaryInformation;
+                if (summary != null)
                 {
-                    var workbook = XlsWorkbooks.Load(ms);
-                    var summary = workbook.SummaryInformation;
-                    if (summary != null)
-                    {
-                        MetadataConversions.Apply(summary, result.Metadata);
-                    }
-
-                    result.FormatMetadata = BuildExcelFormatMetadata(workbook);
-
-                    _helper.ExtractFirstLayerEmbedded(result, workbook);
-                    // Handed to XlsTextExtractor so the workbook is parsed once; MainExtractor releases it.
-                    result.ParsedDocument = workbook;
+                    MetadataConversions.Apply(summary, result.Metadata);
                 }
+
+                result.FormatMetadata = BuildExcelFormatMetadata(workbook);
+
+                _helper.ExtractFirstLayerEmbedded(result, workbook);
+                // Handed to XlsTextExtractor so the workbook is parsed once; MainExtractor releases it.
+                result.ParsedDocument = workbook;
                 result.MimeType = _helper.MimeFor(OfficeMimeTypeEnum.ExcelLegacy);
                 return result;
             }
