@@ -49,7 +49,9 @@ namespace ExtractorOLE
         /// dispatches to the open + text-extraction components registered for that format
         /// in <see cref="IFormatDispatchRegistry"/>; contains no format-specific parsing.
         /// A null request or null required field throws <see cref="ArgumentNullException"/>
-        /// first; then the pre-parse guardrails reject file-too-large and
+        /// first; then an invalid input source (more than one of FileBytes/InputStream/FilePath, or a
+        /// non-seekable stream) throws <see cref="ArgumentException"/> and a FilePath that cannot be
+        /// opened throws the FileStream I/O exception; then the pre-parse guardrails reject file-too-large and
         /// oversized-nested-content input; then a mime type that is not one of the six
         /// supported formats throws <see cref="Exceptions.UnsupportedFormatException"/>;
         /// then a parse-time preflight and open raise the specific
@@ -86,6 +88,9 @@ namespace ExtractorOLE
                 var extractor = _registry.GetTextExtractor(format);
                 if (extractor != null)
                 {
+                    // Byte fallback for stream input re-buffers the file (only when the extractor
+                    // cannot read ParsedDocument). An open OOXML package seeks before every read, so
+                    // rewinding the shared stream here is safe.
                     result.ExtractedText = ExtractText(extractor, result, () => input.Bytes);
                 }
             }

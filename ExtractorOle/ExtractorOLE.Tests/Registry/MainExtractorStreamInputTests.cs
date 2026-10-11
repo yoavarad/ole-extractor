@@ -152,6 +152,11 @@ namespace ExtractorOLE.Tests.Registry
             bytesAndStream.InputStream = new MemoryStream(bytes);
             Assert.Throws<ArgumentException>(() => extractor.Extract(bytesAndStream));
 
+            var bytesAndPath = Request(DocxMime);
+            bytesAndPath.FileBytes = bytes;
+            bytesAndPath.FilePath = "unused.docx";
+            Assert.Throws<ArgumentException>(() => extractor.Extract(bytesAndPath));
+
             var streamAndPath = Request(DocxMime);
             streamAndPath.InputStream = new MemoryStream(bytes);
             streamAndPath.FilePath = "unused.docx";
@@ -192,6 +197,68 @@ namespace ExtractorOLE.Tests.Registry
 
             Assert.IsAssignableFrom<ExtractorOleException>(bytesError);
             Assert.Equal(bytesError!.GetType(), streamError?.GetType());
+        }
+
+        [Theory]
+        [InlineData("text/plain")]                // unsupported format
+        [InlineData(DocxMime)]                    // corrupt container
+        public void FilePath_IsClosedWhenExtractThrows(string mime)
+        {
+            var path = Path.GetTempFileName();
+            try
+            {
+                File.WriteAllBytes(path, new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 });
+                var request = Request(mime);
+                request.FilePath = path;
+
+                Assert.IsAssignableFrom<ExtractorOleException>(Record.Exception(() => BuildExtractor().Extract(request)));
+            }
+            finally
+            {
+                File.Delete(path); // throws if Extract left the file open
+            }
+        }
+
+        [Fact]
+        public void EmptyStream_RaisesTheSameErrorAsEmptyBytes()
+        {
+            var extractor = BuildExtractor();
+            var bytesError = Record.Exception(() => extractor.Extract(Request(DocxMime)));
+            var request = Request(DocxMime);
+            request.InputStream = new MemoryStream();
+
+            Assert.IsType<TruncatedContainerException>(bytesError);
+            Assert.IsType<TruncatedContainerException>(Record.Exception(() => extractor.Extract(request)));
+        }
+
+        [Fact]
+        public async Task ExtractManyAsync_MixedInputSources_MatchByteArrayResults()
+        {
+            var docx = Generate(DocxMime, "batch docx");
+            var xlsx = Generate(XlsxMime, "batch xlsx");
+            var path = Path.GetTempFileName();
+            try
+            {
+                File.WriteAllBytes(path, xlsx);
+                using var stream = new MemoryStream(docx, writable: false);
+                var byStream = Request(DocxMime);
+                byStream.InputStream = stream;
+                var byPath = Request(XlsxMime);
+                byPath.FilePath = path;
+                var byBytes = Request(PptxMime);
+                byBytes.FileBytes = Generate(PptxMime, "batch pptx");
+
+                var results = await BuildExtractor().ExtractManyAsync(new[] { byStream, byPath, byBytes }, maxDegreeOfParallelism: 3);
+
+                Assert.All(results, r => Assert.Null(r.Error));
+                Assert.Contains("batch docx", results[0].Result!.ExtractedText);
+                Assert.Contains("batch xlsx", results[1].Result!.ExtractedText);
+                Assert.Contains("batch pptx", results[2].Result!.ExtractedText);
+            }
+            finally
+            {
+                File.Delete(path);
+            }
         }
 
         private sealed class NonSeekableStream : MemoryStream

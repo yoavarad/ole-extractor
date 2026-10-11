@@ -10,7 +10,8 @@ namespace ExtractorOLE.DTOs
     //
     // The file content comes from exactly one of FileBytes, InputStream or FilePath (ADR-008).
     // Setting InputStream or FilePath alongside a non-empty FileBytes, or both together, is an
-    // ArgumentException.
+    // ArgumentException. Leave FileBytes at its empty default when using InputStream/FilePath: a
+    // null FileBytes is still an ArgumentNullException, as before.
     public class ExtractionRequest
     {
         public byte[] FileBytes { get; set; } = Array.Empty<byte>();
