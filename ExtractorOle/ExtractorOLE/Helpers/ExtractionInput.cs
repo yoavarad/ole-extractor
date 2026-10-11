@@ -77,15 +77,11 @@ namespace ExtractorOLE.Helpers
         }
 
         /// <summary>
-        /// The whole content as a byte[], for consumers that still take byte[]: guardrails and
-        /// preflight (#193), legacy CFB open strategies (#194) and ITextExtractor.ExtractText(byte[]).
-        /// For stream input this reads the stream into a buffer that is kept until
-        /// <see cref="ReleaseBytes"/>, so call that before the format library opens the stream.
+        /// The whole content as a byte[], for consumers that still take byte[]: legacy CFB open
+        /// strategies (#194) and ITextExtractor.ExtractText(byte[]). For stream input this reads
+        /// the stream into a buffer that is kept until <see cref="Dispose"/>.
         /// </summary>
         public byte[] Bytes => _bytes ?? (_bridgeBytes ??= ReadAll(Stream!));
-
-        /// <summary>Drops the buffer <see cref="Bytes"/> made for stream input.</summary>
-        public void ReleaseBytes() => _bridgeBytes = null;
 
         public void Dispose()
         {

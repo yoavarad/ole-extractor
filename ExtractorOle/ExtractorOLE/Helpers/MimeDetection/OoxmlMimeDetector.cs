@@ -97,27 +97,39 @@ namespace ExtractorOLE.Helpers.MimeDetection
         // Package.Open (System.IO.Packaging -> System.IO.Compression) walk the structure first.
         internal static bool TryGetDeclaredZipTotalSize(byte[] bytes, out ulong declaredTotalBytes, out int entriesInspected, out ulong largestEntryBytes)
         {
+            using var stream = new MemoryStream(bytes, writable: false);
+            return TryGetDeclaredZipTotalSize(stream, out declaredTotalBytes, out entriesInspected, out largestEntryBytes);
+        }
+
+        // Stream form (#193): seeks to each local header (absolute offsets, 0 = start of content)
+        // and reads only its 30-byte fixed part, so the file is never buffered whole.
+        internal static bool TryGetDeclaredZipTotalSize(Stream stream, out ulong declaredTotalBytes, out int entriesInspected, out ulong largestEntryBytes)
+        {
             declaredTotalBytes = 0;
             entriesInspected = 0;
             largestEntryBytes = 0;
 
             const int LocalHeaderFixedLength = 30; // through end of extra-field-length at offset 28-29
             ReadOnlySpan<byte> localHeaderSignature = stackalloc byte[] { 0x50, 0x4B, 0x03, 0x04 };
+            Span<byte> header = stackalloc byte[LocalHeaderFixedLength];
+            long length = stream.Length;
 
             long offset = 0;
-            while (offset + LocalHeaderFixedLength <= bytes.Length)
+            while (offset + LocalHeaderFixedLength <= length)
             {
-                if (!bytes.AsSpan((int)offset, 4).SequenceEqual(localHeaderSignature))
+                stream.Position = offset;
+                stream.ReadExactly(header);
+                if (!header.Slice(0, 4).SequenceEqual(localHeaderSignature))
                 {
                     break; // no more local file headers -- central directory or end of entries reached
                 }
 
                 entriesInspected++;
 
-                uint compressedSize = BinaryPrimitives.ReadUInt32LittleEndian(bytes.AsSpan((int)offset + 18, 4));
-                uint uncompressedSize = BinaryPrimitives.ReadUInt32LittleEndian(bytes.AsSpan((int)offset + 22, 4));
-                ushort nameLength = BinaryPrimitives.ReadUInt16LittleEndian(bytes.AsSpan((int)offset + 26, 2));
-                ushort extraLength = BinaryPrimitives.ReadUInt16LittleEndian(bytes.AsSpan((int)offset + 28, 2));
+                uint compressedSize = BinaryPrimitives.ReadUInt32LittleEndian(header.Slice(18, 4));
+                uint uncompressedSize = BinaryPrimitives.ReadUInt32LittleEndian(header.Slice(22, 4));
+                ushort nameLength = BinaryPrimitives.ReadUInt16LittleEndian(header.Slice(26, 2));
+                ushort extraLength = BinaryPrimitives.ReadUInt16LittleEndian(header.Slice(28, 2));
 
                 // 0xFFFFFFFF is the ZIP64 sentinel meaning "real size is in the extra field" --
                 // treat as maximally oversized rather than trust a field that's deliberately
@@ -133,7 +145,7 @@ namespace ExtractorOLE.Helpers.MimeDetection
                 largestEntryBytes = Math.Max(largestEntryBytes, uncompressedSize);
 
                 long nextOffset = offset + LocalHeaderFixedLength + nameLength + extraLength + compressedSize;
-                if (nextOffset <= offset || nextOffset > bytes.Length)
+                if (nextOffset <= offset || nextOffset > length)
                 {
                     // Forged/overflowing length fields would walk past the buffer -- stop
                     // scanning here; the total accumulated so far still stands.

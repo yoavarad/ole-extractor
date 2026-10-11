@@ -73,10 +73,11 @@ namespace ExtractorOLE
                          ?? throw new Exceptions.UnsupportedFormatException(request.DetectedMimeType);
 
             using (ExtractionTelemetry.Stage("preflight", mime, size))
-                ParseTimeErrorGuard.Preflight(input.Bytes, IsOoxml(format));
-            // Stream/path input: drop the buffer guardrails/preflight needed before the format
-            // library opens the stream (#193 removes that buffer).
-            input.ReleaseBytes();
+            {
+                // Stream/path input is checked in place, reading only headers/tail (#193).
+                if (input.OriginalBytes != null) ParseTimeErrorGuard.Preflight(input.OriginalBytes, IsOoxml(format));
+                else ParseTimeErrorGuard.Preflight(input.Stream!, IsOoxml(format));
+            }
             DocumentExtractionResult result;
             using (ExtractionTelemetry.Stage("open", mime, size))
                 result = ParseTimeErrorGuard.OpenOrThrow(_registry.GetOpenStrategy(format), input, request.DetectedMimeType);
