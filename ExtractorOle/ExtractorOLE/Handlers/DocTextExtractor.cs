@@ -2,6 +2,7 @@ using b2xtranslator.DocFileFormat;
 using b2xtranslator.OpenXmlLib;
 using b2xtranslator.StructuredStorage.Reader;
 using b2xtranslator.WordprocessingMLMapping;
+using ExtractorOLE.Helpers;
 using System;
 using System.IO;
 using B2xWordprocessingDocument = b2xtranslator.OpenXmlLib.WordprocessingML.WordprocessingDocument;
@@ -26,15 +27,25 @@ namespace ExtractorOLE.Handlers
     // An unreadable or unconvertible .doc yields string.Empty rather than throwing: b2xtranslator
     // is unmaintained since 2018 (ADR-004), so a record shape it doesn't handle must not take down
     // the extraction. Never returns null.
-    internal class DocTextExtractor : ITextExtractor
+    internal class DocTextExtractor : IParsedDocumentTextExtractor
     {
         private readonly DocxTextExtractor _docxTextExtractor = new();
 
-        public string ExtractText(byte[] fileBytes)
+        public string ExtractText(byte[] fileBytes) => ExtractFrom(new MemoryStream(fileBytes));
+
+        // parsedDocument is the caller's .doc stream DocOpenStrategy.Open(Stream) handed on (#194); null for anything else.
+        public string? ExtractText(object parsedDocument)
+        {
+            if (parsedDocument is not Stream docStream) return null;
+            // StructuredStorageReader closes its stream; the handed-on stream belongs to the caller (#194).
+            return ExtractFrom(new NonClosingStream(docStream));
+        }
+
+        private string ExtractFrom(Stream docStream)
         {
             try
             {
-                return _docxTextExtractor.ExtractText(ConvertToDocx(fileBytes));
+                return _docxTextExtractor.ExtractText(ConvertToDocx(docStream));
             }
             catch (Exception ex)
             {
@@ -46,10 +57,11 @@ namespace ExtractorOLE.Handlers
         // Runs entirely in memory (#169): b2xtranslator's public Create() only targets a file path,
         // so InMemoryWordprocessingDocument overrides the package's Close() to serialize into a
         // MemoryStream instead.
-        private static byte[] ConvertToDocx(byte[] docBytes)
+        private static byte[] ConvertToDocx(Stream docStream)
         {
+            docStream.Position = 0;
             var output = new MemoryStream();
-            using (var reader = new StructuredStorageReader(new MemoryStream(docBytes)))
+            using (var reader = new StructuredStorageReader(docStream))
             {
                 var doc = new WordDocument(reader);
                 var outType = Converter.DetectOutputType(doc);

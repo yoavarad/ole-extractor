@@ -45,33 +45,40 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
             _helper = helper;
         }
 
-        public DocumentExtractionResult? Open(byte[] fileBytes)
+        public DocumentExtractionResult? Open(byte[] fileBytes) => OpenFrom(new MemoryStream(fileBytes));
+
+        // Reads the caller's seekable stream directly (#194, ADR-008); the caller owns and disposes it. The stream is handed on as ParsedDocument so DocTextExtractor converts the body from it instead of a re-buffered byte[].
+        public DocumentExtractionResult? Open(Stream input)
+        {
+            var result = OpenFrom(new NonClosingStream(input));
+            if (result != null) result.ParsedDocument = new NonClosingStream(input);
+            return result;
+        }
+
+        private DocumentExtractionResult? OpenFrom(Stream source)
         {
             try
             {
                 var result = new DocumentExtractionResult();
-                using (var ms = new MemoryStream(fileBytes))
+                // NPOIFSFileSystem implements ICloseable, not IDisposable, so it is closed
+                // explicitly in a finally block rather than via a using statement.
+                var fs = new NPOIFSFileSystem(source);
+                try
                 {
-                    // NPOIFSFileSystem implements ICloseable, not IDisposable, so it is closed
-                    // explicitly in a finally block rather than via a using statement.
-                    var fs = new NPOIFSFileSystem(ms);
-                    try
+                    var summary = ReadSummaryInformation(fs.Root);
+                    if (summary != null)
                     {
-                        var summary = ReadSummaryInformation(fs.Root);
-                        if (summary != null)
-                        {
-                            MetadataConversions.Apply(summary, result.Metadata);
-                        }
-
-                        var docSummary = ReadDocumentSummaryInformation(fs.Root);
-                        result.FormatMetadata = BuildWordFormatMetadata(fs.Root, summary, docSummary);
-
-                        _helper.ExtractFirstLayerEmbedded(result, fs.Root);
+                        MetadataConversions.Apply(summary, result.Metadata);
                     }
-                    finally
-                    {
-                        fs.Close();
-                    }
+
+                    var docSummary = ReadDocumentSummaryInformation(fs.Root);
+                    result.FormatMetadata = BuildWordFormatMetadata(fs.Root, summary, docSummary);
+
+                    _helper.ExtractFirstLayerEmbedded(result, fs.Root);
+                }
+                finally
+                {
+                    fs.Close();
                 }
                 result.MimeType = _helper.MimeFor(OfficeMimeTypeEnum.WordLegacy);
                 return result;

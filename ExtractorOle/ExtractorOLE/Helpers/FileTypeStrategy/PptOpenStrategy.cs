@@ -29,23 +29,30 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
         private readonly IExtractionHelper _helper;
 
         // NPOIFSFileSystem takes ownership of the stream it's given and closes it in its own Close().
-        private static readonly Func<byte[], NPOIFSFileSystem> DefaultOpenFileSystem =
-            bytes => new NPOIFSFileSystem(new MemoryStream(bytes));
+        private static readonly Func<Stream, NPOIFSFileSystem> DefaultOpenFileSystem =
+            stream => new NPOIFSFileSystem(stream);
 
-        private readonly Func<byte[], NPOIFSFileSystem> _openFileSystem;
+        private readonly Func<Stream, NPOIFSFileSystem> _openFileSystem;
 
         public PptOpenStrategy(IExtractionHelper helper) : this(helper, DefaultOpenFileSystem)
         {
         }
 
         // Test seam: lets tests count how many times the compound file is opened per Open().
-        internal PptOpenStrategy(IExtractionHelper helper, Func<byte[], NPOIFSFileSystem> openFileSystem)
+        internal PptOpenStrategy(IExtractionHelper helper, Func<Stream, NPOIFSFileSystem> openFileSystem)
         {
             _helper = helper;
             _openFileSystem = openFileSystem;
         }
 
-        public DocumentExtractionResult? Open(byte[] fileBytes)
+        public DocumentExtractionResult? Open(byte[] fileBytes) =>
+            OpenFrom(new MemoryStream(fileBytes), () => PptToPptxConverter.Convert(fileBytes));
+
+        // Reads the caller's seekable stream directly (#194, ADR-008): no byte[] bridge; the caller owns and disposes it.
+        public DocumentExtractionResult? Open(Stream input) =>
+            OpenFrom(new NonClosingStream(input), () => PptToPptxConverter.Convert(input));
+
+        private DocumentExtractionResult? OpenFrom(Stream cfbSource, Func<byte[]> convertToPptx)
         {
             DocumentExtractionResult result;
             // One NPOIFSFileSystem over the original .ppt bytes serves both the metadata/macro read
@@ -53,7 +60,7 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
             NPOIFSFileSystem fs;
             try
             {
-                fs = _openFileSystem(fileBytes);
+                fs = _openFileSystem(cfbSource);
             }
             catch
             {
@@ -104,7 +111,7 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
             // way; only SlideCount/NotesSlideCount stay at their defaults (0/null/empty).
             try
             {
-                PopulateBodyContent(fileBytes, result);
+                PopulateBodyContent(convertToPptx, result);
             }
             catch (Exception ex)
             {
@@ -130,9 +137,9 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
             return (metadata, hasMacros);
         }
 
-        private void PopulateBodyContent(byte[] fileBytes, DocumentExtractionResult result)
+        private void PopulateBodyContent(Func<byte[]> convertToPptx, DocumentExtractionResult result)
         {
-            byte[] pptxBytes = PptToPptxConverter.Convert(fileBytes);
+            byte[] pptxBytes = convertToPptx();
             result.ParsedDocument = pptxBytes; // reused by PptTextExtractor (#168)
             using var pptxStream = new MemoryStream(pptxBytes);
             using var pres = PresentationDocument.Open(pptxStream, false);

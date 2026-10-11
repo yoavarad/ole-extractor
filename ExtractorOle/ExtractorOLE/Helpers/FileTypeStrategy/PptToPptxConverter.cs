@@ -8,7 +8,7 @@ using System.IO;
 
 namespace ExtractorOLE.Helpers.FileTypeStrategy
 {
-    // Converts legacy .ppt bytes to .pptx bytes in-process via b2xtranslator's Ppt module
+    // Converts legacy .ppt bytes or seekable stream to .pptx bytes in-process via b2xtranslator's Ppt module
     // (ADR-004: docs/adrs/004-legacy-doc-ppt-parsing.md). Shared by PptOpenStrategy (slide-count
     // and embedded-file discovery) and PptTextExtractor (flat body text) so both read the same
     // converted package through the project's existing DocumentFormat.OpenXml path.
@@ -24,11 +24,15 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
         [ThreadStatic]
         internal static int ConvertCallCount;
 
-        public static byte[] Convert(byte[] pptBytes)
+        public static byte[] Convert(byte[] pptBytes) => Convert(new MemoryStream(pptBytes));
+
+        public static byte[] Convert(Stream pptStream)
         {
             ConvertCallCount++;
             var output = new MemoryStream();
-            using (var reader = new StructuredStorageReader(new MemoryStream(pptBytes)))
+            pptStream.Position = 0;
+            // The reader closes its stream; the caller's stream must stay open (#194).
+            using (var reader = new StructuredStorageReader(new NonClosingStream(pptStream)))
             {
                 var ppt = new PowerpointDocument(reader);
                 var outType = Converter.DetectOutputType(ppt);

@@ -145,10 +145,10 @@ namespace ExtractorOLE.Tests.PowerPoint
         {
             var bytes = BuildMacroEnabledPptFixtureBytes("Once");
             int opens = 0;
-            var strategy = new PptOpenStrategy(new ExtractionHelper(), b =>
+            var strategy = new PptOpenStrategy(new ExtractionHelper(), s =>
             {
                 opens++;
-                return new NPOIFSFileSystem(new MemoryStream(b));
+                return new NPOIFSFileSystem(s);
             });
 
             var result = strategy.Open(bytes);
@@ -157,6 +157,27 @@ namespace ExtractorOLE.Tests.PowerPoint
             Assert.Equal(1, opens);
             Assert.Equal("Once", result!.Metadata!.Title);
             Assert.True(((PowerPointFormatMetadata)result.FormatMetadata!).HasMacros);
+        }
+
+        [Fact]
+        public void OpenStream_OpensNpoifsFileSystemExactlyOnce_AndLeavesStreamOpen()
+        {
+            var bytes = BuildMacroEnabledPptFixtureBytes("Once");
+            int opens = 0;
+            var strategy = new PptOpenStrategy(new ExtractionHelper(), s =>
+            {
+                opens++;
+                return new NPOIFSFileSystem(s);
+            });
+            using var stream = new MemoryStream(bytes, false);
+
+            var result = strategy.Open(stream);
+
+            Assert.NotNull(result);
+            Assert.Equal(1, opens);
+            Assert.Equal("Once", result!.Metadata!.Title);
+            Assert.True(((PowerPointFormatMetadata)result.FormatMetadata!).HasMacros);
+            Assert.True(stream.CanRead);
         }
 
         [Fact]
