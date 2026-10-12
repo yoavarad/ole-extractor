@@ -18,6 +18,7 @@ namespace ExtractorOLE.Tests.PowerPoint
     /// MultiEmbeddingSampleTests.Xlsx_..._OneCorruptEmbedding_...) that use the
     /// same ZipEntryCorruptor-based technique.
     /// </summary>
+    [Collection("ConsoleRedirect")]
     public class PptxFirstLayerEmbeddedWalkTests
     {
         private static GeneratedSample GenerateTwoEmbeddingSample()

@@ -23,6 +23,7 @@ namespace ExtractorOLE.Tests.PowerPoint
     /// purely as a convenient writer for the base CFB/HPSF streams), the same technique
     /// XlsOpenStrategyTests uses for its own embedded-object fixtures.
     /// </summary>
+    [Collection("ConsoleRedirect")]
     public class PptFirstLayerEmbeddedWalkTests
     {
         private static byte[] BuildBaseFixtureBytes()
