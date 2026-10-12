@@ -28,9 +28,8 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
 
         private readonly IExtractionHelper _helper;
 
-        // NPOIFSFileSystem takes ownership of the stream it's given and closes it in its own Close().
-        private static readonly Func<Stream, NPOIFSFileSystem> DefaultOpenFileSystem =
-            stream => new NPOIFSFileSystem(stream);
+        // Stream input is read lazily and left open; byte[] input is buffered by NPOI (#236).
+        private static readonly Func<Stream, NPOIFSFileSystem> DefaultOpenFileSystem = CfbFileSystems.Open;
 
         private readonly Func<Stream, NPOIFSFileSystem> _openFileSystem;
 

@@ -251,6 +251,29 @@ namespace ExtractorOLE.Tests.Registry
             Assert.Equal(fromBytes!.GetType(), fromStream!.GetType());
         }
 
+        [Theory]
+        [InlineData(XlsMime)]
+        [InlineData(DocMime)]
+        [InlineData(PptMime)]
+        public void CfbFileSystems_StreamInputIsReadLazily_ByteInputIsBuffered(string mime)
+        {
+            var bytes = Generate(mime, "lazy cfb");
+            using var stream = new DisposeTrackingStream(bytes);
+
+            // #236: caller stream (wrapped in NonClosingStream by Open(Stream)) is read on demand, not copied
+            using (var lazy = CfbFileSystems.Open(new NonClosingStream(stream)))
+            {
+                Assert.IsType<NPOI.POIFS.NIO.StreamBackedDataSource>(lazy.Data);
+                Assert.NotEmpty(lazy.Root.EntryNames);
+            }
+            Assert.Equal(0, stream.DisposeCount);
+            Assert.True(stream.CanRead);
+
+            // Byte[] input path unchanged: NPOI buffers the MemoryStream
+            using var buffered = CfbFileSystems.Open(new MemoryStream(bytes));
+            Assert.IsType<NPOI.POIFS.NIO.ByteArrayBackedDataSource>(buffered.Data);
+        }
+
         private sealed class DisposeTrackingStream : MemoryStream
         {
             public int DisposeCount;

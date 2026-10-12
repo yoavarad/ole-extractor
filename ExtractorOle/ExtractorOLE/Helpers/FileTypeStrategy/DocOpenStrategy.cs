@@ -62,7 +62,7 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
                 var result = new DocumentExtractionResult();
                 // NPOIFSFileSystem implements ICloseable, not IDisposable, so it is closed
                 // explicitly in a finally block rather than via a using statement.
-                var fs = new NPOIFSFileSystem(source);
+                var fs = CfbFileSystems.Open(source);
                 try
                 {
                     var summary = ReadSummaryInformation(fs.Root);

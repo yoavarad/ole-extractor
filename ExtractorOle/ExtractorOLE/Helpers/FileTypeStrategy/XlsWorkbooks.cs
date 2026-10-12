@@ -18,7 +18,8 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
         internal static HSSFWorkbook Load(Stream stream)
         {
             _loadCount++;
-            return new HSSFWorkbook(stream);
+            // Same as HSSFWorkbook(Stream) (root directory, nodes preserved), but stream input is read lazily (#236).
+            return new HSSFWorkbook(CfbFileSystems.Open(stream));
         }
     }
 }
