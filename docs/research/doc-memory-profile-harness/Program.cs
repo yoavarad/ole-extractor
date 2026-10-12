@@ -63,7 +63,8 @@ static class P
         {
             var p = Process.GetCurrentProcess();
             while (!cts.IsCancellationRequested) { p.Refresh(); peakWs = Math.Max(peakWs, p.WorkingSet64); peakPriv = Math.Max(peakPriv, p.PrivateMemorySize64); Thread.Sleep(5); }
-        }) { IsBackground = true };
+        })
+        { IsBackground = true };
         sampler.Start();
 
         Report("start");
