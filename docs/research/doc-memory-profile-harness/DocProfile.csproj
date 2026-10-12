@@ -11,6 +11,6 @@
     <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\third_party\b2xtranslator\Doc\b2xtranslator.doc.csproj" />
+    <ProjectReference Include="..\..\..\third_party\b2xtranslator\Doc\b2xtranslator.doc.csproj" />
   </ItemGroup>
 </Project>
