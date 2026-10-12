@@ -38,6 +38,23 @@ short-lived gen0 garbage (109 gen0 GCs) and ~200MB of live heap.
 Retained after a full GC following the constructor: 1,996MB = **1,830MB the two dictionaries**,
 64MB `Text` (`List<char>`), ~100MB rest (the input byte[] etc).
 
+## Re-run on current b2xtranslator (930217bd)
+Initial profile used b2xtranslator `d20ff458`; re-run after PR #240 on `930217bd` (npoi `502d75df7`),
+same harness, sample and mode. `d20ff458..930217bd` touches only mapping files (#148 `HasAttributes`
+emptiness checks), README and graphify output; `PieceTable.cs` / `WordDocument.cs` are unchanged.
+
+| Metric | d20ff458 | 930217bd |
+|---|---|---|
+| WordDocument ctor: allocated / heap / ws | 4,067 / 3,616 / 3,171MB | 4,067 / 3,616 / 3,176MB |
+| Peak working set / private | 3,344 / 3,934MB | 3,213 / 3,762MB |
+| Total allocated | 5,561MB | 5,566MB |
+| `Entry<int,int>[]` + `Int32[]` share | 52.4% + 13.1% | 52.4% + 13.1% |
+| Heap after Convert | 3,816MB | 2,190MB (GC timing, not a code change) |
+
+The ~4% lower peak is run-to-run GC noise; allocations are identical. The headline finding and the
+ranked follow-ups above still hold unchanged: ~95% of the peak is still reached in the `WordDocument`
+constructor from the `PieceTable` per-character dictionaries.
+
 ## Root cause
 `third_party/b2xtranslator/Doc/DocFileFormat/PieceTable.cs`, constructor, inner loop
 `for (c = cpStart; c < cpEnd; c++)`: for **every character** of the document it inserts into two
