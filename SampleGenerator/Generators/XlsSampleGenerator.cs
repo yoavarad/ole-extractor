@@ -31,6 +31,9 @@ namespace SampleGenerator.Generators
             ArgumentNullException.ThrowIfNull(spec);
 
             using var workbook = new HSSFWorkbook();
+            // NPOI defaults WriteAccess to Environment.UserName; pin it so no developer username is committed.
+            workbook.Workbook.GetWorkbookRecordList().Records
+                .OfType<NPOI.HSSF.Record.WriteAccessRecord>().Single().Username = "NPOI";
             var sheet = workbook.CreateSheet("Sheet1");
 
             var rowIndex = 0;
