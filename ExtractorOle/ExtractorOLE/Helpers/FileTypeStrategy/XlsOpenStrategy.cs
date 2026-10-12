@@ -21,7 +21,7 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
 
         public DocumentExtractionResult? Open(byte[] fileBytes) => OpenFrom(new MemoryStream(fileBytes));
 
-        // Reads the caller's seekable stream directly (#194, ADR-008): NPOI buffers it once instead of a byte[] bridge plus NPOI's own copy. The caller owns and disposes it.
+        // Reads the caller's seekable stream directly (#194, ADR-008): NPOI reads it block by block without buffering it (#236). The caller owns and disposes it.
         public DocumentExtractionResult? Open(Stream input) => OpenFrom(new NonClosingStream(input));
 
         private DocumentExtractionResult? OpenFrom(Stream source)
