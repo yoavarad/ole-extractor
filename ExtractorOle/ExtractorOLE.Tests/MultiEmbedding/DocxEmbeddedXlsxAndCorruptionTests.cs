@@ -17,6 +17,7 @@ namespace ExtractorOLE.Tests.MultiEmbedding
     /// and survives a single corrupt embedding without failing the whole
     /// extraction call.
     /// </summary>
+    [Collection("ConsoleRedirect")]
     public class DocxEmbeddedXlsxAndCorruptionTests
     {
         [Fact]

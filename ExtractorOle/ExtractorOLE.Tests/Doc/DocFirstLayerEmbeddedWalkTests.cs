@@ -14,6 +14,7 @@ namespace ExtractorOLE.Tests.Doc
     // directory (docs/research/npoi.md); these fixtures build that shape directly via
     // NPOIFSFileSystem, mirroring XlsOpenStrategyTests' raw-POIFS fixture technique since no
     // HWPFDocument-level convenience API exists for this format (ADR-004).
+    [Collection("ConsoleRedirect")]
     public class DocFirstLayerEmbeddedWalkTests
     {
         private static byte[] BuildDocFixtureWithObjectPoolChild(string childName, Action<DirectoryEntry> populate)

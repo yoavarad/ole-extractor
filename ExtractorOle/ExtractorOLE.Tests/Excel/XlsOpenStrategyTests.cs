@@ -14,6 +14,7 @@ using Xunit;
 
 namespace ExtractorOLE.Tests.Excel
 {
+    [Collection("ConsoleRedirect")]
     public class XlsOpenStrategyTests
     {
         private static byte[] BuildXlsFixtureBytes(string? title, string? author, DateTime? created, DateTime? lastSaved, string? lastAuthor)

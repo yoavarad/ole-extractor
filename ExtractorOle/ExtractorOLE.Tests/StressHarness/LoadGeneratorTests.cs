@@ -9,6 +9,7 @@ using Xunit;
 
 namespace ExtractorOLE.Tests.StressHarness
 {
+    [Collection("ThreadPoolSensitive")]
     public class LoadGeneratorTests
     {
         private static List<byte[]> MakeSamples(int count)
