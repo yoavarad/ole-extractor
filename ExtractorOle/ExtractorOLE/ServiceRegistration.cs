@@ -101,7 +101,7 @@ namespace ExtractorOLE
                 sp.GetRequiredService<IDictionary<OfficeMimeTypeEnum, ITextExtractor>>()));
 
             // Main extractor
-            services.AddSingleton<MainExtractor>();
+            services.AddSingleton(sp => new MainExtractor(sp.GetRequiredService<IExtractionHelper>(), sp.GetRequiredService<IFormatDispatchRegistry>(), sp.GetRequiredService<ExtractionGuardrails>()));
         }
     }
 }
