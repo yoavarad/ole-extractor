@@ -1,5 +1,6 @@
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
+using ExtractorOLE.Configuration;
 using ExtractorOLE.DTOs;
 using ExtractorOLE.Helpers.MimeDetection;
 using ExtractorOLE.Registry;
@@ -17,10 +18,15 @@ namespace ExtractorOLE.Helpers
     {
         private readonly IMimeDetectionRegistry _detectionRegistry;
 
-        public ExtractionHelper() : this(new MimeDetectionRegistry(new IMimeTypeDetector[]
+        public ExtractionHelper() : this(new MimeDetectionLimits())
         {
-            new OoxmlMimeDetector(),
-            new CfbMimeDetector(),
+        }
+
+        // Non-DI entry point: the same limits instance reaches both detectors.
+        public ExtractionHelper(MimeDetectionLimits limits) : this(new MimeDetectionRegistry(new IMimeTypeDetector[]
+        {
+            new OoxmlMimeDetector(limits ?? throw new ArgumentNullException(nameof(limits))),
+            new CfbMimeDetector(limits),
         }))
         {
         }

@@ -25,6 +25,13 @@ namespace ExtractorOLE
         {
         }
 
+        // Non-DI entry point: custom limits feed the guardrails. Pass the same instance to
+        // new ExtractionHelper(limits) so the mime detectors share it.
+        public MainExtractor(IExtractionHelper helper, IFormatDispatchRegistry registry, MimeDetectionLimits limits)
+            : this(helper, registry, new ExtractionGuardrails(limits ?? throw new ArgumentNullException(nameof(limits))))
+        {
+        }
+
         public MainExtractor(IExtractionHelper helper, IFormatDispatchRegistry registry, ExtractionGuardrails guardrails)
         {
             _helper = helper ?? throw new ArgumentNullException(nameof(helper));

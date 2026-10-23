@@ -15,7 +15,7 @@ namespace ExtractorOLE
         public static void Register(IServiceCollection services)
         {
             // Core helpers
-            services.AddSingleton<IExtractionHelper, ExtractionHelper>();
+            services.AddSingleton<IExtractionHelper>(sp => new ExtractionHelper(sp.GetRequiredService<IMimeDetectionRegistry>()));
 
             // Pre-parse Extract guardrails, sharing the one configured limits instance
             // with mime detection (ydk:nfr:extraction/max-file-size, nesting-depth-guard).
@@ -94,7 +94,7 @@ namespace ExtractorOLE
                 sp.GetRequiredService<IDictionary<OfficeMimeTypeEnum, ITextExtractor>>()));
 
             // Main extractor
-            services.AddSingleton<MainExtractor>();
+            services.AddSingleton(sp => new MainExtractor(sp.GetRequiredService<IExtractionHelper>(), sp.GetRequiredService<IFormatDispatchRegistry>(), sp.GetRequiredService<ExtractionGuardrails>()));
         }
     }
 }
