@@ -43,18 +43,26 @@ namespace ExtractorOLE.Helpers.MimeDetection
 
         public MimeDetectionResult Detect(MimeDetectionRequest request)
         {
-            if (request?.FileBytes == null || request.FileBytes.Length == 0)
+            if (request == null || (request.FileBytes == null && request.InputStream == null && request.FilePath == null))
             {
                 return UnknownResult();
             }
 
-            if (request.FileBytes.Length > _limits.MaxFileSizeBytes)
+            using var input = MimeDetectionInput.From(request);
+            var stream = input.Stream;
+            var length = input.Length;
+            if (length == 0)
             {
-                _logRejection?.Invoke($"[CfbMimeDetector] file-too-large: fileName='{request.FileName}', actualBytes={request.FileBytes.Length}, limitBytes={_limits.MaxFileSizeBytes}");
-                throw new FileTooLargeException(request.FileBytes.Length, _limits.MaxFileSizeBytes);
+                return UnknownResult();
             }
 
-            if (TryGetDeclaredCfbTotalSize(request.FileBytes, out var declaredTotalBytes, out var fatSectorCount, out var sectorSize)
+            if (length > _limits.MaxFileSizeBytes)
+            {
+                _logRejection?.Invoke($"[CfbMimeDetector] file-too-large: fileName='{request.FileName}', actualBytes={length}, limitBytes={_limits.MaxFileSizeBytes}");
+                throw new FileTooLargeException(length, _limits.MaxFileSizeBytes);
+            }
+
+            if (TryGetDeclaredCfbTotalSize(stream, out var declaredTotalBytes, out var fatSectorCount, out var sectorSize)
                 && declaredTotalBytes > (ulong)_limits.MaxDeclaredNestedContentBytes)
             {
                 var metric = $"CFB FAT sector count {fatSectorCount} at sector size {sectorSize} bytes implies {declaredTotalBytes} bytes total (limit {_limits.MaxDeclaredNestedContentBytes})";
@@ -68,8 +76,8 @@ namespace ExtractorOLE.Helpers.MimeDetection
                 // OpenMcdf's own FAT/directory walk runs.
                 s_openMcdfParseAttempts.Increment();
 
-                using var stream = new MemoryStream(request.FileBytes);
-                using var root = RootStorage.Open(stream);
+                stream.Position = 0;
+                using var root = RootStorage.Open(new NonClosingStream(stream));
 
                 HashSet<string> entryNames = root.EnumerateEntries()
                     .Select(entry => entry.Name)
