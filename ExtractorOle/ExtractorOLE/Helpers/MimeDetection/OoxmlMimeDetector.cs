@@ -40,18 +40,26 @@ namespace ExtractorOLE.Helpers.MimeDetection
 
         public MimeDetectionResult Detect(MimeDetectionRequest request)
         {
-            if (request?.FileBytes == null || request.FileBytes.Length == 0)
+            if (request == null || (request.FileBytes == null && request.InputStream == null && request.FilePath == null))
             {
                 return UnknownResult();
             }
 
-            if (request.FileBytes.Length > _limits.MaxFileSizeBytes)
+            using var input = MimeDetectionInput.From(request);
+            var stream = input.Stream;
+            var length = input.Length;
+            if (length == 0)
             {
-                _logRejection?.Invoke($"[OoxmlMimeDetector] file-too-large: fileName='{request.FileName}', actualBytes={request.FileBytes.Length}, limitBytes={_limits.MaxFileSizeBytes}");
-                throw new FileTooLargeException(request.FileBytes.Length, _limits.MaxFileSizeBytes);
+                return UnknownResult();
             }
 
-            if (TryGetDeclaredZipTotalSize(request.FileBytes, out var declaredTotalBytes, out var entriesInspected, out _)
+            if (length > _limits.MaxFileSizeBytes)
+            {
+                _logRejection?.Invoke($"[OoxmlMimeDetector] file-too-large: fileName='{request.FileName}', actualBytes={length}, limitBytes={_limits.MaxFileSizeBytes}");
+                throw new FileTooLargeException(length, _limits.MaxFileSizeBytes);
+            }
+
+            if (TryGetDeclaredZipTotalSize(stream, out var declaredTotalBytes, out var entriesInspected, out _)
                 && declaredTotalBytes > (ulong)_limits.MaxDeclaredNestedContentBytes)
             {
                 var metric = $"ZIP local file header(s) ({entriesInspected} {(entriesInspected == 1 ? "entry" : "entries")}) declare {declaredTotalBytes} bytes total uncompressed (limit {_limits.MaxDeclaredNestedContentBytes})";
@@ -65,8 +73,8 @@ namespace ExtractorOLE.Helpers.MimeDetection
                 // Package.Open's own ZIP central-directory walk runs.
                 s_packageOpenAttempts.Increment();
 
-                using var stream = new MemoryStream(request.FileBytes);
-                using var package = Package.Open(stream, FileMode.Open, FileAccess.Read);
+                stream.Position = 0;
+                using var package = Package.Open(new NonClosingStream(stream), FileMode.Open, FileAccess.Read);
 
                 if (package.PartExists(WordDocumentPartUri))
                 {

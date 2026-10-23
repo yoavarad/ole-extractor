@@ -70,10 +70,12 @@ namespace ExtractorOLE.Helpers
             {
                 throw new ArgumentNullException(nameof(request));
             }
-            if (request.FileBytes == null)
+            if (request.FileBytes == null && request.InputStream == null && request.FilePath == null)
             {
                 throw new ArgumentNullException(nameof(request.FileBytes));
             }
+
+            MimeDetectionInput.Validate(request);
 
             foreach (var detector in _detectionRegistry.Detectors)
             {
