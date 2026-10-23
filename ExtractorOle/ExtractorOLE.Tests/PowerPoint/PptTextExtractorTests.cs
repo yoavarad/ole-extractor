@@ -166,7 +166,9 @@ namespace ExtractorOLE.Tests.PowerPoint
             var extractor = services.BuildServiceProvider().GetRequiredService<MainExtractor>();
             var bytes = BuildFixture(HebrewArabic, PersianRussian, CjkEmojiCombining, ZwjEmoji);
 
+#pragma warning disable CS0618 // exercises the [Obsolete] Extract(byte[]) shim
             var result = extractor.Extract(bytes);
+#pragma warning restore CS0618
 
             Assert.Equal("application/vnd.ms-powerpoint", result.MimeType);
             Assert.Equal(Lines(HebrewArabic, PersianRussian, CjkEmojiCombining, ZwjEmoji), result.ExtractedText);

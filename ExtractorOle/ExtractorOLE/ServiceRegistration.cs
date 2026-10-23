@@ -14,8 +14,15 @@ namespace ExtractorOLE
     {
         public static void Register(IServiceCollection services)
         {
-            // Core helpers
-            services.AddSingleton<IExtractionHelper, ExtractionHelper>();
+            // Core helpers: mime mapping, mime detection and embedded-file extraction,
+            // with IExtractionHelper as a thin facade over the three.
+            services.AddSingleton<IMimeTypeMapper, MimeTypeMapper>();
+            services.AddSingleton<IOfficeMimeTypeDetector, OfficeMimeTypeDetector>();
+            services.AddSingleton<IEmbeddedFileExtractor, EmbeddedFileExtractor>();
+            services.AddSingleton<IExtractionHelper>(sp => new ExtractionHelper(
+                sp.GetRequiredService<IMimeTypeMapper>(),
+                sp.GetRequiredService<IOfficeMimeTypeDetector>(),
+                sp.GetRequiredService<IEmbeddedFileExtractor>()));
 
             // Pre-parse Extract guardrails, sharing the one configured limits instance
             // with mime detection (ydk:nfr:extraction/max-file-size, nesting-depth-guard).
@@ -30,7 +37,7 @@ namespace ExtractorOLE
 
             // Mime detection registry (ydk:req:extraction/format-extensibility,
             // ydk:req:extraction/dependency-injection): DetectMimeType dispatch
-            // (ExtractionHelper.DetectMimeTypeFromBytes) tries each of these
+            // (OfficeMimeTypeDetector.DetectMimeTypeFromBytes) tries each of these
             // structural checks in order via this DI-registered seam, instead of
             // constructing a detector inline in orchestration code.
             services.AddSingleton<IMimeDetectionRegistry>(sp => new MimeDetectionRegistry(new IMimeTypeDetector[]
