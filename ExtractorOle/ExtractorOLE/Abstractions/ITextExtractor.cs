@@ -1,6 +1,6 @@
 using System;
 
-namespace ExtractorOLE
+namespace ExtractorOLE.Abstractions
 {
     public interface ITextExtractor
     {

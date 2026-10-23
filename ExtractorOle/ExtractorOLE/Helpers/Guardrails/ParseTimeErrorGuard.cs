@@ -1,3 +1,4 @@
+using ExtractorOLE.Helpers.Input;
 using ExtractorOLE.DTOs;
 using ExtractorOLE.Exceptions;
 using ExtractorOLE.Helpers.FileTypeStrategy;
@@ -7,7 +8,7 @@ using System.Buffers.Binary;
 using System.IO;
 using System.Linq;
 
-namespace ExtractorOLE.Helpers
+namespace ExtractorOLE.Helpers.Guardrails
 {
     // Parse-time error handling for Extract ([ydk:error:extraction/truncated-container],
     // [ydk:error:extraction/password-protected], [ydk:error:extraction/corrupt-file]).

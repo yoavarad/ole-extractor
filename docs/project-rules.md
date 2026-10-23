@@ -10,7 +10,7 @@ C# library that takes an Office file's bytes and filename, detects its exact MIM
 
 Repo `ExtractorOle/` has a pre-existing scaffold:
 - Working OOXML path (docx/xlsx/pptx) via `DocumentFormat.OpenXml`, DI-wired Strategy (open) + Handler (text) pattern via `Microsoft.Extensions.DependencyInjection`.
-- `Old/` folder is dead code — confirmed via graphify (zero live edges into the active path); superseded by the Strategy/Handler refactor.
+- The former `Old/` folder (dead code, superseded by the Strategy/Handler refactor) has been deleted.
 - `.csproj` targets net10.0 (the current LTS); retargeting to another framework is a deliberate, explicit task.
 - No legacy OLE/CFB (doc/xls/ppt) support at all yet — net-new work.
 - No tests, no samples, no docs prior to this effort.

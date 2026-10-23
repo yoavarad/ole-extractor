@@ -1,3 +1,4 @@
+using ExtractorOLE.Abstractions;
 using ExtractorOLE.Handlers;
 using ExtractorOLE.Helpers;
 using ExtractorOLE.Helpers.FileTypeStrategy;

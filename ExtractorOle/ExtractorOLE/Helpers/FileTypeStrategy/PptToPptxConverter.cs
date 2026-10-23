@@ -1,3 +1,4 @@
+using ExtractorOLE.Helpers.Input;
 using B2xPresentationDocument = b2xtranslator.OpenXmlLib.PresentationML.PresentationDocument;
 using b2xtranslator.OpenXmlLib;
 using b2xtranslator.PptFileFormat;

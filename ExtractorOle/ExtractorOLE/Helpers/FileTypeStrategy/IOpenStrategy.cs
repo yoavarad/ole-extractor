@@ -1,3 +1,4 @@
+using ExtractorOLE.Helpers.Input;
 using ExtractorOLE.DTOs;
 using System.IO;
 

@@ -43,18 +43,19 @@ extracted). See `docs/specs/overview.md` for the full scope list.
 ```
 ole-extractor/
 ├── ExtractorOle/                     # .NET solution (ExtractorOle.slnx)
-│   ├── ExtractorOLE/                 # Main library (+ minimal console host)
+│   ├── ExtractorOLE/                 # Main library
 │   │   ├── MainExtractor.cs          # Public extraction entry point
-│   │   ├── ITextExtractor.cs         # Per-format text-extraction contract
+│   │   ├── Abstractions/             # ITextExtractor, IParsedDocumentTextExtractor contracts
 │   │   ├── DTOs/                     # Requests/results, detected-format & mime enums
 │   │   ├── Handlers/                 # Per-format ITextExtractor implementations
 │   │   ├── Helpers/
+│   │   │   ├── Guardrails/           # ExtractionGuardrails, ParseTimeErrorGuard
+│   │   │   ├── Input/                # ExtractionInput, NonClosingStream
 │   │   │   ├── MimeDetection/        # Content-only OOXML/CFB mime detectors
 │   │   │   └── FileTypeStrategy/     # Per-format "open" strategies
 │   │   ├── Registry/                 # Format-dispatch registry (detection → open → text)
 │   │   ├── Configuration/            # Limits (max file size, nesting-depth guard, etc.)
-│   │   ├── Exceptions/               # Domain exceptions (too-large, oversized-nested, ...)
-│   │   └── Old/                      # Dead code from the original scaffold — not on the live path
+│   │   └── Exceptions/               # Domain exceptions (too-large, oversized-nested, ...)
 │   ├── ExtractorOLE.Tests/           # xUnit test suite
 │   ├── ExtractorOLE.Benchmarks/      # BenchmarkDotNet time-profiling harness
 │   └── ExtractorOLE.StressHarness/   # Hand-rolled stress-test harness (see ADR-002)
