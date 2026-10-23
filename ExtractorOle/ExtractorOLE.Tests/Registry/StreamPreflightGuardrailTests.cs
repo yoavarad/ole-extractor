@@ -1,3 +1,5 @@
+using ExtractorOLE.Helpers.Guardrails;
+using ExtractorOLE.Helpers.Input;
 using ExtractorOLE.Configuration;
 using ExtractorOLE.DTOs;
 using ExtractorOLE.Exceptions;
@@ -67,16 +69,16 @@ namespace ExtractorOLE.Tests.Registry
                 case "zip-max-comment": return WithZipComment(Fixture("valid-docx"), new byte[ushort.MaxValue]);
                 case "zip-max-comment-truncated": return WithZipComment(Sample("truncated-container.docx"), new byte[ushort.MaxValue]);
                 case "zip-large-truncated":
-                {
-                    var full = BuildLargeStoredZip(200_000);
-                    return full[..1000].Concat(full[2000..]).ToArray(); // drop 1000 payload bytes
-                }
+                    {
+                        var full = BuildLargeStoredZip(200_000);
+                        return full[..1000].Concat(full[2000..]).ToArray(); // drop 1000 payload bytes
+                    }
                 case "cfb-fat-past-eof":
-                {
-                    var xls = BuildXls();
-                    BinaryPrimitives.WriteUInt32LittleEndian(xls.AsSpan(0x4C, 4), 100_000);
-                    return xls;
-                }
+                    {
+                        var xls = BuildXls();
+                        BinaryPrimitives.WriteUInt32LittleEndian(xls.AsSpan(0x4C, 4), 100_000);
+                        return xls;
+                    }
                 case "cfb-v4": return BuildCfbV4();
                 default: return Sample(name);
             }

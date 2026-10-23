@@ -1,3 +1,4 @@
+using ExtractorOLE.Abstractions;
 using ExtractorOLE.Configuration;
 using ExtractorOLE.DTOs;
 using ExtractorOLE.Helpers;

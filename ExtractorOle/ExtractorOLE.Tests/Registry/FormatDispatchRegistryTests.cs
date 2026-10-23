@@ -1,3 +1,4 @@
+using ExtractorOLE.Abstractions;
 using DocumentFormat.OpenXml.Packaging;
 using ExtractorOLE.DTOs;
 using ExtractorOLE.Helpers;

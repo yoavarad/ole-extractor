@@ -1,3 +1,4 @@
+using ExtractorOLE.Helpers.Input;
 using ExtractorOLE.Configuration;
 using ExtractorOLE.DTOs;
 using ExtractorOLE.Exceptions;
@@ -5,7 +6,7 @@ using ExtractorOLE.Helpers.MimeDetection;
 using System;
 using System.IO;
 
-namespace ExtractorOLE.Helpers
+namespace ExtractorOLE.Helpers.Guardrails
 {
     /// <summary>
     /// Pre-parse guardrails for Extract ([ydk:nfr:extraction/max-file-size],

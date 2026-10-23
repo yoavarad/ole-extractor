@@ -1,3 +1,4 @@
+using ExtractorOLE.Abstractions;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using ExtractorOLE.Helpers.FileTypeStrategy;

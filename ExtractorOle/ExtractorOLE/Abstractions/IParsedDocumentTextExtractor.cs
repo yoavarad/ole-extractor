@@ -1,4 +1,4 @@
-namespace ExtractorOLE
+namespace ExtractorOLE.Abstractions
 {
     // A text extractor that can also read what its format's open strategy already parsed
     // (DocumentExtractionResult.ParsedDocument), so MainExtractor parses each input once (#168).

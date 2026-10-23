@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace ExtractorOLE.Helpers
+namespace ExtractorOLE.Helpers.Input
 {
     /// <summary>
     /// NPOIFSFileSystem(Stream) and b2xtranslator's StructuredStorageReader close the stream they are given;

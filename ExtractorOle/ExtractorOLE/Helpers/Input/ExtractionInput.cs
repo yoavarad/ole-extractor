@@ -1,8 +1,9 @@
+using ExtractorOLE.Abstractions;
 using ExtractorOLE.DTOs;
 using System;
 using System.IO;
 
-namespace ExtractorOLE.Helpers
+namespace ExtractorOLE.Helpers.Input
 {
     /// <summary>
     /// The content of one <see cref="ExtractionRequest"/>, from whichever source it carries

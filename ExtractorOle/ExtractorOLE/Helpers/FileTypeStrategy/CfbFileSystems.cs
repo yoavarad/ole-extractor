@@ -1,3 +1,4 @@
+using ExtractorOLE.Helpers.Input;
 using NPOI.POIFS.FileSystem;
 using NPOI.POIFS.NIO;
 using System.IO;
