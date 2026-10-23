@@ -31,7 +31,9 @@ namespace ExtractorOLE.Tests.Registry
             var expected = "Registry dispatch smoke test - docx.";
             var bytes = new DocxSampleGenerator().Generate(new SampleSpec { BodyText = expected }).Content;
 
+#pragma warning disable CS0618 // exercises the [Obsolete] Extract(byte[]) shim
             var result = BuildExtractor().Extract(bytes);
+#pragma warning restore CS0618
 
             Assert.Equal(expected, result.ExtractedText);
             Assert.Contains("wordprocessingml", result.MimeType);
@@ -43,7 +45,9 @@ namespace ExtractorOLE.Tests.Registry
             var expected = "Registry dispatch smoke test - xlsx.";
             var bytes = new XlsxSampleGenerator().Generate(new SampleSpec { BodyText = expected }).Content;
 
+#pragma warning disable CS0618 // exercises the [Obsolete] Extract(byte[]) shim
             var result = BuildExtractor().Extract(bytes);
+#pragma warning restore CS0618
 
             Assert.Equal(expected, result.ExtractedText);
             Assert.Contains("spreadsheetml", result.MimeType);
@@ -55,7 +59,9 @@ namespace ExtractorOLE.Tests.Registry
             var expected = "Registry dispatch smoke test - pptx.";
             var bytes = new PptxSampleGenerator().Generate(new SampleSpec { BodyText = expected }).Content;
 
+#pragma warning disable CS0618 // exercises the [Obsolete] Extract(byte[]) shim
             var result = BuildExtractor().Extract(bytes);
+#pragma warning restore CS0618
 
             Assert.Equal(expected, result.ExtractedText);
             Assert.Contains("presentationml", result.MimeType);
@@ -74,7 +80,9 @@ namespace ExtractorOLE.Tests.Registry
             using var ms = new MemoryStream();
             workbook.Write(ms);
 
+#pragma warning disable CS0618 // exercises the [Obsolete] Extract(byte[]) shim
             var result = BuildExtractor().Extract(ms.ToArray());
+#pragma warning restore CS0618
 
             Assert.Equal("application/vnd.ms-excel", result.MimeType);
             Assert.Equal("Registry dispatch smoke test - xls", result.Metadata.Title);

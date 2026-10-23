@@ -49,7 +49,9 @@ namespace ExtractorOLE.Tests.Registry
             var bytes = Generate(text);
 
             var before = XlsWorkbooks.LoadCount;
+#pragma warning disable CS0618 // exercises the [Obsolete] Extract(byte[]) shim
             var result = extractor.Extract(bytes);
+#pragma warning restore CS0618
             var loads = XlsWorkbooks.LoadCount - before;
 
             Assert.Equal(1, loads);

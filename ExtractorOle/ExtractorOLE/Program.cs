@@ -1,3 +1,4 @@
+using ExtractorOLE.DTOs;
 using ExtractorOLE.Helpers;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -31,7 +32,12 @@ namespace ExtractorOLE
             Console.WriteLine($"Detected format: {detectedMime} ({helper.MimeFor(detectedMime)})");
 
             // 2) Extraction
-            var result = extractor.Extract(fileBytes);
+            var result = extractor.Extract(new ExtractionRequest
+            {
+                FileBytes = fileBytes,
+                FileName = Path.GetFileName(filePath),
+                DetectedMimeType = helper.MimeFor(detectedMime),
+            });
             Console.WriteLine($"Extraction MIME type: {result.MimeType}");
             Console.WriteLine($"Title: {result.Metadata.Title}");
             Console.WriteLine($"Creator: {result.Metadata.Creator}");

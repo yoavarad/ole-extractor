@@ -50,6 +50,14 @@ namespace ExtractorOLE.StressHarness
             var extractor = provider.GetRequiredService<MainExtractor>();
             var helper = provider.GetRequiredService<IExtractionHelper>();
 
+            // Detect + extract, as the retired Extract(byte[]) overload did.
+            DocumentExtractionResult Extract(byte[] bytes) => extractor.Extract(new ExtractionRequest
+            {
+                FileBytes = bytes,
+                FileName = string.Empty,
+                DetectedMimeType = helper.MimeFor(helper.DetectMimeTypeFromBytes(bytes)),
+            });
+
             var options = new LoadGenerationOptions(concurrency, iterations);
 
             Console.WriteLine();
@@ -64,7 +72,7 @@ namespace ExtractorOLE.StressHarness
             {
                 try
                 {
-                    baselines[sample] = extractor.Extract(sample);
+                    baselines[sample] = Extract(sample);
                 }
                 catch (Exception ex)
                 {
@@ -76,7 +84,7 @@ namespace ExtractorOLE.StressHarness
             long mismatches = 0;
             DocumentExtractionResult ExtractAndCompare(byte[] bytes)
             {
-                var actual = extractor.Extract(bytes);
+                var actual = Extract(bytes);
                 if (baselines.TryGetValue(bytes, out var baseline) && baseline is not null &&
                     (actual.MimeType != baseline.MimeType || actual.ExtractedText != baseline.ExtractedText))
                 {

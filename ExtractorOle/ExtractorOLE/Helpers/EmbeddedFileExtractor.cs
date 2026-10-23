@@ -1,0 +1,446 @@
+using DocumentFormat.OpenXml.Packaging;
+using ExtractorOLE.DTOs;
+using NPOI.HSSF.UserModel;
+using NPOI.POIFS.FileSystem;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+
+namespace ExtractorOLE.Helpers
+{
+    /// <summary>
+    /// First-layer embedded-file (and OOXML package metadata) extraction for OOXML parts,
+    /// HSSF workbooks, raw CFB (.ppt) file systems and the .doc ObjectPool storage.
+    /// </summary>
+    public interface IEmbeddedFileExtractor
+    {
+        void ExtractMetadataAndEmbedded(OpenXmlPackage package, OpenXmlPart? rootPart, DocumentExtractionResult result);
+        void ExtractFirstLayerEmbedded(DocumentExtractionResult result, OpenXmlPart rootPart);
+        void ExtractFirstLayerEmbedded(DocumentExtractionResult result, HSSFWorkbook workbook);
+        void ExtractFirstLayerEmbedded(DocumentExtractionResult result, NPOIFSFileSystem fs);
+        void ExtractFirstLayerEmbedded(DocumentExtractionResult result, DirectoryEntry root);
+    }
+
+    public class EmbeddedFileExtractor : IEmbeddedFileExtractor
+    {
+        private readonly IMimeTypeMapper _mapper;
+
+        public EmbeddedFileExtractor(IMimeTypeMapper mapper)
+        {
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+        }
+        public void ExtractMetadataAndEmbedded(OpenXmlPackage package, OpenXmlPart? rootPart, DocumentExtractionResult result)
+        {
+            if (package == null) return;
+
+            var extendedPropsPart = package.GetPartsOfType<ExtendedFilePropertiesPart>().FirstOrDefault();
+            if (extendedPropsPart?.Properties != null)
+            {
+                result.Metadata.EditingDurationMinutes = MetadataConversions.ParseInt(extendedPropsPart.Properties.TotalTime?.Text);
+                result.Metadata.ApplicationName = MetadataConversions.NullIfEmpty(extendedPropsPart.Properties.Application?.Text);
+            }
+
+            var corePart = package.GetPartsOfType<CoreFilePropertiesPart>().FirstOrDefault();
+
+            if (corePart?.CoreFileProperties != null)
+            {
+                var props = corePart.CoreFileProperties;
+                result.Metadata.Title = props.Title;
+                result.Metadata.Creator = props.Creator;
+                result.Metadata.Created = props.Created;
+                result.Metadata.Modified = props.Modified;
+                result.Metadata.LastModifiedBy = props.LastModifiedBy;
+                result.Metadata.Subject = MetadataConversions.NullIfEmpty(props.Subject);
+                result.Metadata.Comments = MetadataConversions.NullIfEmpty(props.Description);
+                result.Metadata.RevisionNumber = MetadataConversions.ParseInt(props.Revision);
+                result.Metadata.LastPrinted = props.LastPrinted;
+                result.Metadata.Keywords = MetadataConversions.NullIfEmpty(props.Keywords);
+
+                if (string.IsNullOrEmpty(result.MimeType) && !string.IsNullOrEmpty(corePart.ContentType))
+                {
+                    result.MimeType = corePart.ContentType;
+                }
+            }
+
+            if (rootPart != null)
+            {
+                ExtractFirstLayerEmbedded(result, rootPart);
+            }
+        }
+
+        // A subfile is a distinct package part ([ydk:req:extraction/subfile-scope] speaks of
+        // embeddings/ and media parts, not relationships): every image / OLE-embedding part
+        // reachable from the root is listed exactly once by part URI, however many hosts relate
+        // to it. The walk is breadth-first so the parts directly on the root come first, then
+        // parts one hop down (slides, worksheets, headers), then deeper hosts (slide layouts,
+        // vmlDrawing OLE previews). Only containers are descended into; an embedding is never
+        // unpacked. The visited set also breaks relationship cycles (slide <-> layout <-> master).
+        public void ExtractFirstLayerEmbedded(DocumentExtractionResult result, OpenXmlPart rootPart)
+        {
+            int index = 1;
+            var seen = new HashSet<Uri> { rootPart.Uri };
+            var hosts = new List<OpenXmlPart> { rootPart };
+            bool isRootLevel = true;
+
+            while (hosts.Count > 0)
+            {
+                var nextHosts = new List<OpenXmlPart>();
+                foreach (var host in hosts)
+                {
+                    foreach (var partPair in host.Parts)
+                    {
+                        var nestedPart = partPair.OpenXmlPart;
+                        if (!seen.Add(nestedPart.Uri)) continue;
+
+                        if (nestedPart is ImagePart)
+                        {
+                            // Images directly on the root keep the embedded_object prefix; images
+                            // one or more hops down are slide_image.
+                            ExtractPartData(nestedPart, result.EmbeddedFiles, ref index, isRootLevel ? "embedded_object" : "slide_image");
+                        }
+                        else if (nestedPart is EmbeddedObjectPart || nestedPart is EmbeddedPackagePart)
+                        {
+                            ExtractPartData(nestedPart, result.EmbeddedFiles, ref index, "embedded_object");
+                        }
+                        else
+                        {
+                            nextHosts.Add(nestedPart);
+                        }
+                    }
+                }
+
+                hosts = nextHosts;
+                isRootLevel = false;
+            }
+        }
+
+        public void ExtractFirstLayerEmbedded(DocumentExtractionResult result, HSSFWorkbook workbook)
+        {
+            int index = 1;
+
+            foreach (HSSFObjectData obj in workbook.GetAllEmbeddedObjects())
+            {
+                ExtractHssfObjectData(obj, result.EmbeddedFiles, ref index);
+            }
+
+            foreach (HSSFPictureData pic in workbook.GetAllPictures())
+            {
+                ExtractHssfPictureData(pic, result.EmbeddedFiles, ref index);
+            }
+        }
+
+        // Legacy .ppt has no per-format API like HSSFWorkbook.GetAllEmbeddedObjects() to
+        // enumerate embeddings -- NPOI has no working HSLF entry point (ADR-004). Embedded
+        // OLE objects show up as CFB storages directly under the file's root, so this walks
+        // the root directory entries generically: any top-level storage is one opaque
+        // embedded object, named by its own CFB storage name (per ydk:req:extraction/subfile-scope's
+        // ppt-specific acceptance criterion). The standard root streams a real .ppt carries
+        // (PowerPoint Document, SummaryInformation, DocumentSummaryInformation, Current User)
+        // are never directories, so they never collide with this check. Inline media -- legacy
+        // .ppt concatenates every slide image into one root "Pictures" stream -- is returned as
+        // one further opaque subfile rather than parsed apart into individual images (no
+        // acceptance criterion asks for splitting it, and it fits the same "container returned
+        // as one opaque item, not recursively unpacked" rule already established for OLE objects).
+        public void ExtractFirstLayerEmbedded(DocumentExtractionResult result, NPOIFSFileSystem fs)
+        {
+            var root = fs.Root;
+            var topLevelEntries = new List<Entry>();
+            foreach (Entry entry in root)
+            {
+                topLevelEntries.Add(entry);
+            }
+
+            foreach (var entry in topLevelEntries)
+            {
+                if (!entry.IsDirectoryEntry) continue;
+
+                try
+                {
+                    ExtractCfbStorage((DirectoryEntry)entry, result.EmbeddedFiles);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Skipping unreadable embedded object storage '{entry.Name}': {ex.Message}");
+                }
+            }
+
+            // Guarded with an `is` check rather than relying on the catch below: "Pictures" is
+            // always a stream in a real .ppt, but if it were somehow a storage it would already
+            // have been picked up (and, if unreadable, logged) by the storage loop above -- an
+            // unconditional cast here would just re-attempt and re-log it as a second, unrelated
+            // failure.
+            if (root.HasEntry("Pictures") && root.GetEntry("Pictures") is DocumentEntry picturesEntry)
+            {
+                try
+                {
+                    ExtractCfbStream(picturesEntry, result.EmbeddedFiles);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Skipping unreadable Pictures stream: {ex.Message}");
+                }
+            }
+        }
+
+        // Reads a stream into an exactly-sized array with a single copy when length is known;
+        // otherwise falls back to a MemoryStream.
+        private static byte[] ReadAllBytes(Stream input, long length)
+        {
+            if (length < 0 || length > Array.MaxLength)
+            {
+                using var ms = new MemoryStream();
+                input.CopyTo(ms);
+                return TakeBytes(ms);
+            }
+
+            var bytes = new byte[length];
+            int read = 0;
+            while (read < bytes.Length)
+            {
+                int n = input.Read(bytes, read, bytes.Length - read);
+                if (n <= 0) break;
+                read += n;
+            }
+
+            if (read == bytes.Length)
+            {
+                return bytes;
+            }
+
+            // Stream shorter than advertised: trim, then drain any remainder defensively.
+            using var tail = new MemoryStream();
+            tail.Write(bytes, 0, read);
+            input.CopyTo(tail);
+            return TakeBytes(tail);
+        }
+
+        // Hands off the MemoryStream's backing array when it is exactly full (no copy);
+        // otherwise copies once.
+        private static byte[] TakeBytes(MemoryStream ms)
+        {
+            if (ms.TryGetBuffer(out var seg) && seg.Offset == 0 && seg.Array!.Length == seg.Count)
+            {
+                return seg.Array;
+            }
+
+            return ms.ToArray();
+        }
+
+        // Copies one CFB storage's whole subtree into a standalone POIFS filesystem and
+        // serializes it to bytes -- the same opaque, no-recursive-unpacking technique
+        // ExtractHssfObjectData uses for .xls embedded objects. Named by the storage's own
+        // CFB name.
+        private void ExtractCfbStorage(DirectoryEntry storage, List<EmbeddedFileItem> fileList)
+        {
+            var target = new NPOIFSFileSystem();
+            try
+            {
+                EntryUtils.CopyNodes(storage, target.Root);
+                byte[] extractedBytes;
+                using (var outStream = new MemoryStream())
+                {
+                    target.WriteFileSystem(outStream);
+                    extractedBytes = TakeBytes(outStream);
+                }
+
+                fileList.Add(new EmbeddedFileItem
+                {
+                    BinaryData = extractedBytes,
+                    PackagePath = storage.Name,
+                    SizeInBytes = extractedBytes.LongLength,
+                    FileName = storage.Name,
+                });
+            }
+            finally
+            {
+                target.Close();
+            }
+        }
+
+        // Reads one root-level CFB stream (the "Pictures" media blob) as one opaque subfile.
+        private void ExtractCfbStream(DocumentEntry stream, List<EmbeddedFileItem> fileList)
+        {
+            using var input = new DocumentInputStream(stream);
+            byte[] extractedBytes = ReadAllBytes(input, stream.Size);
+
+            fileList.Add(new EmbeddedFileItem
+            {
+                BinaryData = extractedBytes,
+                PackagePath = stream.Name,
+                SizeInBytes = extractedBytes.LongLength,
+                FileName = stream.Name,
+            });
+        }
+
+        // Legacy .doc has no HWPFDocument-level "get all embedded objects" convenience API
+        // (ADR-004: HWPF lives only in NPOI's un-compiled scratchpad tree). Per the Word/OLE
+        // storage convention (mirrored from Java POI, documented in docs/research/npoi.md),
+        // first-layer OLE-embedded objects live as child storages of a root-level "ObjectPool"
+        // directory - so this walks that storage directly off the raw CFB tree, independent of
+        // any body-text conversion path. Each child directory is copied out and serialized as
+        // one opaque blob (same technique as ExtractHssfObjectData), never unpacked further.
+        public void ExtractFirstLayerEmbedded(DocumentExtractionResult result, DirectoryEntry root)
+        {
+            if (!root.HasEntry("ObjectPool")) return;
+            if (root.GetEntry("ObjectPool") is not DirectoryEntry objectPool) return;
+
+            int index = 1;
+            foreach (var entry in objectPool)
+            {
+                ExtractDocObjectPoolEntry(entry, result.EmbeddedFiles, ref index);
+            }
+        }
+
+        // Reads one ObjectPool child. Wrapped in its own try/catch, mirroring
+        // ExtractHssfObjectData, so that one corrupt/malformed entry (e.g. one that isn't
+        // actually a directory storage) is skipped and logged without failing the whole walk.
+        private void ExtractDocObjectPoolEntry(Entry entry, List<EmbeddedFileItem> fileList, ref int index)
+        {
+            try
+            {
+                if (entry is not DirectoryEntry objectDir)
+                {
+                    throw new IOException($"ObjectPool entry '{entry.Name}' is not a directory storage");
+                }
+
+                var target = new NPOIFSFileSystem();
+                try
+                {
+                    EntryUtils.CopyNodes(objectDir, target.Root);
+                    using (var outStream = new MemoryStream())
+                    {
+                        target.WriteFileSystem(outStream);
+                        var extractedBytes = TakeBytes(outStream);
+
+                        var item = new EmbeddedFileItem
+                        {
+                            BinaryData = extractedBytes,
+                            PackagePath = $"ObjectPool/{objectDir.Name}",
+                            SizeInBytes = extractedBytes.LongLength,
+                            FileName = objectDir.Name,
+                        };
+
+                        fileList.Add(item);
+                        index++;
+                    }
+                }
+                finally
+                {
+                    target.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Skipping corrupt embedded object '{entry.Name}' in ObjectPool: {ex.Message}");
+            }
+        }
+
+        // Reads one embedded OLE object. Wrapped in its own try/catch so that one corrupt item
+        // (e.g. a POIFS directory entry that doesn't resolve to a real DirectoryEntry) is skipped
+        // and logged without failing the whole extraction.
+        private void ExtractHssfObjectData(HSSFObjectData obj, List<EmbeddedFileItem> fileList, ref int index)
+        {
+            try
+            {
+                byte[] extractedBytes;
+
+                if (obj.HasDirectoryEntry())
+                {
+                    // Copy the container's directory tree into a standalone POIFS filesystem and
+                    // serialize it to bytes. This returns the whole embedded object as one opaque
+                    // blob - its internal streams (e.g. "Ole", "Ole10Native") are never unpacked
+                    // or listed separately.
+                    var target = new NPOIFSFileSystem();
+                    try
+                    {
+                        EntryUtils.CopyNodes(obj.Directory, target.Root);
+                        using (var outStream = new MemoryStream())
+                        {
+                            target.WriteFileSystem(outStream);
+                            extractedBytes = TakeBytes(outStream);
+                        }
+                    }
+                    finally
+                    {
+                        target.Close();
+                    }
+                }
+                else
+                {
+                    extractedBytes = obj.ObjectData;
+                }
+
+                var item = new EmbeddedFileItem
+                {
+                    BinaryData = extractedBytes,
+                    PackagePath = $"embedded_object_{index}",
+                    SizeInBytes = extractedBytes.LongLength,
+                    FileName = $"embedded_object_{index}.bin"
+                };
+
+                fileList.Add(item);
+                index++;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Skipping corrupt embedded object at index {index}: {ex.Message}");
+            }
+        }
+
+        // Reads one inline picture. Wrapped in its own try/catch to isolate one corrupt item from
+        // the rest of the extraction, matching ExtractHssfObjectData's per-item behavior.
+        private void ExtractHssfPictureData(HSSFPictureData pic, List<EmbeddedFileItem> fileList, ref int index)
+        {
+            try
+            {
+                byte[] extractedBytes = pic.Data;
+                string extension = pic.SuggestFileExtension();
+                string fileName = string.IsNullOrEmpty(extension)
+                    ? $"picture_{index}.bin"
+                    : $"picture_{index}.{extension}";
+
+                var item = new EmbeddedFileItem
+                {
+                    BinaryData = extractedBytes,
+                    PackagePath = $"picture_{index}",
+                    SizeInBytes = extractedBytes.LongLength,
+                    FileName = fileName
+                };
+
+                fileList.Add(item);
+                index++;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Skipping corrupt picture at index {index}: {ex.Message}");
+            }
+        }
+
+        private void ExtractPartData(OpenXmlPart part, List<EmbeddedFileItem> fileList, ref int index, string prefix)
+        {
+            try
+            {
+                using (Stream partStream = part.GetStream())
+                {
+                    byte[] extractedBytes = ReadAllBytes(partStream, partStream.CanSeek ? partStream.Length : -1);
+
+                    var item = new EmbeddedFileItem
+                    {
+                        BinaryData = extractedBytes,
+                        PackagePath = part.Uri.ToString(),
+                        SizeInBytes = extractedBytes.LongLength,
+                        FileName = $"{prefix}_{index}{_mapper.GetExtensionFromContentType(part.ContentType)}"
+                    };
+
+                    fileList.Add(item);
+                    index++;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Skipping unreadable embedded part '{part.Uri}': {ex.Message}");
+            }
+        }
+    }
+}

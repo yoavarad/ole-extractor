@@ -113,7 +113,9 @@ namespace ExtractorOLE.Tests.Registry
             using var provider = services.BuildServiceProvider();
             var mainExtractor = provider.GetRequiredService<MainExtractor>();
 
+#pragma warning disable CS0618 // exercises the [Obsolete] Extract(byte[]) shim
             var result = mainExtractor.Extract(new byte[] { 0x01, 0x02, 0x03 });
+#pragma warning restore CS0618
 
             Assert.Equal("FAKE_TEXT", result.ExtractedText);
             Assert.Equal("application/x-fake-format", result.MimeType);

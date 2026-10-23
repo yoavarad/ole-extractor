@@ -39,11 +39,6 @@ namespace ExtractorOLE
             _guardrails = guardrails ?? throw new ArgumentNullException(nameof(guardrails));
         }
 
-        private IOpenStrategy? FindOpenStrategyForMime(OfficeMimeTypeEnum mimeType)
-        {
-            return _registry.GetOpenStrategy(mimeType);
-        }
-
         private static readonly OfficeMimeTypeEnum[] SupportedFormats =
         {
             OfficeMimeTypeEnum.Word, OfficeMimeTypeEnum.Excel, OfficeMimeTypeEnum.PowerPoint,
@@ -170,82 +165,23 @@ namespace ExtractorOLE
             return null;
         }
 
+        /// <summary>
+        /// Legacy convenience overload: detects the mime type itself, then delegates to
+        /// <see cref="Extract(ExtractionRequest)"/> with no other logic, so it follows that
+        /// contract exactly (including its exceptions; an undetected format throws
+        /// <see cref="Exceptions.UnsupportedFormatException"/>).
+        /// </summary>
+        [Obsolete("Detect the mime type and call Extract(ExtractionRequest) instead.")]
         public DocumentExtractionResult Extract(byte[] fileBytes)
         {
-            var result = new DocumentExtractionResult();
-
-            string? coreMime = null;
-            // detect package type as enum
-            var packageType = _helper.DetectMimeTypeFromBytes(fileBytes);
-
-            // Try strategy based on detected package MIME first            
-            var strategy = FindOpenStrategyForMime(packageType);
-            if (strategy != null)
+            if (fileBytes == null) throw new ArgumentNullException(nameof(fileBytes));
+            var format = _helper.DetectMimeTypeFromBytes(fileBytes);
+            return Extract(new ExtractionRequest
             {
-                try
-                {
-                    var stratResult = strategy.Open(fileBytes);
-                    if (stratResult != null)
-                    {
-                        if (!string.IsNullOrEmpty(stratResult.MimeType)) coreMime = stratResult.MimeType;
-                        result = stratResult;
-                    }
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine($"failed running on found Mime type, switching to fallback. error: {e.Message}");
-                    // strategy failed - fall back to trial open order below
-                }
-            }
-
-            try
-            {
-                // Determine final mime: priority to coreMime, then package type, then magic
-                OfficeMimeTypeEnum finalMimeType = OfficeMimeTypeEnum.OpenXmlUnknown;
-                if (packageType != OfficeMimeTypeEnum.OpenXmlUnknown)
-                {
-                    finalMimeType = packageType;
-
-                }
-                else if (!string.IsNullOrEmpty(coreMime))
-                {
-                    finalMimeType = _helper.ParseOfficeMimeType(coreMime);
-                }
-                else
-                {
-                    // fallback via magic bytes
-                    var magic = _helper.DetectMimeFromMagicBytes(fileBytes);
-                    finalMimeType = _helper.ParseOfficeMimeType(magic);
-                }
-
-                string finalMime = _helper.MimeFor(finalMimeType) ?? coreMime ?? "application/octet-stream";
-
-                result.MimeType = finalMime;
-
-                // Text extraction via registry (enum keyed)
-                var extractor = FindHandlerForMime(finalMimeType);
-                if (extractor != null)
-                {
-                    try
-                    {
-                        result.ExtractedText = ExtractText(extractor, result, () => fileBytes);
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Text extraction failed: {ex.Message}");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine($"No text extractor registered for MIME '{finalMime}'");
-                }
-            }
-            finally
-            {
-                ReleaseParsedDocument(result);
-            }
-
-            return result;
+                FileBytes = fileBytes,
+                FileName = string.Empty,
+                DetectedMimeType = _helper.MimeFor(format),
+            });
         }
 
         // Reuses what the open strategy already parsed (#168, #167) when the extractor can take
@@ -268,25 +204,5 @@ namespace ExtractorOLE
             result.ParsedDocument = null;
             (parsed as IDisposable)?.Dispose();
         }
-
-        private ITextExtractor? FindHandlerForMime(OfficeMimeTypeEnum mimeType)
-        {
-            var exact = _registry.GetTextExtractor(mimeType);
-            if (exact != null) return exact;
-
-            // fallback: if unknown openxml package, prefer Word then Excel
-            if (mimeType == OfficeMimeTypeEnum.OpenXmlUnknown)
-            {
-                var w = _registry.GetTextExtractor(OfficeMimeTypeEnum.Word);
-                if (w != null) return w;
-                var x = _registry.GetTextExtractor(OfficeMimeTypeEnum.Excel);
-                if (x != null) return x;
-                var y = _registry.GetTextExtractor(OfficeMimeTypeEnum.PowerPoint);
-                if (y != null) return y;
-            }
-
-            return null;
-        }
-
     }
 }
