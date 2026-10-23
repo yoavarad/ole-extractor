@@ -1,6 +1,7 @@
 using ExtractorOLE.Configuration;
 using ExtractorOLE.DTOs;
 using ExtractorOLE.Exceptions;
+using ExtractorOLE.Helpers.Input;
 using System;
 using System.Buffers.Binary;
 using System.IO;
