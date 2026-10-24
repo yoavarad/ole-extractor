@@ -30,6 +30,17 @@
         ]
       },
       {
+        "matcher": "Bash|PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .claude/hooks/verify_pr_body.py",
+            "timeout": 120,
+            "statusMessage": "Validating PR body..."
+          }
+        ]
+      },
+      {
         "matcher": "Read|Glob",
         "hooks": [
           {
