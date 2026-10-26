@@ -25,5 +25,5 @@ if (cpu) config = config.AddDiagnoser(new EventPipeProfiler(EventPipeProfile.Cpu
 if (alloc) config = config.AddDiagnoser(new EventPipeProfiler(EventPipeProfile.GcVerbose));
 
 // No arguments: run everything instead of showing the interactive switcher menu.
-BenchmarkSwitcher.FromAssembly(typeof(ExtractionBenchmarks).Assembly).Run(args.Length == 0 ? new[] { "--filter", "*" } : args, config);
+BenchmarkSwitcher.FromAssembly(typeof(ExtractionBenchmarks).Assembly).Run(args.Length == 0 ? ["--filter", "*"] : args, config);
 return 0;

@@ -81,7 +81,7 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
                 {
                     fs.Close();
                 }
-                result.MimeType = _helper.MimeFor(OfficeMimeTypeEnum.WordLegacy);
+                result.MimeType = _helper.MimeFor(OfficeMimeType.WordLegacy);
                 return result;
             }
             catch

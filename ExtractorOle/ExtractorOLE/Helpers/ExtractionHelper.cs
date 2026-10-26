@@ -51,9 +51,9 @@ namespace ExtractorOLE.Helpers
             _embedded = embedded ?? throw new ArgumentNullException(nameof(embedded));
         }
 
-        public string MimeFor(OfficeMimeTypeEnum type) => _mapper.MimeFor(type);
+        public string MimeFor(OfficeMimeType type) => _mapper.MimeFor(type);
 
-        public OfficeMimeTypeEnum ParseOfficeMimeType(string? mime) => _mapper.ParseOfficeMimeType(mime);
+        public OfficeMimeType ParseOfficeMimeType(string? mime) => _mapper.ParseOfficeMimeType(mime);
 
         public string GetExtensionFromContentType(string contentType) => _mapper.GetExtensionFromContentType(contentType);
 
@@ -72,7 +72,7 @@ namespace ExtractorOLE.Helpers
         public void ExtractFirstLayerEmbedded(DocumentExtractionResult result, DirectoryEntry root) =>
             _embedded.ExtractFirstLayerEmbedded(result, root);
 
-        public OfficeMimeTypeEnum DetectMimeTypeFromBytes(byte[] fileBytes) => _detector.DetectMimeTypeFromBytes(fileBytes);
+        public OfficeMimeType DetectMimeTypeFromBytes(byte[] fileBytes) => _detector.DetectMimeTypeFromBytes(fileBytes);
 
         public MimeDetectionResult DetectMimeType(MimeDetectionRequest request) => _detector.DetectMimeType(request);
 

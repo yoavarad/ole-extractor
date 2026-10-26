@@ -38,9 +38,9 @@ namespace ExtractorOLE.Tests.Registry
         // through the real, unmodified MainExtractor dispatch code.
         private sealed class FakeExtractionHelper : IExtractionHelper
         {
-            public string MimeFor(OfficeMimeTypeEnum type) => "application/x-fake-format";
+            public string MimeFor(OfficeMimeType type) => "application/x-fake-format";
 
-            public OfficeMimeTypeEnum ParseOfficeMimeType(string? mime) => OfficeMimeTypeEnum.Word;
+            public OfficeMimeType ParseOfficeMimeType(string? mime) => OfficeMimeType.Word;
 
             public void ExtractMetadataAndEmbedded(OpenXmlPackage package, OpenXmlPart? rootPart, DocumentExtractionResult result) =>
                 throw new NotSupportedException("Not exercised by this test - FakeOpenStrategy handles Open() directly.");
@@ -57,7 +57,7 @@ namespace ExtractorOLE.Tests.Registry
             public void ExtractFirstLayerEmbedded(DocumentExtractionResult result, NPOI.POIFS.FileSystem.DirectoryEntry root) =>
                 throw new NotSupportedException("Not exercised by this test.");
 
-            public OfficeMimeTypeEnum DetectMimeTypeFromBytes(byte[] fileBytes) => OfficeMimeTypeEnum.Word;
+            public OfficeMimeType DetectMimeTypeFromBytes(byte[] fileBytes) => OfficeMimeType.Word;
 
             public MimeDetectionResult DetectMimeType(MimeDetectionRequest request) =>
                 throw new NotSupportedException("Not exercised by this test.");
@@ -74,25 +74,25 @@ namespace ExtractorOLE.Tests.Registry
             services.AddSingleton<IOpenStrategy, FakeOpenStrategy>();
             services.AddSingleton<ITextExtractor, FakeTextExtractor>();
             services.AddSingleton<IFormatDispatchRegistry>(sp => new FormatDispatchRegistry(
-                new Dictionary<OfficeMimeTypeEnum, IOpenStrategy> { [OfficeMimeTypeEnum.Word] = sp.GetRequiredService<IOpenStrategy>() },
-                new Dictionary<OfficeMimeTypeEnum, ITextExtractor> { [OfficeMimeTypeEnum.Word] = sp.GetRequiredService<ITextExtractor>() }));
+                new Dictionary<OfficeMimeType, IOpenStrategy> { [OfficeMimeType.Word] = sp.GetRequiredService<IOpenStrategy>() },
+                new Dictionary<OfficeMimeType, ITextExtractor> { [OfficeMimeType.Word] = sp.GetRequiredService<ITextExtractor>() }));
 
             using var provider = services.BuildServiceProvider();
             var registry = provider.GetRequiredService<IFormatDispatchRegistry>();
 
-            Assert.IsType<FakeOpenStrategy>(registry.GetOpenStrategy(OfficeMimeTypeEnum.Word));
-            Assert.IsType<FakeTextExtractor>(registry.GetTextExtractor(OfficeMimeTypeEnum.Word));
+            Assert.IsType<FakeOpenStrategy>(registry.GetOpenStrategy(OfficeMimeType.Word));
+            Assert.IsType<FakeTextExtractor>(registry.GetTextExtractor(OfficeMimeType.Word));
         }
 
         [Fact]
         public void UnregisteredFormat_ReturnsNullFromBothLookups()
         {
             var registry = new FormatDispatchRegistry(
-                new Dictionary<OfficeMimeTypeEnum, IOpenStrategy>(),
-                new Dictionary<OfficeMimeTypeEnum, ITextExtractor>());
+                new Dictionary<OfficeMimeType, IOpenStrategy>(),
+                new Dictionary<OfficeMimeType, ITextExtractor>());
 
-            Assert.Null(registry.GetOpenStrategy(OfficeMimeTypeEnum.Excel));
-            Assert.Null(registry.GetTextExtractor(OfficeMimeTypeEnum.Excel));
+            Assert.Null(registry.GetOpenStrategy(OfficeMimeType.Excel));
+            Assert.Null(registry.GetTextExtractor(OfficeMimeType.Excel));
         }
 
         [Fact]
@@ -107,8 +107,8 @@ namespace ExtractorOLE.Tests.Registry
             services.AddSingleton<IOpenStrategy, FakeOpenStrategy>();
             services.AddSingleton<ITextExtractor, FakeTextExtractor>();
             services.AddSingleton<IFormatDispatchRegistry>(sp => new FormatDispatchRegistry(
-                new Dictionary<OfficeMimeTypeEnum, IOpenStrategy> { [OfficeMimeTypeEnum.Word] = sp.GetRequiredService<IOpenStrategy>() },
-                new Dictionary<OfficeMimeTypeEnum, ITextExtractor> { [OfficeMimeTypeEnum.Word] = sp.GetRequiredService<ITextExtractor>() }));
+                new Dictionary<OfficeMimeType, IOpenStrategy> { [OfficeMimeType.Word] = sp.GetRequiredService<IOpenStrategy>() },
+                new Dictionary<OfficeMimeType, ITextExtractor> { [OfficeMimeType.Word] = sp.GetRequiredService<ITextExtractor>() }));
             services.AddSingleton<MainExtractor>();
 
             using var provider = services.BuildServiceProvider();

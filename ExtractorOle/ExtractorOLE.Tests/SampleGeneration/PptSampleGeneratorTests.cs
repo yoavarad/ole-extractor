@@ -33,7 +33,7 @@ namespace ExtractorOLE.Tests.SampleGeneration
             var sample = new PptSampleGenerator().Generate(new SampleSpec { BodyText = "hello" });
 
             Assert.Equal("sample.ppt", sample.FileName);
-            Assert.Equal(OfficeMimeTypeEnum.PowerPointLegacy,
+            Assert.Equal(OfficeMimeType.PowerPointLegacy,
                 new ExtractionHelper().DetectMimeTypeFromBytes(sample.Content));
         }
 
@@ -45,7 +45,7 @@ namespace ExtractorOLE.Tests.SampleGeneration
                 BodyText = string.Join(Environment.NewLine, Lines),
             });
 
-            var result = DocSampleGeneratorTests.Extract(sample.Content, OfficeMimeTypeEnum.PowerPointLegacy);
+            var result = DocSampleGeneratorTests.Extract(sample.Content, OfficeMimeType.PowerPointLegacy);
 
             Assert.Equal(string.Join(Environment.NewLine, Lines), result.ExtractedText);
             Assert.Equal(1, ((PowerPointFormatMetadata)result.FormatMetadata!).SlideCount);
@@ -67,7 +67,7 @@ namespace ExtractorOLE.Tests.SampleGeneration
         {
             var sample = new PptSampleGenerator().Generate(new SampleSpec { BodyText = Lines[index] });
 
-            var result = DocSampleGeneratorTests.Extract(sample.Content, OfficeMimeTypeEnum.PowerPointLegacy);
+            var result = DocSampleGeneratorTests.Extract(sample.Content, OfficeMimeType.PowerPointLegacy);
 
             Assert.True(Lines[index] == result.ExtractedText, $"{label}: expected '{Lines[index]}', got '{result.ExtractedText}'");
         }
@@ -78,7 +78,7 @@ namespace ExtractorOLE.Tests.SampleGeneration
             var body = MultilingualFixtures.ComposeLargeBody(5_000, 20).Replace("\r\n", "\n");
             var sample = new PptSampleGenerator().Generate(new SampleSpec { BodyText = body });
 
-            var result = DocSampleGeneratorTests.Extract(sample.Content, OfficeMimeTypeEnum.PowerPointLegacy);
+            var result = DocSampleGeneratorTests.Extract(sample.Content, OfficeMimeType.PowerPointLegacy);
 
             Assert.Equal(body.Replace("\n", Environment.NewLine), result.ExtractedText);
         }
@@ -105,7 +105,7 @@ namespace ExtractorOLE.Tests.SampleGeneration
                 VbaProject = new byte[] { 0xAA, 0xBB },
             });
 
-            var result = DocSampleGeneratorTests.Extract(sample.Content, OfficeMimeTypeEnum.PowerPointLegacy);
+            var result = DocSampleGeneratorTests.Extract(sample.Content, OfficeMimeType.PowerPointLegacy);
 
             Assert.Equal(MultilingualFixtures.Hebrew, result.Metadata.Title);
             Assert.Equal(MultilingualFixtures.Arabic, result.Metadata.Creator);
@@ -123,7 +123,7 @@ namespace ExtractorOLE.Tests.SampleGeneration
         {
             var sample = new PptSampleGenerator().Generate(new SampleSpec { BodyText = "body" });
 
-            var result = DocSampleGeneratorTests.Extract(sample.Content, OfficeMimeTypeEnum.PowerPointLegacy);
+            var result = DocSampleGeneratorTests.Extract(sample.Content, OfficeMimeType.PowerPointLegacy);
 
             Assert.False(((PowerPointFormatMetadata)result.FormatMetadata!).HasMacros);
             Assert.Empty(result.EmbeddedFiles);
@@ -134,7 +134,7 @@ namespace ExtractorOLE.Tests.SampleGeneration
         {
             var sample = new PptSampleGenerator().Generate(new SampleSpec());
 
-            var result = DocSampleGeneratorTests.Extract(sample.Content, OfficeMimeTypeEnum.PowerPointLegacy);
+            var result = DocSampleGeneratorTests.Extract(sample.Content, OfficeMimeType.PowerPointLegacy);
 
             Assert.Equal(string.Empty, result.ExtractedText);
         }

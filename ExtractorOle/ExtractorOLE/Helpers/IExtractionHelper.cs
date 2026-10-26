@@ -8,8 +8,8 @@ namespace ExtractorOLE.Helpers
 {
     public interface IExtractionHelper
     {
-        string MimeFor(OfficeMimeTypeEnum type);
-        OfficeMimeTypeEnum ParseOfficeMimeType(string? mime);
+        string MimeFor(OfficeMimeType type);
+        OfficeMimeType ParseOfficeMimeType(string? mime);
 
         void ExtractMetadataAndEmbedded(OpenXmlPackage package, OpenXmlPart? rootPart, DocumentExtractionResult result);
         void ExtractFirstLayerEmbedded(DocumentExtractionResult result, OpenXmlPart rootPart);
@@ -17,7 +17,7 @@ namespace ExtractorOLE.Helpers
         void ExtractFirstLayerEmbedded(DocumentExtractionResult result, NPOIFSFileSystem fs);
         void ExtractFirstLayerEmbedded(DocumentExtractionResult result, DirectoryEntry root);
 
-        OfficeMimeTypeEnum DetectMimeTypeFromBytes(byte[] fileBytes);
+        OfficeMimeType DetectMimeTypeFromBytes(byte[] fileBytes);
         MimeDetectionResult DetectMimeType(MimeDetectionRequest request);
         string GetExtensionFromContentType(string contentType);
         string DetectMimeFromMagicBytes(byte[] bytes);

@@ -240,10 +240,10 @@ namespace ExtractorOLE.Tests.Excel
             ServiceRegistration.Register(services);
             var provider = services.BuildServiceProvider();
 
-            var dict = provider.GetRequiredService<IDictionary<OfficeMimeTypeEnum, IOpenStrategy>>();
+            var dict = provider.GetRequiredService<IDictionary<OfficeMimeType, IOpenStrategy>>();
 
-            Assert.True(dict.ContainsKey(OfficeMimeTypeEnum.ExcelLegacy));
-            Assert.IsType<XlsOpenStrategy>(dict[OfficeMimeTypeEnum.ExcelLegacy]);
+            Assert.True(dict.ContainsKey(OfficeMimeType.ExcelLegacy));
+            Assert.IsType<XlsOpenStrategy>(dict[OfficeMimeType.ExcelLegacy]);
         }
 
         [Fact]
@@ -312,8 +312,8 @@ namespace ExtractorOLE.Tests.Excel
             // count of 1.
             Assert.Equal(2, result!.EmbeddedFiles.Count);
 
-            var objectItems = result.EmbeddedFiles.Where(f => f.FileName.StartsWith("embedded_object_")).ToList();
-            var pictureItems = result.EmbeddedFiles.Where(f => f.FileName.StartsWith("picture_")).ToList();
+            var objectItems = result.EmbeddedFiles.Where(f => f.FileName.StartsWith("embedded_object_", StringComparison.Ordinal)).ToList();
+            var pictureItems = result.EmbeddedFiles.Where(f => f.FileName.StartsWith("picture_", StringComparison.Ordinal)).ToList();
             Assert.Single(objectItems);
             Assert.Single(pictureItems);
 

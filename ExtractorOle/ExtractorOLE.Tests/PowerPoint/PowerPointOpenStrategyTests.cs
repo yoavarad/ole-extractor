@@ -25,7 +25,7 @@ namespace ExtractorOLE.Tests.PowerPoint
     /// </summary>
     public class PowerPointOpenStrategyTests
     {
-        private static byte[] BuildPptxFixture(int totalSlideCount, ISet<int> notesSlideIndexes, byte[]? vbaProject = null)
+        private static byte[] BuildPptxFixture(int totalSlideCount, HashSet<int> notesSlideIndexes, byte[]? vbaProject = null)
         {
             var spec = new SampleSpec { BodyText = "Slide 1", VbaProject = vbaProject };
             var generated = new PptxSampleGenerator().Generate(spec);

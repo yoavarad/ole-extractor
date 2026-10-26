@@ -12,19 +12,19 @@ namespace ExtractorOLE.Benchmarks
         public const string SamplesDirEnvVar = "OLE_BENCHMARK_SAMPLES_DIR";
 
         // Ids are "<format>-<tier>", e.g. "docx-10mb"; the file is samples/benchmark/benchmark-<tier>.<format>.
-        private static readonly (string Ext, OfficeMimeTypeEnum Mime)[] Formats =
+        private static readonly (string Ext, OfficeMimeType Mime)[] Formats =
         {
-            ("docx", OfficeMimeTypeEnum.Word),
-            ("xlsx", OfficeMimeTypeEnum.Excel),
-            ("pptx", OfficeMimeTypeEnum.PowerPoint),
-            ("doc", OfficeMimeTypeEnum.WordLegacy),
-            ("xls", OfficeMimeTypeEnum.ExcelLegacy),
-            ("ppt", OfficeMimeTypeEnum.PowerPointLegacy),
+            ("docx", OfficeMimeType.Word),
+            ("xlsx", OfficeMimeType.Excel),
+            ("pptx", OfficeMimeType.PowerPoint),
+            ("doc", OfficeMimeType.WordLegacy),
+            ("xls", OfficeMimeType.ExcelLegacy),
+            ("ppt", OfficeMimeType.PowerPointLegacy),
         };
 
         public static IEnumerable<string> Ids(string tier) => Formats.Select(f => $"{f.Ext}-{tier}");
 
-        public static OfficeMimeTypeEnum MimeFor(string id) =>
+        public static OfficeMimeType MimeFor(string id) =>
             Formats.Single(f => f.Ext == id[..id.IndexOf('-')]).Mime;
 
         public static string PathFor(string id)

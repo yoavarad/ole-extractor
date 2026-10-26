@@ -44,8 +44,8 @@ namespace ExtractorOLE.Tests.PowerPoint
 
             Assert.NotNull(result);
             Assert.Equal(2, result!.EmbeddedFiles.Count);
-            Assert.Equal(1, result.EmbeddedFiles.Count(f => f.FileName.StartsWith("embedded_object_")));
-            Assert.Equal(1, result.EmbeddedFiles.Count(f => f.FileName.StartsWith("slide_image_")));
+            Assert.Equal(1, result.EmbeddedFiles.Count(f => f.FileName.StartsWith("embedded_object_", StringComparison.Ordinal)));
+            Assert.Equal(1, result.EmbeddedFiles.Count(f => f.FileName.StartsWith("slide_image_", StringComparison.Ordinal)));
             Assert.All(result.EmbeddedFiles, f => Assert.True(f.SizeInBytes > 0));
         }
 

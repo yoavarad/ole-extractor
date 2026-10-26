@@ -1,6 +1,6 @@
 namespace ExtractorOLE.DTOs
 {
-    public enum DetectedFormatEnum
+    public enum DetectedFormat
     {
         Doc,
         Xls,

@@ -26,9 +26,9 @@ namespace ExtractorOLE.Tests.Helpers
         {
             var mapper = new MimeTypeMapper();
 
-            Assert.Equal("application/msword", mapper.MimeFor(OfficeMimeTypeEnum.WordLegacy));
-            Assert.Equal(OfficeMimeTypeEnum.Excel, mapper.ParseOfficeMimeType(mapper.MimeFor(OfficeMimeTypeEnum.Excel)));
-            Assert.Equal(OfficeMimeTypeEnum.OpenXmlUnknown, mapper.ParseOfficeMimeType(null));
+            Assert.Equal("application/msword", mapper.MimeFor(OfficeMimeType.WordLegacy));
+            Assert.Equal(OfficeMimeType.Excel, mapper.ParseOfficeMimeType(mapper.MimeFor(OfficeMimeType.Excel)));
+            Assert.Equal(OfficeMimeType.OpenXmlUnknown, mapper.ParseOfficeMimeType(null));
             Assert.Equal(".png", mapper.GetExtensionFromContentType("image/png"));
             Assert.Equal(".bin", mapper.GetExtensionFromContentType(""));
         }
@@ -46,8 +46,8 @@ namespace ExtractorOLE.Tests.Helpers
             using var ms = new MemoryStream();
             workbook.Write(ms);
 
-            Assert.Equal(OfficeMimeTypeEnum.ExcelLegacy, detector.DetectMimeTypeFromBytes(ms.ToArray()));
-            Assert.Equal(OfficeMimeTypeEnum.OpenXmlUnknown, detector.DetectMimeTypeFromBytes(new byte[] { 1, 2, 3, 4 }));
+            Assert.Equal(OfficeMimeType.ExcelLegacy, detector.DetectMimeTypeFromBytes(ms.ToArray()));
+            Assert.Equal(OfficeMimeType.OpenXmlUnknown, detector.DetectMimeTypeFromBytes(new byte[] { 1, 2, 3, 4 }));
             Assert.Equal("application/pdf", detector.DetectMimeFromMagicBytes(new byte[] { (byte)'%', (byte)'P', (byte)'D', (byte)'F' }));
         }
 
@@ -77,7 +77,7 @@ namespace ExtractorOLE.Tests.Helpers
         private sealed class AlwaysDocDetector : IMimeTypeDetector
         {
             public MimeDetectionResult Detect(MimeDetectionRequest request) =>
-                new MimeDetectionResult { DetectedFormat = DetectedFormatEnum.Doc, MimeType = "application/msword", IsSupported = true };
+                new MimeDetectionResult { DetectedFormat = DetectedFormat.Doc, MimeType = "application/msword", IsSupported = true };
         }
 
         [Fact]
@@ -89,8 +89,8 @@ namespace ExtractorOLE.Tests.Helpers
             using var provider = services.BuildServiceProvider();
             var garbage = new byte[] { 1, 2, 3, 4 };
 
-            Assert.Equal(OfficeMimeTypeEnum.WordLegacy, provider.GetRequiredService<IOfficeMimeTypeDetector>().DetectMimeTypeFromBytes(garbage));
-            Assert.Equal(OfficeMimeTypeEnum.WordLegacy, provider.GetRequiredService<IExtractionHelper>().DetectMimeTypeFromBytes(garbage));
+            Assert.Equal(OfficeMimeType.WordLegacy, provider.GetRequiredService<IOfficeMimeTypeDetector>().DetectMimeTypeFromBytes(garbage));
+            Assert.Equal(OfficeMimeType.WordLegacy, provider.GetRequiredService<IExtractionHelper>().DetectMimeTypeFromBytes(garbage));
         }
 
         [Fact]

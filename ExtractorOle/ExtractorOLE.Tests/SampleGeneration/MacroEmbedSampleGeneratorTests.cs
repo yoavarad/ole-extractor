@@ -83,11 +83,11 @@ namespace ExtractorOLE.Tests.SampleGeneration
         }
 
         [Theory]
-        [InlineData(typeof(DocSampleGenerator), OfficeMimeTypeEnum.WordLegacy)]
-        [InlineData(typeof(XlsSampleGenerator), OfficeMimeTypeEnum.ExcelLegacy)]
-        [InlineData(typeof(PptSampleGenerator), OfficeMimeTypeEnum.PowerPointLegacy)]
+        [InlineData(typeof(DocSampleGenerator), OfficeMimeType.WordLegacy)]
+        [InlineData(typeof(XlsSampleGenerator), OfficeMimeType.ExcelLegacy)]
+        [InlineData(typeof(PptSampleGenerator), OfficeMimeType.PowerPointLegacy)]
         public void LegacyFormat_MacroEmbedSpec_ProducesMacroFileWithEmbeddingThatExtractsBack(
-            Type generatorType, OfficeMimeTypeEnum format)
+            Type generatorType, OfficeMimeType format)
         {
             var generator = (ISampleGenerator)Activator.CreateInstance(generatorType)!;
 

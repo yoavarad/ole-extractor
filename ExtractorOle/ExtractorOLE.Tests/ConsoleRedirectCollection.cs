@@ -8,7 +8,7 @@ namespace ExtractorOLE.Tests
     /// another's capture writer (flaky empty-capture assertions).
     /// </summary>
     [CollectionDefinition("ConsoleRedirect", DisableParallelization = true)]
-    public sealed class ConsoleRedirectCollection { }
+    public sealed class ConsoleRedirectCollectionDefinition { }
 }
 
 namespace ExtractorOLE.Tests
@@ -18,5 +18,5 @@ namespace ExtractorOLE.Tests
     /// must not compete with other collections for ThreadPool threads/CPU.
     /// </summary>
     [CollectionDefinition("ThreadPoolSensitive", DisableParallelization = true)]
-    public sealed class ThreadPoolSensitiveCollection { }
+    public sealed class ThreadPoolSensitiveCollectionDefinition { }
 }

@@ -14,21 +14,21 @@ namespace ExtractorOLE.Registry
     /// </summary>
     public sealed class FormatDispatchRegistry : IFormatDispatchRegistry
     {
-        private readonly IDictionary<OfficeMimeTypeEnum, IOpenStrategy> _openStrategies;
-        private readonly IDictionary<OfficeMimeTypeEnum, ITextExtractor> _textExtractors;
+        private readonly IDictionary<OfficeMimeType, IOpenStrategy> _openStrategies;
+        private readonly IDictionary<OfficeMimeType, ITextExtractor> _textExtractors;
 
         public FormatDispatchRegistry(
-            IDictionary<OfficeMimeTypeEnum, IOpenStrategy> openStrategies,
-            IDictionary<OfficeMimeTypeEnum, ITextExtractor> textExtractors)
+            IDictionary<OfficeMimeType, IOpenStrategy> openStrategies,
+            IDictionary<OfficeMimeType, ITextExtractor> textExtractors)
         {
             _openStrategies = openStrategies ?? throw new ArgumentNullException(nameof(openStrategies));
             _textExtractors = textExtractors ?? throw new ArgumentNullException(nameof(textExtractors));
         }
 
-        public IOpenStrategy? GetOpenStrategy(OfficeMimeTypeEnum format) =>
+        public IOpenStrategy? GetOpenStrategy(OfficeMimeType format) =>
             _openStrategies.TryGetValue(format, out var strategy) ? strategy : null;
 
-        public ITextExtractor? GetTextExtractor(OfficeMimeTypeEnum format) =>
+        public ITextExtractor? GetTextExtractor(OfficeMimeType format) =>
             _textExtractors.TryGetValue(format, out var extractor) ? extractor : null;
     }
 }

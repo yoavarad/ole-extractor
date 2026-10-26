@@ -33,7 +33,7 @@ namespace ExtractorOLE.Tests.Helpers
                 Calls++;
                 return new MimeDetectionResult
                 {
-                    DetectedFormat = DetectedFormatEnum.Unknown,
+                    DetectedFormat = DetectedFormat.Unknown,
                     MimeType = "application/octet-stream",
                     IsSupported = false
                 };
@@ -106,7 +106,7 @@ namespace ExtractorOLE.Tests.Helpers
             limits.MaxFileSizeBytes = 20; // exactly at the limit: accepted
             var result = helper.DetectMimeType(request);
 
-            Assert.Equal(DetectedFormatEnum.Unknown, result.DetectedFormat);
+            Assert.Equal(DetectedFormat.Unknown, result.DetectedFormat);
             Assert.Equal(1, spy.Calls); // ran through every detector, none rejected it
         }
     }

@@ -67,7 +67,7 @@ namespace SampleGenerator.Generators
             }
         }
 
-        private static (byte[] WordDocument, byte[] Table) BuildStreams(IReadOnlyList<string> paragraphs)
+        private static (byte[] WordDocument, byte[] Table) BuildStreams(List<string> paragraphs)
         {
             // Every paragraph, including the last, ends with a paragraph mark (0x0D).
             var text = string.Concat(paragraphs.Select(p => p.Replace('\r', ' ') + "\r"));

@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace ExtractorOLE.DTOs
 {
-    public enum OfficeMimeTypeEnum
+    public enum OfficeMimeType
     {
         Word,
         Excel,

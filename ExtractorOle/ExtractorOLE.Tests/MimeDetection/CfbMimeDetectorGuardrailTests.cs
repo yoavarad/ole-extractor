@@ -112,7 +112,7 @@ namespace ExtractorOLE.Tests.MimeDetection
 
             var defaultDetector = new CfbMimeDetector();
             var result = defaultDetector.Detect(request);
-            Assert.Equal(DetectedFormatEnum.Unknown, result.DetectedFormat);
+            Assert.Equal(DetectedFormat.Unknown, result.DetectedFormat);
         }
 
         [Fact]
@@ -127,7 +127,7 @@ namespace ExtractorOLE.Tests.MimeDetection
 
             var result = detector.Detect(request);
 
-            Assert.Equal(DetectedFormatEnum.Unknown, result.DetectedFormat);
+            Assert.Equal(DetectedFormat.Unknown, result.DetectedFormat);
         }
 
         [Fact]
@@ -162,7 +162,7 @@ namespace ExtractorOLE.Tests.MimeDetection
 
             var defaultDetector = new CfbMimeDetector();
             var result = defaultDetector.Detect(request);
-            Assert.Equal(DetectedFormatEnum.Unknown, result.DetectedFormat);
+            Assert.Equal(DetectedFormat.Unknown, result.DetectedFormat);
 
             var strictDetector = new CfbMimeDetector(new MimeDetectionLimits { MaxDeclaredNestedContentBytes = 1000 });
             Assert.Throws<OversizedNestedContentException>(() => strictDetector.Detect(request));

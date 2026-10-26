@@ -114,12 +114,12 @@ namespace ExtractorOLE.Tests.Integration
 
             var format = targets[0].GetString() switch
             {
-                "docx" => OfficeMimeTypeEnum.Word,
-                "xlsx" => OfficeMimeTypeEnum.Excel,
-                "pptx" => OfficeMimeTypeEnum.PowerPoint,
-                "doc" => OfficeMimeTypeEnum.WordLegacy,
-                "xls" => OfficeMimeTypeEnum.ExcelLegacy,
-                "ppt" => OfficeMimeTypeEnum.PowerPointLegacy,
+                "docx" => OfficeMimeType.Word,
+                "xlsx" => OfficeMimeType.Excel,
+                "pptx" => OfficeMimeType.PowerPoint,
+                "doc" => OfficeMimeType.WordLegacy,
+                "xls" => OfficeMimeType.ExcelLegacy,
+                "ppt" => OfficeMimeType.PowerPointLegacy,
                 var other => throw new InvalidOperationException($"Unmapped manifest target format '{other}'"),
             };
             return new ExtractionHelper().MimeFor(format);
@@ -218,7 +218,9 @@ namespace ExtractorOLE.Tests.Integration
 
         private static string CollapseWhitespace(string text) => Regex.Replace(text, @"\s+", " ");
 
-        private static string[] Lines(string text) => text.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
+        private static readonly string[] LineSeparators = { "\r\n", "\n" };
+
+        private static string[] Lines(string text) => text.Split(LineSeparators, StringSplitOptions.None);
 
         private static void AssertText(JsonElement entry, string actualText)
         {

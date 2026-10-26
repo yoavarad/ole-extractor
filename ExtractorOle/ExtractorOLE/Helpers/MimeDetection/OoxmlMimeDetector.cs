@@ -79,17 +79,17 @@ namespace ExtractorOLE.Helpers.MimeDetection
 
                 if (package.PartExists(WordDocumentPartUri))
                 {
-                    return BuildResult(DetectedFormatEnum.Docx, "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+                    return BuildResult(DetectedFormat.Docx, "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
                 }
 
                 if (package.PartExists(ExcelWorkbookPartUri))
                 {
-                    return BuildResult(DetectedFormatEnum.Xlsx, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                    return BuildResult(DetectedFormat.Xlsx, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
                 }
 
                 if (package.PartExists(PowerPointPresentationPartUri))
                 {
-                    return BuildResult(DetectedFormatEnum.Pptx, "application/vnd.openxmlformats-officedocument.presentationml.presentation");
+                    return BuildResult(DetectedFormat.Pptx, "application/vnd.openxmlformats-officedocument.presentationml.presentation");
                 }
 
                 return UnknownResult();
@@ -167,7 +167,7 @@ namespace ExtractorOLE.Helpers.MimeDetection
             return entriesInspected > 0;
         }
 
-        private static MimeDetectionResult BuildResult(DetectedFormatEnum format, string mimeType) => new()
+        private static MimeDetectionResult BuildResult(DetectedFormat format, string mimeType) => new()
         {
             DetectedFormat = format,
             MimeType = mimeType,
@@ -176,7 +176,7 @@ namespace ExtractorOLE.Helpers.MimeDetection
 
         private static MimeDetectionResult UnknownResult() => new()
         {
-            DetectedFormat = DetectedFormatEnum.Unknown,
+            DetectedFormat = DetectedFormat.Unknown,
             MimeType = "application/octet-stream",
             IsSupported = false
         };

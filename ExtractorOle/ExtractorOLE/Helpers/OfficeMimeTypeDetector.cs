@@ -11,7 +11,7 @@ namespace ExtractorOLE.Helpers
     /// </summary>
     public interface IOfficeMimeTypeDetector
     {
-        OfficeMimeTypeEnum DetectMimeTypeFromBytes(byte[] fileBytes);
+        OfficeMimeType DetectMimeTypeFromBytes(byte[] fileBytes);
         MimeDetectionResult DetectMimeType(MimeDetectionRequest request);
         string DetectMimeFromMagicBytes(byte[] bytes);
     }
@@ -32,16 +32,13 @@ namespace ExtractorOLE.Helpers
         // tries every registered structural check (OOXML, then CFB) in order and
         // returns Unknown only when none of them match
         // ([ydk:req:extraction/format-extensibility]).
-        public OfficeMimeTypeEnum DetectMimeTypeFromBytes(byte[] fileBytes)
+        public OfficeMimeType DetectMimeTypeFromBytes(byte[] fileBytes)
         {
-            if (fileBytes == null)
-            {
-                throw new ArgumentNullException(nameof(fileBytes));
-            }
+            ArgumentNullException.ThrowIfNull(fileBytes);
 
             if (fileBytes.Length == 0)
             {
-                return OfficeMimeTypeEnum.OpenXmlUnknown;
+                return OfficeMimeType.OpenXmlUnknown;
             }
 
             var request = new MimeDetectionRequest { FileBytes = fileBytes };
@@ -56,7 +53,7 @@ namespace ExtractorOLE.Helpers
                 }
             }
 
-            return OfficeMimeTypeEnum.OpenXmlUnknown;
+            return OfficeMimeType.OpenXmlUnknown;
         }
 
         // Facade over the DI-registered detection registry: tries every registered
@@ -66,13 +63,11 @@ namespace ExtractorOLE.Helpers
         // ([ydk:req:extraction/format-extensibility]).
         public MimeDetectionResult DetectMimeType(MimeDetectionRequest request)
         {
-            if (request == null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
+            ArgumentNullException.ThrowIfNull(request);
             if (request.FileBytes == null && request.InputStream == null && request.FilePath == null)
             {
-                throw new ArgumentNullException(nameof(request.FileBytes));
+                // ParamName is the method parameter ("request"); the message names the missing property.
+                throw new ArgumentNullException(nameof(request), "MimeDetectionRequest.FileBytes must not be null when InputStream and FilePath are not set.");
             }
 
             MimeDetectionInput.Validate(request);
@@ -80,7 +75,7 @@ namespace ExtractorOLE.Helpers
             foreach (var detector in _detectionRegistry.Detectors)
             {
                 var result = detector.Detect(request);
-                if (result.DetectedFormat != DetectedFormatEnum.Unknown)
+                if (result.DetectedFormat != DetectedFormat.Unknown)
                 {
                     return result;
                 }
@@ -88,23 +83,23 @@ namespace ExtractorOLE.Helpers
 
             return new MimeDetectionResult
             {
-                DetectedFormat = DetectedFormatEnum.Unknown,
+                DetectedFormat = DetectedFormat.Unknown,
                 MimeType = "application/octet-stream",
                 IsSupported = false,
             };
         }
 
-        // OfficeMimeTypeEnum now has three legacy values (ExcelLegacy, PowerPointLegacy,
+        // OfficeMimeType now has three legacy values (ExcelLegacy, PowerPointLegacy,
         // WordLegacy); Xls, Ppt, and Doc CFB detections are all wired to their legacy enum
         // values, and only Unknown still falls through to OpenXmlUnknown here.
-        private static OfficeMimeTypeEnum? MapDetectedFormat(DetectedFormatEnum format) => format switch
+        private static OfficeMimeType? MapDetectedFormat(DetectedFormat format) => format switch
         {
-            DetectedFormatEnum.Docx => OfficeMimeTypeEnum.Word,
-            DetectedFormatEnum.Xlsx => OfficeMimeTypeEnum.Excel,
-            DetectedFormatEnum.Pptx => OfficeMimeTypeEnum.PowerPoint,
-            DetectedFormatEnum.Xls => OfficeMimeTypeEnum.ExcelLegacy,
-            DetectedFormatEnum.Ppt => OfficeMimeTypeEnum.PowerPointLegacy,
-            DetectedFormatEnum.Doc => OfficeMimeTypeEnum.WordLegacy,
+            DetectedFormat.Docx => OfficeMimeType.Word,
+            DetectedFormat.Xlsx => OfficeMimeType.Excel,
+            DetectedFormat.Pptx => OfficeMimeType.PowerPoint,
+            DetectedFormat.Xls => OfficeMimeType.ExcelLegacy,
+            DetectedFormat.Ppt => OfficeMimeType.PowerPointLegacy,
+            DetectedFormat.Doc => OfficeMimeType.WordLegacy,
             _ => null,
         };
 

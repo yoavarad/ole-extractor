@@ -47,15 +47,15 @@ namespace ExtractorOLE.Tests.Registry
             };
         }
 
-        private static OfficeMimeTypeEnum LegacyKind(string mime) => mime switch
+        private static OfficeMimeType LegacyKind(string mime) => mime switch
         {
-            XlsMime => OfficeMimeTypeEnum.ExcelLegacy,
-            DocMime => OfficeMimeTypeEnum.WordLegacy,
-            _ => OfficeMimeTypeEnum.PowerPointLegacy,
+            XlsMime => OfficeMimeType.ExcelLegacy,
+            DocMime => OfficeMimeType.WordLegacy,
+            _ => OfficeMimeType.PowerPointLegacy,
         };
 
         private static IOpenStrategy LegacyStrategy(string mime) =>
-            BuildProvider().GetRequiredService<IDictionary<OfficeMimeTypeEnum, IOpenStrategy>>()[LegacyKind(mime)];
+            BuildProvider().GetRequiredService<IDictionary<OfficeMimeType, IOpenStrategy>>()[LegacyKind(mime)];
 
         private static ZipFallbackOpenStrategy BuildZipFallback()
         {

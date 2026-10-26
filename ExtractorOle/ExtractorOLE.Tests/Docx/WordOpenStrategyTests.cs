@@ -8,6 +8,7 @@ using System;
 using System.IO;
 using Xunit;
 using ExtProps = DocumentFormat.OpenXml.ExtendedProperties;
+using System.Globalization;
 
 namespace ExtractorOLE.Tests.Docx
 {
@@ -52,11 +53,11 @@ namespace ExtractorOLE.Tests.Docx
                 {
                     var extendedPart = document.AddExtendedFilePropertiesPart();
                     var properties = new ExtProps.Properties();
-                    if (pages.HasValue) properties.Append(new ExtProps.Pages(pages.Value.ToString()));
-                    if (words.HasValue) properties.Append(new ExtProps.Words(words.Value.ToString()));
-                    if (characters.HasValue) properties.Append(new ExtProps.Characters(characters.Value.ToString()));
-                    if (paragraphs.HasValue) properties.Append(new ExtProps.Paragraphs(paragraphs.Value.ToString()));
-                    if (lines.HasValue) properties.Append(new ExtProps.Lines(lines.Value.ToString()));
+                    if (pages.HasValue) properties.Append(new ExtProps.Pages(pages.Value.ToString(CultureInfo.InvariantCulture)));
+                    if (words.HasValue) properties.Append(new ExtProps.Words(words.Value.ToString(CultureInfo.InvariantCulture)));
+                    if (characters.HasValue) properties.Append(new ExtProps.Characters(characters.Value.ToString(CultureInfo.InvariantCulture)));
+                    if (paragraphs.HasValue) properties.Append(new ExtProps.Paragraphs(paragraphs.Value.ToString(CultureInfo.InvariantCulture)));
+                    if (lines.HasValue) properties.Append(new ExtProps.Lines(lines.Value.ToString(CultureInfo.InvariantCulture)));
                     if (company != null) properties.Append(new ExtProps.Company(company));
                     if (manager != null) properties.Append(new ExtProps.Manager(manager));
                     if (template != null) properties.Append(new ExtProps.Template(template));

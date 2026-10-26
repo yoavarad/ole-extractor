@@ -76,7 +76,7 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
                     result = new DocumentExtractionResult
                     {
                         Metadata = metadata,
-                        MimeType = _helper.MimeFor(OfficeMimeTypeEnum.PowerPointLegacy),
+                        MimeType = _helper.MimeFor(OfficeMimeType.PowerPointLegacy),
                         // SlideCount/NotesSlideCount are populated below, best-effort, from the
                         // converted body; HasMacros is already final here since it's sourced from the
                         // original file directly, independent of whether body conversion succeeds.
@@ -137,7 +137,7 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
             return (metadata, hasMacros);
         }
 
-        private void PopulateBodyContent(Func<byte[]> convertToPptx, DocumentExtractionResult result)
+        private static void PopulateBodyContent(Func<byte[]> convertToPptx, DocumentExtractionResult result)
         {
             byte[] pptxBytes = convertToPptx();
             result.ParsedDocument = pptxBytes; // reused by PptTextExtractor (#168)

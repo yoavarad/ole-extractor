@@ -28,7 +28,7 @@ namespace ExtractorOLE.Tests.SampleGeneration
             "café café", // decomposed + precomposed: any Unicode normalization would collapse these
         };
 
-        internal static DocumentExtractionResult Extract(byte[] bytes, OfficeMimeTypeEnum format)
+        internal static DocumentExtractionResult Extract(byte[] bytes, OfficeMimeType format)
         {
             var services = new ServiceCollection();
             ServiceRegistration.Register(services);
@@ -49,7 +49,7 @@ namespace ExtractorOLE.Tests.SampleGeneration
             var sample = new DocSampleGenerator().Generate(new SampleSpec { BodyText = "hello" });
 
             Assert.Equal("sample.doc", sample.FileName);
-            Assert.Equal(OfficeMimeTypeEnum.WordLegacy,
+            Assert.Equal(OfficeMimeType.WordLegacy,
                 new ExtractionHelper().DetectMimeTypeFromBytes(sample.Content));
         }
 
@@ -61,7 +61,7 @@ namespace ExtractorOLE.Tests.SampleGeneration
                 BodyText = string.Join(Environment.NewLine, Lines),
             });
 
-            var result = Extract(sample.Content, OfficeMimeTypeEnum.WordLegacy);
+            var result = Extract(sample.Content, OfficeMimeType.WordLegacy);
 
             Assert.Equal(string.Join(Environment.NewLine, Lines), result.ExtractedText);
         }
@@ -82,7 +82,7 @@ namespace ExtractorOLE.Tests.SampleGeneration
         {
             var sample = new DocSampleGenerator().Generate(new SampleSpec { BodyText = Lines[index] });
 
-            var result = Extract(sample.Content, OfficeMimeTypeEnum.WordLegacy);
+            var result = Extract(sample.Content, OfficeMimeType.WordLegacy);
 
             Assert.True(Lines[index] == result.ExtractedText, $"{label}: expected '{Lines[index]}', got '{result.ExtractedText}'");
         }
@@ -93,7 +93,7 @@ namespace ExtractorOLE.Tests.SampleGeneration
             var body = MultilingualFixtures.ComposeLargeBody(5_000, 20).Replace("\r\n", "\n");
             var sample = new DocSampleGenerator().Generate(new SampleSpec { BodyText = body });
 
-            var result = Extract(sample.Content, OfficeMimeTypeEnum.WordLegacy);
+            var result = Extract(sample.Content, OfficeMimeType.WordLegacy);
 
             Assert.Equal(body.Replace("\n", Environment.NewLine), result.ExtractedText);
         }
@@ -120,7 +120,7 @@ namespace ExtractorOLE.Tests.SampleGeneration
                 VbaProject = new byte[] { 0xAA, 0xBB },
             });
 
-            var result = Extract(sample.Content, OfficeMimeTypeEnum.WordLegacy);
+            var result = Extract(sample.Content, OfficeMimeType.WordLegacy);
 
             Assert.Equal(MultilingualFixtures.Hebrew, result.Metadata.Title);
             Assert.Equal(MultilingualFixtures.Arabic, result.Metadata.Creator);
@@ -136,7 +136,7 @@ namespace ExtractorOLE.Tests.SampleGeneration
         {
             var sample = new DocSampleGenerator().Generate(new SampleSpec { BodyText = "body" });
 
-            var result = Extract(sample.Content, OfficeMimeTypeEnum.WordLegacy);
+            var result = Extract(sample.Content, OfficeMimeType.WordLegacy);
 
             Assert.False(((WordFormatMetadata)result.FormatMetadata!).HasMacros);
         }
@@ -146,7 +146,7 @@ namespace ExtractorOLE.Tests.SampleGeneration
         {
             var sample = new DocSampleGenerator().Generate(new SampleSpec());
 
-            var result = DocSampleGeneratorTests.Extract(sample.Content, OfficeMimeTypeEnum.WordLegacy);
+            var result = DocSampleGeneratorTests.Extract(sample.Content, OfficeMimeType.WordLegacy);
 
             Assert.Equal(string.Empty, result.ExtractedText);
         }

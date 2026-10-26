@@ -42,10 +42,10 @@ namespace ExtractorOLE
             _guardrails = guardrails ?? throw new ArgumentNullException(nameof(guardrails));
         }
 
-        private static readonly OfficeMimeTypeEnum[] SupportedFormats =
+        private static readonly OfficeMimeType[] SupportedFormats =
         {
-            OfficeMimeTypeEnum.Word, OfficeMimeTypeEnum.Excel, OfficeMimeTypeEnum.PowerPoint,
-            OfficeMimeTypeEnum.WordLegacy, OfficeMimeTypeEnum.ExcelLegacy, OfficeMimeTypeEnum.PowerPointLegacy,
+            OfficeMimeType.Word, OfficeMimeType.Excel, OfficeMimeType.PowerPoint,
+            OfficeMimeType.WordLegacy, OfficeMimeType.ExcelLegacy, OfficeMimeType.PowerPointLegacy,
         };
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace ExtractorOLE
         /// <see cref="ExtractionRequest.DetectedMimeType"/> as-is (no re-detection) and
         /// dispatches to the open + text-extraction components registered for that format
         /// in <see cref="IFormatDispatchRegistry"/>; contains no format-specific parsing.
-        /// A null request or null required field throws <see cref="ArgumentNullException"/>
+        /// A null request or null required field throws <see cref="ArgumentNullException"/> (ParamName "request"; the message names the null field)
         /// first; then an invalid input source (more than one of FileBytes/InputStream/FilePath, or a
         /// non-seekable stream) throws <see cref="ArgumentException"/> and a FilePath that cannot be
         /// opened throws the FileStream I/O exception; then the pre-parse guardrails reject file-too-large and
@@ -121,7 +121,7 @@ namespace ExtractorOLE
             int? maxDegreeOfParallelism = null,
             CancellationToken cancellationToken = default)
         {
-            if (requests == null) throw new ArgumentNullException(nameof(requests));
+            ArgumentNullException.ThrowIfNull(requests);
             var dop = maxDegreeOfParallelism ?? Environment.ProcessorCount;
             if (dop <= 0) throw new ArgumentOutOfRangeException(nameof(maxDegreeOfParallelism), dop, "Must be positive.");
 
@@ -149,17 +149,18 @@ namespace ExtractorOLE
         // Boundary validation: runs before any detection/extraction logic.
         private static void ValidateRequest(ExtractionRequest request)
         {
-            if (request == null) throw new ArgumentNullException(nameof(request));
-            if (request.FileBytes == null) throw new ArgumentNullException(nameof(request.FileBytes));
-            if (request.FileName == null) throw new ArgumentNullException(nameof(request.FileName));
-            if (request.DetectedMimeType == null) throw new ArgumentNullException(nameof(request.DetectedMimeType));
+            ArgumentNullException.ThrowIfNull(request);
+            // ParamName is the method parameter ("request"); the message names the null property.
+            if (request.FileBytes == null) throw new ArgumentNullException(nameof(request), "ExtractionRequest.FileBytes must not be null.");
+            if (request.FileName == null) throw new ArgumentNullException(nameof(request), "ExtractionRequest.FileName must not be null.");
+            if (request.DetectedMimeType == null) throw new ArgumentNullException(nameof(request), "ExtractionRequest.DetectedMimeType must not be null.");
         }
 
-        private static bool IsOoxml(OfficeMimeTypeEnum format) =>
-            format is OfficeMimeTypeEnum.Word or OfficeMimeTypeEnum.Excel or OfficeMimeTypeEnum.PowerPoint;
+        private static bool IsOoxml(OfficeMimeType format) =>
+            format is OfficeMimeType.Word or OfficeMimeType.Excel or OfficeMimeType.PowerPoint;
 
         // Reverse of IExtractionHelper.MimeFor over the six supported formats.
-        private OfficeMimeTypeEnum? ResolveFormat(string? mime)
+        private OfficeMimeType? ResolveFormat(string? mime)
         {
             foreach (var format in SupportedFormats)
             {
@@ -177,7 +178,7 @@ namespace ExtractorOLE
         [Obsolete("Detect the mime type and call Extract(ExtractionRequest) instead.")]
         public DocumentExtractionResult Extract(byte[] fileBytes)
         {
-            if (fileBytes == null) throw new ArgumentNullException(nameof(fileBytes));
+            ArgumentNullException.ThrowIfNull(fileBytes);
             var format = _helper.DetectMimeTypeFromBytes(fileBytes);
             return Extract(new ExtractionRequest
             {

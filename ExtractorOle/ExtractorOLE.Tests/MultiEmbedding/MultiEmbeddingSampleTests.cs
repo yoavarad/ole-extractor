@@ -57,8 +57,8 @@ namespace ExtractorOLE.Tests.MultiEmbedding
             // All 4 embeddings live on the SlidePart (PresentationPart cannot hold
             // EmbeddedObjectPart/EmbeddedPackagePart/ImagePart directly, per
             // ExtractionHelper.ExtractFirstLayerEmbedded's PowerPoint scan).
-            Assert.Equal(2, result.EmbeddedFiles.Count(f => f.FileName.StartsWith("embedded_object_")));
-            Assert.Equal(2, result.EmbeddedFiles.Count(f => f.FileName.StartsWith("slide_image_")));
+            Assert.Equal(2, result.EmbeddedFiles.Count(f => f.FileName.StartsWith("embedded_object_", StringComparison.Ordinal)));
+            Assert.Equal(2, result.EmbeddedFiles.Count(f => f.FileName.StartsWith("slide_image_", StringComparison.Ordinal)));
         }
 
         [Fact]
@@ -81,8 +81,8 @@ namespace ExtractorOLE.Tests.MultiEmbedding
             // All 4 embeddings live on the WorksheetPart (WorkbookPart cannot hold
             // EmbeddedObjectPart/EmbeddedPackagePart/ImagePart directly, per
             // ExtractionHelper.ExtractFirstLayerEmbedded's generic depth-2 scan).
-            Assert.Equal(2, result.EmbeddedFiles.Count(f => f.FileName.StartsWith("embedded_object_")));
-            Assert.Equal(2, result.EmbeddedFiles.Count(f => f.FileName.StartsWith("slide_image_")));
+            Assert.Equal(2, result.EmbeddedFiles.Count(f => f.FileName.StartsWith("embedded_object_", StringComparison.Ordinal)));
+            Assert.Equal(2, result.EmbeddedFiles.Count(f => f.FileName.StartsWith("slide_image_", StringComparison.Ordinal)));
         }
 
         [Fact]

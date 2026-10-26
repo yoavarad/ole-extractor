@@ -187,10 +187,10 @@ namespace ExtractorOLE.Tests.PowerPoint
             ServiceRegistration.Register(services);
             var provider = services.BuildServiceProvider();
 
-            var dict = provider.GetRequiredService<IDictionary<OfficeMimeTypeEnum, IOpenStrategy>>();
+            var dict = provider.GetRequiredService<IDictionary<OfficeMimeType, IOpenStrategy>>();
 
-            Assert.True(dict.ContainsKey(OfficeMimeTypeEnum.PowerPointLegacy));
-            Assert.IsType<PptOpenStrategy>(dict[OfficeMimeTypeEnum.PowerPointLegacy]);
+            Assert.True(dict.ContainsKey(OfficeMimeType.PowerPointLegacy));
+            Assert.IsType<PptOpenStrategy>(dict[OfficeMimeType.PowerPointLegacy]);
         }
     }
 }

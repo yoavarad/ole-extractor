@@ -33,7 +33,7 @@ namespace ExtractorOLE.Tests.SampleGeneration
             var sample = new XlsSampleGenerator().Generate(new SampleSpec { BodyText = "hello" });
 
             Assert.Equal("sample.xls", sample.FileName);
-            Assert.Equal(OfficeMimeTypeEnum.ExcelLegacy,
+            Assert.Equal(OfficeMimeType.ExcelLegacy,
                 new ExtractionHelper().DetectMimeTypeFromBytes(sample.Content));
         }
 
@@ -45,7 +45,7 @@ namespace ExtractorOLE.Tests.SampleGeneration
                 BodyText = string.Join(Environment.NewLine, Lines),
             });
 
-            var result = DocSampleGeneratorTests.Extract(sample.Content, OfficeMimeTypeEnum.ExcelLegacy);
+            var result = DocSampleGeneratorTests.Extract(sample.Content, OfficeMimeType.ExcelLegacy);
 
             Assert.Equal(string.Join(Environment.NewLine, Lines), result.ExtractedText);
         }
@@ -66,7 +66,7 @@ namespace ExtractorOLE.Tests.SampleGeneration
         {
             var sample = new XlsSampleGenerator().Generate(new SampleSpec { BodyText = Lines[index] });
 
-            var result = DocSampleGeneratorTests.Extract(sample.Content, OfficeMimeTypeEnum.ExcelLegacy);
+            var result = DocSampleGeneratorTests.Extract(sample.Content, OfficeMimeType.ExcelLegacy);
 
             Assert.Equal(Lines[index], result.ExtractedText);
         }
@@ -94,7 +94,7 @@ namespace ExtractorOLE.Tests.SampleGeneration
                 VbaProject = new byte[] { 0xAA, 0xBB },
             });
 
-            var result = DocSampleGeneratorTests.Extract(sample.Content, OfficeMimeTypeEnum.ExcelLegacy);
+            var result = DocSampleGeneratorTests.Extract(sample.Content, OfficeMimeType.ExcelLegacy);
 
             Assert.Equal(MultilingualFixtures.Hebrew, result.Metadata.Title);
             Assert.Equal(MultilingualFixtures.Arabic, result.Metadata.Creator);
@@ -111,7 +111,7 @@ namespace ExtractorOLE.Tests.SampleGeneration
         {
             var sample = new XlsSampleGenerator().Generate(new SampleSpec { BodyText = "body" });
 
-            var result = DocSampleGeneratorTests.Extract(sample.Content, OfficeMimeTypeEnum.ExcelLegacy);
+            var result = DocSampleGeneratorTests.Extract(sample.Content, OfficeMimeType.ExcelLegacy);
 
             Assert.False(((ExcelFormatMetadata)result.FormatMetadata!).HasMacros);
         }
@@ -121,7 +121,7 @@ namespace ExtractorOLE.Tests.SampleGeneration
         {
             var sample = new XlsSampleGenerator().Generate(new SampleSpec());
 
-            var result = DocSampleGeneratorTests.Extract(sample.Content, OfficeMimeTypeEnum.ExcelLegacy);
+            var result = DocSampleGeneratorTests.Extract(sample.Content, OfficeMimeType.ExcelLegacy);
 
             Assert.Equal(string.Empty, result.ExtractedText);
         }

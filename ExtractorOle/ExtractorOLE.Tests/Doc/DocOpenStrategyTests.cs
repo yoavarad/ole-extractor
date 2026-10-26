@@ -216,13 +216,13 @@ namespace ExtractorOLE.Tests.Doc
             ServiceRegistration.Register(services);
             var provider = services.BuildServiceProvider();
 
-            var openStrategies = provider.GetRequiredService<IDictionary<OfficeMimeTypeEnum, IOpenStrategy>>();
-            Assert.True(openStrategies.ContainsKey(OfficeMimeTypeEnum.WordLegacy));
-            Assert.IsType<DocOpenStrategy>(openStrategies[OfficeMimeTypeEnum.WordLegacy]);
+            var openStrategies = provider.GetRequiredService<IDictionary<OfficeMimeType, IOpenStrategy>>();
+            Assert.True(openStrategies.ContainsKey(OfficeMimeType.WordLegacy));
+            Assert.IsType<DocOpenStrategy>(openStrategies[OfficeMimeType.WordLegacy]);
 
-            var textExtractors = provider.GetRequiredService<IDictionary<OfficeMimeTypeEnum, ITextExtractor>>();
-            Assert.True(textExtractors.ContainsKey(OfficeMimeTypeEnum.WordLegacy));
-            Assert.IsType<DocTextExtractor>(textExtractors[OfficeMimeTypeEnum.WordLegacy]);
+            var textExtractors = provider.GetRequiredService<IDictionary<OfficeMimeType, ITextExtractor>>();
+            Assert.True(textExtractors.ContainsKey(OfficeMimeType.WordLegacy));
+            Assert.IsType<DocTextExtractor>(textExtractors[OfficeMimeType.WordLegacy]);
         }
     }
 }

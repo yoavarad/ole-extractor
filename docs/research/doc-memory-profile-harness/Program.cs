@@ -29,12 +29,12 @@ static class P
         }
         protected override void OnEventWritten(EventWrittenEventArgs e)
         {
-            if (e.EventName == null || !e.EventName.StartsWith("GCAllocationTick")) return;
+            if (e.EventName == null || !e.EventName.StartsWith("GCAllocationTick", StringComparison.Ordinal)) return;
             string name = "?"; long amt = 0;
             for (int i = 0; i < e.PayloadNames.Count; i++)
             {
                 if (e.PayloadNames[i] == "TypeName") name = e.Payload[i] as string ?? "?";
-                if (e.PayloadNames[i] == "AllocationAmount64") amt = Convert.ToInt64(e.Payload[i]);
+                if (e.PayloadNames[i] == "AllocationAmount64") amt = Convert.ToInt64(e.Payload[i], System.Globalization.CultureInfo.InvariantCulture);
             }
             Bytes.AddOrUpdate(name, amt, (_, v) => v + amt);
             Interlocked.Add(ref Total, amt);
