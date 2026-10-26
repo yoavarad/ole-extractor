@@ -41,7 +41,7 @@ namespace ExtractorOLE.Tests.Registry
                 WasCalled = true;
                 return new MimeDetectionResult
                 {
-                    DetectedFormat = DetectedFormatEnum.Xls,
+                    DetectedFormat = DetectedFormat.Xls,
                     MimeType = "application/vnd.ms-excel",
                     IsSupported = true
                 };
@@ -52,7 +52,7 @@ namespace ExtractorOLE.Tests.Registry
         {
             public MimeDetectionResult Detect(MimeDetectionRequest request) => new()
             {
-                DetectedFormat = DetectedFormatEnum.Unknown,
+                DetectedFormat = DetectedFormat.Unknown,
                 MimeType = "application/octet-stream",
                 IsSupported = false
             };
@@ -69,7 +69,7 @@ namespace ExtractorOLE.Tests.Registry
             var result = helper.DetectMimeTypeFromBytes(new byte[] { 0x01, 0x02, 0x03 });
 
             Assert.True(fakeCfb.WasCalled);
-            Assert.Equal(OfficeMimeTypeEnum.ExcelLegacy, result);
+            Assert.Equal(OfficeMimeType.ExcelLegacy, result);
         }
 
         [Fact]
@@ -81,7 +81,7 @@ namespace ExtractorOLE.Tests.Registry
 
             var result = helper.DetectMimeTypeFromBytes(new byte[] { 0x01, 0x02, 0x03 });
 
-            Assert.Equal(OfficeMimeTypeEnum.OpenXmlUnknown, result);
+            Assert.Equal(OfficeMimeType.OpenXmlUnknown, result);
         }
     }
 }

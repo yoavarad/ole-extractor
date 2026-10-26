@@ -29,9 +29,9 @@ namespace ExtractorOLE.Tests.Registry
         {
             public int Lookups { get; private set; }
 
-            public IOpenStrategy? GetOpenStrategy(OfficeMimeTypeEnum format) { Lookups++; return null; }
+            public IOpenStrategy? GetOpenStrategy(OfficeMimeType format) { Lookups++; return null; }
 
-            public ITextExtractor? GetTextExtractor(OfficeMimeTypeEnum format) { Lookups++; return null; }
+            public ITextExtractor? GetTextExtractor(OfficeMimeType format) { Lookups++; return null; }
         }
 
         private static (MainExtractor extractor, SpyRegistry spy, List<string> log) Build(MimeDetectionLimits? limits = null)

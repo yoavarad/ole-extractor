@@ -27,7 +27,7 @@ namespace ExtractorOLE.Tests.MimeDetection
 
             var result = detector.Detect(request);
 
-            Assert.Equal(DetectedFormatEnum.Docx, result.DetectedFormat);
+            Assert.Equal(DetectedFormat.Docx, result.DetectedFormat);
             Assert.Equal("application/vnd.openxmlformats-officedocument.wordprocessingml.document", result.MimeType);
             Assert.True(result.IsSupported);
         }
@@ -46,7 +46,7 @@ namespace ExtractorOLE.Tests.MimeDetection
 
             var result = detector.Detect(request);
 
-            Assert.Equal(DetectedFormatEnum.Xlsx, result.DetectedFormat);
+            Assert.Equal(DetectedFormat.Xlsx, result.DetectedFormat);
             Assert.Equal("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", result.MimeType);
             Assert.True(result.IsSupported);
         }
@@ -65,7 +65,7 @@ namespace ExtractorOLE.Tests.MimeDetection
 
             var result = detector.Detect(request);
 
-            Assert.Equal(DetectedFormatEnum.Pptx, result.DetectedFormat);
+            Assert.Equal(DetectedFormat.Pptx, result.DetectedFormat);
             Assert.Equal("application/vnd.openxmlformats-officedocument.presentationml.presentation", result.MimeType);
             Assert.True(result.IsSupported);
         }
@@ -83,7 +83,7 @@ namespace ExtractorOLE.Tests.MimeDetection
 
             var result = detector.Detect(request);
 
-            Assert.Equal(DetectedFormatEnum.Docx, result.DetectedFormat);
+            Assert.Equal(DetectedFormat.Docx, result.DetectedFormat);
             Assert.Equal("application/vnd.openxmlformats-officedocument.wordprocessingml.document", result.MimeType);
             Assert.True(result.IsSupported);
         }
@@ -101,7 +101,7 @@ namespace ExtractorOLE.Tests.MimeDetection
 
             var result = detector.Detect(request);
 
-            Assert.Equal(DetectedFormatEnum.Xlsx, result.DetectedFormat);
+            Assert.Equal(DetectedFormat.Xlsx, result.DetectedFormat);
             Assert.Equal("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", result.MimeType);
             Assert.True(result.IsSupported);
         }
@@ -119,7 +119,7 @@ namespace ExtractorOLE.Tests.MimeDetection
 
             var result = detector.Detect(request);
 
-            Assert.Equal(DetectedFormatEnum.Pptx, result.DetectedFormat);
+            Assert.Equal(DetectedFormat.Pptx, result.DetectedFormat);
             Assert.Equal("application/vnd.openxmlformats-officedocument.presentationml.presentation", result.MimeType);
             Assert.True(result.IsSupported);
         }
@@ -137,7 +137,7 @@ namespace ExtractorOLE.Tests.MimeDetection
 
             var result = detector.Detect(request);
 
-            Assert.Equal(DetectedFormatEnum.Docx, result.DetectedFormat);
+            Assert.Equal(DetectedFormat.Docx, result.DetectedFormat);
         }
 
         [Fact]
@@ -153,7 +153,7 @@ namespace ExtractorOLE.Tests.MimeDetection
 
             var result = detector.Detect(request);
 
-            Assert.Equal(DetectedFormatEnum.Docx, result.DetectedFormat);
+            Assert.Equal(DetectedFormat.Docx, result.DetectedFormat);
         }
 
         [Fact]
@@ -168,7 +168,7 @@ namespace ExtractorOLE.Tests.MimeDetection
 
             var result = detector.Detect(request);
 
-            Assert.Equal(DetectedFormatEnum.Unknown, result.DetectedFormat);
+            Assert.Equal(DetectedFormat.Unknown, result.DetectedFormat);
             Assert.Equal("application/octet-stream", result.MimeType);
             Assert.False(result.IsSupported);
         }
@@ -189,7 +189,7 @@ namespace ExtractorOLE.Tests.MimeDetection
 
             var result = detector.Detect(request);
 
-            Assert.Equal(DetectedFormatEnum.Docx, result.DetectedFormat);
+            Assert.Equal(DetectedFormat.Docx, result.DetectedFormat);
         }
 
         [Fact]
@@ -204,7 +204,7 @@ namespace ExtractorOLE.Tests.MimeDetection
 
             var result = detector.Detect(request);
 
-            Assert.Equal(DetectedFormatEnum.Unknown, result.DetectedFormat);
+            Assert.Equal(DetectedFormat.Unknown, result.DetectedFormat);
             Assert.Equal("application/octet-stream", result.MimeType);
             Assert.False(result.IsSupported);
         }
@@ -221,7 +221,7 @@ namespace ExtractorOLE.Tests.MimeDetection
 
             var result = detector.Detect(request);
 
-            Assert.Equal(DetectedFormatEnum.Unknown, result.DetectedFormat);
+            Assert.Equal(DetectedFormat.Unknown, result.DetectedFormat);
         }
 
         [Fact]
@@ -236,7 +236,7 @@ namespace ExtractorOLE.Tests.MimeDetection
 
             var result = detector.Detect(request);
 
-            Assert.Equal(DetectedFormatEnum.Unknown, result.DetectedFormat);
+            Assert.Equal(DetectedFormat.Unknown, result.DetectedFormat);
         }
     }
 }

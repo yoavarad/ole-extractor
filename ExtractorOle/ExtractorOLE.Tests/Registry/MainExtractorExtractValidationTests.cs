@@ -108,7 +108,8 @@ namespace ExtractorOLE.Tests.Registry
 
             var ex = Assert.Throws<ArgumentNullException>(() => spied.Extractor.Extract(request));
 
-            Assert.Equal(field, ex.ParamName);
+            Assert.Equal("request", ex.ParamName);
+            Assert.Contains(field, ex.Message, StringComparison.Ordinal);
             Assert.Equal(0, spied.TotalCalls);
         }
     }

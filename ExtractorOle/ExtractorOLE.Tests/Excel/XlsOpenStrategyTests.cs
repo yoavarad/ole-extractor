@@ -240,10 +240,10 @@ namespace ExtractorOLE.Tests.Excel
             ServiceRegistration.Register(services);
             var provider = services.BuildServiceProvider();
 
-            var dict = provider.GetRequiredService<IDictionary<OfficeMimeTypeEnum, IOpenStrategy>>();
+            var dict = provider.GetRequiredService<IDictionary<OfficeMimeType, IOpenStrategy>>();
 
-            Assert.True(dict.ContainsKey(OfficeMimeTypeEnum.ExcelLegacy));
-            Assert.IsType<XlsOpenStrategy>(dict[OfficeMimeTypeEnum.ExcelLegacy]);
+            Assert.True(dict.ContainsKey(OfficeMimeType.ExcelLegacy));
+            Assert.IsType<XlsOpenStrategy>(dict[OfficeMimeType.ExcelLegacy]);
         }
 
         [Fact]

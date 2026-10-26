@@ -144,6 +144,8 @@ throughput.
   - [ADR-004](docs/adrs/004-legacy-doc-ppt-parsing.md) — legacy `.doc`/`.ppt` body-text parsing via `b2xtranslator`
   - [ADR-005](docs/adrs/005-legacy-doc-ppt-authoring.md) — authoring legacy `.doc`/`.ppt`/`.xls` test samples in SampleGenerator
   - [ADR-007](docs/adrs/007-batch-extraction-api.md) — batch extraction API with bounded parallelism
+  - [ADR-009](docs/adrs/009-analyzer-compliance-over-api-stability.md) — fix analyzer findings instead of suppressing them (breaking enum renames, ParamName contract)
+- [`CHANGELOG.md`](CHANGELOG.md) — breaking changes and migration notes
 - [`docs/project-rules.md`](docs/project-rules.md) — conventions, brownfield constraints, and known gotchas
 - [`docs/research/`](docs/research/) — research spikes backing the ADRs above
 

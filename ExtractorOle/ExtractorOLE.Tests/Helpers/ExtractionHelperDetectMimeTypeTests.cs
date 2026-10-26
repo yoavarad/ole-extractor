@@ -23,7 +23,7 @@ namespace ExtractorOLE.Tests.Helpers
                 WasCalled = true;
                 return new MimeDetectionResult
                 {
-                    DetectedFormat = DetectedFormatEnum.Unknown,
+                    DetectedFormat = DetectedFormat.Unknown,
                     MimeType = "application/octet-stream",
                     IsSupported = false
                 };
@@ -46,7 +46,7 @@ namespace ExtractorOLE.Tests.Helpers
 
             var result = new ExtractionHelper().DetectMimeTypeFromBytes(xlsBytes);
 
-            Assert.Equal(OfficeMimeTypeEnum.ExcelLegacy, result);
+            Assert.Equal(OfficeMimeType.ExcelLegacy, result);
         }
 
         [Fact]
@@ -56,13 +56,13 @@ namespace ExtractorOLE.Tests.Helpers
 
             var result = new ExtractionHelper().DetectMimeTypeFromBytes(garbageBytes);
 
-            Assert.Equal(OfficeMimeTypeEnum.OpenXmlUnknown, result);
+            Assert.Equal(OfficeMimeType.OpenXmlUnknown, result);
         }
 
         [Fact]
         public void ParameterlessConstructor_StillUsable()
         {
-            var mime = new ExtractionHelper().MimeFor(OfficeMimeTypeEnum.Word);
+            var mime = new ExtractionHelper().MimeFor(OfficeMimeType.Word);
 
             Assert.False(string.IsNullOrEmpty(mime));
         }
@@ -84,7 +84,7 @@ namespace ExtractorOLE.Tests.Helpers
         {
             var result = new ExtractionHelper().DetectMimeTypeFromBytes(Array.Empty<byte>());
 
-            Assert.Equal(OfficeMimeTypeEnum.OpenXmlUnknown, result);
+            Assert.Equal(OfficeMimeType.OpenXmlUnknown, result);
         }
 
         [Fact]
@@ -95,7 +95,7 @@ namespace ExtractorOLE.Tests.Helpers
 
             var result = new ExtractionHelper().DetectMimeType(request);
 
-            Assert.Equal(DetectedFormatEnum.Docx, result.DetectedFormat);
+            Assert.Equal(DetectedFormat.Docx, result.DetectedFormat);
             Assert.True(result.IsSupported);
         }
 
@@ -106,7 +106,7 @@ namespace ExtractorOLE.Tests.Helpers
 
             var result = new ExtractionHelper().DetectMimeType(request);
 
-            Assert.Equal(DetectedFormatEnum.Xls, result.DetectedFormat);
+            Assert.Equal(DetectedFormat.Xls, result.DetectedFormat);
             Assert.True(result.IsSupported);
         }
 
@@ -117,7 +117,7 @@ namespace ExtractorOLE.Tests.Helpers
 
             var result = new ExtractionHelper().DetectMimeType(request);
 
-            Assert.Equal(DetectedFormatEnum.Unknown, result.DetectedFormat);
+            Assert.Equal(DetectedFormat.Unknown, result.DetectedFormat);
             Assert.Equal("application/octet-stream", result.MimeType);
             Assert.False(result.IsSupported);
         }
@@ -142,7 +142,10 @@ namespace ExtractorOLE.Tests.Helpers
             var helper = new ExtractionHelper(registry);
             var request = new MimeDetectionRequest { FileBytes = null! };
 
-            Assert.Throws<ArgumentNullException>(() => helper.DetectMimeType(request));
+            var ex = Assert.Throws<ArgumentNullException>(() => helper.DetectMimeType(request));
+
+            Assert.Equal("request", ex.ParamName);
+            Assert.Contains("FileBytes", ex.Message, StringComparison.Ordinal);
 
             Assert.False(spy.WasCalled);
         }

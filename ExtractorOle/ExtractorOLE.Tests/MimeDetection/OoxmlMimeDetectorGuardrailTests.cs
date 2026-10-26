@@ -133,7 +133,7 @@ namespace ExtractorOLE.Tests.MimeDetection
 
             var defaultDetector = new OoxmlMimeDetector();
             var result = defaultDetector.Detect(request);
-            Assert.Equal(DetectedFormatEnum.Unknown, result.DetectedFormat);
+            Assert.Equal(DetectedFormat.Unknown, result.DetectedFormat);
         }
 
         [Fact]
@@ -148,7 +148,7 @@ namespace ExtractorOLE.Tests.MimeDetection
 
             var result = detector.Detect(request);
 
-            Assert.Equal(DetectedFormatEnum.Unknown, result.DetectedFormat);
+            Assert.Equal(DetectedFormat.Unknown, result.DetectedFormat);
         }
 
         [Fact]
@@ -163,7 +163,7 @@ namespace ExtractorOLE.Tests.MimeDetection
 
             var defaultDetector = new OoxmlMimeDetector();
             var result = defaultDetector.Detect(request);
-            Assert.Equal(DetectedFormatEnum.Unknown, result.DetectedFormat);
+            Assert.Equal(DetectedFormat.Unknown, result.DetectedFormat);
 
             var strictDetector = new OoxmlMimeDetector(new MimeDetectionLimits { MaxDeclaredNestedContentBytes = 1 });
             Assert.Throws<OversizedNestedContentException>(() => strictDetector.Detect(request));

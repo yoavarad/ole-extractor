@@ -94,7 +94,7 @@ namespace ExtractorOLE.Tests.Integration
             var fullPath = FindRepoRootFile(relativePath);
             var fileBytes = File.ReadAllBytes(fullPath);
             var request = new MimeDetectionRequest { FileBytes = fileBytes, FileName = Path.GetFileName(relativePath) };
-            var expectedFormat = Enum.Parse<DetectedFormatEnum>(expectedEnum);
+            var expectedFormat = Enum.Parse<DetectedFormat>(expectedEnum);
 
             var result = new ExtractionHelper().DetectMimeType(request);
 

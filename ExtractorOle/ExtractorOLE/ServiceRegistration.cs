@@ -58,17 +58,17 @@ namespace ExtractorOLE
             services.AddSingleton<DocOpenStrategy>();
 
             // Map enum to strategy implementation
-            services.AddSingleton<IDictionary<OfficeMimeTypeEnum, IOpenStrategy>>(sp =>
+            services.AddSingleton<IDictionary<OfficeMimeType, IOpenStrategy>>(sp =>
             {
-                var dict = new Dictionary<OfficeMimeTypeEnum, IOpenStrategy>
+                var dict = new Dictionary<OfficeMimeType, IOpenStrategy>
                 {
-                    [OfficeMimeTypeEnum.Word] = sp.GetRequiredService<WordOpenStrategy>(),
-                    [OfficeMimeTypeEnum.Excel] = sp.GetRequiredService<ExcelOpenStrategy>(),
-                    [OfficeMimeTypeEnum.PowerPoint] = sp.GetRequiredService<PowerPointOpenStrategy>(),
-                    [OfficeMimeTypeEnum.OpenXmlUnknown] = sp.GetRequiredService<ZipFallbackOpenStrategy>(),
-                    [OfficeMimeTypeEnum.ExcelLegacy] = sp.GetRequiredService<XlsOpenStrategy>(),
-                    [OfficeMimeTypeEnum.PowerPointLegacy] = sp.GetRequiredService<PptOpenStrategy>(),
-                    [OfficeMimeTypeEnum.WordLegacy] = sp.GetRequiredService<DocOpenStrategy>(),
+                    [OfficeMimeType.Word] = sp.GetRequiredService<WordOpenStrategy>(),
+                    [OfficeMimeType.Excel] = sp.GetRequiredService<ExcelOpenStrategy>(),
+                    [OfficeMimeType.PowerPoint] = sp.GetRequiredService<PowerPointOpenStrategy>(),
+                    [OfficeMimeType.OpenXmlUnknown] = sp.GetRequiredService<ZipFallbackOpenStrategy>(),
+                    [OfficeMimeType.ExcelLegacy] = sp.GetRequiredService<XlsOpenStrategy>(),
+                    [OfficeMimeType.PowerPointLegacy] = sp.GetRequiredService<PptOpenStrategy>(),
+                    [OfficeMimeType.WordLegacy] = sp.GetRequiredService<DocOpenStrategy>(),
                 };
                 return dict;
             });
@@ -81,16 +81,16 @@ namespace ExtractorOLE
             services.AddSingleton<DocTextExtractor>();
             services.AddSingleton<PptTextExtractor>();
 
-            services.AddSingleton<IDictionary<OfficeMimeTypeEnum, ITextExtractor>>(sp =>
+            services.AddSingleton<IDictionary<OfficeMimeType, ITextExtractor>>(sp =>
             {
-                var dict = new Dictionary<OfficeMimeTypeEnum, ITextExtractor>
+                var dict = new Dictionary<OfficeMimeType, ITextExtractor>
                 {
-                    [OfficeMimeTypeEnum.Word] = sp.GetRequiredService<DocxTextExtractor>(),
-                    [OfficeMimeTypeEnum.Excel] = sp.GetRequiredService<XlsxTextExtractor>(),
-                    [OfficeMimeTypeEnum.PowerPoint] = sp.GetRequiredService<PptxTextExtractor>(),
-                    [OfficeMimeTypeEnum.ExcelLegacy] = sp.GetRequiredService<XlsTextExtractor>(),
-                    [OfficeMimeTypeEnum.WordLegacy] = sp.GetRequiredService<DocTextExtractor>(),
-                    [OfficeMimeTypeEnum.PowerPointLegacy] = sp.GetRequiredService<PptTextExtractor>(),
+                    [OfficeMimeType.Word] = sp.GetRequiredService<DocxTextExtractor>(),
+                    [OfficeMimeType.Excel] = sp.GetRequiredService<XlsxTextExtractor>(),
+                    [OfficeMimeType.PowerPoint] = sp.GetRequiredService<PptxTextExtractor>(),
+                    [OfficeMimeType.ExcelLegacy] = sp.GetRequiredService<XlsTextExtractor>(),
+                    [OfficeMimeType.WordLegacy] = sp.GetRequiredService<DocTextExtractor>(),
+                    [OfficeMimeType.PowerPointLegacy] = sp.GetRequiredService<PptTextExtractor>(),
                 };
                 return dict;
             });
@@ -99,8 +99,8 @@ namespace ExtractorOLE
             // the single DI-registered seam MainExtractor resolves open/text-extraction
             // components through, keyed by format.
             services.AddSingleton<IFormatDispatchRegistry>(sp => new FormatDispatchRegistry(
-                sp.GetRequiredService<IDictionary<OfficeMimeTypeEnum, IOpenStrategy>>(),
-                sp.GetRequiredService<IDictionary<OfficeMimeTypeEnum, ITextExtractor>>()));
+                sp.GetRequiredService<IDictionary<OfficeMimeType, IOpenStrategy>>(),
+                sp.GetRequiredService<IDictionary<OfficeMimeType, ITextExtractor>>()));
 
             // Main extractor
             services.AddSingleton(sp => new MainExtractor(sp.GetRequiredService<IExtractionHelper>(), sp.GetRequiredService<IFormatDispatchRegistry>(), sp.GetRequiredService<ExtractionGuardrails>()));

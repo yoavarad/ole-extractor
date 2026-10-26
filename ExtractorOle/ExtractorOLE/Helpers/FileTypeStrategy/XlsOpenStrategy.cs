@@ -42,7 +42,7 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
                 _helper.ExtractFirstLayerEmbedded(result, workbook);
                 // Handed to XlsTextExtractor so the workbook is parsed once; MainExtractor releases it.
                 result.ParsedDocument = workbook;
-                result.MimeType = _helper.MimeFor(OfficeMimeTypeEnum.ExcelLegacy);
+                result.MimeType = _helper.MimeFor(OfficeMimeType.ExcelLegacy);
                 return result;
             }
             catch (NPOI.EncryptedDocumentException)

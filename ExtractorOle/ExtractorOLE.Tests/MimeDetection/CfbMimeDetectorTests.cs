@@ -39,7 +39,7 @@ namespace ExtractorOLE.Tests.MimeDetection
 
             var result = detector.Detect(request);
 
-            Assert.Equal(DetectedFormatEnum.Doc, result.DetectedFormat);
+            Assert.Equal(DetectedFormat.Doc, result.DetectedFormat);
             Assert.Equal("application/msword", result.MimeType);
             Assert.True(result.IsSupported);
         }
@@ -58,7 +58,7 @@ namespace ExtractorOLE.Tests.MimeDetection
 
             var result = detector.Detect(request);
 
-            Assert.Equal(DetectedFormatEnum.Xls, result.DetectedFormat);
+            Assert.Equal(DetectedFormat.Xls, result.DetectedFormat);
             Assert.Equal("application/vnd.ms-excel", result.MimeType);
             Assert.True(result.IsSupported);
         }
@@ -75,7 +75,7 @@ namespace ExtractorOLE.Tests.MimeDetection
 
             var result = detector.Detect(request);
 
-            Assert.Equal(DetectedFormatEnum.Ppt, result.DetectedFormat);
+            Assert.Equal(DetectedFormat.Ppt, result.DetectedFormat);
             Assert.Equal("application/vnd.ms-powerpoint", result.MimeType);
             Assert.True(result.IsSupported);
         }
@@ -92,7 +92,7 @@ namespace ExtractorOLE.Tests.MimeDetection
 
             var result = detector.Detect(request);
 
-            Assert.Equal(DetectedFormatEnum.Unknown, result.DetectedFormat);
+            Assert.Equal(DetectedFormat.Unknown, result.DetectedFormat);
             Assert.Equal("application/octet-stream", result.MimeType);
             Assert.False(result.IsSupported);
         }
@@ -109,7 +109,7 @@ namespace ExtractorOLE.Tests.MimeDetection
 
             var result = detector.Detect(request);
 
-            Assert.Equal(DetectedFormatEnum.Unknown, result.DetectedFormat);
+            Assert.Equal(DetectedFormat.Unknown, result.DetectedFormat);
         }
 
         [Fact]
@@ -124,7 +124,7 @@ namespace ExtractorOLE.Tests.MimeDetection
 
             var result = detector.Detect(request);
 
-            Assert.Equal(DetectedFormatEnum.Unknown, result.DetectedFormat);
+            Assert.Equal(DetectedFormat.Unknown, result.DetectedFormat);
         }
 
         [Fact]
@@ -142,7 +142,7 @@ namespace ExtractorOLE.Tests.MimeDetection
 
             var result = detector.Detect(request);
 
-            Assert.Equal(DetectedFormatEnum.Doc, result.DetectedFormat);
+            Assert.Equal(DetectedFormat.Doc, result.DetectedFormat);
         }
     }
 }

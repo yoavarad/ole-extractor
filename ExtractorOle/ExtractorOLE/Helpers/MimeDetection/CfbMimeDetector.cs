@@ -86,17 +86,17 @@ namespace ExtractorOLE.Helpers.MimeDetection
 
                 if (entryNames.Contains(WordDocumentEntryName))
                 {
-                    return BuildResult(DetectedFormatEnum.Doc, "application/msword");
+                    return BuildResult(DetectedFormat.Doc, "application/msword");
                 }
 
                 if (entryNames.Contains(ExcelWorkbookEntryName) || entryNames.Contains(ExcelBookEntryName))
                 {
-                    return BuildResult(DetectedFormatEnum.Xls, "application/vnd.ms-excel");
+                    return BuildResult(DetectedFormat.Xls, "application/vnd.ms-excel");
                 }
 
                 if (entryNames.Contains(PowerPointEntryName))
                 {
-                    return BuildResult(DetectedFormatEnum.Ppt, "application/vnd.ms-powerpoint");
+                    return BuildResult(DetectedFormat.Ppt, "application/vnd.ms-powerpoint");
                 }
 
                 return UnknownResult();
@@ -156,7 +156,7 @@ namespace ExtractorOLE.Helpers.MimeDetection
             return true;
         }
 
-        private static MimeDetectionResult BuildResult(DetectedFormatEnum format, string mimeType) => new()
+        private static MimeDetectionResult BuildResult(DetectedFormat format, string mimeType) => new()
         {
             DetectedFormat = format,
             MimeType = mimeType,
@@ -165,7 +165,7 @@ namespace ExtractorOLE.Helpers.MimeDetection
 
         private static MimeDetectionResult UnknownResult() => new()
         {
-            DetectedFormat = DetectedFormatEnum.Unknown,
+            DetectedFormat = DetectedFormat.Unknown,
             MimeType = "application/octet-stream",
             IsSupported = false
         };

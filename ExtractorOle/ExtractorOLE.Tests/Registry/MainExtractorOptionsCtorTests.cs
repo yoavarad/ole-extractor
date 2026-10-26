@@ -13,8 +13,8 @@ namespace ExtractorOLE.Tests.Registry
     {
         private sealed class NullRegistry : IFormatDispatchRegistry
         {
-            public IOpenStrategy? GetOpenStrategy(OfficeMimeTypeEnum format) => null;
-            public ITextExtractor? GetTextExtractor(OfficeMimeTypeEnum format) => null;
+            public IOpenStrategy? GetOpenStrategy(OfficeMimeType format) => null;
+            public ITextExtractor? GetTextExtractor(OfficeMimeType format) => null;
         }
 
         private static ExtractionRequest Req(int size) => new()

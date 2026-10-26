@@ -15,8 +15,8 @@ namespace ExtractorOLE.Registry
     /// </summary>
     public interface IFormatDispatchRegistry
     {
-        IOpenStrategy? GetOpenStrategy(OfficeMimeTypeEnum format);
+        IOpenStrategy? GetOpenStrategy(OfficeMimeType format);
 
-        ITextExtractor? GetTextExtractor(OfficeMimeTypeEnum format);
+        ITextExtractor? GetTextExtractor(OfficeMimeType format);
     }
 }

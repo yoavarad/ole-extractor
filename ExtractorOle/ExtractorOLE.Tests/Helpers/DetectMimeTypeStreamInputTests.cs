@@ -20,29 +20,29 @@ namespace ExtractorOLE.Tests.Helpers
             return services.BuildServiceProvider().GetRequiredService<IExtractionHelper>();
         }
 
-        private static byte[] Generate(DetectedFormatEnum format, string text = "hello")
+        private static byte[] Generate(DetectedFormat format, string text = "hello")
         {
             var spec = new SampleSpec { BodyText = text };
             return format switch
             {
-                DetectedFormatEnum.Docx => new DocxSampleGenerator().Generate(spec).Content,
-                DetectedFormatEnum.Xlsx => new XlsxSampleGenerator().Generate(spec).Content,
-                DetectedFormatEnum.Pptx => new PptxSampleGenerator().Generate(spec).Content,
-                DetectedFormatEnum.Doc => new DocSampleGenerator().Generate(spec).Content,
-                DetectedFormatEnum.Xls => new XlsSampleGenerator().Generate(spec).Content,
+                DetectedFormat.Docx => new DocxSampleGenerator().Generate(spec).Content,
+                DetectedFormat.Xlsx => new XlsxSampleGenerator().Generate(spec).Content,
+                DetectedFormat.Pptx => new PptxSampleGenerator().Generate(spec).Content,
+                DetectedFormat.Doc => new DocSampleGenerator().Generate(spec).Content,
+                DetectedFormat.Xls => new XlsSampleGenerator().Generate(spec).Content,
                 _ => new PptSampleGenerator().Generate(spec).Content,
             };
         }
 
-        public static TheoryData<DetectedFormatEnum> Formats => new()
+        public static TheoryData<DetectedFormat> Formats => new()
         {
-            DetectedFormatEnum.Docx, DetectedFormatEnum.Xlsx, DetectedFormatEnum.Pptx,
-            DetectedFormatEnum.Doc, DetectedFormatEnum.Xls, DetectedFormatEnum.Ppt,
+            DetectedFormat.Docx, DetectedFormat.Xlsx, DetectedFormat.Pptx,
+            DetectedFormat.Doc, DetectedFormat.Xls, DetectedFormat.Ppt,
         };
 
         [Theory]
         [MemberData(nameof(Formats))]
-        public void DetectMimeType_InputStream_DetectsFormat_AndLeavesStreamOpen(DetectedFormatEnum format)
+        public void DetectMimeType_InputStream_DetectsFormat_AndLeavesStreamOpen(DetectedFormat format)
         {
             var bytes = Generate(format);
             var expected = BuildHelper().DetectMimeType(new MimeDetectionRequest { FileBytes = bytes });
@@ -58,7 +58,7 @@ namespace ExtractorOLE.Tests.Helpers
 
         [Theory]
         [MemberData(nameof(Formats))]
-        public void DetectMimeType_FilePath_DetectsFormat_AndReleasesFile(DetectedFormatEnum format)
+        public void DetectMimeType_FilePath_DetectsFormat_AndReleasesFile(DetectedFormat format)
         {
             var path = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N") + ".bin");
             File.WriteAllBytes(path, Generate(format));
@@ -78,7 +78,7 @@ namespace ExtractorOLE.Tests.Helpers
         [Fact]
         public void DetectMimeType_MultipleSources_ThrowsArgumentException()
         {
-            var bytes = Generate(DetectedFormatEnum.Docx);
+            var bytes = Generate(DetectedFormat.Docx);
             using var stream = new MemoryStream(bytes);
             var helper = BuildHelper();
 
@@ -93,16 +93,16 @@ namespace ExtractorOLE.Tests.Helpers
         [Fact]
         public void DetectMimeType_NonSeekableStream_ThrowsArgumentException()
         {
-            using var stream = new NonSeekableStream(Generate(DetectedFormatEnum.Docx));
+            using var stream = new NonSeekableStream(Generate(DetectedFormat.Docx));
 
             Assert.Throws<ArgumentException>(() => BuildHelper().DetectMimeType(
                 new MimeDetectionRequest { InputStream = stream }));
         }
 
         [Theory]
-        [InlineData(DetectedFormatEnum.Docx)]
-        [InlineData(DetectedFormatEnum.Doc)]
-        public void DetectMimeType_InputStream_ReadsFarLessThanWholeFile(DetectedFormatEnum format)
+        [InlineData(DetectedFormat.Docx)]
+        [InlineData(DetectedFormat.Doc)]
+        public void DetectMimeType_InputStream_ReadsFarLessThanWholeFile(DetectedFormat format)
         {
             // Large, poorly compressible body so the file is much bigger than headers/directory.
             var rng = new Random(1);
