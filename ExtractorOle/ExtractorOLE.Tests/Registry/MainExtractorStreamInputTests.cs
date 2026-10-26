@@ -239,7 +239,7 @@ namespace ExtractorOLE.Tests.Registry
             var path = Path.GetTempFileName();
             try
             {
-                File.WriteAllBytes(path, xlsx);
+                await File.WriteAllBytesAsync(path, xlsx);
                 using var stream = new MemoryStream(docx, writable: false);
                 var byStream = Request(DocxMime);
                 byStream.InputStream = stream;

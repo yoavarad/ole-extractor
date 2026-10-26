@@ -25,6 +25,8 @@ namespace ExtractorOLE.Tests.Integration
     // a dedicated throw-assertion Fact instead.
     public class DetectMimeTypeCorpusManifestTests
     {
+        private static readonly JsonSerializerOptions ManifestJsonOptions = new() { PropertyNameCaseInsensitive = true };
+
         private const string OversizedBombSamplePath = "samples/adversarial/oversized-declared-size-bomb.doc";
 
         private sealed class ManifestRoot
@@ -71,10 +73,7 @@ namespace ExtractorOLE.Tests.Integration
         {
             var manifestPath = FindRepoRootFile("samples/manifest.json");
             var json = File.ReadAllText(manifestPath);
-            var root = JsonSerializer.Deserialize<ManifestRoot>(json, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            });
+            var root = JsonSerializer.Deserialize<ManifestRoot>(json, ManifestJsonOptions);
 
             return root?.Samples ?? new List<ManifestSample>();
         }
@@ -95,7 +94,7 @@ namespace ExtractorOLE.Tests.Integration
             var fullPath = FindRepoRootFile(relativePath);
             var fileBytes = File.ReadAllBytes(fullPath);
             var request = new MimeDetectionRequest { FileBytes = fileBytes, FileName = Path.GetFileName(relativePath) };
-            var expectedFormat = (DetectedFormatEnum)Enum.Parse(typeof(DetectedFormatEnum), expectedEnum);
+            var expectedFormat = Enum.Parse<DetectedFormatEnum>(expectedEnum);
 
             var result = new ExtractionHelper().DetectMimeType(request);
 

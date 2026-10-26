@@ -121,7 +121,7 @@ namespace ExtractorOLE
             int? maxDegreeOfParallelism = null,
             CancellationToken cancellationToken = default)
         {
-            if (requests == null) throw new ArgumentNullException(nameof(requests));
+            ArgumentNullException.ThrowIfNull(requests);
             var dop = maxDegreeOfParallelism ?? Environment.ProcessorCount;
             if (dop <= 0) throw new ArgumentOutOfRangeException(nameof(maxDegreeOfParallelism), dop, "Must be positive.");
 
@@ -149,10 +149,14 @@ namespace ExtractorOLE
         // Boundary validation: runs before any detection/extraction logic.
         private static void ValidateRequest(ExtractionRequest request)
         {
-            if (request == null) throw new ArgumentNullException(nameof(request));
+            ArgumentNullException.ThrowIfNull(request);
+            // ParamName names the offending request property: part of the public contract
+            // (MainExtractorExtractValidationTests), so CA2208 is suppressed here.
+#pragma warning disable CA2208
             if (request.FileBytes == null) throw new ArgumentNullException(nameof(request.FileBytes));
             if (request.FileName == null) throw new ArgumentNullException(nameof(request.FileName));
             if (request.DetectedMimeType == null) throw new ArgumentNullException(nameof(request.DetectedMimeType));
+#pragma warning restore CA2208
         }
 
         private static bool IsOoxml(OfficeMimeTypeEnum format) =>
@@ -177,7 +181,7 @@ namespace ExtractorOLE
         [Obsolete("Detect the mime type and call Extract(ExtractionRequest) instead.")]
         public DocumentExtractionResult Extract(byte[] fileBytes)
         {
-            if (fileBytes == null) throw new ArgumentNullException(nameof(fileBytes));
+            ArgumentNullException.ThrowIfNull(fileBytes);
             var format = _helper.DetectMimeTypeFromBytes(fileBytes);
             return Extract(new ExtractionRequest
             {

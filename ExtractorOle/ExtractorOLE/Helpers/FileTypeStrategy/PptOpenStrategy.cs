@@ -137,7 +137,7 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
             return (metadata, hasMacros);
         }
 
-        private void PopulateBodyContent(Func<byte[]> convertToPptx, DocumentExtractionResult result)
+        private static void PopulateBodyContent(Func<byte[]> convertToPptx, DocumentExtractionResult result)
         {
             byte[] pptxBytes = convertToPptx();
             result.ParsedDocument = pptxBytes; // reused by PptTextExtractor (#168)

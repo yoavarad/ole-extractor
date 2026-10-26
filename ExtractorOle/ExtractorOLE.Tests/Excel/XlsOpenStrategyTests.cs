@@ -312,8 +312,8 @@ namespace ExtractorOLE.Tests.Excel
             // count of 1.
             Assert.Equal(2, result!.EmbeddedFiles.Count);
 
-            var objectItems = result.EmbeddedFiles.Where(f => f.FileName.StartsWith("embedded_object_")).ToList();
-            var pictureItems = result.EmbeddedFiles.Where(f => f.FileName.StartsWith("picture_")).ToList();
+            var objectItems = result.EmbeddedFiles.Where(f => f.FileName.StartsWith("embedded_object_", StringComparison.Ordinal)).ToList();
+            var pictureItems = result.EmbeddedFiles.Where(f => f.FileName.StartsWith("picture_", StringComparison.Ordinal)).ToList();
             Assert.Single(objectItems);
             Assert.Single(pictureItems);
 

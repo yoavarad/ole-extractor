@@ -131,7 +131,7 @@ namespace ExtractorOLE.Tests.Batch
         public async Task CancelledToken_ThrowsOperationCanceled()
         {
             using var cts = new CancellationTokenSource();
-            cts.Cancel();
+            await cts.CancelAsync();
 
             await Assert.ThrowsAnyAsync<OperationCanceledException>(
                 () => Extractor.Value.ExtractManyAsync(new[] { ValidDocx() }, 1, cts.Token));

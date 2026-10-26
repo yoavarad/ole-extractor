@@ -231,7 +231,7 @@ namespace ExtractorOLE.Helpers
         // serializes it to bytes -- the same opaque, no-recursive-unpacking technique
         // ExtractHssfObjectData uses for .xls embedded objects. Named by the storage's own
         // CFB name.
-        private void ExtractCfbStorage(DirectoryEntry storage, List<EmbeddedFileItem> fileList)
+        private static void ExtractCfbStorage(DirectoryEntry storage, List<EmbeddedFileItem> fileList)
         {
             var target = new NPOIFSFileSystem();
             try
@@ -259,7 +259,7 @@ namespace ExtractorOLE.Helpers
         }
 
         // Reads one root-level CFB stream (the "Pictures" media blob) as one opaque subfile.
-        private void ExtractCfbStream(DocumentEntry stream, List<EmbeddedFileItem> fileList)
+        private static void ExtractCfbStream(DocumentEntry stream, List<EmbeddedFileItem> fileList)
         {
             using var input = new DocumentInputStream(stream);
             byte[] extractedBytes = ReadAllBytes(input, stream.Size);
@@ -295,7 +295,7 @@ namespace ExtractorOLE.Helpers
         // Reads one ObjectPool child. Wrapped in its own try/catch, mirroring
         // ExtractHssfObjectData, so that one corrupt/malformed entry (e.g. one that isn't
         // actually a directory storage) is skipped and logged without failing the whole walk.
-        private void ExtractDocObjectPoolEntry(Entry entry, List<EmbeddedFileItem> fileList, ref int index)
+        private static void ExtractDocObjectPoolEntry(Entry entry, List<EmbeddedFileItem> fileList, ref int index)
         {
             try
             {
@@ -339,7 +339,7 @@ namespace ExtractorOLE.Helpers
         // Reads one embedded OLE object. Wrapped in its own try/catch so that one corrupt item
         // (e.g. a POIFS directory entry that doesn't resolve to a real DirectoryEntry) is skipped
         // and logged without failing the whole extraction.
-        private void ExtractHssfObjectData(HSSFObjectData obj, List<EmbeddedFileItem> fileList, ref int index)
+        private static void ExtractHssfObjectData(HSSFObjectData obj, List<EmbeddedFileItem> fileList, ref int index)
         {
             try
             {
@@ -390,7 +390,7 @@ namespace ExtractorOLE.Helpers
 
         // Reads one inline picture. Wrapped in its own try/catch to isolate one corrupt item from
         // the rest of the extraction, matching ExtractHssfObjectData's per-item behavior.
-        private void ExtractHssfPictureData(HSSFPictureData pic, List<EmbeddedFileItem> fileList, ref int index)
+        private static void ExtractHssfPictureData(HSSFPictureData pic, List<EmbeddedFileItem> fileList, ref int index)
         {
             try
             {

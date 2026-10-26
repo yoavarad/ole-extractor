@@ -34,11 +34,11 @@ namespace ExtractorOLE.Tests.MultiEmbedding
             Assert.NotNull(result);
             Assert.Equal(2, result!.EmbeddedFiles.Count);
 
-            var xlsxItem = Assert.Single(result.EmbeddedFiles, f => f.FileName.EndsWith(".xlsx"));
+            var xlsxItem = Assert.Single(result.EmbeddedFiles, f => f.FileName.EndsWith(".xlsx", StringComparison.Ordinal));
             Assert.True(xlsxItem.SizeInBytes > 0);
             Assert.Equal(originalXlsxBytes, xlsxItem.BinaryData);
 
-            Assert.Single(result.EmbeddedFiles, f => f.FileName.EndsWith(".png"));
+            Assert.Single(result.EmbeddedFiles, f => f.FileName.EndsWith(".png", StringComparison.Ordinal));
 
             var forbiddenFragments = new[]
             {

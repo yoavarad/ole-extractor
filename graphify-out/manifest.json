@@ -12,9 +12,9 @@
     "semantic_hash": ""
   },
   ".claude/settings.json": {
-    "mtime": 1787919481.8705437,
-    "seen": 1791832390.7958066,
-    "ast_hash": "467d4fc1d526f480f99c30bf8215fbae",
+    "mtime": 1792839610.2664,
+    "seen": 1793000028.1515722,
+    "ast_hash": "1d3cdee9f822280b635805d2e145c5c6",
     "semantic_hash": ""
   },
   ".ydk/hooks/commit-msg": {
@@ -66,9 +66,9 @@
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.Benchmarks/Program.cs": {
-    "mtime": 1791659179.8529599,
-    "seen": 1791832390.7958288,
-    "ast_hash": "6e0c8d47d3a676bef0d29b8d32317810",
+    "mtime": 1792999790.900165,
+    "seen": 1793000028.1515927,
+    "ast_hash": "a25029a305af2ddcf7cc2728523d93af",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.StressHarness/ExtractorOLE.StressHarness.csproj": {
@@ -78,15 +78,15 @@
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.StressHarness/Program.cs": {
-    "mtime": 1791659179.8529599,
-    "seen": 1791832390.795836,
-    "ast_hash": "46ace2dfa3f943087ad4b042e6c57fad",
+    "mtime": 1792787108.1523867,
+    "seen": 1793000028.1515987,
+    "ast_hash": "5c0aa39981de496809bf3fae4ab77706",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.Tests/Excel/ExcelExtractorEmbeddedObjectTests.cs": {
-    "mtime": 1787566687.7967038,
-    "seen": 1791832390.7958488,
-    "ast_hash": "39d73bdbfb679005889250757ddacaed",
+    "mtime": 1792787108.1523867,
+    "seen": 1793000028.1516101,
+    "ast_hash": "96963547bb1385a52fb077c777fae394",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.Tests/ExtractorOLE.Tests.csproj": {
@@ -102,9 +102,9 @@
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.Tests/MultiEmbedding/MultiEmbeddingSampleTests.cs": {
-    "mtime": 1787918204.2906027,
-    "seen": 1791832390.7958717,
-    "ast_hash": "64dfd322f0558cb7b27012f27ff16a8b",
+    "mtime": 1792999838.3975687,
+    "seen": 1793000028.1516306,
+    "ast_hash": "0cec4623802d9daba9f27b81ad8b0803",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.Tests/SampleGeneration/MacroEmbedSampleGeneratorTests.cs": {
@@ -114,21 +114,21 @@
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE/DTOs/DetectedFormatEnum.cs": {
-    "mtime": 1787431675.9324903,
-    "seen": 1791832390.7959073,
-    "ast_hash": "cdc48aaa8034e53b36d55fdce1d386a0",
+    "mtime": 1792999744.5163212,
+    "seen": 1793000028.151665,
+    "ast_hash": "f7d6453b24756297759eb0dfc175a8b9",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE/DTOs/DocumentExtractionResult.cs": {
-    "mtime": 1791659179.8615408,
-    "seen": 1791832390.7959087,
-    "ast_hash": "21031cfd2844af1e2676b088a1e69619",
+    "mtime": 1792999923.1420622,
+    "seen": 1793000028.1516657,
+    "ast_hash": "e8e1b26a683f86b04083d3b5ff6e7008",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE/DTOs/MimeDetectionRequest.cs": {
-    "mtime": 1787431675.9324903,
-    "seen": 1791832390.7959123,
-    "ast_hash": "0393d4ac7188aca270d5990aede9cf8e",
+    "mtime": 1792787108.1624382,
+    "seen": 1793000028.1516685,
+    "ast_hash": "63a659518e47e970305ddbdcb69b0052",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE/DTOs/MimeDetectionResult.cs": {
@@ -138,39 +138,39 @@
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE/DTOs/OfficeMimeTypeEnum.cs": {
-    "mtime": 1789590565.186842,
-    "seen": 1791832390.7959144,
-    "ast_hash": "5fd063b01d08b2cef2111f3ff1b1cd1c",
+    "mtime": 1792999923.1739755,
+    "seen": 1793000028.1516702,
+    "ast_hash": "57d7caa8fdef3df7d11a788ebf351708",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE/ExtractorOLE.csproj": {
-    "mtime": 1791661434.2666354,
-    "seen": 1791832390.7959273,
-    "ast_hash": "8fa74d0612ea16d4f65dbf1518f8d851",
+    "mtime": 1792787108.1624382,
+    "seen": 1793000028.151681,
+    "ast_hash": "7828bb0accc6cb95c33e49fb88299fc1",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE/Handlers/DocxTextExtractor.cs": {
-    "mtime": 1791659179.8635533,
-    "seen": 1791832390.7959297,
-    "ast_hash": "61fc0384bc7a6d3cdc94cccf5ebe066e",
+    "mtime": 1792787108.170566,
+    "seen": 1793000028.1516826,
+    "ast_hash": "8f23cb8e8e4fb2f920c986ee4ea813d7",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE/Handlers/PptxTextExtractor.cs": {
-    "mtime": 1791659179.8635533,
-    "seen": 1791832390.7959318,
-    "ast_hash": "19d171185e8c8db2a1bab3c26e6c5816",
+    "mtime": 1792787108.172223,
+    "seen": 1793000028.1516845,
+    "ast_hash": "f1f0a319888d51d150ca17cbeba19660",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE/Handlers/XlsxTextExtractor.cs": {
-    "mtime": 1791659179.8650823,
-    "seen": 1791832390.795934,
-    "ast_hash": "a6d2ff75d7f55394394407816d63040b",
+    "mtime": 1792787108.172223,
+    "seen": 1793000028.1516862,
+    "ast_hash": "03c97cb9b4f2b22334892db53c15b43e",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE/Helpers/ExtractionHelper.cs": {
-    "mtime": 1791659179.8650823,
-    "seen": 1791832390.795936,
-    "ast_hash": "bb8ff0cd7079d8d39b05367a0aa44d62",
+    "mtime": 1792787108.175447,
+    "seen": 1793000028.1516879,
+    "ast_hash": "cdf3c40d780321769dafc3ce5c6ab8bb",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE/Helpers/FileTypeStrategy/ExcelOpenStrategy.cs": {
@@ -180,9 +180,9 @@
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE/Helpers/FileTypeStrategy/IOpenStrategy.cs": {
-    "mtime": 1791784047.3193898,
-    "seen": 1791832390.7959409,
-    "ast_hash": "eeff9073235bc5825e3d973084e184cb",
+    "mtime": 1792787108.1780245,
+    "seen": 1793000028.1516914,
+    "ast_hash": "b93d0d20cad4911773f19efc415e8c5a",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE/Helpers/FileTypeStrategy/PowerPointOpenStrategy.cs": {
@@ -210,9 +210,9 @@
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE/Helpers/MimeDetection/CfbMimeDetector.cs": {
-    "mtime": 1791784047.3193898,
-    "seen": 1791832390.7959535,
-    "ast_hash": "30bc9283823ba0c4791e827da70df7d3",
+    "mtime": 1792839610.2664,
+    "seen": 1793000028.1517067,
+    "ast_hash": "4c0f2412ffd965f130166bf130fff665",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE/Helpers/MimeDetection/ICfbMimeDetector.cs": {
@@ -221,58 +221,16 @@
     "ast_hash": "8ba78b794f82c9ff20c82e8f381f46f7",
     "semantic_hash": ""
   },
-  "ExtractorOle/ExtractorOLE/ITextExtractor.cs": {
-    "mtime": 1787129036.2838628,
-    "seen": 1791832390.7959619,
-    "ast_hash": "11a599e51dcb55bcd382216114d285a2",
-    "semantic_hash": ""
-  },
   "ExtractorOle/ExtractorOLE/MainExtractor.cs": {
-    "mtime": 1791784047.326519,
-    "seen": 1791832390.795963,
-    "ast_hash": "a610e1b7d7af81d3e9c4eeb71c103b08",
-    "semantic_hash": ""
-  },
-  "ExtractorOle/ExtractorOLE/Old/BackupLogic.cs": {
-    "mtime": 1787129036.2838628,
-    "seen": 1791832390.7959642,
-    "ast_hash": "106ab04501fd9b8e3d361287dc3b9203",
-    "semantic_hash": ""
-  },
-  "ExtractorOle/ExtractorOLE/Old/Doc/DocExtractor.cs": {
-    "mtime": 1788021217.1848137,
-    "seen": 1791832390.7959652,
-    "ast_hash": "54e47d8be7c826c1d37d9f189653d09f",
-    "semantic_hash": ""
-  },
-  "ExtractorOle/ExtractorOLE/Old/Excel/ExcelExtractor.cs": {
-    "mtime": 1787566687.8050976,
-    "seen": 1791832390.7959661,
-    "ast_hash": "e91bdf7e468ca6adc349f6a5cb4ce88d",
-    "semantic_hash": ""
-  },
-  "ExtractorOle/ExtractorOLE/Old/PowerPoint/SlidesExtractor.cs": {
-    "mtime": 1787129036.2881496,
-    "seen": 1791832390.7959673,
-    "ast_hash": "bd9f839623215d0404791ca683d3dbbd",
-    "semantic_hash": ""
-  },
-  "ExtractorOle/ExtractorOLE/Old/Util/ExtractionUtil.cs": {
-    "mtime": 1787129036.29135,
-    "seen": 1791832390.795968,
-    "ast_hash": "f94e54e2a424bde88067c3e0e156a242",
-    "semantic_hash": ""
-  },
-  "ExtractorOle/ExtractorOLE/Program.cs": {
-    "mtime": 1788119381.22566,
-    "seen": 1791832390.795969,
-    "ast_hash": "50080d002130696bb9e28fefe81bed33",
+    "mtime": 1792999728.6067977,
+    "seen": 1793000028.151714,
+    "ast_hash": "1ad4fe187f98cf4f820b351b3a86d962",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE/ServiceRegistration.cs": {
-    "mtime": 1789836997.142856,
-    "seen": 1791832390.7959745,
-    "ast_hash": "4144ba22dbd5f5a93893208eceeca0cf",
+    "mtime": 1792787108.191053,
+    "seen": 1793000028.151719,
+    "ast_hash": "26e0fbbc3922a9dcc11aabf6ff7a6689",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOle.slnx": {
@@ -336,9 +294,9 @@
     "semantic_hash": ""
   },
   "SampleGenerator/Generators/DocSampleGenerator.cs": {
-    "mtime": 1789898452.2762902,
-    "seen": 1791832390.7959929,
-    "ast_hash": "42fa74f65cbd0f053997fd7797c86f4a",
+    "mtime": 1792999838.3975687,
+    "seen": 1793000028.1517355,
+    "ast_hash": "c2fe28a11932ea8014e3b7aeb7dbaa59",
     "semantic_hash": ""
   },
   "SampleGenerator/Generators/DocxSampleGenerator.cs": {
@@ -378,9 +336,9 @@
     "semantic_hash": ""
   },
   "SampleGenerator/Generators/XlsxSampleGenerator.cs": {
-    "mtime": 1787566687.820415,
-    "seen": 1791832390.796001,
-    "ast_hash": "9d5092fcf833b80406868aca502dcdbd",
+    "mtime": 1792999838.3975687,
+    "seen": 1793000028.151743,
+    "ast_hash": "ca7c6d28f947b7a55948fe1ace5aeece",
     "semantic_hash": ""
   },
   "SampleGenerator/Program.cs": {
@@ -864,9 +822,9 @@
     "semantic_hash": ""
   },
   "docs/project-rules.md": {
-    "mtime": 1791661434.2713807,
-    "seen": 1791832390.7960908,
-    "ast_hash": "ddb1e6a56fff3dc3e324e2f7b2973170",
+    "mtime": 1792787108.191053,
+    "seen": 1793000028.1518478,
+    "ast_hash": "b538cdcf5cb65be3d2a0717e9ca895bd",
     "semantic_hash": ""
   },
   "docs/research/benchmarkdotnet.md": {
@@ -972,9 +930,9 @@
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.Tests/Excel/XlsOpenStrategyTests.cs": {
-    "mtime": 1791832361.044902,
-    "seen": 1791832390.795851,
-    "ast_hash": "4d511109d140a0b3633cdc8b9e5c3034",
+    "mtime": 1792999790.900165,
+    "seen": 1793000028.1516125,
+    "ast_hash": "21f7fdf8991a86d8b4131240fa384462",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.Tests/Helpers/ExtractionHelperDetectMimeTypeTests.cs": {
@@ -996,15 +954,15 @@
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.Tests/MultiEmbedding/DocxEmbeddedXlsxAndCorruptionTests.cs": {
-    "mtime": 1791832361.044902,
-    "seen": 1791832390.7958705,
-    "ast_hash": "b4c8134d121d41c8c3d876c7e3885b20",
+    "mtime": 1792999838.3975687,
+    "seen": 1793000028.15163,
+    "ast_hash": "24763fabb3aa58d003e48d7edbad0b14",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.Tests/PowerPoint/PptxFirstLayerEmbeddedWalkTests.cs": {
-    "mtime": 1791832361.0475676,
-    "seen": 1791832390.795878,
-    "ast_hash": "866bdb377854a15959e90984f21363ac",
+    "mtime": 1792999838.3975687,
+    "seen": 1793000028.1516361,
+    "ast_hash": "a12c1fe58a934b8ae136c180c62c0c4e",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE/Configuration/MimeDetectionLimits.cs": {
@@ -1038,9 +996,9 @@
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE/Helpers/FileTypeStrategy/XlsOpenStrategy.cs": {
-    "mtime": 1791832361.0517514,
-    "seen": 1791832390.795947,
-    "ast_hash": "df1492c8e1254b8a2be3ef3449d17ab7",
+    "mtime": 1792787108.1780245,
+    "seen": 1793000028.1516972,
+    "ast_hash": "c0f07498157beda542e77e4e7afa3bc2",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE/Helpers/MimeDetection/IOoxmlMimeDetector.cs": {
@@ -1050,9 +1008,9 @@
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE/Helpers/MimeDetection/OoxmlMimeDetector.cs": {
-    "mtime": 1791784047.3193898,
-    "seen": 1791832390.795958,
-    "ast_hash": "583a61a31b44885863242ce4bf9d214d",
+    "mtime": 1792839610.2729375,
+    "seen": 1793000028.1517112,
+    "ast_hash": "eba20b75e38383db1dca3ee0486b84aa",
     "semantic_hash": ""
   },
   "SampleGenerator/Fixtures/CuratedSampleSpecs.cs": {
@@ -1092,39 +1050,39 @@
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.Tests/MultiEmbedding/CuratedNestedEmbeddingSampleTests.cs": {
-    "mtime": 1791661434.262719,
-    "seen": 1791832390.795869,
-    "ast_hash": "0fbcf6ef16d7c9ea4ef5c510c88c5ad2",
+    "mtime": 1792999838.3975687,
+    "seen": 1793000028.1516287,
+    "ast_hash": "5a5803d6fabe6ac69aefef4663376132",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.Tests/Registry/FormatDispatchRegistryTests.cs": {
-    "mtime": 1789802534.9530647,
-    "seen": 1791832390.7958813,
-    "ast_hash": "cf0f5e030e56f6bab1202e765ddb0c4d",
+    "mtime": 1792787108.1523867,
+    "seen": 1793000028.151639,
+    "ast_hash": "e20c26c20dfa0c5c6499e8e203cbdd2c",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.Tests/Registry/MainExtractorDispatchIntegrationTests.cs": {
-    "mtime": 1788022497.299837,
-    "seen": 1791832390.7958832,
-    "ast_hash": "7255bd02e2133a2ef00fe4af01e6d2d2",
+    "mtime": 1792787108.1523867,
+    "seen": 1793000028.1516407,
+    "ast_hash": "65ad536bc38e555846514e846eced396",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE/Handlers/XlsTextExtractor.cs": {
-    "mtime": 1791751327.8057005,
-    "seen": 1791832390.7959328,
-    "ast_hash": "99e3249a7bf92cd38462f2f5c4b6167f",
+    "mtime": 1792787108.172223,
+    "seen": 1793000028.1516855,
+    "ast_hash": "0b93e16bdfcb729d32e75982128b509b",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE/Registry/FormatDispatchRegistry.cs": {
-    "mtime": 1788022497.299837,
-    "seen": 1791832390.79597,
-    "ast_hash": "37fd7e875b53f1a8b426328b08287ad0",
+    "mtime": 1792787108.1896577,
+    "seen": 1793000028.151715,
+    "ast_hash": "5ade239c2fa0b4cf564d0fae06cc9073",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE/Registry/IFormatDispatchRegistry.cs": {
-    "mtime": 1788022497.299837,
-    "seen": 1791832390.7959714,
-    "ast_hash": "9c81b7b48c4aae80058cf3df129b7d1e",
+    "mtime": 1792787108.190015,
+    "seen": 1793000028.1517158,
+    "ast_hash": "ae7f0544b6d8a400bff9216e423d901d",
     "semantic_hash": ""
   },
   ".ydk/verifications/dotnet-quality/manifest.yaml": {
@@ -1134,9 +1092,9 @@
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1791661434.2685218,
-    "seen": 1791832390.7960796,
-    "ast_hash": "8f959632b250c500c885303f1201c710",
+    "mtime": 1792787108.191053,
+    "seen": 1793000028.151833,
+    "ast_hash": "c85fc1eee46f34a2cdbde00658eea400",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.StressHarness/LoadGenerator.cs": {
@@ -1146,9 +1104,9 @@
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.Tests/Docx/WordOpenStrategyTests.cs": {
-    "mtime": 1788119381.2064223,
-    "seen": 1791832390.7958477,
-    "ast_hash": "105ecf91ed0242747af607a731ef16ee",
+    "mtime": 1792999790.900165,
+    "seen": 1793000028.1516092,
+    "ast_hash": "58b2ac0d75d665f60c910b2a29bedfdd",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.Tests/Excel/ExcelOpenStrategyTests.cs": {
@@ -1164,9 +1122,9 @@
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.Tests/PowerPoint/PowerPointOpenStrategyTests.cs": {
-    "mtime": 1788119381.2064223,
-    "seen": 1791832390.7958727,
-    "ast_hash": "0a6322f94fc229f7553d2abd3a16eeeb",
+    "mtime": 1792999838.3975687,
+    "seen": 1793000028.1516316,
+    "ast_hash": "325335d526e0f3e0d4412c401fdec6b7",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.Tests/PowerPoint/PptxTextExtractorTests.cs": {
@@ -1236,9 +1194,9 @@
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.Tests/Integration/DetectMimeTypeCorpusManifestTests.cs": {
-    "mtime": 1789505090.685232,
-    "seen": 1791832390.7958593,
-    "ast_hash": "fed01447c9649ace30ca76fcfe980225",
+    "mtime": 1792999790.900165,
+    "seen": 1793000028.1516206,
+    "ast_hash": "06c18fee48934aa6d5762d8dc026369b",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.Tests/PowerPoint/PptOpenStrategyTests.cs": {
@@ -1248,33 +1206,33 @@
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE/Helpers/FileTypeStrategy/PptOpenStrategy.cs": {
-    "mtime": 1791832361.0517514,
-    "seen": 1791832390.795944,
-    "ast_hash": "d4ecf129f97eec78c113068e9a6a5d60",
+    "mtime": 1792999989.3982775,
+    "seen": 1793000028.1516943,
+    "ast_hash": "caed7404dbc4aa90b2d7b7fd2fd537e5",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.Tests/Doc/DocOpenStrategyTests.cs": {
-    "mtime": 1789802534.9450214,
-    "seen": 1791832390.7958434,
-    "ast_hash": "a3e49cc758e1f4069be59658781ab2da",
+    "mtime": 1792787108.1523867,
+    "seen": 1793000028.1516047,
+    "ast_hash": "18942361c9328d8d7d97e259cae7a895",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE/Handlers/DocTextExtractor.cs": {
-    "mtime": 1791784047.3158138,
-    "seen": 1791832390.7959285,
-    "ast_hash": "7586787d9c6ae34f6323f19419ae19a5",
+    "mtime": 1792787108.170566,
+    "seen": 1793000028.151682,
+    "ast_hash": "391cf479044b90b34d03ad8f3cb861bd",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE/Helpers/FileTypeStrategy/DocOpenStrategy.cs": {
-    "mtime": 1791832361.0506368,
-    "seen": 1791832390.7959387,
-    "ast_hash": "c9fd9fb54a79053698d4bb90d6ec053c",
+    "mtime": 1792787108.177001,
+    "seen": 1793000028.1516898,
+    "ast_hash": "83627f4972c3b0df4d3dec5e1562b34d",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.Benchmarks/BenchmarkColumns.cs": {
-    "mtime": 1789898452.2603807,
-    "seen": 1791832390.7958238,
-    "ast_hash": "4f8b79c6a83ff2d99da9f8a50989d335",
+    "mtime": 1792999790.900165,
+    "seen": 1793000028.1515875,
+    "ast_hash": "25a896b5e6919033c65d0e7c7db9c89d",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.Benchmarks/BenchmarkSamples.cs": {
@@ -1302,9 +1260,9 @@
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.Tests/Integration/ExtractCorpusManifestTests.cs": {
-    "mtime": 1790336657.7181005,
-    "seen": 1791832390.7958605,
-    "ast_hash": "45336e5249c3c1a5beee2a858e0b1be4",
+    "mtime": 1792999838.3958707,
+    "seen": 1793000028.1516216,
+    "ast_hash": "bd1c706b8f88e366640deb9c68b5e60e",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.Tests/PowerPoint/PptFirstLayerEmbeddedWalkTests.cs": {
@@ -1314,9 +1272,9 @@
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.Tests/PowerPoint/PptTextExtractorTests.cs": {
-    "mtime": 1791659179.8575175,
-    "seen": 1791832390.7958758,
-    "ast_hash": "ede417249054f6a9793ac4f1b873c1c9",
+    "mtime": 1792787108.1523867,
+    "seen": 1793000028.1516342,
+    "ast_hash": "7dc17e1501aaede2aecd6421bf18530d",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.Tests/PowerPoint/PptTextFixtureBuilder.cs": {
@@ -1332,9 +1290,9 @@
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.Tests/Registry/MainExtractorExtractRequestTests.cs": {
-    "mtime": 1789825240.9034927,
-    "seen": 1791832390.7958844,
-    "ast_hash": "402fe003756726d98bcf1630b853d79c",
+    "mtime": 1792999838.3975687,
+    "seen": 1793000028.1516416,
+    "ast_hash": "a6ada4931bb884f1d77a3ea76896b4d7",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.Tests/Registry/MainExtractorExtractValidationTests.cs": {
@@ -1344,15 +1302,15 @@
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.Tests/Registry/MainExtractorGuardrailTests.cs": {
-    "mtime": 1789836997.140625,
-    "seen": 1791832390.7958865,
-    "ast_hash": "e960e879896c0eb5a2bc0f97b6d8167e",
+    "mtime": 1792999838.3975687,
+    "seen": 1793000028.1516433,
+    "ast_hash": "5f27f9156790ff230b16ddd2db916e9c",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.Tests/Registry/MainExtractorParseErrorTests.cs": {
-    "mtime": 1789836997.140625,
-    "seen": 1791832390.7958891,
-    "ast_hash": "ea5ccf1ed21812200c9bd22df0eb6a27",
+    "mtime": 1792787108.1624382,
+    "seen": 1793000028.1516457,
+    "ast_hash": "4111544558ee37bbaa9381ce2ccb6e22",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.Tests/SampleGeneration/BenchmarkSampleGeneratorTests.cs": {
@@ -1410,27 +1368,15 @@
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE/Handlers/PptTextExtractor.cs": {
-    "mtime": 1791659179.8635533,
-    "seen": 1791832390.7959306,
-    "ast_hash": "ea08fb3618a1b07d0f7c7fed689c8179",
-    "semantic_hash": ""
-  },
-  "ExtractorOle/ExtractorOLE/Helpers/ExtractionGuardrails.cs": {
-    "mtime": 1791784047.3158138,
-    "seen": 1791832390.7959347,
-    "ast_hash": "767a6e257aa9decab2a90ed18a6d7f05",
+    "mtime": 1792787108.172223,
+    "seen": 1793000028.1516836,
+    "ast_hash": "6ac5dd999585f01f30a67935fcec65c5",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE/Helpers/FileTypeStrategy/PptToPptxConverter.cs": {
-    "mtime": 1791784047.3193898,
-    "seen": 1791832390.795945,
-    "ast_hash": "871bc3d47771dbec74ce3339a445e871",
-    "semantic_hash": ""
-  },
-  "ExtractorOle/ExtractorOLE/Helpers/ParseTimeErrorGuard.cs": {
-    "mtime": 1791784047.3255062,
-    "seen": 1791832390.7959597,
-    "ast_hash": "d1227b043fa079ecc91ee11797e7031c",
+    "mtime": 1792787108.1780245,
+    "seen": 1793000028.1516953,
+    "ast_hash": "699f0bb9c2e28ac85cb9afbbfe9c30df",
     "semantic_hash": ""
   },
   "SampleGenerator/Generators/BenchmarkSampleGenerator.cs": {
@@ -1482,9 +1428,9 @@
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.Tests/Registry/MainExtractorOoxmlSingleOpenTests.cs": {
-    "mtime": 1791659179.8575175,
-    "seen": 1791832390.7958882,
-    "ast_hash": "c69b50afa45d23ae4c898b65fbea8958",
+    "mtime": 1792787108.1624382,
+    "seen": 1793000028.151644,
+    "ast_hash": "f3a0269108f63f3f97e0abff39c026e6",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.Tests/Telemetry/ExtractionTelemetryTests.cs": {
@@ -1515,12 +1461,6 @@
     "mtime": 1791659179.8691108,
     "seen": 1791832390.7959523,
     "ast_hash": "f56be34c71f39d0f9420e4fee8fe90d4",
-    "semantic_hash": ""
-  },
-  "ExtractorOle/ExtractorOLE/IParsedDocumentTextExtractor.cs": {
-    "mtime": 1791659179.8711245,
-    "seen": 1791832390.795961,
-    "ast_hash": "9c22942b72bb36afade7bb6d9dbb5fb1",
     "semantic_hash": ""
   },
   "global.json": {
@@ -1602,57 +1542,57 @@
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.Benchmarks/packages.lock.json": {
-    "mtime": 1791661434.2591953,
-    "seen": 1791832390.79583,
-    "ast_hash": "48f2d6f5af65bb520a4cde37803a2038",
+    "mtime": 1792999618.6851892,
+    "seen": 1793000028.151594,
+    "ast_hash": "bec689062bfb773ffe489fb70157ea62",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.StressHarness/BatchMode.cs": {
-    "mtime": 1791659179.8529599,
-    "seen": 1791832390.7958312,
-    "ast_hash": "cc11b4ebab4dff9316160c36cc457532",
+    "mtime": 1792999790.900165,
+    "seen": 1793000028.1515954,
+    "ast_hash": "9e5c8b1b5b389f9189e9cbcdea767205",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.StressHarness/packages.lock.json": {
-    "mtime": 1791661434.262719,
-    "seen": 1791832390.795837,
-    "ast_hash": "8a8232e794b4cfac426a9d7c3ab814d0",
+    "mtime": 1792999618.6851892,
+    "seen": 1793000028.1515996,
+    "ast_hash": "73dd412be43d080599e65cc5b0e524c7",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.Tests/Batch/ExtractManyAsyncTests.cs": {
-    "mtime": 1791659179.855482,
-    "seen": 1791832390.795839,
-    "ast_hash": "974dcf136d1fef6d70f2b66d4cfa0715",
+    "mtime": 1792999790.900165,
+    "seen": 1793000028.1516013,
+    "ast_hash": "7dcf09a6fc02361396c2c925a466888e",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.Tests/ConsoleRedirectCollection.cs": {
-    "mtime": 1791832361.044902,
-    "seen": 1791832390.7958403,
-    "ast_hash": "65591ac005fe5556f23d744450eaaebb",
+    "mtime": 1792999744.5637555,
+    "seen": 1793000028.1516025,
+    "ast_hash": "7ff45109ef8578bb37f3b9eca1b9e43e",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.Tests/Registry/LegacyCfbStreamInputTests.cs": {
-    "mtime": 1791832361.0490842,
-    "seen": 1791832390.7958822,
-    "ast_hash": "bdec970b227a4a9f642575b5cbd0db04",
+    "mtime": 1792787108.1523867,
+    "seen": 1793000028.1516397,
+    "ast_hash": "b256455bf53189d1097c8bbb92ec0107",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.Tests/Registry/MainExtractorStreamInputTests.cs": {
-    "mtime": 1791784047.3035147,
-    "seen": 1791832390.79589,
-    "ast_hash": "408a05ef1186b762b15178b4f57bf431",
+    "mtime": 1792999838.3975687,
+    "seen": 1793000028.1516464,
+    "ast_hash": "a628050e669fd1eca67375bfe3390764",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.Tests/Registry/MainExtractorXlsSingleLoadTests.cs": {
-    "mtime": 1791751327.8046937,
-    "seen": 1791832390.7958913,
-    "ast_hash": "a14ee9c0ecc95fce75b1468e215da911",
+    "mtime": 1792787108.1624382,
+    "seen": 1793000028.1516476,
+    "ast_hash": "1e172ecdfe9b1737b2ce8c581f3ce87e",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.Tests/Registry/StreamPreflightGuardrailTests.cs": {
-    "mtime": 1791784047.3035147,
-    "seen": 1791832390.7958932,
-    "ast_hash": "cba7e1624161c74068356f505530f37c",
+    "mtime": 1792999838.3975687,
+    "seen": 1793000028.1516495,
+    "ast_hash": "4c05b877bb3e4d4e41fa09ae0ee12956",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.Tests/Registry/ZipFallbackOpenStrategyTests.cs": {
@@ -1662,9 +1602,9 @@
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.Tests/packages.lock.json": {
-    "mtime": 1791661434.2666354,
-    "seen": 1791832390.795903,
-    "ast_hash": "4d899393642ad2f2870839466821ff0a",
+    "mtime": 1792999618.6851892,
+    "seen": 1793000028.151659,
+    "ast_hash": "3c39b047bb65ae4e6e735585288215a7",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE.Tests/xunit.runner.json": {
@@ -1679,16 +1619,10 @@
     "ast_hash": "dc8a4fafb9ed5c3af18a04d4349cc618",
     "semantic_hash": ""
   },
-  "ExtractorOle/ExtractorOLE/Helpers/ExtractionInput.cs": {
-    "mtime": 1791784047.317369,
-    "seen": 1791832390.7959368,
-    "ast_hash": "9a65ab950967724fb9c7307fbf46b514",
-    "semantic_hash": ""
-  },
   "ExtractorOle/ExtractorOLE/Helpers/FileTypeStrategy/CfbFileSystems.cs": {
-    "mtime": 1791832361.0506368,
-    "seen": 1791832390.7959378,
-    "ast_hash": "36c52d262ef519bf66b88b060af4528e",
+    "mtime": 1792787108.177001,
+    "seen": 1793000028.151689,
+    "ast_hash": "c9b0f023874e13f1b2f1413d265f20f8",
     "semantic_hash": ""
   },
   "ExtractorOle/ExtractorOLE/Helpers/FileTypeStrategy/XlsWorkbooks.cs": {
@@ -1697,22 +1631,16 @@
     "ast_hash": "4d652847a48138eac92080cb2530f126",
     "semantic_hash": ""
   },
-  "ExtractorOle/ExtractorOLE/Helpers/NonClosingStream.cs": {
-    "mtime": 1791784047.324995,
-    "seen": 1791832390.795959,
-    "ast_hash": "d99835ed69f9ed336b94f668eeda878d",
-    "semantic_hash": ""
-  },
   "ExtractorOle/ExtractorOLE/packages.lock.json": {
-    "mtime": 1791752304.0941508,
-    "seen": 1791832390.7959754,
-    "ast_hash": "4527a29756d3f24d71bfe21a3b7cf7a5",
+    "mtime": 1792999618.6851892,
+    "seen": 1793000028.1517203,
+    "ast_hash": "57a39674e7772e56e9c297bc0c7e71dc",
     "semantic_hash": ""
   },
   "SampleGenerator/packages.lock.json": {
-    "mtime": 1791752321.3442008,
-    "seen": 1791832390.7960064,
-    "ast_hash": "6b7a0c9fa31ccad1554140aaac2e8317",
+    "mtime": 1792999618.6750627,
+    "seen": 1793000028.1517475,
+    "ast_hash": "c24e6526ec9de6a45c12d0fa2542c72f",
     "semantic_hash": ""
   },
   "docs/research/doc-memory-profile-harness/DocProfile.csproj": {
@@ -1779,6 +1707,102 @@
     "mtime": 1791832361.0517514,
     "seen": 1791832390.7960932,
     "ast_hash": "5f95a064c0c54c435627dd1f8f0102c3",
+    "semantic_hash": ""
+  },
+  ".claude/hooks/verify_pr_body.py": {
+    "mtime": 1792839610.2664,
+    "seen": 1793000028.15157,
+    "ast_hash": "6368cc349cd0595ce5cb97c5dc5f4023",
+    "semantic_hash": ""
+  },
+  "ExtractorOle/ExtractorOLE.Tests/Helpers/DetectMimeTypeStreamInputTests.cs": {
+    "mtime": 1792787108.1523867,
+    "seen": 1793000028.1516166,
+    "ast_hash": "6a7e3e9e7190ae5be539376e42e43dfe",
+    "semantic_hash": ""
+  },
+  "ExtractorOle/ExtractorOLE.Tests/Helpers/ExtractionHelperSplitTests.cs": {
+    "mtime": 1792787108.1523867,
+    "seen": 1793000028.1516194,
+    "ast_hash": "cccd70a38a05af404d28d1a5180dd588",
+    "semantic_hash": ""
+  },
+  "ExtractorOle/ExtractorOLE.Tests/Registry/MainExtractorOptionsCtorTests.cs": {
+    "mtime": 1792787108.1624382,
+    "seen": 1793000028.1516447,
+    "ast_hash": "03d96f2e30ec5b9f4b8ae5ab759e8c1b",
+    "semantic_hash": ""
+  },
+  "ExtractorOle/ExtractorOLE/Abstractions/IParsedDocumentTextExtractor.cs": {
+    "mtime": 1792787108.1624382,
+    "seen": 1793000028.151661,
+    "ast_hash": "eb28023b079fad83ca6ca58b4233abb1",
+    "semantic_hash": ""
+  },
+  "ExtractorOle/ExtractorOLE/Abstractions/ITextExtractor.cs": {
+    "mtime": 1792787108.1624382,
+    "seen": 1793000028.1516619,
+    "ast_hash": "ef08bf7a7a0a41bda1b1889b11f3dd75",
+    "semantic_hash": ""
+  },
+  "ExtractorOle/ExtractorOLE/Helpers/EmbeddedFileExtractor.cs": {
+    "mtime": 1792999989.377133,
+    "seen": 1793000028.1516871,
+    "ast_hash": "ba18d6674f07f014a013d7139014ec42",
+    "semantic_hash": ""
+  },
+  "ExtractorOle/ExtractorOLE/Helpers/Guardrails/ExtractionGuardrails.cs": {
+    "mtime": 1792787108.1780245,
+    "seen": 1793000028.1517,
+    "ast_hash": "d6dac9e748393a902780789e60a0d430",
+    "semantic_hash": ""
+  },
+  "ExtractorOle/ExtractorOLE/Helpers/Guardrails/ParseTimeErrorGuard.cs": {
+    "mtime": 1792787108.1780245,
+    "seen": 1793000028.151701,
+    "ast_hash": "1e096a00c2397376fb9a06059348e0ca",
+    "semantic_hash": ""
+  },
+  "ExtractorOle/ExtractorOLE/Helpers/Input/ExtractionInput.cs": {
+    "mtime": 1792787108.1780245,
+    "seen": 1793000028.1517026,
+    "ast_hash": "eefd83140d7fb01466a3503cfffa9d8c",
+    "semantic_hash": ""
+  },
+  "ExtractorOle/ExtractorOLE/Helpers/Input/NonClosingStream.cs": {
+    "mtime": 1792787108.1780245,
+    "seen": 1793000028.1517036,
+    "ast_hash": "cdaf7c6385ee119bda561c289fadfa96",
+    "semantic_hash": ""
+  },
+  "ExtractorOle/ExtractorOLE/Helpers/MimeDetection/MimeDetectionInput.cs": {
+    "mtime": 1792787108.1836061,
+    "seen": 1793000028.1517105,
+    "ast_hash": "fe45ae8f3f8ed5db54d2ee9963c7db1c",
+    "semantic_hash": ""
+  },
+  "ExtractorOle/ExtractorOLE/Helpers/MimeTypeMapper.cs": {
+    "mtime": 1792999989.4090474,
+    "seen": 1793000028.151712,
+    "ast_hash": "04771320b2901282ee4009f7fdadb83c",
+    "semantic_hash": ""
+  },
+  "ExtractorOle/ExtractorOLE/Helpers/OfficeMimeTypeDetector.cs": {
+    "mtime": 1792999736.658416,
+    "seen": 1793000028.1517131,
+    "ast_hash": "e4cf83246d37042adc95e0e1afab4ce6",
+    "semantic_hash": ""
+  },
+  ".claude/skills/csharp-development-best-practices/SKILL.md": {
+    "mtime": 1792999595.2273936,
+    "seen": 1793000028.1517532,
+    "ast_hash": "c501e4fff4f8fc99d390115551c8a792",
+    "semantic_hash": ""
+  },
+  ".claude/skills/csharp-development-best-practices/references/csharp-development-best-practices.md": {
+    "mtime": 1792999595.2273936,
+    "seen": 1793000028.151754,
+    "ast_hash": "fe8d98a935157a8ecba2cd8e319aed12",
     "semantic_hash": ""
   }
 }

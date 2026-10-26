@@ -2,6 +2,7 @@ using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using SampleGenerator.Abstractions;
+using System.Globalization;
 
 namespace SampleGenerator.Generators
 {
@@ -60,7 +61,7 @@ namespace SampleGenerator.Generators
                     {
                         CellReference = $"A{row.RowIndex}",
                         DataType = CellValues.SharedString,
-                        CellValue = new CellValue(stringIndex.ToString())
+                        CellValue = new CellValue(stringIndex.ToString(CultureInfo.InvariantCulture))
                     });
                     sheetData.Append(row);
                 }

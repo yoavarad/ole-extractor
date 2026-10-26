@@ -136,7 +136,7 @@ namespace ExtractorOLE.Tests.Registry
 
             protected override object? Invoke(MethodInfo? targetMethod, object?[]? args)
             {
-                if (targetMethod!.Name.StartsWith("Detect")) DetectionCalls++;
+                if (targetMethod!.Name.StartsWith("Detect", StringComparison.Ordinal)) DetectionCalls++;
                 return targetMethod.Invoke(Inner, args);
             }
         }

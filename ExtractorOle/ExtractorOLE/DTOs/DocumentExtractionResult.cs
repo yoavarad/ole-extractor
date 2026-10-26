@@ -1,4 +1,4 @@
-﻿using ExtractorOLE.Abstractions;
+using ExtractorOLE.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Text;

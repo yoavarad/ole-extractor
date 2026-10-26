@@ -34,7 +34,7 @@ namespace ExtractorOLE.Helpers
             if (m.Contains("word") || m.Contains("wordprocessingml") || m.Contains("/doc")) return OfficeMimeTypeEnum.Word;
             if (m.Contains("sheet") || m.Contains("spreadsheetml") || m.Contains("excel") || m.Contains("/xl")) return OfficeMimeTypeEnum.Excel;
             if (m.Contains("presentation") || m.Contains("presentationml") || m.Contains("ppt")) return OfficeMimeTypeEnum.PowerPoint;
-            if (m.Equals("application/zip") || m.Equals("application/vnd.openxmlformats-package")) return OfficeMimeTypeEnum.OpenXmlUnknown;
+            if (m.Equals("application/zip", StringComparison.Ordinal) || m.Equals("application/vnd.openxmlformats-package", StringComparison.Ordinal)) return OfficeMimeTypeEnum.OpenXmlUnknown;
 
             return OfficeMimeTypeEnum.OpenXmlUnknown;
         }

@@ -9,6 +9,7 @@ using ExtractorOLE.Registry;
 using Microsoft.Extensions.DependencyInjection;
 using System.Buffers.Binary;
 using Xunit;
+using System.Globalization;
 
 namespace ExtractorOLE.Tests.Registry
 {
@@ -247,7 +248,7 @@ namespace ExtractorOLE.Tests.Registry
             var line = Assert.Single(log);
             Assert.Contains("oversized-nested-content", line);
             Assert.Contains("bomb.docx", line);
-            Assert.Contains(bytes.Length.ToString(), line);
+            Assert.Contains(bytes.Length.ToString(CultureInfo.InvariantCulture), line);
             Assert.Contains("1073741824", line); // configured per-entry limit
         }
 

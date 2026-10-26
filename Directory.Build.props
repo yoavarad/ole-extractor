@@ -1,13 +1,29 @@
 <Project>
   <!--
     CI sets -p:CiWarningsAsErrors=true (.github/workflows/ci.yml) to fail the build on compiler
-    warnings in this repo's own projects. Vendored submodules under third_party/ (NPOI,
+    and analyzer warnings in this repo's own projects. Vendored submodules under third_party/ (NPOI,
     b2xtranslator) are excluded: their warnings are upstream code we don't maintain.
-    Local builds are unaffected unless the property is passed.
+    Local builds are unaffected (warn-only) unless the property is passed.
   -->
   <PropertyGroup Condition="'$(CiWarningsAsErrors)' == 'true' and !$(MSBuildProjectDirectory.Replace('\', '/').Contains('/third_party/'))">
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
   </PropertyGroup>
+  <!--
+    Analyzer enforcement (YDK dotnet analyzers, csharp-development-best-practices skill).
+    Rule severities live in the root .editorconfig. Own projects only; third_party/ is left alone.
+  -->
+  <PropertyGroup Condition="!$(MSBuildProjectDirectory.Replace('\', '/').Contains('/third_party/'))">
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+  </PropertyGroup>
+  <ItemGroup Condition="!$(MSBuildProjectDirectory.Replace('\', '/').Contains('/third_party/'))">
+    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="18.12.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
   <!--
     NuGet lock files (packages.lock.json) pin the restore graph and key the setup-dotnet package cache
     in CI. Only this repo's own projects get one; vendored third_party/ projects are left alone.

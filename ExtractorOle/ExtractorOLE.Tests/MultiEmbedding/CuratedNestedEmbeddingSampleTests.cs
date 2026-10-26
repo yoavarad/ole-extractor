@@ -37,7 +37,7 @@ namespace ExtractorOLE.Tests.MultiEmbedding
 
             Assert.EndsWith(".xlsx", subfile.FileName);
             Assert.Equal(innerXlsxBytes, subfile.BinaryData);
-            Assert.DoesNotContain(result.EmbeddedFiles, f => f.FileName.EndsWith(".png"));
+            Assert.DoesNotContain(result.EmbeddedFiles, f => f.FileName.EndsWith(".png", StringComparison.Ordinal));
             Assert.DoesNotContain(result.EmbeddedFiles, f => f.FileName == "budget-chart.png");
         }
 
@@ -57,7 +57,7 @@ namespace ExtractorOLE.Tests.MultiEmbedding
 
             Assert.EndsWith(".xlsx", subfile.FileName);
             Assert.Equal(innerXlsxBytes, subfile.BinaryData);
-            Assert.DoesNotContain(result.EmbeddedFiles, f => f.FileName.EndsWith(".png"));
+            Assert.DoesNotContain(result.EmbeddedFiles, f => f.FileName.EndsWith(".png", StringComparison.Ordinal));
             Assert.DoesNotContain(result.EmbeddedFiles, f => f.FileName == "sales-chart.png");
         }
 
@@ -89,7 +89,7 @@ namespace ExtractorOLE.Tests.MultiEmbedding
                 fs.Close();
             }
 
-            Assert.DoesNotContain(result.EmbeddedFiles, f => f.FileName.EndsWith(".png"));
+            Assert.DoesNotContain(result.EmbeddedFiles, f => f.FileName.EndsWith(".png", StringComparison.Ordinal));
         }
 
         [Fact]
@@ -107,7 +107,7 @@ namespace ExtractorOLE.Tests.MultiEmbedding
 
             // xls reports the embedded OLE package as one opaque object; the generator's shared 1x1 icon
             // picture (70 bytes) accompanies it. The inner xlsx's own PNG chart is never surfaced.
-            var subfile = Assert.Single(result!.EmbeddedFiles, f => f.FileName.EndsWith(".bin"));
+            var subfile = Assert.Single(result!.EmbeddedFiles, f => f.FileName.EndsWith(".bin", StringComparison.Ordinal));
             var fs = new NPOIFSFileSystem(new MemoryStream(subfile.BinaryData));
             try
             {
@@ -123,7 +123,7 @@ namespace ExtractorOLE.Tests.MultiEmbedding
             }
 
             Assert.Equal(2, result.EmbeddedFiles.Count);
-            Assert.DoesNotContain(result.EmbeddedFiles, f => f.FileName.EndsWith(".xlsx"));
+            Assert.DoesNotContain(result.EmbeddedFiles, f => f.FileName.EndsWith(".xlsx", StringComparison.Ordinal));
             Assert.DoesNotContain(result.EmbeddedFiles, f => f.FileName == "threshold-chart.png");
         }
 
@@ -155,7 +155,7 @@ namespace ExtractorOLE.Tests.MultiEmbedding
                 fs.Close();
             }
 
-            Assert.DoesNotContain(result.EmbeddedFiles, f => f.FileName.EndsWith(".png"));
+            Assert.DoesNotContain(result.EmbeddedFiles, f => f.FileName.EndsWith(".png", StringComparison.Ordinal));
         }
     }
 }

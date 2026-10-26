@@ -218,7 +218,9 @@ namespace ExtractorOLE.Tests.Integration
 
         private static string CollapseWhitespace(string text) => Regex.Replace(text, @"\s+", " ");
 
-        private static string[] Lines(string text) => text.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
+        private static readonly string[] LineSeparators = { "\r\n", "\n" };
+
+        private static string[] Lines(string text) => text.Split(LineSeparators, StringSplitOptions.None);
 
         private static void AssertText(JsonElement entry, string actualText)
         {

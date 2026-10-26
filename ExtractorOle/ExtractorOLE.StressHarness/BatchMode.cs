@@ -41,7 +41,7 @@ namespace ExtractorOLE.StressHarness
 
             // Serial baseline; also warms JIT/caches before the timed runs.
             var serial = requests.Select(req => Outcome(() => extractor.Extract(req))).ToList();
-            int serialOk = serial.Count(o => o.StartsWith("ok|"));
+            int serialOk = serial.Count(o => o.StartsWith("ok|", StringComparison.Ordinal));
             Console.WriteLine($"Serial baseline: {serialOk}/{serial.Count} succeeded");
 
             long mismatches = 0;

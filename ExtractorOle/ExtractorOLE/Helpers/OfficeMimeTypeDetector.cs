@@ -34,10 +34,7 @@ namespace ExtractorOLE.Helpers
         // ([ydk:req:extraction/format-extensibility]).
         public OfficeMimeTypeEnum DetectMimeTypeFromBytes(byte[] fileBytes)
         {
-            if (fileBytes == null)
-            {
-                throw new ArgumentNullException(nameof(fileBytes));
-            }
+            ArgumentNullException.ThrowIfNull(fileBytes);
 
             if (fileBytes.Length == 0)
             {
@@ -66,13 +63,13 @@ namespace ExtractorOLE.Helpers
         // ([ydk:req:extraction/format-extensibility]).
         public MimeDetectionResult DetectMimeType(MimeDetectionRequest request)
         {
-            if (request == null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
+            ArgumentNullException.ThrowIfNull(request);
             if (request.FileBytes == null && request.InputStream == null && request.FilePath == null)
             {
+                // ParamName names the missing request property, matching MainExtractor.ValidateRequest.
+#pragma warning disable CA2208
                 throw new ArgumentNullException(nameof(request.FileBytes));
+#pragma warning restore CA2208
             }
 
             MimeDetectionInput.Validate(request);

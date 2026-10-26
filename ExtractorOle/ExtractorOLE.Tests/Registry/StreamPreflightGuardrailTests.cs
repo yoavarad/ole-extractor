@@ -262,7 +262,7 @@ namespace ExtractorOLE.Tests.Registry
         [MemberData(nameof(OversizedContainers))]
         public void Guardrails_ByteStreamAndPathInput_RejectIdentically(string name, byte[] bytes)
         {
-            var mime = name.StartsWith("cfb") ? DocMime : DocxMime;
+            var mime = name.StartsWith("cfb", StringComparison.Ordinal) ? DocMime : DocxMime;
 
             var (byBytes, bytesLog) = Build();
             var bytesEx = Assert.Throws<OversizedNestedContentException>(() => byBytes.Extract(

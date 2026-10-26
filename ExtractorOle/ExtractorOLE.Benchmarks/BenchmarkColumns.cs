@@ -1,6 +1,7 @@
 using BenchmarkDotNet.Columns;
 using BenchmarkDotNet.Reports;
 using BenchmarkDotNet.Running;
+using System.Globalization;
 
 namespace ExtractorOLE.Benchmarks
 {
@@ -33,7 +34,7 @@ namespace ExtractorOLE.Benchmarks
             long? size = id == null ? null : BenchmarkSamples.SizeOf(id);
             long? allocated = summary[benchmarkCase]?.GcStats.GetBytesAllocatedPerOperation(benchmarkCase);
             if (size is null or 0 || allocated is null) return "NA";
-            return ((double)allocated.Value / size.Value).ToString("0.00");
+            return ((double)allocated.Value / size.Value).ToString("0.00", CultureInfo.InvariantCulture);
         }
     }
 
