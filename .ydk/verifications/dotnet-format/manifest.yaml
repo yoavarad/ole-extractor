@@ -1,7 +1,0 @@
-name: dotnet-format
-description: Verify .NET code formatting (dotnet format --verify-no-changes)
-trigger: git:pre-push
-parallel: true
-timeout: 300
-requires: []
-supports_auto_fix: false

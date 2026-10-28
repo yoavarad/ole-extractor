@@ -1,1627 +1,1248 @@
-# Graph Report - ole-extractor  (2026-10-26)
+# Graph Report - 262  (2026-10-28)
 
 ## Corpus Check
-- 241 files · ~173,682 words
-- Verdict: corpus is large enough that graph structure adds value.
-- Unclassified: 35 file(s) not represented in the graph (top: .doc 7, (none) 6, .pptx 6)
+- cluster-only mode — file stats not available
 
 ## Summary
-- 3716 nodes · 6845 edges · 336 communities (301 shown, 35 thin omitted)
-- Extraction: 89% EXTRACTED · 11% INFERRED · 0% AMBIGUOUS · INFERRED: 726 edges (avg confidence: 0.84)
+- 3126 nodes · 7017 edges · 253 communities (231 shown, 22 thin omitted)
+- Extraction: 86% EXTRACTED · 14% INFERRED · 0% AMBIGUOUS · INFERRED: 1007 edges (avg confidence: 0.84)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `2eafb958`
+- Built from commit: `c1cf0009`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
-- xunit
-- SampleSpec
-- ExtractorOLE.Benchmarks/packages.lock.json
-- XlsxSampleGenerator
-- manifest.json
-- npoi_hssf_usermodel
-- .RunAsync
-- Per-Criterion Detail
-- ExtractCorpusManifestTests
-- ExtractionBenchmarks.cs
-- 4. Process and tooling findings (YDK)
-- .Apply
-- SampleGenerator.Abstractions
-- ExtractorOLE.DTOs
-- 002-profiling-and-stress-testing.md
-- MainExtractorStreamInputTests
-- ExtractionRequest
-- --update Incremental Re-extraction
-- ExtractorOLE
-- test_compare_benchmarks.py
-- ExtractorOLE.Tests/packages.lock.json
-- LegacyCfbStreamInputTests
-- Spec Quality Verification Report (Re-run 4)
-- dotnet-test/check.py
-- Legacy .xls parsing -- research spike (T-b70522d2)
-- dotnet-build verification manifest
-- dotnet-format/check.py
-- EmbeddedFileExtractor
-- TruncatedContainerException
-- ADR-008: Stream/file-path input instead of whole-file byte[] (spike #174)
-- dotnet-build/check.py
-- net10.0
-- IOpenStrategy
-- XlsOpenStrategy
-- ExtractorOLE.StressHarness/packages.lock.json
-- What You Must Do When Invoked
-- dotnet-quality/check.py
-- Upstream recommendation: .NET/C# support in YDK
-- Legacy Office Format Library Landscape Scan
-- OoxmlMimeDetector
-- PowerPointOpenStrategy
-- epic.md
-- compare_benchmarks.py
-- AI Analysis
-- Stage 02 Planning Report — 2026-08-19
-- exports.md
-- MimeDetectionRequest
-- ADR-001: Extraction library stack (OOXML, legacy OLE, CFB introspection)
-- query.md
-- EmbeddedContentSpec
-- PptxSampleGenerator
-- ADR-006: GitHub Issues as the YDK task backend
-- OversizedNestedContentException
-- .RunDetections
-- README.md
-- ExcelFormatMetadata
-- PptSampleGenerator
-- MimeTypeMapper
-- /graphify
-- DocumentExtractionResult
-- Candidates evaluated
-- AttemptCounter
-- DetectMimeTypeCorpusManifestTests
-- NoTempFileIoTests
-- Stage 02 Planning Report — Sprint 2 & Sprint 3 — 2026-08-19
-- extraction-spec.md
-- DocumentFormat.OpenXml — Research Spike
-- OpenMcdf — Research Spike Notes
-- DocOpenStrategy
-- Benchmark baseline and regression policy
-- SKILL.md
-- .claude/CLAUDE.md
-- graphify reference: extra exports and benchmark
-- ADR-003: Manual LLM spec review in place of `ydk spec verify`
-- C# Development Best Practices
-- StreamPreflightGuardrailTests
-- PptTextExtractorTests
-- IExtractionHelper
-- MainExtractorDispatchIntegrationTests
-- Dependencies Field
-- Error Schema
-- FileMetadata
-- CLAUDE.md
-- C# / .NET Engineering Best Practices
-- Microsoft.Extensions.Configuration.Abstractions
-- dependencies
-- FileTooLargeException
-- ExtractManyAsyncTests
-- ExtractorOLE.Helpers.FileTypeStrategy
-- Story Reference Field
-- typing
-- Extract Contract
-- yaml
-- extraction.md
-- github-and-merge.md
-- Content-Only MIME Detection Rule
-- Project Rules
-- DocTextExtractor.cs
-- ExtractorOLE/packages.lock.json
-- AI Provider Configuration
-- dependencies
-- MainExtractorExtractRequestTests
-- GeneratedSample
-- Execution Configuration
-- DetectedFormat
-- task.md
-- OfficeMimeType
-- Pre-push Hooks Configuration
-- Task Management Configuration
-- SampleGenerator/packages.lock.json
-- BatchExtractionResult
-- 4. Async, cancellation, timeouts, and concurrency
-- net10.0
-- XlsTextExtractor
-- SampleFormat
-- 9. Data access and Entity Framework Core
-- .Open
-- DocTextExtractor
-- .Register
-- Overview
-- dependencies
-- PptOpenStrategy
-- net10.0
-- net10.0
-- dependencies
-- ReadCountingStream
-- AllocListener
-- .Open
-- net10.0
-- dependencies
-- Microsoft.Build.Tasks.Git
-- dependencies
-- check-task-complete.sh
-- Spec Refs Field
-- ExtractionTelemetry
-- YAGNI (You Aren't Gonna Need It)
-- commit-msg
-- pre-commit
-- pre-push
-- Microsoft.Build.Tasks.Git
-- dependencies
-- Microsoft.Build.Tasks.Git
-- dependencies
-- N05 Ambiguity Reviewer
-- N08 No Technical Specs in Prose Reviewer
-- Microsoft.Build.Tasks.Git
-- ADR-004: Legacy .doc/.ppt body-text parsing (b2xtranslator, not NPOI)
-- BenchmarkColumns.cs
-- 2. Error handling and exceptions
-- DocSampleGenerator
-- Library Tradeoffs — Office File MIME Detection & Extraction
-- .Extract
-- dependencies
-- Microsoft.Build.Tasks.Git
-- xunit.core
-- ExtractionGuardrails
-- NPOI — Research Spike
-- Component Schema Definition (UI)
-- Config Schema
-- Event Schema
-- Ext Schema
-- NFR Schema
-- Test Schema
-- N01 Problem Statement Reviewer
-- N02 Success Criteria Reviewer
-- N03 Scope Boundaries Reviewer
-- N04 Terminology Consistency Reviewer
-- N06 Flow Completeness Reviewer
-- CorruptedContainerSampleGenerator
-- Extraction
-- MacroEmbedSampleGeneratorTests
-- Stream
-- xunit
-- Microsoft.NET.Test.Sdk
-- dependencies
-- AI Analysis
-- b2xtranslator.doc
-- Microsoft.Diagnostics.NETCore.Client
-- System.Management
-- MimeDetectionResult
-- SkiaSharp
-- ExtractionHelper
-- b2xtranslator.doc
-- DocumentFormat.OpenXml.Features
-- DocumentFormat.OpenXml
-- Microsoft.Extensions.DependencyInjection
-- SkiaSharp
-- DocumentFormat.OpenXml.Framework
-- b2xtranslator.doc
-- SkiaSharp
-- b2xtranslator.doc
-- Microsoft.TestPlatform.TestHost
-- SkiaSharp
-- .Generate
-- DocumentFormat.OpenXml.Features
-- DocumentFormat.OpenXml
-- Microsoft.Extensions.DependencyInjection
-- SkiaSharp
-- DocumentFormat.OpenXml.Framework
-- IParsedDocumentTextExtractor
-- Microsoft.CodeAnalysis.Common
-- Microsoft.CodeAnalysis.CSharp
-- Microsoft.Diagnostics.Runtime
-- PptTextFixtureBuilder
-- Microsoft.Extensions.Configuration.Binder
-- NonClosingStream
-- Microsoft.Extensions.Configuration
-- DocumentFormat.OpenXml.Framework
-- DocumentFormat.OpenXml
-- Microsoft.Extensions.DependencyInjection
-- DocumentFormat.OpenXml.Framework
-- PptxSharedPartSubfileTests
-- Microsoft.Extensions.DependencyInjection
-- DocumentFormat.OpenXml.Framework
-- xunit.extensibility.core
-- BenchmarkSamples
-- PptFirstLayerEmbeddedWalkTests
-- ExtractionBenchmarks
-- WriteTrackingStream
-- .GetValue
-- OpenMcdf
-- AllocatedPerInputByteColumn
-- .Generate
-- P95TargetColumn
-- Flavor
-- MimeDetectionLimits
-- OpenMcdf
-- xunit.runner.visualstudio
-- xunit.runner.json
-- OpenMcdf
-- BenchmarkDotNet.Annotations
-- BouncyCastle.Cryptography
-- ExtractorOleException
-- CommandLineParser
-- Enums.NET
-- ExtendedNumerics.BigDecimal
-- Gee.External.Capstone
-- 16. Pull request checklist
-- BenchmarkSampleGenerator
-- MathNet.Numerics.Signed
-- Microsoft.Bcl.AsyncInterfaces
-- Microsoft.CodeAnalysis.Analyzers
-- Microsoft.DotNet.PlatformAbstractions
-- 11. Testing
-- Microsoft.Extensions.Logging.Abstractions
-- Microsoft.IO.RecyclableMemoryStream
-- 12. Naming, structure, and maintainability
-- OpenMcdf
-- Perfolizer
-- SharpZipLib
-- SkiaSharp.NativeAssets.macOS
-- SkiaSharp.NativeAssets.Win32
-- 13. Security baseline
-- System.IO.Hashing
-- BouncyCastle.Cryptography
-- Enums.NET
-- ExtendedNumerics.BigDecimal
-- MathNet.Numerics.Signed
-- 3. Logging and observability
-- Microsoft.IO.RecyclableMemoryStream
-- Microsoft.SourceLink.Common
-- SharpZipLib
-- 7. Configuration, dependency injection, and secrets
-- System.IO.Hashing
-- mime-detection.md
-- 5. Nullability, validation, and domain modeling
-- BouncyCastle.Cryptography
-- Enums.NET
-- MathNet.Numerics.Signed
-- Microsoft.Extensions.DependencyInjection.Abstractions
-- 6. API contracts and data models
-- Microsoft.SourceLink.Common
-- SkiaSharp.NativeAssets.Linux.NoDependencies
-- 8. JSON serialization
-- SkiaSharp.NativeAssets.Win32
-- System.IO.Hashing
-- System.IO.Packaging
-- Microsoft.VisualStudio.Threading.Analyzers
-- BouncyCastle.Cryptography
-- extractorole.stressharness
-- Microsoft.VisualStudio.Threading.Analyzers
-- Microsoft.VisualStudio.Threading.Analyzers
-- Microsoft.CodeCoverage
-- Microsoft.IO.RecyclableMemoryStream
-- Microsoft.SourceLink.Common
-- Microsoft.TestPlatform.ObjectModel
-- Microsoft.VisualStudio.Threading.Analyzers
-- SkiaSharp.NativeAssets.Linux.NoDependencies
-- SkiaSharp.NativeAssets.macOS
-- SkiaSharp.NativeAssets.Win32
-- Microsoft.VisualStudio.Threading.Analyzers
-- 10. Resource management and time
-- xunit.analyzers
-- xunit.assert
-- ZString
-- Enums.NET
-- ExtendedNumerics.BigDecimal
-- MathNet.Numerics.Signed
-- Microsoft.Diagnostics.Tracing.TraceEvent
-- SharpZipLib
-- SkiaSharp.NativeAssets.Linux.NoDependencies
-- SkiaSharp.NativeAssets.macOS
-- Microsoft.Extensions.Primitives
-- System.IO.Hashing
-- System.IO.Packaging
-- ZString
-- .ConvertToDocx
-- Microsoft.SourceLink.Common
-- SkiaSharp.NativeAssets.Linux.NoDependencies
-- System.IO.Packaging
-- ZString
-- SkiaSharp.NativeAssets.macOS
-- SkiaSharp.NativeAssets.Win32
-- ZString
-- ExtendedNumerics.BigDecimal
-- OpenMcdf
-- SharpZipLib
-- Enums.NET
-- Microsoft.Extensions.DependencyInjection.Abstractions
-- SharpZipLib
-- System.IO.Packaging
-- Microsoft.Extensions.DependencyInjection.Abstractions
-- Microsoft.IO.RecyclableMemoryStream
-- system_runtime_interopservices
-- .ExtractText
-- .ExtractText
-- .Open
-- .Generate
-- Spike 237: where the ~3.5GB peak in b2xtranslator .doc conversion comes from
-- ole-extractor
-- BenchmarkSampleGenerator.cs
-- ZipFallbackOpenStrategyTests
-- .ExtractText
-- Breaking changes
+- DI Registry Guardrail Tests
+- Tests XLS And PPT Sample Generators
+- Benchmarks Lock Dependency Listing
+- Tests XLSX Text Extraction
+- Sample Manifest JSON
+- ADR Analyzer Compliance Over Compat
+- Tests PPT Samples And Batch Extract
+- Tests Detect MIME Stream Input
+- Extract Corpus Manifest Tests
+- ADR Stream Input Spike
+- Tests Unreadable Content Stream
+- Metadata Conversions
+- SampleGenerator Abstractions And Fixtures
+- Mime Detection DTOs And Detectors
+- ADR-002 Profiling Stress Testing
+- Tests Stream Input Extraction
+- Extraction Request Telemetry
+- Tests Corpus Manifests And Batch
+- Solution And Project Files
+- Doc Open Strategy
+- Tests Lock Dependency Listing
+- Tests Legacy CFB Stream Input
+- Stream Parse-Time Guard
+- MIME Detection Registry Tests
+- Legacy XLS Parsing Spike
+- Zip Entry Corruptor
+- Docs YDK .NET Recommendations
+- Embedded File Extractor Results
+- Truncated Container Parse Errors
+- DOC Text Extractor Tests
+- Non-Closing Stream Wrapper
+- Benchmarks Lock Iced
+- Format Dispatch Registry
+- XLS Open Strategy
+- StressHarness Lock Dependency Listing
+- Tests Call Counting Proxies
+- BenchmarkDotNet Research Spike
+- Stress Harness And Load Generator
+- Legacy Format Library Scan
+- OOXML MIME Detector
+- Tests PowerPoint Open Strategy
+- Claude PR Body Hooks
+- Docs DOC Conversion Memory Profile
+- Benchmarks Lock OpenXml Features
+- StressHarness Lock OpenXml Features
+- CFB MIME Detector
+- ADR-001 Library Stack
+- OpenXml Package Properties Helper
+- Embedded Content Spec Builders
+- Pptx Sample Generator And Extractor
+- ADR-006 GitHub Issues Backend
+- Oversized Nested Content Guardrails
+- Detector Counter Concurrency
+- README And Project Rules
+- Excel Open Strategy Tests
+- Benchmarks Lock DI Entry
+- Office MIME Type Detector
+- Benchmarks Lock NETCore Platforms
+- Benchmarks Lock CodeDom
+- Legacy Doc Ppt Candidates
+- Attempt Counter
+- Extraction Helper Fakes
+- Core Lock Skia Linux NoDeps
+- Core Lock Skia macOS
+- StressHarness Lock SharpZipLib
+- OpenXml Research Spike
+- OpenMcdf Research Spike
+- Word Metadata And Open Strategy
+- Benchmark Baseline Policy
+- StressHarness Lock ZString
+- Tests Lock BigDecimal
+- Tests Lock Newtonsoft.Json
+- ADR-003 Manual Spec Review
+- C# Best Practices Skill
+- Stream Preflight Guardrail Tests
+- Tests Lock IO Hashing
+- Extraction Input Wrapper
+- SampleGen Lock BigDecimal
+- SampleGen Lock IO Hashing
+- File Metadata DTO
+- Project CLAUDE.md Conventions
+- C# Engineering Playbook
+- Benchmarks Config Extensions Lock
+- Tests Lock Project Dependencies
+- Max File Size Guard Tests
+- Tests Extract Validation Exceptions
+- Strategy Test System Imports
+- Specs Overview And Testing Strategy
+- Extraction And Dataset Specs
+- Project Rules Doc
+- Core Lock Dependency Listing
+- Benchmarks Lock Project Dependencies
+- Tests Extract Request Dispatch
+- Tests Detect MIME Corpus Manifest
+- MIME Type Mapper Tests
+- SampleGen Lock Dependency Listing
+- C# Async And Concurrency
+- Tests Lock Net10 Package Graph
+- XLS Text Extractor
+- Tests Benchmark Sample Generator
+- C# Data Access EF Core
+- Ppt To Pptx Converter
+- PPT Open Strategy
+- Core Lock Net10 Package Graph
+- StressHarness Lock Net10 Package Graph
+- StressHarness Lock Project Dependencies
+- Read Counting Stream
+- Doc Memory Profile Harness
+- SampleGen Lock BouncyCastle
+- Benchmarks Lock SourceLink
+- Check Task Complete Hook
+- Extraction Telemetry And Profiling
+- Core Lock SourceLink
+- StressHarness Lock SourceLink
+- Tests Lock SourceLink
+- ADR-004 Legacy Doc Ppt Parsing
+- Benchmark Columns And Program
+- C# Error Handling Guidelines
+- Doc Sample Generator
+- Library Tradeoffs Tables
+- MainExtractor Options And Size Limits
+- SampleGenerator Lock SourceLink
+- Tests Lock xunit Core
+- NPOI Research Spike
+- Corrupted Container Sample Generator
+- DOCX Samples And Text Extractor
+- Read-Only View Guard Streams
+- Tests Lock xunit Packages
+- Tests Lock Test SDK
+- Benchmarks Lock Logging And DI
+- Benchmarks Lock b2x Doc Ppt
+- Benchmarks Lock Diagnostics Client
+- Benchmarks Lock System.Management
+- Benchmarks Lock SkiaSharp
+- Core Lock b2x Doc Ppt
+- Core Lock OpenXml Features
+- Core Lock OpenXml
+- Core Lock DependencyInjection
+- Core Lock SkiaSharp
+- Core Lock OpenXml Framework
+- StressHarness Lock b2x Doc Ppt
+- StressHarness Lock SkiaSharp
+- Tests Lock b2x Doc Ppt
+- Tests Lock TestPlatform Host
+- Tests Lock SkiaSharp
+- SampleGenerator Lock OpenXml Features
+- SampleGenerator Lock OpenXml
+- SampleGenerator Lock DependencyInjection
+- SampleGenerator Lock SkiaSharp
+- SampleGenerator Lock OpenXml Framework
+- Benchmarks Lock CodeAnalysis Common
+- Benchmarks Lock CodeAnalysis CSharp
+- Benchmarks Lock Diagnostics Runtime
+- Tests PPT Text Extractor
+- Benchmarks Lock Config Binder
+- Benchmarks Lock Configuration
+- Benchmarks Lock OpenXml Framework
+- StressHarness Lock OpenXml
+- StressHarness Lock DependencyInjection
+- StressHarness Lock OpenXml Framework
+- Pptx Shared Part Subfiles
+- Tests Lock DependencyInjection
+- Tests Lock OpenXml Framework
+- Tests Lock xunit Extensibility Core
+- Benchmark Samples Resolver
+- Benchmarks Lock Package Graph
+- Extraction Benchmarks Tiers
+- Write Tracking Stream
+- Benchmark Column Value Helpers
+- Core Lock OpenMcdf
+- Allocated Per Input Byte Column
+- P95 Target Column
+- Zip Fallback Open Strategy
+- Tests Lock OpenMcdf
+- Tests Lock xunit Runner
+- xunit Runner JSON Config
+- SampleGenerator Lock OpenMcdf
+- Benchmarks Lock BDN Annotations
+- Bench Lock Extensions Primitives
+- Benchmarks Lock CommandLineParser
+- Benchmarks Lock BigDecimal
+- Benchmarks Lock Capstone
+- C# Pull Request Checklist
+- Benchmarks Sample Generator Registry
+- Benchmarks Lock Async Interfaces
+- Benchmarks Lock Platform Abstractions
+- C# Testing Guidelines
+- Benchmarks Lock Logging Abstractions
+- Benchmarks Lock RecyclableMemoryStream
+- C# Naming And Maintainability
+- Benchmarks Lock OpenMcdf Package
+- Benchmarks Lock SharpZipLib
+- Bench Lock Skia Linux Assets
+- C# Security Baseline
+- Core Lock BouncyCastle
+- Core Lock MathNet
+- C# Logging And Observability
+- Core Lock RecyclableMemoryStream
+- Core Lock SourceLink Common
+- Core Lock SharpZipLib
+- C# Configuration And DI
+- Core Lock IO Hashing
+- MIME Detection Spec
+- C# Nullability And Domain Modeling
+- StressHarness Lock BouncyCastle
+- StressHarness Lock Enums.NET
+- StressHarness Lock MathNet
+- StressHarness Lock DI Abstractions
+- C# API Contracts And Data Models
+- StressHarness Lock Skia Linux
+- C# JSON Serialization
+- StressHarness Lock Skia Win32
+- StressHarness Lock IO Hashing
+- Benchmarks Lock Threading Analyzers
+- Tests Lock StressHarness Reference
+- Core Lock Threading Analyzers
+- StressHarness Lock Threading Analyzers
+- Tests Lock CodeCoverage
+- Tests Lock SourceLink Common
+- Tests Lock Threading Analyzers
+- Tests Lock Skia Linux
+- Tests Lock Skia macOS
+- Tests Lock Skia Win32
+- SampleGenerator Lock Threading Analyzers
+- C# Resource Management And Time
+- Tests Lock xunit Analyzers
+- Tests Lock xunit Assert
+- Tests Lock ZString
+- Core Lock Enums.NET Entry
+- Core Lock DI Abstractions Entry
+- SampleGenerator Lock MathNet
+- Benchmarks Lock TraceEvent
+- SampleGenerator Lock SharpZipLib
+- SampleGenerator Lock Skia Linux
+- SampleGen Lock Net10 Core Deps
+- StressHarness Lock RecyclableStream
+- SampleGenerator Lock IO Packaging
+- SampleGenerator Lock ZString
+- SampleGen Lock SourceLink Common
+- Benchmarks Lock SourceLink Common
+- SampleGen Lock Skia Win32
+- Benchmarks Lock IO Packaging
+- Benchmarks Lock ZString
+- Core Lock Skia Win32
+- Core Lock ZString
+- StressHarness Lock BigDecimal
+- Tests Lock Enums.NET
+- Tests Lock DI Abstractions
+- Tests Lock SharpZipLib
+- README Project Overview
 
 ## God Nodes (most connected - your core abstractions)
-1. `SampleSpec` - 93 edges
-2. `ExtractionHelper` - 92 edges
+1. `SampleSpec` - 95 edges
+2. `ExtractionHelper` - 95 edges
 3. `ExtractorOLE.DTOs` - 82 edges
-4. `MimeDetectionRequest` - 68 edges
-5. `net10.0` - 53 edges
-6. `OfficeMimeType` - 50 edges
-7. `DocumentExtractionResult` - 47 edges
-8. `ExtractorOLE.Helpers` - 46 edges
-9. `net10.0` - 44 edges
-10. `SampleGenerator.Abstractions` - 44 edges
+4. `MimeDetectionRequest` - 75 edges
+5. `DocumentExtractionResult` - 74 edges
+6. `ExtractionRequest` - 54 edges
+7. `net10.0` - 53 edges
+8. `MainExtractor` - 52 edges
+9. `OfficeMimeType` - 50 edges
+10. `ExtractorOLE.Helpers` - 46 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `Alternatives Considered` --references--> `PptTextFixtureBuilder`  [INFERRED]
-  docs/adrs/005-legacy-doc-ppt-authoring.md → ExtractorOle/ExtractorOLE.Tests/PowerPoint/PptTextFixtureBuilder.cs
-- `HPSF -> OOXML core/app property mapping` --references--> `FileMetadata`  [INFERRED]
-  docs/research/legacy-xls-parsing.md → ExtractorOle/ExtractorOLE/DTOs/DocumentExtractionResult.cs
 - `Follow-up tasks` --references--> `ExtractionRequest`  [INFERRED]
   docs/adrs/008-stream-input-spike.md → ExtractorOle/ExtractorOLE/DTOs/ExtractionRequest.cs
 - `Ranked follow-ups (expected savings on the 100MB doc)` --references--> `DocTextExtractor`  [INFERRED]
   docs/research/doc-conversion-memory-profile.md → ExtractorOle/ExtractorOLE/Handlers/DocTextExtractor.cs
-- `7. Whole-target build/test checks can permanently block ALL pushes on a pre-existing broken baseline` --references--> `run()`  [INFERRED]
-  docs/research/ydk-dotnet-support-recommendation.md → .github/scripts/test_compare_benchmarks.py
+- `HPSF -> OOXML core/app property mapping` --references--> `FileMetadata`  [INFERRED]
+  docs/research/legacy-xls-parsing.md → ExtractorOle/ExtractorOLE/DTOs/DocumentExtractionResult.cs
+- `Consequences` --references--> `XlsSampleGenerator`  [INFERRED]
+  docs/adrs/005-legacy-doc-ppt-authoring.md → SampleGenerator/Generators/XlsSampleGenerator.cs
+- `Consequences` --references--> `PptOpenStrategy`  [INFERRED]
+  docs/adrs/005-legacy-doc-ppt-authoring.md → ExtractorOle/ExtractorOLE/Helpers/FileTypeStrategy/PptOpenStrategy.cs
 
 ## Import Cycles
 - None detected.
 
 ## Hyperedges (group relationships)
-- **Spec Refs Traceability Convention** — github_pull_request_template_spec_refs, github_issue_template_epic_spec_refs, github_issue_template_story_spec_refs [EXTRACTED 0.85]
-- **Incremental Update Merge Pipeline** — claude_skills_graphify_references_update_detect_incremental, claude_skills_graphify_references_update_build_merge, claude_skills_graphify_references_update_save_manifest [EXTRACTED 0.90]
-- **Video Transcription Pipeline** — claude_skills_graphify_references_transcribe_step25, claude_skills_graphify_references_transcribe_whisper_prompt, claude_skills_graphify_references_transcribe_transcribe_all [EXTRACTED 0.90]
-- **Extraction Requirements Set** — ydk_components_req_extraction_content_only_mime_detection_rule, ydk_components_req_extraction_dependency_injection_rule, ydk_components_req_extraction_format_extensibility_rule, ydk_components_req_extraction_subfile_scope_rule, ydk_components_req_extraction_unicode_fidelity_rule [EXTRACTED 0.95]
 - **Three Adversarial Test Coverage Mechanisms** — docs_specs_testing_strategy_corpus_sample_backed, docs_specs_testing_strategy_unit_test_backed, docs_specs_testing_strategy_stress_harness_backed [EXTRACTED 1.00]
-- **Container Parsing Error Family** — ydk_components_error_extraction_corrupt_file, ydk_components_error_extraction_truncated_container, ydk_components_error_extraction_oversized_nested_content, ydk_components_error_extraction_unsupported_format [EXTRACTED 1.00]
 - **Detection/Open/Text-Extraction Pipeline** — docs_specs_overview_detection_component, docs_specs_overview_open_component, docs_specs_overview_text_extraction_component [EXTRACTED 1.00]
-- **Extraction Resource-Safety Guards** — ydk_components_nfr_extraction_max_file_size, ydk_components_error_extraction_oversized_nested_content, ydk_components_nfr_extraction_memory_ceiling, ydk_components_nfr_extraction_nesting_depth_guard [EXTRACTED 1.00]
-- **Graphify Full Pipeline** — claude_skills_graphify_skill_step1_ensure_installed, claude_skills_graphify_skill_step2_detect_files, claude_skills_graphify_skill_step3_extract, claude_skills_graphify_skill_step4_build_graph, claude_skills_graphify_skill_step5_label_communities, claude_skills_graphify_skill_step6_exports, claude_skills_graphify_skill_step9_manifest_cost [EXTRACTED 1.00]
-- **Graphify Query Command Family** — claude_skills_graphify_references_query, claude_skills_graphify_references_query_bfs_dfs_modes, claude_skills_graphify_references_query_path_command, claude_skills_graphify_references_query_explain_command, claude_skills_graphify_references_query_vocab_expansion [EXTRACTED 1.00]
 - **Legacy .doc/.ppt Parsing Alternatives (ADR-004)** — concept_illidans4_npoi_fork, concept_libreoffice_headless_conversion [EXTRACTED 1.00]
 - **Stress Testing Tooling Evaluation (ADR-002)** — docs_research_stress_testing_tools_nbomber, concept_hand_rolled_stress_harness, docs_research_stress_testing_tools_hdrhistogram_net [EXTRACTED 1.00]
-- **Zip/CFB Bomb Resource-Exhaustion Defense** — ydk_components_nfr_extraction_nesting_depth_guard, ydk_components_nfr_extraction_memory_ceiling, ydk_components_error_extraction_oversized_nested_content [EXTRACTED 1.00]
-- **Clarity Review Group** — ydk_spec_reviewers_n04_n04, ydk_spec_reviewers_n05_n05, ydk_spec_reviewers_n06_n06 [EXTRACTED 1.00]
-- **Completeness Review Group** — ydk_spec_reviewers_n01_n01, ydk_spec_reviewers_n02_n02, ydk_spec_reviewers_n03_n03 [EXTRACTED 1.00]
-- **Quality Review Group** — ydk_spec_reviewers_n07_n07, ydk_spec_reviewers_n08_n08, ydk_spec_reviewers_n09_n09 [EXTRACTED 1.00]
-- **Quality Gate Concepts (Spec Check + Acceptance Criteria)** — ydk_config_spec_check, github_issue_template_task_acceptance_criteria, github_issue_template_task_test_strategy [INFERRED 0.65]
 
-## Communities (336 total, 35 thin omitted)
+## Communities (253 total, 22 thin omitted)
 
-### Community 0 - "xunit"
+### Community 0 - "DI Registry Guardrail Tests"
 Cohesion: 0.15
-Nodes (16): ExtractorOLE.Tests.Helpers, ExtractorOLE.Tests, ExtractorOLE.Registry, ExtractorOLE.Tests.Batch, ExtractorOLE.Exceptions, ExtractorOLE.Helpers, ExtractorOLE.Tests.Registry, ExtractorOLE.Tests.Integration (+8 more)
+Nodes (11): ExtractorOLE, ExtractorOLE.Helpers.Guardrails, ExtractorOLE.Tests.Helpers, ExtractorOLE.Tests, ExtractorOLE.Registry, ExtractorOLE.Helpers, ExtractorOLE.Tests.Registry, ExtractorOLE.Configuration (+3 more)
 
-### Community 1 - "SampleSpec"
-Cohesion: 0.10
-Nodes (16): Fact, CuratedNestedEmbeddingSampleTests, Fact, InlineData, Theory, XlsSampleGeneratorTests, IDictionary, IList (+8 more)
+### Community 1 - "Tests XLS And PPT Sample Generators"
+Cohesion: 0.08
+Nodes (14): Context, CuratedNestedEmbeddingSampleTests, PptSampleGeneratorTests, XlsSampleGeneratorTests, SampleSpec, BodyText, Embeddings, Metadata (+6 more)
 
-### Community 2 - "ExtractorOLE.Benchmarks/packages.lock.json"
-Cohesion: 0.04
-Nodes (50): b2xtranslator, b2xtranslator.doc, b2xtranslator.ppt, BouncyCastle.Cryptography, DocumentFormat.OpenXml, DocumentFormat.OpenXml.Features, DocumentFormat.OpenXml.Framework, Enums.NET (+42 more)
+### Community 2 - "Benchmarks Lock Dependency Listing"
+Cohesion: 0.05
+Nodes (51): contentHash, dependencies, requested, resolved, type, dependencies, BenchmarkDotNet.Annotations@0.14.0, BouncyCastle.Cryptography@[2.6.2, ) (+43 more)
 
-### Community 3 - "XlsxSampleGenerator"
-Cohesion: 0.18
-Nodes (11): XlsxTextExtractor, Fact, InlineData, Theory, WorksheetPart, XlsxTextExtractorTests, XlsxSampleGenerator, Format (+3 more)
+### Community 3 - "Tests XLSX Text Extraction"
+Cohesion: 0.12
+Nodes (7): XlsxTextExtractor, ExcelExtractorEmbeddedObjectTests, XlsxTextExtractorTests, MultiEmbeddingSampleTests, MultiEmbeddingSampleSpecs, XlsxSampleGenerator, Format
 
-### Community 4 - "manifest.json"
+### Community 4 - "Sample Manifest JSON"
 Cohesion: 0.33
 Nodes (5): benchmarkSamples, $benchmarkSamplesNote, $curatedSamplesNote, $note, samples
 
-### Community 5 - "npoi_hssf_usermodel"
-Cohesion: 0.15
-Nodes (7): ExtractorOLE.Tests.PowerPoint, npoi_hssf_usermodel, npoi_poifs_filesystem, npoi_poifs_nio, npoi_ss_usermodel, npoi_util, system_text
+### Community 5 - "ADR Analyzer Compliance Over Compat"
+Cohesion: 0.12
+Nodes (17): Breaking changes, Changelog, Unreleased, ADR-009: Fix analyzer findings instead of suppressing them, even when it breaks the public API, Breaking changes and migration, Consequences, Context, Decision (+9 more)
 
-### Community 6 - ".RunAsync"
-Cohesion: 0.07
-Nodes (34): Alternatives Considered, API Shape For Our Use Case, BenchmarkDotNet Research Spike, Citations/Links, License, Maintenance Signal, Strengths, Structure As A Separate Project (+26 more)
+### Community 6 - "Tests PPT Samples And Batch Extract"
+Cohesion: 0.05
+Nodes (27): Consequences, ADR-007: Batch extraction API with bounded parallelism, Alternatives Considered, Consequences, Context, Decision, Measured throughput, Status (+19 more)
 
-### Community 7 - "Per-Criterion Detail"
-Cohesion: 0.06
-Nodes (32): 1. Placeholder scan — **PASS**, 2. Internal consistency — **C1–C3 resolved (re-run 2); C4, C5, C6 resolved (re-run 3); C5a resolved (re-run 4); one trivial residual, C5b**, 3. Scope — **PASS**, 4. Ambiguity — **PASS** (all 4 prior findings fixed; 4 minor residuals, none critical), 5. YAGNI — **PASS**, 6. Component reference check — **PASS**, Considered and not counted, Deterministic Scan Results (+24 more)
+### Community 7 - "Tests Detect MIME Stream Input"
+Cohesion: 0.18
+Nodes (6): CountingStream, BytesRead, DetectMimeTypeStreamInputTests, Formats, NonSeekableStream, CanSeek
 
-### Community 8 - "ExtractCorpusManifestTests"
-Cohesion: 0.13
-Nodes (13): FormatMetadata, DateTime, Fact, HashSet, IEnumerable, Lazy, List, MainExtractor (+5 more)
-
-### Community 9 - "ExtractionBenchmarks.cs"
-Cohesion: 0.32
-Nodes (7): benchmarkdotnet_attributes, benchmarkdotnet_engines, benchmarkdotnet_jobs, Tier100MbConfig, Tier10MbConfig, TierConfig, ManualConfig
-
-### Community 10 - "4. Process and tooling findings (YDK)"
-Cohesion: 0.08
-Nodes (23): 1. Nothing signals that an epic has ended, 1. What shipped, 2. Status-sync churn, 2. What went well (keep doing), 3.1 The library ADR checked licenses but not the APIs we would actually build against, 3.2 The integration test came last but found the most bugs, 3.3 Tasks marked done without their output existing, 3.4 Expectations written from prose instead of runs (+15 more)
-
-### Community 11 - ".Apply"
-Cohesion: 0.20
-Nodes (7): DateTime, SummaryInformation, MetadataConversions, Fact, InlineData, Theory, MetadataConversionsTests
-
-### Community 12 - "SampleGenerator.Abstractions"
-Cohesion: 0.14
-Nodes (8): SampleGenerator.Abstractions, SampleGenerator, SampleGenerator.Generators, SampleGenerator.Fixtures, ExtractorOLE.Tests.SampleGeneration, documentformat_openxml_drawing, documentformat_openxml_presentation, MetadataFields
-
-### Community 13 - "ExtractorOLE.DTOs"
-Cohesion: 0.11
-Nodes (15): ExtractorOLE, ExtractorOLE.Helpers.Guardrails, ExtractorOLE.DTOs, ExtractorOLE.Helpers.Input, ExtractorOLE.Helpers.MimeDetection, ExtractorOLE.Tests.MimeDetection, ExtractorOLE.Tests.Doc, ExtractorOLE.Configuration (+7 more)
-
-### Community 14 - "002-profiling-and-stress-testing.md"
+### Community 9 - "ADR Stream Input Spike"
 Cohesion: 0.16
-Nodes (15): ADR-002 Decision: Profiling and Stress Testing Approach, dotnet-counters Tool, Hand-Rolled Stress Harness, ADR-002: Time profiling and stress testing approach, Alternatives Considered, Consequences, Context, Decision (+7 more)
+Nodes (8): ADR-008: Stream/file-path input instead of whole-file byte[] (spike #174), Context, Decision, Follow-up tasks, Measurements, Status, OpenXmlPackages, OpenCount
 
-### Community 15 - "MainExtractorStreamInputTests"
-Cohesion: 0.10
-Nodes (19): ArgumentException, Fact, InlineData, MainExtractor, SeekOrigin, Task, Theory, WordprocessingDocument (+11 more)
+### Community 10 - "Tests Unreadable Content Stream"
+Cohesion: 0.13
+Nodes (6): UnreadableContentStream, CanRead, CanSeek, CanWrite, Length, Position
 
-### Community 16 - "ExtractionRequest"
+### Community 12 - "SampleGenerator Abstractions And Fixtures"
+Cohesion: 0.12
+Nodes (8): SampleGenerator.Abstractions, SampleGenerator, SampleGenerator.Generators, ExtractorOLE.Tests.Docx, ExtractorOLE.Tests.Excel, SampleGenerator.Fixtures, ExtractorOLE.Tests.SampleGeneration, MetadataFields
+
+### Community 13 - "Mime Detection DTOs And Detectors"
+Cohesion: 0.11
+Nodes (6): ExtractorOLE.DTOs, ExtractorOLE.Helpers.Input, ExtractorOLE.Helpers.MimeDetection, ExtractorOLE.Tests.MimeDetection, ExtractorOLE.Exceptions, AdversarialSampleGenerator
+
+### Community 14 - "ADR-002 Profiling Stress Testing"
+Cohesion: 0.12
+Nodes (19): ADR-002 Decision: Profiling and Stress Testing Approach, dotnet-counters Tool, Hand-Rolled Stress Harness, ADR-002: Time profiling and stress testing approach, Alternatives Considered, Consequences, Context, Decision (+11 more)
+
+### Community 15 - "Tests Stream Input Extraction"
+Cohesion: 0.17
+Nodes (7): ExtractorOleException, Code, Detail, StatusCode, MainExtractorStreamInputTests, NonSeekableStream, CanSeek
+
+### Community 16 - "Extraction Request Telemetry"
 Cohesion: 0.14
-Nodes (10): Stream, ExtractionRequest, DetectedMimeType, FileBytes, FileName, FilePath, InputStream, Fact (+2 more)
+Nodes (8): ExtractionRequest, DetectedMimeType, FileBytes, FileName, FilePath, InputStream, ExtractionGuardrails, ExtractionTelemetryTests
 
-### Community 17 - "--update Incremental Re-extraction"
-Cohesion: 0.09
-Nodes (19): .graphify_detect.json, graphify reference: transcribe video and audio, Step 2.5: Transcribe Video/Audio, Step 2.5 - Transcribe video / audio files (only if video files detected), transcribe_all(), .graphify_transcripts.json, GRAPHIFY_WHISPER_MODEL env var, Whisper Domain-Hint Prompt (+11 more)
-
-### Community 18 - "ExtractorOLE"
+### Community 18 - "Solution And Project Files"
 Cohesion: 0.06
 Nodes (31): net10.0, Microsoft.NET.Sdk, ExtractorOLE.Benchmarks, net10.0, Microsoft.NET.Sdk, ExtractorOLE, net10.0, DocumentFormat.OpenXml (3.5.1) (+23 more)
 
-### Community 19 - "test_compare_benchmarks.py"
-Cohesion: 0.27
-Nodes (7): 7. Whole-target build/test checks can permanently block ALL pushes on a pre-existing broken baseline, CompareBenchmarksTests, run(), write_report(), subprocess, tempfile, unittest
+### Community 19 - "Doc Open Strategy"
+Cohesion: 0.16
+Nodes (3): DocOpenStrategy, DocFirstLayerEmbeddedWalkTests, DocOpenStrategyTests
 
-### Community 20 - "ExtractorOLE.Tests/packages.lock.json"
-Cohesion: 0.05
-Nodes (38): b2xtranslator, b2xtranslator.doc, b2xtranslator.ppt, BouncyCastle.Cryptography, DocumentFormat.OpenXml, DocumentFormat.OpenXml.Features, DocumentFormat.OpenXml.Framework, Enums.NET (+30 more)
+### Community 20 - "Tests Lock Dependency Listing"
+Cohesion: 0.12
+Nodes (23): dependencies, BouncyCastle.Cryptography@[2.6.2, ), Enums.NET@[5.0.0, ), ExtendedNumerics.BigDecimal@[2025.1001.2.129, ), MathNet.Numerics.Signed@[5.0.0, ), Microsoft.IO.RecyclableMemoryStream@[3.0.1, ), Microsoft.SourceLink.GitHub@[10.0.401, ), SharpZipLib@[1.4.2, ) (+15 more)
 
-### Community 21 - "LegacyCfbStreamInputTests"
-Cohesion: 0.18
-Nodes (10): ByteArrayBackedDataSource, Fact, IDictionary, InlineData, MainExtractor, ServiceProvider, Theory, DisposeTrackingStream (+2 more)
+### Community 23 - "MIME Detection Registry Tests"
+Cohesion: 0.09
+Nodes (17): MimeDetectionResult, DetectedFormat, IsSupported, MimeType, IMimeTypeDetector, MimeDetectionRegistry, Detectors, ExtractionHelperDetectMimeTypeTests (+9 more)
 
-### Community 22 - "Spec Quality Verification Report (Re-run 4)"
-Cohesion: 0.33
-Nodes (7): Dependency Injection Convention for Format Components, Format Extensibility via Registry Pattern, Subfile Scope Definition, Unicode Fidelity Requirement, Spec Quality Verification Report (Re-run 4), Stage 02 Planning Report — Sprint 1, Stage 02 Planning Report — Sprint 2 & 3
-
-### Community 23 - "dotnet-test/check.py"
-Cohesion: 0.28
-Nodes (8): re, _find_test_target(), _has_sdk(), main(), Verification plugin: dotnet test. Runs the .NET test suite via ``dotnet test``.…, Check that an actual .NET SDK is installed, not just the dotnet muxer. On…, Prefer a .sln (dotnet test filters to test projects automatically); else the…, Run the dotnet-test verification check.
-
-### Community 24 - "Legacy .xls parsing -- research spike (T-b70522d2)"
+### Community 24 - "Legacy XLS Parsing Spike"
 Cohesion: 0.14
 Nodes (13): Adoption evidence, Alternatives, Critical gap: embedded OLE objects, Current repo reality (verified in-code, not just b2x-side), Empirical spike results (2026-09-02), Fork attempt blocked, HPSF -> OOXML core/app property mapping, Legacy .xls parsing -- research spike (T-b70522d2) (+5 more)
 
-### Community 26 - "dotnet-format/check.py"
-Cohesion: 0.28
-Nodes (8): json, _find_format_targets(), _has_sdk(), main(), Verification plugin: dotnet format. Verifies .NET code formatting via ``dotnet…, Check that an actual .NET SDK is installed, not just the dotnet muxer. On…, Find a .sln first, else every real (non-test/bench/harness) .csproj.…, Run the dotnet-format verification check.
-
-### Community 27 - "EmbeddedFileExtractor"
-Cohesion: 0.11
-Nodes (22): CoreFilePropertiesPart, DocumentEntry, Entry, ExtendedFilePropertiesPart, EmbeddedFileItem, BinaryData, FileName, PackagePath (+14 more)
-
-### Community 28 - "TruncatedContainerException"
-Cohesion: 0.13
-Nodes (16): CorruptFileException, Code, DetectedMimeType, ParseFailureReason, StatusCode, TruncatedContainerException, ActualBytes, Code (+8 more)
-
-### Community 29 - "ADR-008: Stream/file-path input instead of whole-file byte[] (spike #174)"
-Cohesion: 0.16
-Nodes (11): ADR-008: Stream/file-path input instead of whole-file byte[] (spike #174), Context, Decision, Follow-up tasks, Measurements, Status, PresentationDocument, SpreadsheetDocument (+3 more)
-
-### Community 30 - "dotnet-build/check.py"
-Cohesion: 0.28
-Nodes (8): shutil, _find_build_targets(), _has_sdk(), main(), Verification plugin: dotnet build. Builds the .NET solution (or every non-…, Check that an actual .NET SDK is installed, not just the dotnet muxer. On…, Find a .sln first, else every real (non-test/bench/harness) .csproj.…, Run the dotnet-build verification check.
-
-### Community 31 - "net10.0"
-Cohesion: 0.10
-Nodes (20): type, dependencies, net10.0, contentHash, resolved, type, contentHash, resolved (+12 more)
-
-### Community 32 - "IOpenStrategy"
-Cohesion: 0.13
-Nodes (16): ITextExtractor, IOpenStrategy, Stream, ZipFallbackOpenStrategy, Func, IDictionary, FormatDispatchRegistry, Fact (+8 more)
-
-### Community 33 - "XlsOpenStrategy"
+### Community 26 - "Docs YDK .NET Recommendations"
 Cohesion: 0.18
-Nodes (7): HSSFWorkbook, IExtractionHelper, XlsOpenStrategy, DateTime, Fact, IDictionary, XlsOpenStrategyTests
+Nodes (10): YDK Fork Task-Dependency Bugs, 1. Ship three global plugins, not one bundle, 2. Add a `dotnet` stack to `stacks.py`, 3. Centralize the SDK-vs-muxer detection — this is the real gotcha, 4. Target-discovery edge cases actually hit (and the fix already applied), 5. `tdd-guard` is Python-only — known gap, not fixed here, 7. Whole-target build/test checks can permanently block ALL pushes on a pre-existing broken baseline, 8. Priority summary (+2 more)
 
-### Community 34 - "ExtractorOLE.StressHarness/packages.lock.json"
-Cohesion: 0.07
-Nodes (27): b2xtranslator, b2xtranslator.doc, b2xtranslator.ppt, BouncyCastle.Cryptography, DocumentFormat.OpenXml, DocumentFormat.OpenXml.Features, DocumentFormat.OpenXml.Framework, Enums.NET (+19 more)
+### Community 27 - "Embedded File Extractor Results"
+Cohesion: 0.08
+Nodes (14): DocumentExtractionResult, EmbeddedFiles, ExtractedText, FormatMetadata, Metadata, MimeType, ParsedDocument, EmbeddedFileItem (+6 more)
 
-### Community 35 - "What You Must Do When Invoked"
-Cohesion: 0.13
-Nodes (15): Part A - Structural extraction for code files, Part B - Semantic extraction (parallel subagents), Part C - Merge AST + semantic into final extraction, Step 0 - GitHub repos and multi-path merge (only if a URL or several paths), Step 1 - Ensure graphify is installed, Step 2.5 - Video and audio (only if video files detected), Step 2 - Detect files, Step 3 - Extract entities and relationships (+7 more)
+### Community 28 - "Truncated Container Parse Errors"
+Cohesion: 0.12
+Nodes (14): CorruptFileException, Code, DetectedMimeType, ParseFailureReason, StatusCode, PasswordProtectedException, Code, StatusCode (+6 more)
 
-### Community 36 - "dotnet-quality/check.py"
-Cohesion: 0.33
-Nodes (6): time, main(), Verification plugin: dotnet-quality bundle. Thin bundle that runs the dotnet-…, Subprocess-invoke sibling plugin ``name``'s check.py, returning its result., Run the dotnet-quality verification check., _run_sub_check()
+### Community 29 - "DOC Text Extractor Tests"
+Cohesion: 0.23
+Nodes (5): Per-parser stream capability, Method, DocTextExtractor, InMemoryWordprocessingDocument, DocTextExtractorTests
 
-### Community 37 - "Upstream recommendation: .NET/C# support in YDK"
-Cohesion: 0.17
-Nodes (12): YDK Fork Task-Dependency Bugs, 1. Ship three global plugins, not one bundle, 2. Add a `dotnet` stack to `stacks.py`, 3. Centralize the SDK-vs-muxer detection — this is the real gotcha, 4. Target-discovery edge cases actually hit (and the fix already applied), 5. `tdd-guard` is Python-only — known gap, not fixed here, 8. Priority summary, Source material (+4 more)
+### Community 30 - "Non-Closing Stream Wrapper"
+Cohesion: 0.18
+Nodes (6): NonClosingStream, CanRead, CanSeek, CanWrite, Length, Position
 
-### Community 38 - "Legacy Office Format Library Landscape Scan"
+### Community 31 - "Benchmarks Lock Iced"
+Cohesion: 0.50
+Nodes (4): contentHash, resolved, type, Iced
+
+### Community 32 - "Format Dispatch Registry"
+Cohesion: 0.11
+Nodes (16): ITextExtractor, OfficeMimeType, Excel, ExcelLegacy, OpenXmlUnknown, PowerPoint, PowerPointLegacy, Word (+8 more)
+
+### Community 34 - "StressHarness Lock Dependency Listing"
+Cohesion: 0.12
+Nodes (23): dependencies, BouncyCastle.Cryptography@[2.6.2, ), Enums.NET@[5.0.0, ), ExtendedNumerics.BigDecimal@[2025.1001.2.129, ), MathNet.Numerics.Signed@[5.0.0, ), Microsoft.IO.RecyclableMemoryStream@[3.0.1, ), Microsoft.SourceLink.GitHub@[10.0.401, ), SharpZipLib@[1.4.2, ) (+15 more)
+
+### Community 35 - "Tests Call Counting Proxies"
+Cohesion: 0.22
+Nodes (6): DetectionCountingProxy, DetectionCalls, Inner, CallCountingProxy, Calls, Inner
+
+### Community 36 - "BenchmarkDotNet Research Spike"
+Cohesion: 0.20
+Nodes (10): Alternatives Considered, API Shape For Our Use Case, BenchmarkDotNet Research Spike, Citations/Links, License, Maintenance Signal, Strengths, Structure As A Separate Project (+2 more)
+
+### Community 37 - "Stress Harness And Load Generator"
+Cohesion: 0.10
+Nodes (3): ExtractorOLE.StressHarness, ExtractorOLE.Tests.Telemetry, ExtractorOLE.Tests.StressHarness
+
+### Community 38 - "Legacy Format Library Scan"
 Cohesion: 0.14
 Nodes (14): b2xtranslator (original) — dead, but see DocSharp fork below, CFB/OLE2 readers found (beyond OpenMcdf), Citations/links, Commercial libraries excluded, Conclusion, DocSharp (manfromarce/DocSharp) — actively maintained fork of b2xtranslator, notable finding, IKVM + Apache POI (Java interop) — not a sane approach, confirmed, Kaitai Struct-generated CFB parser (curiosity, not a library) (+6 more)
 
-### Community 39 - "OoxmlMimeDetector"
-Cohesion: 0.17
-Nodes (11): IOoxmlMimeDetector, Action, Stream, OoxmlMimeDetector, PackageOpenAttemptCount, Fact, OoxmlMimeDetectorTests, MacroEmbedSampleSpecs (+3 more)
-
-### Community 40 - "PowerPointOpenStrategy"
+### Community 39 - "OOXML MIME Detector"
 Cohesion: 0.12
-Nodes (17): PowerPointFormatMetadata, HasMacros, NotesSlideCount, SlideCount, IExtractionHelper, PresentationPart, SlidePart, Text (+9 more)
+Nodes (15): MimeDetectionLimits, MaxDeclaredEntryBytes, MaxDeclaredNestedContentBytes, MaxFileSizeBytes, MimeDetectionRequest, FileBytes, FileName, FilePath (+7 more)
 
-### Community 41 - "epic.md"
-Cohesion: 0.18
-Nodes (12): Description, Release Field (Epic), Scope, Spec Refs Field (Epic), Acceptance Criteria, Epic Field (Story), Spec Refs Field (Story), PR Template (+4 more)
+### Community 40 - "Tests PowerPoint Open Strategy"
+Cohesion: 0.24
+Nodes (3): PowerPointOpenStrategy, PowerPointOpenStrategyTests, PptxFirstLayerEmbeddedWalkTests
 
-### Community 42 - "compare_benchmarks.py"
-Cohesion: 0.19
-Nodes (11): YDK unified guard hook - all guard checks in one script., Block `gh pr create/edit` when the PR body would fail CI's pr-body check. Runs…, csv, build_table(), load(), main(), Compare BenchmarkDotNet P95 results against the committed baseline. Usage:…, to_ms() (+3 more)
-
-### Community 43 - "AI Analysis"
-Cohesion: 0.25
-Nodes (7): AI Analysis, Patterns, Retrospective: 144, Rule suggestions, Shipped, Summary, Template suggestions
-
-### Community 44 - "Stage 02 Planning Report — 2026-08-19"
-Cohesion: 0.14
-Nodes (13): Command Log (all invocations used, in order), DAG Validation, Dependency graph modeled, Epics created, Open Questions / Risks for Stage 03, Pass 1 — Full Backlog (Epics + Stories), Pass 2 — Sprint 1 Tasks (Epic 1 + Epic 2), Sanity checks after Pass 1 (+5 more)
-
-### Community 45 - "exports.md"
-Cohesion: 0.17
-Nodes (12): Token reduction benchmark, FalkorDB export, GraphML export, MCP stdio server, Neo4j export, SVG export, Wiki export, Step 4.5: Graph health check (+4 more)
-
-### Community 46 - "MimeDetectionRequest"
-Cohesion: 0.14
-Nodes (17): Stream, MimeDetectionRequest, FileBytes, FileName, FilePath, InputStream, Action, Stream (+9 more)
-
-### Community 47 - "ADR-001: Extraction library stack (OOXML, legacy OLE, CFB introspection)"
-Cohesion: 0.29
-Nodes (7): ADR-001: Extraction library stack (OOXML, legacy OLE, CFB introspection), Alternatives Considered, Consequences, Context, Decision, Note (2026-08-23), Status
-
-### Community 48 - "query.md"
-Cohesion: 0.20
-Nodes (11): BFS/DFS traversal modes, /graphify explain, For /graphify explain, For /graphify path, graphify reference: query, path, explain, /graphify path, save-result feedback loop, Step 0 — Constrained query expansion (REQUIRED before traversal) (+3 more)
-
-### Community 49 - "EmbeddedContentSpec"
-Cohesion: 0.12
-Nodes (13): Fact, MainExtractor, ExcelExtractorEmbeddedObjectTests, EmbeddedContentSpec, Content, ContentType, FileName, DocxEmbeddedXlsxSampleSpecs (+5 more)
-
-### Community 50 - "PptxSampleGenerator"
-Cohesion: 0.13
-Nodes (15): PptxTextExtractor, Fact, NotesSlidePart, ShapeTree, SlidePart, PptxTextExtractorTests, PresentationPart, ShapeTree (+7 more)
-
-### Community 51 - "ADR-006: GitHub Issues as the YDK task backend"
-Cohesion: 0.29
-Nodes (6): ADR-006: GitHub Issues as the YDK task backend, Alternatives Considered, Consequences, Context, Decision, Status
-
-### Community 52 - "OversizedNestedContentException"
-Cohesion: 0.15
-Nodes (13): OversizedNestedContentException, Code, DeclaredMetric, StatusCode, ArgumentNullException, extractor, Fact, List (+5 more)
-
-### Community 53 - ".RunDetections"
-Cohesion: 0.48
-Nodes (3): Fact, Task, DetectorCounterConcurrencyTests
-
-### Community 54 - "README.md"
-Cohesion: 0.18
-Nodes (18): ADR-001 Decision: Extraction Library Stack, ADR-004 Decision: b2xtranslator for Legacy Body Text, DocSharp (manfromarce/DocSharp), IllidanS4/npoi Scratchpad Retarget Fork, LibreOffice Headless Subprocess Conversion, modeverv/dotnet-poi, OSS-Only Library Constraint, Unicode/i18n Fidelity Requirement (+10 more)
-
-### Community 55 - "ExcelFormatMetadata"
-Cohesion: 0.18
-Nodes (12): List, ExcelFormatMetadata, ActiveSheetIndex, SheetCount, SheetNames, IExtractionHelper, WorkbookPart, ExcelOpenStrategy (+4 more)
-
-### Community 56 - "PptSampleGenerator"
-Cohesion: 0.17
-Nodes (9): CurrentUser, Document, Fact, InlineData, Theory, PptSampleGeneratorTests, IReadOnlyList, PptSampleGenerator (+1 more)
-
-### Community 57 - "MimeTypeMapper"
-Cohesion: 0.22
-Nodes (6): MimeTypeMapper, Fact, MainExtractor, ServiceProvider, AlwaysDocDetector, ExtractionHelperSplitTests
-
-### Community 58 - "/graphify"
-Cohesion: 0.20
-Nodes (10): For /graphify add and --watch, For /graphify query, For the commit hook and native CLAUDE.md integration, For --update and --cluster-only, /graphify, Honesty Rules, Interpreter guard for subcommands, Usage (+2 more)
-
-### Community 59 - "DocumentExtractionResult"
-Cohesion: 0.08
-Nodes (18): List, DocumentExtractionResult, EmbeddedFiles, ExtractedText, Metadata, MimeType, ParsedDocument, DirectoryEntry (+10 more)
-
-### Community 60 - "Candidates evaluated"
-Cohesion: 0.20
-Nodes (10): 1. Port NPOI's own scratchpad HWPF/HSLF to SDK-style/net8.0 ourselves, 2. b2xtranslator -- binary-to-OOXML converter, 3. modeverv/dotnet-poi -- from-scratch Apache POI-equivalent port, 4. LibreOffice headless subprocess conversion, 5. Rejected without deep evaluation, Candidates evaluated, Confirmed starting facts (from T-d6de875f's submodule work), Important decoupling this spike surfaces (+2 more)
-
-### Community 61 - "AttemptCounter"
-Cohesion: 0.33
-Nodes (5): AsyncLocal, Box, AttemptCounter, Value, Box
-
-### Community 62 - "DetectMimeTypeCorpusManifestTests"
-Cohesion: 0.12
-Nodes (17): Fact, IEnumerable, List, MemberData, Theory, DetectMimeTypeCorpusManifestTests, ExpectedDetectedFormat, Enum (+9 more)
-
-### Community 63 - "NoTempFileIoTests"
-Cohesion: 0.47
-Nodes (3): Fact, IEnumerable, NoTempFileIoTests
-
-### Community 64 - "Stage 02 Planning Report — Sprint 2 & Sprint 3 — 2026-08-19"
-Cohesion: 0.20
-Nodes (9): Command Log, Component Coverage, Cross-Epic/Cross-Sprint Dependency Edges Modeled, DAG Validation, Open Questions / Risks for Stage 03, Stage 02 Planning Report — Sprint 2 & Sprint 3 — 2026-08-19, Summary, Task Counts Per Story (+1 more)
-
-### Community 65 - "extraction-spec.md"
-Cohesion: 0.25
-Nodes (8): graphify reference: extraction subagent prompt, /graphify command, Step 1: Ensure graphify installed, Step 2: Detect files, Step 3: Extract entities and relationships, Hyperedges rule, Node ID format rule (avoid ghost duplicates), Semantic similarity edge rule
-
-### Community 66 - "DocumentFormat.OpenXml — Research Spike"
-Cohesion: 0.22
-Nodes (9): API surface relevant to our use case, Citations/links, DocumentFormat.OpenXml — Research Spike, Library name, License, Maintenance signal (stars/last release/last commit), Strengths, Unicode/RTL/emoji findings (+1 more)
-
-### Community 67 - "OpenMcdf — Research Spike Notes"
-Cohesion: 0.22
-Nodes (9): API surface relevant to our use case, Citations / links, Library name, License, Maintenance signal, OpenMcdf — Research Spike Notes, Strengths, Unicode / RTL / emoji findings (entry names) (+1 more)
-
-### Community 68 - "DocOpenStrategy"
-Cohesion: 0.05
-Nodes (37): compressedSize, DirectoryNode, DocumentSummaryInformation, WordFormatMetadata, CharacterCount, Company, HasMacros, LineCount (+29 more)
-
-### Community 69 - "Benchmark baseline and regression policy"
-Cohesion: 0.40
-Nodes (4): Benchmark baseline and regression policy, Committed baseline, Regression rule, Separate from the test gate
-
-### Community 70 - "SKILL.md"
-Cohesion: 0.25
-Nodes (5): /graphify add <url>, --watch folder auto-rebuild, For /graphify add, For --watch, graphify reference: add a URL and watch a folder
-
-### Community 71 - ".claude/CLAUDE.md"
-Cohesion: 0.25
-Nodes (6): graphify, Native CLAUDE.md integration (graphify claude install), For git commit hook, For native CLAUDE.md integration, graphify reference: commit hook and native CLAUDE.md integration, graphify post-commit hook
-
-### Community 72 - "graphify reference: extra exports and benchmark"
-Cohesion: 0.25
-Nodes (8): graphify reference: extra exports and benchmark, Step 6b - Wiki (only if --wiki flag), Step 7 - Neo4j export (only if --neo4j or --neo4j-push flag), Step 7a - FalkorDB export (only if --falkordb or --falkordb-push flag), Step 7b - SVG export (only if --svg flag), Step 7c - GraphML export (only if --graphml flag), Step 7d - MCP server (only if --mcp flag), Step 8 - Token reduction benchmark (only if total_words > 5000)
-
-### Community 73 - "ADR-003: Manual LLM spec review in place of `ydk spec verify`"
-Cohesion: 0.25
-Nodes (7): ADR-003 Decision: Manual Spec Review Substitution, ADR-003: Manual LLM spec review in place of `ydk spec verify`, Alternatives Considered, Consequences, Context, Decision, Status
-
-### Community 74 - "C# Development Best Practices"
-Cohesion: 0.18
-Nodes (10): Authorship and license, C# Development Best Practices, C#/.NET guardrails, Definition of done, Required operating procedure, Source of truth, Workflow: fix a bug, Workflow: implement a feature (+2 more)
-
-### Community 75 - "StreamPreflightGuardrailTests"
-Cohesion: 0.17
-Nodes (6): Fact, IEnumerable, InlineData, MemberData, Theory, StreamPreflightGuardrailTests
-
-### Community 76 - "PptTextExtractorTests"
-Cohesion: 0.29
-Nodes (5): PptTextExtractor, Fact, IDictionary, MainExtractor, PptTextExtractorTests
-
-### Community 77 - "IExtractionHelper"
-Cohesion: 0.23
-Nodes (5): IExtractionHelper, Func, MainExtractor, Task, BatchMode
-
-### Community 78 - "MainExtractorDispatchIntegrationTests"
-Cohesion: 0.50
-Nodes (3): Fact, MainExtractor, MainExtractorDispatchIntegrationTests
-
-### Community 80 - "Error Schema"
-Cohesion: 0.32
-Nodes (8): Contract Schema, Crosscut Schema, Entity Schema, Error Schema, Hook Schema, Page Schema, Req Schema, Route Schema
-
-### Community 81 - "FileMetadata"
-Cohesion: 0.14
-Nodes (14): DateTime, FileMetadata, ApplicationName, Comments, Created, Creator, EditingDurationMinutes, Keywords (+6 more)
-
-### Community 82 - "CLAUDE.md"
-Cohesion: 0.33
-Nodes (6): Code exploration: use graphify, not raw file reads, graphify, Use graphify instead of raw reads, Project Conventions — ole-extractor, Fast path: query existing graph, YDK workflow
-
-### Community 83 - "C# / .NET Engineering Best Practices"
-Cohesion: 0.20
-Nodes (9): 14. Performance principles, 15. Tooling and automated enforcement, 17. Definition of done, 18. Keeping the playbook useful, 19. Relationship to the agent skill, 1.1 Defaults for repositories generated by `dotnet-webapi-clean`, 1. How to apply this playbook, C# / .NET Engineering Best Practices (+1 more)
-
-### Community 84 - "Microsoft.Extensions.Configuration.Abstractions"
-Cohesion: 0.12
-Nodes (17): Microsoft.Extensions.DependencyInjection.Abstractions, Microsoft.Extensions.Primitives, contentHash, dependencies, resolved, type, contentHash, dependencies (+9 more)
-
-### Community 85 - "dependencies"
-Cohesion: 0.10
-Nodes (24): b2xtranslator.doc, b2xtranslator.ppt, DocumentFormat.OpenXml, DocumentFormat.OpenXml.Features, DocumentFormat.OpenXml.Framework, Microsoft.Extensions.DependencyInjection, NPOI.Core, OpenMcdf (+16 more)
-
-### Community 87 - "FileTooLargeException"
-Cohesion: 0.14
-Nodes (15): FileTooLargeException, ActualBytes, Code, LimitBytes, StatusCode, Func, Stream, Fact (+7 more)
-
-### Community 89 - "ExtractManyAsyncTests"
-Cohesion: 0.08
-Nodes (27): ArgumentOutOfRangeException, CallCountingProxy, UnsupportedFormatException, Code, DetectedMimeType, StatusCode, ArgumentNullException, Fact (+19 more)
-
-### Community 90 - "ExtractorOLE.Helpers.FileTypeStrategy"
-Cohesion: 0.12
-Nodes (15): ExtractorOLE.Handlers, ExtractorOLE.Tests.Architecture, ExtractorOLE.Helpers.FileTypeStrategy, ExtractorOLE.Tests.Docx, ExtractorOLE.Tests.Excel, ExtractorOLE.Tests.MultiEmbedding, ExtractorOLE.Abstractions, documentformat_openxml_extendedproperties (+7 more)
-
-### Community 93 - "Extract Contract"
-Cohesion: 0.14
-Nodes (27): ADR-002, Adversarial Review, Success Criteria, Corpus-Sample-Backed Coverage, Integration Tests, Rules, Stress-Harness-Backed Coverage, Stress Testing (+19 more)
-
-### Community 95 - "extraction.md"
-Cohesion: 0.21
-Nodes (9): Format Family (LegacyOle vs Ooxml), Format Kind (Word/Excel/PowerPoint), Subfile Scope (First-Layer Extraction), Corpus Composition, Corpus Manifest, Dataset Curation, Provenance & Licensing, Purpose (+1 more)
-
-### Community 96 - "github-and-merge.md"
-Cohesion: 0.47
-Nodes (5): graphify reference: GitHub clone and cross-repo merge, Step 0 - Clone GitHub repo(s) (only if a GitHub URL was given), graphify clone, graphify merge-graphs, Multi-subfolder/monorepo merge flow
-
-### Community 98 - "Project Rules"
-Cohesion: 0.33
-Nodes (6): Brownfield Constraints, Conventions, Known Gotchas, Library Stack (locked), Product Context, Project Rules
-
-### Community 99 - "DocTextExtractor.cs"
-Cohesion: 0.10
-Nodes (18): b2xtranslator_docfileformat, b2xtranslator_openxmllib, b2xtranslator_openxmllib_presentationml_presentationdocument, b2xtranslator_openxmllib_wordprocessingml_wordprocessingdocument, b2xtranslator_pptfileformat, b2xtranslator_presentationmlmapping, b2xtranslator_structuredstorage_reader, b2xtranslator_wordprocessingmlmapping (+10 more)
-
-### Community 100 - "ExtractorOLE/packages.lock.json"
-Cohesion: 0.09
-Nodes (21): b2xtranslator, BouncyCastle.Cryptography, DocumentFormat.OpenXml, DocumentFormat.OpenXml.Framework, Enums.NET, ExtendedNumerics.BigDecimal, MathNet.Numerics.Signed, Microsoft.Build.Tasks.Git (+13 more)
-
-### Community 102 - "dependencies"
-Cohesion: 0.10
-Nodes (21): b2xtranslator.doc, b2xtranslator.ppt, DocumentFormat.OpenXml, DocumentFormat.OpenXml.Features, DocumentFormat.OpenXml.Framework, Microsoft.Extensions.DependencyInjection, NPOI.Core, OpenMcdf (+13 more)
-
-### Community 103 - "MainExtractorExtractRequestTests"
-Cohesion: 0.15
-Nodes (13): DispatchProxy, Fact, MainExtractor, MethodInfo, ServiceProvider, DetectionCountingProxy, DetectionCalls, Inner (+5 more)
-
-### Community 104 - "GeneratedSample"
-Cohesion: 0.12
-Nodes (13): IPackageProperties, GeneratedSample, Content, FileName, IEnumerable, VbaProjectPart, DateTime, IDictionary (+5 more)
-
-### Community 106 - "DetectedFormat"
-Cohesion: 0.11
-Nodes (22): DetectedFormat, Doc, Docx, Ppt, Pptx, Unknown, Xls, Xlsx (+14 more)
-
-### Community 107 - "task.md"
-Cohesion: 0.40
-Nodes (4): Acceptance Criteria, Description, Test Strategy, Spec Check Configuration
-
-### Community 108 - "OfficeMimeType"
-Cohesion: 0.11
-Nodes (16): ADR-009: Fix analyzer findings instead of suppressing them, even when it breaks the public API, Breaking changes and migration, Consequences, Context, Decision, Status, OfficeMimeType, Excel (+8 more)
-
-### Community 111 - "SampleGenerator/packages.lock.json"
-Cohesion: 0.10
-Nodes (20): BouncyCastle.Cryptography, DocumentFormat.OpenXml, DocumentFormat.OpenXml.Framework, Enums.NET, ExtendedNumerics.BigDecimal, MathNet.Numerics.Signed, Microsoft.Build.Tasks.Git, Microsoft.Extensions.DependencyInjection.Abstractions (+12 more)
-
-### Community 112 - "BatchExtractionResult"
-Cohesion: 0.10
-Nodes (18): ADR-007: Batch extraction API with bounded parallelism, Alternatives Considered, Consequences, Context, Decision, Measured throughput, Status, Exception (+10 more)
-
-### Community 113 - "4. Async, cancellation, timeouts, and concurrency"
-Cohesion: 0.20
-Nodes (10): 4.1 Keep asynchronous code asynchronous, 4.2 Pass cancellation tokens end to end, 4.3 Set explicit timeouts for outbound calls, 4.4 Do not use `async void` except for event handlers, 4.5 Do not fire-and-forget background work, 4.6 Bound parallel work, 4.7 Protect shared mutable state, 4.8 Use `IAsyncEnumerable<T>` for genuine streams (+2 more)
-
-### Community 114 - "net10.0"
-Cohesion: 0.08
-Nodes (24): type, dependencies, net10.0, contentHash, resolved, type, contentHash, resolved (+16 more)
-
-### Community 115 - "XlsTextExtractor"
-Cohesion: 0.27
-Nodes (6): HSSFWorkbook, XlsTextExtractor, Fact, InlineData, Theory, XlsTextExtractorTests
-
-### Community 116 - "SampleFormat"
-Cohesion: 0.11
-Nodes (16): Fact, IEnumerable, MainExtractor, MemberData, Theory, BenchmarkSampleGeneratorTests, SkipUnlessGeneratedAttribute, SampleFormat (+8 more)
-
-### Community 117 - "9. Data access and Entity Framework Core"
-Cohesion: 0.20
-Nodes (10): 9.1 Prevent N+1 queries, 9.2 Paginate collection endpoints and queries, 9.3 Parameterize SQL, 9.4 Keep transactions short and database-focused, 9.5 Use `AsNoTracking()` for read-only EF Core queries, 9.6 Save once per unit of work, not once per row, 9.7 Understand deferred execution and enumeration, 9.8 Keep `IQueryable` inside the data-access boundary (+2 more)
-
-### Community 118 - ".Open"
-Cohesion: 0.17
-Nodes (9): Stream, DirectoryEntry, HSSFWorkbook, NPOIFSFileSystem, OpenXmlPackage, OpenXmlPart, EmbeddedObjectPart, Fact (+1 more)
-
-### Community 119 - "DocTextExtractor"
-Cohesion: 0.36
-Nodes (5): DocTextExtractor, Fact, InlineData, Theory, DocTextExtractorTests
-
-### Community 120 - ".Register"
-Cohesion: 0.23
-Nodes (5): IOfficeMimeTypeDetector, OfficeMimeTypeDetector, IDictionary, IServiceCollection, ServiceRegistration
-
-### Community 121 - "Overview"
-Cohesion: 0.28
-Nodes (8): Auth & Security, Component Architecture, Detection Component, Open Component, Overview, Problem Statement, Public API, Text-Extraction Component
-
-### Community 122 - "dependencies"
-Cohesion: 0.12
-Nodes (16): contentHash, dependencies, requested, resolved, type, BenchmarkDotNet.Annotations, CommandLineParser, Gee.External.Capstone (+8 more)
-
-### Community 123 - "PptOpenStrategy"
-Cohesion: 0.15
-Nodes (12): HasMacros, Func, IExtractionHelper, NPOIFSFileSystem, PresentationPart, SlidePart, Text, PptOpenStrategy (+4 more)
-
-### Community 124 - "net10.0"
-Cohesion: 0.12
-Nodes (16): type, dependencies, net10.0, contentHash, resolved, type, b2xtranslator, Microsoft.Extensions.DependencyInjection.Abstractions (+8 more)
-
-### Community 125 - "net10.0"
-Cohesion: 0.12
-Nodes (16): type, dependencies, net10.0, contentHash, resolved, type, b2xtranslator, Microsoft.IO.RecyclableMemoryStream (+8 more)
-
-### Community 126 - "dependencies"
-Cohesion: 0.13
-Nodes (15): b2xtranslator.doc, b2xtranslator.ppt, DocumentFormat.OpenXml, DocumentFormat.OpenXml.Features, Microsoft.Extensions.DependencyInjection, NPOI.Core, OpenMcdf, contentHash (+7 more)
-
-### Community 127 - "ReadCountingStream"
-Cohesion: 0.13
-Nodes (9): SeekOrigin, Span, ReadCountingStream, BytesRead, CanRead, CanSeek, CanWrite, Length (+1 more)
-
-### Community 128 - "AllocListener"
-Cohesion: 0.19
-Nodes (9): B2x, ConcurrentDictionary, AllocListener, Stream, InMem, P, EventListener, EventSource (+1 more)
-
-### Community 129 - ".Open"
-Cohesion: 0.26
-Nodes (6): Stream, EmbeddedObjectPart, Fact, WorksheetPart, MultiEmbeddingSampleTests, MultiEmbeddingSampleSpecs
-
-### Community 130 - "net10.0"
-Cohesion: 0.14
-Nodes (14): contentHash, resolved, type, dependencies, net10.0, contentHash, resolved, type (+6 more)
-
-### Community 131 - "dependencies"
-Cohesion: 0.15
-Nodes (13): BouncyCastle.Cryptography, Enums.NET, ExtendedNumerics.BigDecimal, MathNet.Numerics.Signed, Microsoft.IO.RecyclableMemoryStream, Microsoft.SourceLink.GitHub, SharpZipLib, SkiaSharp (+5 more)
-
-### Community 132 - "Microsoft.Build.Tasks.Git"
-Cohesion: 0.15
-Nodes (13): Microsoft.Build.Tasks.Git, Microsoft.SourceLink.Common, System.IO.Hashing, contentHash, dependencies, resolved, type, contentHash (+5 more)
-
-### Community 133 - "dependencies"
-Cohesion: 0.15
-Nodes (13): BouncyCastle.Cryptography, Enums.NET, ExtendedNumerics.BigDecimal, MathNet.Numerics.Signed, Microsoft.IO.RecyclableMemoryStream, Microsoft.SourceLink.GitHub, SharpZipLib, SkiaSharp (+5 more)
-
-### Community 136 - "ExtractionTelemetry"
-Cohesion: 0.07
-Nodes (24): Activity, 2026-08-22 — T-eeb6684b: Downgrade ExtractorOLE.csproj to net8.0, Activity Log, PR #4, Task T-eeb6684b: downgrade to net8.0, ActivitySource, Counter, 1. Capture a trace for one sample (+16 more)
-
-### Community 141 - "Microsoft.Build.Tasks.Git"
-Cohesion: 0.15
-Nodes (13): Microsoft.Build.Tasks.Git, Microsoft.SourceLink.Common, System.IO.Hashing, contentHash, dependencies, resolved, type, contentHash (+5 more)
-
-### Community 142 - "dependencies"
-Cohesion: 0.15
-Nodes (13): BouncyCastle.Cryptography, Enums.NET, ExtendedNumerics.BigDecimal, MathNet.Numerics.Signed, Microsoft.IO.RecyclableMemoryStream, Microsoft.SourceLink.GitHub, SharpZipLib, SkiaSharp (+5 more)
-
-### Community 143 - "Microsoft.Build.Tasks.Git"
-Cohesion: 0.15
-Nodes (13): Microsoft.Build.Tasks.Git, Microsoft.SourceLink.Common, System.IO.Hashing, contentHash, dependencies, resolved, type, contentHash (+5 more)
-
-### Community 144 - "dependencies"
-Cohesion: 0.15
-Nodes (13): BouncyCastle.Cryptography, Enums.NET, ExtendedNumerics.BigDecimal, MathNet.Numerics.Signed, Microsoft.IO.RecyclableMemoryStream, Microsoft.SourceLink.GitHub, SharpZipLib, SkiaSharp (+5 more)
-
-### Community 147 - "Microsoft.Build.Tasks.Git"
-Cohesion: 0.15
-Nodes (13): Microsoft.Build.Tasks.Git, Microsoft.SourceLink.Common, System.IO.Hashing, contentHash, dependencies, resolved, type, contentHash (+5 more)
-
-### Community 148 - "ADR-004: Legacy .doc/.ppt body-text parsing (b2xtranslator, not NPOI)"
-Cohesion: 0.33
-Nodes (6): ADR-004: Legacy .doc/.ppt body-text parsing (b2xtranslator, not NPOI), Alternatives Considered, Consequences, Context, Decision, Status
-
-### Community 149 - "BenchmarkColumns.cs"
-Cohesion: 0.22
-Nodes (7): benchmarkdotnet_columns, benchmarkdotnet_configs, benchmarkdotnet_diagnosers, benchmarkdotnet_reports, benchmarkdotnet_running, ExtractorOLE.Benchmarks, SampleParam
-
-### Community 150 - "2. Error handling and exceptions"
-Cohesion: 0.25
-Nodes (8): 2.1 Never swallow an exception, 2.2 Catch only exceptions you can handle, 2.3 Preserve stack traces and causes, 2.4 Log an unhandled failure once, at the boundary, 2.5 Do not use exceptions as normal control flow, 2.6 Fail fast with guard clauses, 2.7 Use one consistent global error response, 2. Error handling and exceptions
-
-### Community 151 - "DocSampleGenerator"
-Cohesion: 0.14
-Nodes (11): Fact, InlineData, MainExtractor, Theory, DocSampleGeneratorTests, List, Span, DocSampleGenerator (+3 more)
-
-### Community 152 - "Library Tradeoffs — Office File MIME Detection & Extraction"
-Cohesion: 0.40
-Nodes (5): Cross-cutting note, Library Tradeoffs — Office File MIME Detection & Extraction, Table 1: OOXML parsing/metadata/text/embeddings (docx/xlsx/pptx), Table 2: Legacy OLE (doc/xls/ppt) parsing/metadata/text, Table 3: Raw CFB introspection for mime-sniffing and generic subfile walking
-
-### Community 153 - ".Extract"
-Cohesion: 0.19
-Nodes (7): DetectionCountingProxy, MainExtractor, IFormatDispatchRegistry, Fact, MainExtractorOptionsCtorTests, NullRegistry, Obsolete
-
-### Community 154 - "dependencies"
-Cohesion: 0.15
-Nodes (13): BouncyCastle.Cryptography, Enums.NET, ExtendedNumerics.BigDecimal, MathNet.Numerics.Signed, Microsoft.IO.RecyclableMemoryStream, Microsoft.SourceLink.GitHub, SharpZipLib, SkiaSharp (+5 more)
-
-### Community 155 - "Microsoft.Build.Tasks.Git"
-Cohesion: 0.15
-Nodes (13): Microsoft.Build.Tasks.Git, Microsoft.SourceLink.Common, System.IO.Hashing, contentHash, dependencies, resolved, type, contentHash (+5 more)
-
-### Community 156 - "xunit.core"
-Cohesion: 0.17
-Nodes (12): xunit.extensibility.core, xunit.extensibility.execution, xunit.core, xunit.extensibility.execution, contentHash, dependencies, resolved, type (+4 more)
-
-### Community 157 - "ExtractionGuardrails"
-Cohesion: 0.29
-Nodes (6): Action, ExtractionGuardrails, extractor, List, log, MainExtractor
-
-### Community 158 - "NPOI — Research Spike"
-Cohesion: 0.20
-Nodes (10): API surface relevant to our use case, Citations / links, Library name, License — IMPORTANT FINDING, Maintenance signal, NPOI — Research Spike, Performance signal, Strengths (+2 more)
-
-### Community 171 - "Extraction"
-Cohesion: 0.25
-Nodes (8): Error Handling, Extensibility & DI, Extraction, Flat Text, Format-Specific Metadata, General Metadata, Purpose, Subfiles
-
-### Community 172 - "MacroEmbedSampleGeneratorTests"
-Cohesion: 0.27
-Nodes (5): Fact, InlineData, Theory, MacroEmbedSampleGeneratorTests, Type
-
-### Community 173 - "Stream"
-Cohesion: 0.12
-Nodes (13): B2xPresentationDocument, InMemoryPresentationDocument, PptToPptxConverter, SeekOrigin, Span, ParseTimeErrorGuard, ReadOnlyView, CanRead (+5 more)
-
-### Community 174 - "xunit"
-Cohesion: 0.22
-Nodes (9): xunit.analyzers, xunit.assert, xunit.core, xunit, contentHash, dependencies, requested, resolved (+1 more)
-
-### Community 175 - "Microsoft.NET.Test.Sdk"
-Cohesion: 0.25
-Nodes (8): Microsoft.CodeCoverage, Microsoft.TestPlatform.TestHost, contentHash, dependencies, requested, resolved, type, Microsoft.NET.Test.Sdk
-
-### Community 176 - "dependencies"
-Cohesion: 0.25
-Nodes (8): Microsoft.Extensions.Configuration.Binder, Microsoft.Extensions.Logging.Abstractions, Microsoft.Extensions.Options, contentHash, dependencies, resolved, type, Microsoft.Extensions.Logging
-
-### Community 177 - "AI Analysis"
-Cohesion: 0.25
-Nodes (7): AI Analysis, Patterns, Retrospective: 158, Rule suggestions, Shipped, Summary, Template suggestions
-
-### Community 178 - "b2xtranslator.doc"
-Cohesion: 0.29
-Nodes (7): dependencies, type, dependencies, type, b2xtranslator, b2xtranslator.doc, b2xtranslator.ppt
-
-### Community 179 - "Microsoft.Diagnostics.NETCore.Client"
-Cohesion: 0.29
-Nodes (7): Microsoft.Bcl.AsyncInterfaces, Microsoft.Extensions.Logging, contentHash, dependencies, resolved, type, Microsoft.Diagnostics.NETCore.Client
-
-### Community 180 - "System.Management"
-Cohesion: 0.29
-Nodes (7): Microsoft.NETCore.Platforms, System.CodeDom, System.Management, contentHash, dependencies, resolved, type
-
-### Community 181 - "MimeDetectionResult"
-Cohesion: 0.14
-Nodes (7): MimeDetectionResult, DetectedFormat, IsSupported, MimeType, MimeDetectionInput, Length, Stream
-
-### Community 182 - "SkiaSharp"
-Cohesion: 0.29
-Nodes (7): SkiaSharp.NativeAssets.macOS, SkiaSharp.NativeAssets.Win32, SkiaSharp, contentHash, dependencies, resolved, type
-
-### Community 183 - "ExtractionHelper"
-Cohesion: 0.13
-Nodes (18): ExtractionHelper, IMimeTypeDetector, IReadOnlyList, IMimeDetectionRegistry, Detectors, IReadOnlyList, MimeDetectionRegistry, Detectors (+10 more)
-
-### Community 184 - "b2xtranslator.doc"
-Cohesion: 0.29
-Nodes (7): dependencies, type, dependencies, type, b2xtranslator, b2xtranslator.doc, b2xtranslator.ppt
-
-### Community 185 - "DocumentFormat.OpenXml.Features"
-Cohesion: 0.29
-Nodes (7): DocumentFormat.OpenXml, contentHash, dependencies, requested, resolved, type, DocumentFormat.OpenXml.Features
-
-### Community 186 - "DocumentFormat.OpenXml"
-Cohesion: 0.29
-Nodes (7): DocumentFormat.OpenXml.Framework, contentHash, dependencies, requested, resolved, type, DocumentFormat.OpenXml
-
-### Community 187 - "Microsoft.Extensions.DependencyInjection"
-Cohesion: 0.29
-Nodes (7): Microsoft.Extensions.DependencyInjection.Abstractions, contentHash, dependencies, requested, resolved, type, Microsoft.Extensions.DependencyInjection
-
-### Community 188 - "SkiaSharp"
-Cohesion: 0.29
-Nodes (7): SkiaSharp.NativeAssets.macOS, SkiaSharp.NativeAssets.Win32, SkiaSharp, contentHash, dependencies, resolved, type
-
-### Community 189 - "DocumentFormat.OpenXml.Framework"
-Cohesion: 0.29
-Nodes (7): System.IO.Packaging, contentHash, dependencies, requested, resolved, type, DocumentFormat.OpenXml.Framework
-
-### Community 190 - "b2xtranslator.doc"
-Cohesion: 0.29
-Nodes (7): dependencies, type, dependencies, type, b2xtranslator, b2xtranslator.doc, b2xtranslator.ppt
-
-### Community 191 - "SkiaSharp"
-Cohesion: 0.29
-Nodes (7): SkiaSharp.NativeAssets.macOS, SkiaSharp.NativeAssets.Win32, SkiaSharp, contentHash, dependencies, resolved, type
-
-### Community 192 - "b2xtranslator.doc"
-Cohesion: 0.29
-Nodes (7): dependencies, type, dependencies, type, b2xtranslator, b2xtranslator.doc, b2xtranslator.ppt
-
-### Community 193 - "Microsoft.TestPlatform.TestHost"
-Cohesion: 0.29
-Nodes (7): Microsoft.TestPlatform.ObjectModel, Newtonsoft.Json, contentHash, dependencies, resolved, type, Microsoft.TestPlatform.TestHost
-
-### Community 194 - "SkiaSharp"
-Cohesion: 0.29
-Nodes (7): SkiaSharp.NativeAssets.macOS, SkiaSharp.NativeAssets.Win32, SkiaSharp, contentHash, dependencies, resolved, type
-
-### Community 195 - ".Generate"
-Cohesion: 0.52
-Nodes (3): Fact, MainExtractor, MainExtractorXlsSingleLoadTests
-
-### Community 196 - "DocumentFormat.OpenXml.Features"
-Cohesion: 0.29
-Nodes (7): DocumentFormat.OpenXml, contentHash, dependencies, requested, resolved, type, DocumentFormat.OpenXml.Features
-
-### Community 197 - "DocumentFormat.OpenXml"
-Cohesion: 0.29
-Nodes (7): DocumentFormat.OpenXml.Framework, contentHash, dependencies, requested, resolved, type, DocumentFormat.OpenXml
-
-### Community 198 - "Microsoft.Extensions.DependencyInjection"
-Cohesion: 0.29
-Nodes (7): Microsoft.Extensions.DependencyInjection.Abstractions, contentHash, dependencies, requested, resolved, type, Microsoft.Extensions.DependencyInjection
-
-### Community 199 - "SkiaSharp"
-Cohesion: 0.29
-Nodes (7): SkiaSharp.NativeAssets.macOS, SkiaSharp.NativeAssets.Win32, SkiaSharp, contentHash, dependencies, resolved, type
-
-### Community 200 - "DocumentFormat.OpenXml.Framework"
-Cohesion: 0.29
-Nodes (7): System.IO.Packaging, contentHash, dependencies, requested, resolved, type, DocumentFormat.OpenXml.Framework
-
-### Community 201 - "IParsedDocumentTextExtractor"
-Cohesion: 0.12
-Nodes (12): ADR-005: Authoring legacy .doc/.ppt (and .xls) test samples in SampleGenerator, Alternatives Considered, Consequences, Context, Decision, Status, IParsedDocumentTextExtractor, DocxTextExtractor (+4 more)
-
-### Community 202 - "Microsoft.CodeAnalysis.Common"
-Cohesion: 0.33
-Nodes (6): Microsoft.CodeAnalysis.Analyzers, contentHash, dependencies, resolved, type, Microsoft.CodeAnalysis.Common
-
-### Community 203 - "Microsoft.CodeAnalysis.CSharp"
-Cohesion: 0.33
-Nodes (6): Microsoft.CodeAnalysis.Common, contentHash, dependencies, resolved, type, Microsoft.CodeAnalysis.CSharp
-
-### Community 204 - "Microsoft.Diagnostics.Runtime"
-Cohesion: 0.33
-Nodes (6): Microsoft.Diagnostics.NETCore.Client, contentHash, dependencies, resolved, type, Microsoft.Diagnostics.Runtime
-
-### Community 205 - "PptTextFixtureBuilder"
-Cohesion: 0.41
-Nodes (4): Dictionary, NPOIFSFileSystem, PptTextFixtureBuilder, IReadOnlyDictionary
-
-### Community 206 - "Microsoft.Extensions.Configuration.Binder"
-Cohesion: 0.33
-Nodes (6): Microsoft.Extensions.Configuration, contentHash, dependencies, resolved, type, Microsoft.Extensions.Configuration.Binder
-
-### Community 207 - "NonClosingStream"
-Cohesion: 0.14
-Nodes (8): SeekOrigin, Span, NonClosingStream, CanRead, CanSeek, CanWrite, Length, Position
-
-### Community 208 - "Microsoft.Extensions.Configuration"
-Cohesion: 0.33
-Nodes (6): Microsoft.Extensions.Configuration.Abstractions, contentHash, dependencies, resolved, type, Microsoft.Extensions.Configuration
-
-### Community 209 - "DocumentFormat.OpenXml.Framework"
-Cohesion: 0.33
-Nodes (6): System.IO.Packaging, contentHash, dependencies, resolved, type, DocumentFormat.OpenXml.Framework
-
-### Community 210 - "DocumentFormat.OpenXml"
-Cohesion: 0.33
-Nodes (6): DocumentFormat.OpenXml.Framework, contentHash, dependencies, resolved, type, DocumentFormat.OpenXml
-
-### Community 211 - "Microsoft.Extensions.DependencyInjection"
-Cohesion: 0.33
-Nodes (6): Microsoft.Extensions.DependencyInjection.Abstractions, contentHash, dependencies, resolved, type, Microsoft.Extensions.DependencyInjection
-
-### Community 212 - "DocumentFormat.OpenXml.Framework"
-Cohesion: 0.33
-Nodes (6): System.IO.Packaging, contentHash, dependencies, resolved, type, DocumentFormat.OpenXml.Framework
-
-### Community 213 - "PptxSharedPartSubfileTests"
-Cohesion: 0.33
-Nodes (7): Action, Fact, ImagePart, PresentationPart, SlidePart, PptxSharedPartSubfileTests, VmlDrawingPart
-
-### Community 214 - "Microsoft.Extensions.DependencyInjection"
-Cohesion: 0.33
-Nodes (6): Microsoft.Extensions.DependencyInjection.Abstractions, contentHash, dependencies, resolved, type, Microsoft.Extensions.DependencyInjection
-
-### Community 215 - "DocumentFormat.OpenXml.Framework"
-Cohesion: 0.33
-Nodes (6): System.IO.Packaging, contentHash, dependencies, resolved, type, DocumentFormat.OpenXml.Framework
-
-### Community 216 - "xunit.extensibility.core"
-Cohesion: 0.33
-Nodes (6): xunit.abstractions, xunit.extensibility.core, contentHash, dependencies, resolved, type
-
-### Community 217 - "BenchmarkSamples"
-Cohesion: 0.21
-Nodes (6): Ext, IEnumerable, BenchmarkSamples, GlobalSetup, InvalidOperationException, Mime
-
-### Community 219 - "ExtractionBenchmarks"
-Cohesion: 0.18
-Nodes (10): Benchmark, IEnumerable, Extract100MbBenchmarks, Tier, Extract10MbBenchmarks, Tier, ExtractionBenchmarks, Sample (+2 more)
-
-### Community 220 - "WriteTrackingStream"
-Cohesion: 0.33
-Nodes (3): WriteTrackingStream, Writes, ReadOnlySpan
-
-### Community 221 - ".GetValue"
-Cohesion: 0.36
-Nodes (3): BenchmarkCase, Summary, SummaryStyle
-
-### Community 222 - "OpenMcdf"
-Cohesion: 0.40
-Nodes (5): OpenMcdf, contentHash, requested, resolved, type
-
-### Community 223 - "AllocatedPerInputByteColumn"
-Cohesion: 0.20
-Nodes (10): ColumnCategory, AllocatedPerInputByteColumn, AlwaysShow, Category, ColumnName, Id, IsNumeric, Legend (+2 more)
-
-### Community 224 - ".Generate"
-Cohesion: 0.13
-Nodes (11): ISheet, DateTime, DirectoryEntry, IDictionary, IEnumerable, NPOIFSFileSystem, LegacyCfbHelper, HSSFWorkbook (+3 more)
-
-### Community 225 - "P95TargetColumn"
-Cohesion: 0.20
-Nodes (10): UnitType, P95TargetColumn, AlwaysShow, Category, ColumnName, Id, IsNumeric, Legend (+2 more)
-
-### Community 226 - "Flavor"
-Cohesion: 0.50
-Nodes (4): Flavor, Excel, PowerPoint, Word
-
-### Community 227 - "MimeDetectionLimits"
-Cohesion: 0.25
-Nodes (6): MimeDetectionLimits, MaxDeclaredEntryBytes, MaxDeclaredNestedContentBytes, MaxFileSizeBytes, Fact, OoxmlMimeDetectorGuardrailTests
-
-### Community 228 - "OpenMcdf"
-Cohesion: 0.40
-Nodes (5): OpenMcdf, contentHash, requested, resolved, type
-
-### Community 229 - "xunit.runner.visualstudio"
-Cohesion: 0.40
-Nodes (5): xunit.runner.visualstudio, contentHash, requested, resolved, type
-
-### Community 230 - "xunit.runner.json"
-Cohesion: 0.40
-Nodes (4): maxParallelThreads, parallelizeAssembly, parallelizeTestCollections, $schema
-
-### Community 231 - "OpenMcdf"
-Cohesion: 0.40
-Nodes (5): OpenMcdf, contentHash, requested, resolved, type
-
-### Community 232 - "BenchmarkDotNet.Annotations"
-Cohesion: 0.50
-Nodes (4): contentHash, resolved, type, BenchmarkDotNet.Annotations
-
-### Community 233 - "BouncyCastle.Cryptography"
-Cohesion: 0.50
-Nodes (4): contentHash, resolved, type, BouncyCastle.Cryptography
-
-### Community 234 - "ExtractorOleException"
-Cohesion: 0.12
-Nodes (13): Exception, ExtractorOleException, Code, Detail, StatusCode, PasswordProtectedException, Code, StatusCode (+5 more)
-
-### Community 235 - "CommandLineParser"
-Cohesion: 0.50
-Nodes (4): contentHash, resolved, type, CommandLineParser
-
-### Community 236 - "Enums.NET"
-Cohesion: 0.50
-Nodes (4): contentHash, resolved, type, Enums.NET
-
-### Community 237 - "ExtendedNumerics.BigDecimal"
-Cohesion: 0.50
-Nodes (4): contentHash, resolved, type, ExtendedNumerics.BigDecimal
-
-### Community 238 - "Gee.External.Capstone"
-Cohesion: 0.50
-Nodes (4): contentHash, resolved, type, Gee.External.Capstone
-
-### Community 239 - "16. Pull request checklist"
-Cohesion: 0.29
-Nodes (7): 16. Pull request checklist, Async and concurrency, Configuration and resources, Contracts and data, Correctness and errors, Logging and diagnostics, Tests and maintainability
-
-### Community 240 - "BenchmarkSampleGenerator"
-Cohesion: 0.11
-Nodes (14): Bytes, DateTimeOffset, Index, Length, Name, ISampleGenerator, Format, Dictionary (+6 more)
-
-### Community 241 - "MathNet.Numerics.Signed"
-Cohesion: 0.50
-Nodes (4): contentHash, resolved, type, MathNet.Numerics.Signed
-
-### Community 242 - "Microsoft.Bcl.AsyncInterfaces"
-Cohesion: 0.50
-Nodes (4): contentHash, resolved, type, Microsoft.Bcl.AsyncInterfaces
-
-### Community 243 - "Microsoft.CodeAnalysis.Analyzers"
-Cohesion: 0.50
-Nodes (4): contentHash, resolved, type, Microsoft.CodeAnalysis.Analyzers
-
-### Community 244 - "Microsoft.DotNet.PlatformAbstractions"
-Cohesion: 0.50
-Nodes (4): contentHash, resolved, type, Microsoft.DotNet.PlatformAbstractions
-
-### Community 245 - "11. Testing"
-Cohesion: 0.33
-Nodes (6): 11.1 Test observable behavior, not implementation details, 11.2 Keep expected values independent, 11.3 One behavior per test; use descriptive names, 11.4 Every bug fix should include a regression test, 11.5 Test the boundaries and failure paths, 11. Testing
-
-### Community 246 - "Microsoft.Extensions.Logging.Abstractions"
-Cohesion: 0.50
-Nodes (4): contentHash, resolved, type, Microsoft.Extensions.Logging.Abstractions
-
-### Community 247 - "Microsoft.IO.RecyclableMemoryStream"
-Cohesion: 0.50
-Nodes (4): contentHash, resolved, type, Microsoft.IO.RecyclableMemoryStream
-
-### Community 248 - "12. Naming, structure, and maintainability"
-Cohesion: 0.33
-Nodes (6): 12.1 Name things for the reader, 12.2 Delete dead code, 12.3 Comments explain why, not what, 12.4 Keep methods focused and at one level of abstraction, 12.5 Keep layers and responsibilities clear, 12. Naming, structure, and maintainability
-
-### Community 249 - "OpenMcdf"
-Cohesion: 0.50
-Nodes (4): OpenMcdf, contentHash, resolved, type
-
-### Community 250 - "Perfolizer"
-Cohesion: 0.50
-Nodes (4): Perfolizer, contentHash, resolved, type
-
-### Community 251 - "SharpZipLib"
-Cohesion: 0.50
-Nodes (4): SharpZipLib, contentHash, resolved, type
-
-### Community 252 - "SkiaSharp.NativeAssets.macOS"
-Cohesion: 0.50
-Nodes (4): SkiaSharp.NativeAssets.macOS, contentHash, resolved, type
-
-### Community 253 - "SkiaSharp.NativeAssets.Win32"
-Cohesion: 0.50
-Nodes (4): SkiaSharp.NativeAssets.Win32, contentHash, resolved, type
-
-### Community 254 - "13. Security baseline"
-Cohesion: 0.33
-Nodes (6): 13.1 Treat all external input as untrusted, 13.2 Check authorization and resource ownership, 13.3 Do not construct executable content from raw input, 13.4 Handle passwords with a purpose-built password hasher, 13.5 Keep dependencies maintained, 13. Security baseline
-
-### Community 255 - "System.IO.Hashing"
-Cohesion: 0.50
-Nodes (4): System.IO.Hashing, contentHash, resolved, type
-
-### Community 256 - "BouncyCastle.Cryptography"
-Cohesion: 0.50
-Nodes (4): contentHash, resolved, type, BouncyCastle.Cryptography
-
-### Community 257 - "Enums.NET"
-Cohesion: 0.50
-Nodes (4): contentHash, resolved, type, Enums.NET
-
-### Community 258 - "ExtendedNumerics.BigDecimal"
-Cohesion: 0.50
-Nodes (4): contentHash, resolved, type, ExtendedNumerics.BigDecimal
-
-### Community 259 - "MathNet.Numerics.Signed"
-Cohesion: 0.50
-Nodes (4): contentHash, resolved, type, MathNet.Numerics.Signed
-
-### Community 260 - "3. Logging and observability"
-Cohesion: 0.33
-Nodes (6): 3.1 Use structured logging, 3.2 Choose log levels deliberately, 3.3 Never log secrets or sensitive data, 3.4 Make requests traceable, 3.5 Avoid logging inside hot loops, 3. Logging and observability
-
-### Community 261 - "Microsoft.IO.RecyclableMemoryStream"
-Cohesion: 0.50
-Nodes (4): contentHash, resolved, type, Microsoft.IO.RecyclableMemoryStream
-
-### Community 262 - "Microsoft.SourceLink.Common"
-Cohesion: 0.50
-Nodes (4): contentHash, resolved, type, Microsoft.SourceLink.Common
-
-### Community 263 - "SharpZipLib"
-Cohesion: 0.50
-Nodes (4): SharpZipLib, contentHash, resolved, type
-
-### Community 264 - "7. Configuration, dependency injection, and secrets"
-Cohesion: 0.33
-Nodes (6): 7.1 Keep environment-specific values out of code, 7.2 Never commit secrets, 7.3 Validate configuration at startup, 7.4 Use dependency injection correctly, 7.5 Reuse HTTP clients safely, 7. Configuration, dependency injection, and secrets
-
-### Community 265 - "System.IO.Hashing"
-Cohesion: 0.50
-Nodes (4): System.IO.Hashing, contentHash, resolved, type
-
-### Community 266 - "mime-detection.md"
-Cohesion: 0.13
-Nodes (14): Content-Only MIME Detection Rule, Extensibility, Guardrails, How Detection Works, Macro-Enabled Variants, MIME Detection, Purpose, Scope (+6 more)
-
-### Community 267 - "5. Nullability, validation, and domain modeling"
-Cohesion: 0.40
-Nodes (5): 5.1 Enable nullable reference types, 5.2 Validate untrusted data at boundaries, 5.3 Make invalid states hard to represent, 5.4 Use framework capabilities before inventing replacements, 5. Nullability, validation, and domain modeling
-
-### Community 268 - "BouncyCastle.Cryptography"
-Cohesion: 0.50
-Nodes (4): contentHash, resolved, type, BouncyCastle.Cryptography
-
-### Community 269 - "Enums.NET"
-Cohesion: 0.50
-Nodes (4): contentHash, resolved, type, Enums.NET
-
-### Community 270 - "MathNet.Numerics.Signed"
-Cohesion: 0.50
-Nodes (4): contentHash, resolved, type, MathNet.Numerics.Signed
-
-### Community 271 - "Microsoft.Extensions.DependencyInjection.Abstractions"
-Cohesion: 0.50
-Nodes (4): contentHash, resolved, type, Microsoft.Extensions.DependencyInjection.Abstractions
-
-### Community 272 - "6. API contracts and data models"
-Cohesion: 0.40
-Nodes (5): 6.1 Never expose persistence entities directly from an API, 6.2 Treat published API contracts as compatibility commitments, 6.3 Use decimal types for money, 6.4 Use consistent error responses and status codes, 6. API contracts and data models
-
-### Community 273 - "Microsoft.SourceLink.Common"
-Cohesion: 0.50
-Nodes (4): contentHash, resolved, type, Microsoft.SourceLink.Common
-
-### Community 274 - "SkiaSharp.NativeAssets.Linux.NoDependencies"
-Cohesion: 0.50
-Nodes (4): SkiaSharp.NativeAssets.Linux.NoDependencies, contentHash, resolved, type
-
-### Community 275 - "8. JSON serialization"
-Cohesion: 0.40
-Nodes (5): 8.1 Configure serialization once and reuse it, 8.2 Be explicit about contract-sensitive behavior, 8.3 Prefer one serialization system per boundary, 8.4 Consider cycles and untrusted polymorphic data, 8. JSON serialization
-
-### Community 276 - "SkiaSharp.NativeAssets.Win32"
-Cohesion: 0.50
-Nodes (4): SkiaSharp.NativeAssets.Win32, contentHash, resolved, type
-
-### Community 277 - "System.IO.Hashing"
-Cohesion: 0.50
-Nodes (4): System.IO.Hashing, contentHash, resolved, type
-
-### Community 278 - "System.IO.Packaging"
-Cohesion: 0.50
-Nodes (4): System.IO.Packaging, contentHash, resolved, type
-
-### Community 279 - "Microsoft.VisualStudio.Threading.Analyzers"
-Cohesion: 0.40
-Nodes (5): contentHash, requested, resolved, type, Microsoft.VisualStudio.Threading.Analyzers
-
-### Community 280 - "BouncyCastle.Cryptography"
-Cohesion: 0.50
-Nodes (4): contentHash, resolved, type, BouncyCastle.Cryptography
-
-### Community 281 - "extractorole.stressharness"
-Cohesion: 0.50
-Nodes (4): ExtractorOLE, dependencies, type, extractorole.stressharness
-
-### Community 282 - "Microsoft.VisualStudio.Threading.Analyzers"
-Cohesion: 0.40
-Nodes (5): contentHash, requested, resolved, type, Microsoft.VisualStudio.Threading.Analyzers
-
-### Community 283 - "Microsoft.VisualStudio.Threading.Analyzers"
-Cohesion: 0.40
-Nodes (5): contentHash, requested, resolved, type, Microsoft.VisualStudio.Threading.Analyzers
-
-### Community 284 - "Microsoft.CodeCoverage"
-Cohesion: 0.50
-Nodes (4): contentHash, resolved, type, Microsoft.CodeCoverage
-
-### Community 285 - "Microsoft.IO.RecyclableMemoryStream"
-Cohesion: 0.50
-Nodes (4): contentHash, resolved, type, Microsoft.IO.RecyclableMemoryStream
-
-### Community 286 - "Microsoft.SourceLink.Common"
-Cohesion: 0.50
-Nodes (4): contentHash, resolved, type, Microsoft.SourceLink.Common
-
-### Community 287 - "Microsoft.TestPlatform.ObjectModel"
-Cohesion: 0.50
-Nodes (4): contentHash, resolved, type, Microsoft.TestPlatform.ObjectModel
-
-### Community 288 - "Microsoft.VisualStudio.Threading.Analyzers"
-Cohesion: 0.40
-Nodes (5): contentHash, requested, resolved, type, Microsoft.VisualStudio.Threading.Analyzers
-
-### Community 289 - "SkiaSharp.NativeAssets.Linux.NoDependencies"
-Cohesion: 0.50
-Nodes (4): SkiaSharp.NativeAssets.Linux.NoDependencies, contentHash, resolved, type
-
-### Community 290 - "SkiaSharp.NativeAssets.macOS"
-Cohesion: 0.50
-Nodes (4): SkiaSharp.NativeAssets.macOS, contentHash, resolved, type
-
-### Community 291 - "SkiaSharp.NativeAssets.Win32"
-Cohesion: 0.50
-Nodes (4): SkiaSharp.NativeAssets.Win32, contentHash, resolved, type
-
-### Community 292 - "Microsoft.VisualStudio.Threading.Analyzers"
-Cohesion: 0.40
-Nodes (5): contentHash, requested, resolved, type, Microsoft.VisualStudio.Threading.Analyzers
-
-### Community 293 - "10. Resource management and time"
-Cohesion: 0.50
-Nodes (4): 10.1 Dispose resources deterministically, 10.2 Store and transmit UTC instants, 10.3 Inject time-dependent behavior, 10. Resource management and time
-
-### Community 294 - "xunit.analyzers"
-Cohesion: 0.50
-Nodes (4): xunit.analyzers, contentHash, resolved, type
-
-### Community 295 - "xunit.assert"
-Cohesion: 0.50
-Nodes (4): xunit.assert, contentHash, resolved, type
-
-### Community 296 - "ZString"
-Cohesion: 0.50
-Nodes (4): ZString, contentHash, resolved, type
-
-### Community 297 - "Enums.NET"
-Cohesion: 0.50
-Nodes (4): contentHash, resolved, type, Enums.NET
-
-### Community 298 - "ExtendedNumerics.BigDecimal"
-Cohesion: 0.50
-Nodes (4): contentHash, resolved, type, ExtendedNumerics.BigDecimal
-
-### Community 299 - "MathNet.Numerics.Signed"
-Cohesion: 0.50
-Nodes (4): contentHash, resolved, type, MathNet.Numerics.Signed
-
-### Community 300 - "Microsoft.Diagnostics.Tracing.TraceEvent"
-Cohesion: 0.50
-Nodes (4): contentHash, resolved, type, Microsoft.Diagnostics.Tracing.TraceEvent
-
-### Community 301 - "SharpZipLib"
-Cohesion: 0.50
-Nodes (4): SharpZipLib, contentHash, resolved, type
-
-### Community 302 - "SkiaSharp.NativeAssets.Linux.NoDependencies"
-Cohesion: 0.50
-Nodes (4): SkiaSharp.NativeAssets.Linux.NoDependencies, contentHash, resolved, type
-
-### Community 303 - "SkiaSharp.NativeAssets.macOS"
-Cohesion: 0.50
-Nodes (4): SkiaSharp.NativeAssets.macOS, contentHash, resolved, type
-
-### Community 304 - "Microsoft.Extensions.Primitives"
-Cohesion: 0.50
-Nodes (4): contentHash, resolved, type, Microsoft.Extensions.Primitives
-
-### Community 305 - "System.IO.Hashing"
-Cohesion: 0.50
-Nodes (4): System.IO.Hashing, contentHash, resolved, type
-
-### Community 306 - "System.IO.Packaging"
-Cohesion: 0.50
-Nodes (4): System.IO.Packaging, contentHash, resolved, type
-
-### Community 307 - "ZString"
-Cohesion: 0.50
-Nodes (4): ZString, contentHash, resolved, type
-
-### Community 308 - ".ConvertToDocx"
-Cohesion: 0.25
-Nodes (4): B2xWordprocessingDocument, Per-parser stream capability, Method, InMemoryWordprocessingDocument
-
-### Community 309 - "Microsoft.SourceLink.Common"
-Cohesion: 0.50
-Nodes (4): contentHash, resolved, type, Microsoft.SourceLink.Common
-
-### Community 310 - "SkiaSharp.NativeAssets.Linux.NoDependencies"
-Cohesion: 0.50
-Nodes (4): SkiaSharp.NativeAssets.Linux.NoDependencies, contentHash, resolved, type
-
-### Community 311 - "System.IO.Packaging"
-Cohesion: 0.50
-Nodes (4): System.IO.Packaging, contentHash, resolved, type
-
-### Community 312 - "ZString"
-Cohesion: 0.50
-Nodes (4): ZString, contentHash, resolved, type
-
-### Community 313 - "SkiaSharp.NativeAssets.macOS"
-Cohesion: 0.50
-Nodes (4): SkiaSharp.NativeAssets.macOS, contentHash, resolved, type
-
-### Community 314 - "SkiaSharp.NativeAssets.Win32"
-Cohesion: 0.50
-Nodes (4): SkiaSharp.NativeAssets.Win32, contentHash, resolved, type
-
-### Community 315 - "ZString"
-Cohesion: 0.50
-Nodes (4): ZString, contentHash, resolved, type
-
-### Community 316 - "ExtendedNumerics.BigDecimal"
-Cohesion: 0.50
-Nodes (4): contentHash, resolved, type, ExtendedNumerics.BigDecimal
-
-### Community 317 - "OpenMcdf"
-Cohesion: 0.50
-Nodes (4): OpenMcdf, contentHash, resolved, type
-
-### Community 318 - "SharpZipLib"
-Cohesion: 0.50
-Nodes (4): SharpZipLib, contentHash, resolved, type
-
-### Community 319 - "Enums.NET"
-Cohesion: 0.50
-Nodes (4): contentHash, resolved, type, Enums.NET
-
-### Community 320 - "Microsoft.Extensions.DependencyInjection.Abstractions"
-Cohesion: 0.50
-Nodes (4): contentHash, resolved, type, Microsoft.Extensions.DependencyInjection.Abstractions
-
-### Community 321 - "SharpZipLib"
-Cohesion: 0.50
-Nodes (4): SharpZipLib, contentHash, resolved, type
-
-### Community 322 - "System.IO.Packaging"
-Cohesion: 0.50
-Nodes (4): System.IO.Packaging, contentHash, resolved, type
-
-### Community 323 - "Microsoft.Extensions.DependencyInjection.Abstractions"
-Cohesion: 0.50
-Nodes (4): contentHash, resolved, type, Microsoft.Extensions.DependencyInjection.Abstractions
-
-### Community 324 - "Microsoft.IO.RecyclableMemoryStream"
-Cohesion: 0.50
-Nodes (4): contentHash, resolved, type, Microsoft.IO.RecyclableMemoryStream
-
-### Community 326 - ".ExtractText"
-Cohesion: 0.17
-Nodes (8): IEnumerable, PresentationDocument, PresentationPart, SlideId, SlidePart, Text, OpenXmlElement, StringBuilder
-
-### Community 327 - ".ExtractText"
-Cohesion: 0.28
-Nodes (6): Cell, List, SpreadsheetDocument, WorkbookPart, Row, SharedStringItem
-
-### Community 328 - ".Open"
-Cohesion: 0.25
-Nodes (6): NPOIFSFileSystem, CfbFileSystems, HSSFWorkbook, Stream, XlsWorkbooks, LoadCount
-
-### Community 329 - ".Generate"
-Cohesion: 0.46
-Nodes (4): InlineData, MainExtractor, Theory, MainExtractorOoxmlSingleOpenTests
-
-### Community 330 - "Spike 237: where the ~3.5GB peak in b2xtranslator .doc conversion comes from"
+### Community 43 - "Docs DOC Conversion Memory Profile"
 Cohesion: 0.29
 Nodes (6): Allocation share by type (whole run, 5,570MB sampled), Phase results (allocated / live heap / working set), Ranked follow-ups (expected savings on the 100MB doc), Re-run on current b2xtranslator (930217bd), Root cause, Spike 237: where the ~3.5GB peak in b2xtranslator .doc conversion comes from
 
-### Community 331 - "ole-extractor"
+### Community 44 - "Benchmarks Lock OpenXml Features"
+Cohesion: 0.29
+Nodes (7): DocumentFormat.OpenXml@3.5.1, contentHash, dependencies, resolved, type, DocumentFormat.OpenXml, DocumentFormat.OpenXml.Features
+
+### Community 45 - "StressHarness Lock OpenXml Features"
+Cohesion: 0.29
+Nodes (7): DocumentFormat.OpenXml@3.5.1, contentHash, dependencies, resolved, type, DocumentFormat.OpenXml, DocumentFormat.OpenXml.Features
+
+### Community 46 - "CFB MIME Detector"
+Cohesion: 0.21
+Nodes (4): CfbMimeDetector, OpenMcdfParseAttemptCount, CfbMimeDetectorGuardrailTests, CfbMimeDetectorTests
+
+### Community 47 - "ADR-001 Library Stack"
+Cohesion: 0.29
+Nodes (7): ADR-001: Extraction library stack (OOXML, legacy OLE, CFB introspection), Alternatives Considered, Consequences, Context, Decision, Note (2026-08-23), Status
+
+### Community 49 - "Embedded Content Spec Builders"
+Cohesion: 0.21
+Nodes (6): NoTempFileIoTests, EmbeddedContentSpec, Content, ContentType, FileName, OpenXmlEmbeddingHelper
+
+### Community 50 - "Pptx Sample Generator And Extractor"
+Cohesion: 0.11
+Nodes (5): IParsedDocumentTextExtractor, PptxTextExtractor, PptxTextExtractorTests, PptxSampleGenerator, Format
+
+### Community 51 - "ADR-006 GitHub Issues Backend"
+Cohesion: 0.29
+Nodes (6): ADR-006: GitHub Issues as the YDK task backend, Alternatives Considered, Consequences, Context, Decision, Status
+
+### Community 52 - "Oversized Nested Content Guardrails"
+Cohesion: 0.17
+Nodes (7): OversizedNestedContentException, Code, DeclaredMetric, StatusCode, MainExtractorGuardrailTests, SpyRegistry, Lookups
+
+### Community 54 - "README And Project Rules"
+Cohesion: 0.17
+Nodes (16): ADR-001 Decision: Extraction Library Stack, ADR-004 Decision: b2xtranslator for Legacy Body Text, DocSharp (manfromarce/DocSharp), IllidanS4/npoi Scratchpad Retarget Fork, LibreOffice Headless Subprocess Conversion, modeverv/dotnet-poi, OSS-Only Library Constraint, Unicode/i18n Fidelity Requirement (+8 more)
+
+### Community 55 - "Excel Open Strategy Tests"
+Cohesion: 0.18
+Nodes (8): ExcelFormatMetadata, ActiveSheetIndex, HasMacros, SheetCount, SheetNames, FormatMetadata, ExcelOpenStrategy, ExcelOpenStrategyTests
+
+### Community 56 - "Benchmarks Lock DI Entry"
+Cohesion: 0.50
+Nodes (4): contentHash, resolved, type, Microsoft.Extensions.DependencyInjection.Abstractions
+
+### Community 57 - "Office MIME Type Detector"
+Cohesion: 0.15
+Nodes (7): MimeDetectionInput, Length, Stream, IOfficeMimeTypeDetector, OfficeMimeTypeDetector, IMimeDetectionRegistry, Detectors
+
+### Community 58 - "Benchmarks Lock NETCore Platforms"
+Cohesion: 0.50
+Nodes (4): contentHash, resolved, type, Microsoft.NETCore.Platforms
+
+### Community 59 - "Benchmarks Lock CodeDom"
+Cohesion: 0.50
+Nodes (4): System.CodeDom, contentHash, resolved, type
+
+### Community 60 - "Legacy Doc Ppt Candidates"
+Cohesion: 0.20
+Nodes (10): 1. Port NPOI's own scratchpad HWPF/HSLF to SDK-style/net8.0 ourselves, 2. b2xtranslator -- binary-to-OOXML converter, 3. modeverv/dotnet-poi -- from-scratch Apache POI-equivalent port, 4. LibreOffice headless subprocess conversion, 5. Rejected without deep evaluation, Candidates evaluated, Confirmed starting facts (from T-d6de875f's submodule work), Important decoupling this spike surfaces (+2 more)
+
+### Community 61 - "Attempt Counter"
+Cohesion: 0.33
+Nodes (3): AttemptCounter, Value, Box
+
+### Community 62 - "Extraction Helper Fakes"
+Cohesion: 0.14
+Nodes (3): IExtractionHelper, BatchMode, FakeExtractionHelper
+
+### Community 63 - "Core Lock Skia Linux NoDeps"
+Cohesion: 0.50
+Nodes (4): SkiaSharp.NativeAssets.Linux.NoDependencies, contentHash, resolved, type
+
+### Community 64 - "Core Lock Skia macOS"
+Cohesion: 0.50
+Nodes (4): SkiaSharp.NativeAssets.macOS, contentHash, resolved, type
+
+### Community 65 - "StressHarness Lock SharpZipLib"
+Cohesion: 0.50
+Nodes (4): SharpZipLib, contentHash, resolved, type
+
+### Community 66 - "OpenXml Research Spike"
+Cohesion: 0.22
+Nodes (9): API surface relevant to our use case, Citations/links, DocumentFormat.OpenXml — Research Spike, Library name, License, Maintenance signal (stars/last release/last commit), Strengths, Unicode/RTL/emoji findings (+1 more)
+
+### Community 67 - "OpenMcdf Research Spike"
+Cohesion: 0.22
+Nodes (9): API surface relevant to our use case, Citations / links, Library name, License, Maintenance signal, OpenMcdf — Research Spike Notes, Strengths, Unicode / RTL / emoji findings (entry names) (+1 more)
+
+### Community 68 - "Word Metadata And Open Strategy"
+Cohesion: 0.12
+Nodes (14): WordFormatMetadata, CharacterCount, Company, HasMacros, LineCount, Manager, PageCount, ParagraphCount (+6 more)
+
+### Community 69 - "Benchmark Baseline Policy"
+Cohesion: 0.40
+Nodes (4): Benchmark baseline and regression policy, Committed baseline, Regression rule, Separate from the test gate
+
+### Community 70 - "StressHarness Lock ZString"
+Cohesion: 0.50
+Nodes (4): ZString, contentHash, resolved, type
+
+### Community 71 - "Tests Lock BigDecimal"
+Cohesion: 0.50
+Nodes (4): contentHash, resolved, type, ExtendedNumerics.BigDecimal
+
+### Community 72 - "Tests Lock Newtonsoft.Json"
+Cohesion: 0.50
+Nodes (4): Newtonsoft.Json, contentHash, resolved, type
+
+### Community 73 - "ADR-003 Manual Spec Review"
+Cohesion: 0.25
+Nodes (7): ADR-003 Decision: Manual Spec Review Substitution, ADR-003: Manual LLM spec review in place of `ydk spec verify`, Alternatives Considered, Consequences, Context, Decision, Status
+
+### Community 74 - "C# Best Practices Skill"
+Cohesion: 0.18
+Nodes (10): Authorship and license, C# Development Best Practices, C#/.NET guardrails, Definition of done, Required operating procedure, Source of truth, Workflow: fix a bug, Workflow: implement a feature (+2 more)
+
+### Community 76 - "Tests Lock IO Hashing"
+Cohesion: 0.50
+Nodes (4): System.IO.Hashing, contentHash, resolved, type
+
+### Community 77 - "Extraction Input Wrapper"
+Cohesion: 0.22
+Nodes (5): ExtractionInput, Bytes, Length, OriginalBytes, Stream
+
+### Community 78 - "SampleGen Lock BigDecimal"
+Cohesion: 0.50
+Nodes (4): contentHash, resolved, type, ExtendedNumerics.BigDecimal
+
+### Community 79 - "SampleGen Lock IO Hashing"
+Cohesion: 0.50
+Nodes (4): System.IO.Hashing, contentHash, resolved, type
+
+### Community 81 - "File Metadata DTO"
+Cohesion: 0.15
+Nodes (13): FileMetadata, ApplicationName, Comments, Created, Creator, EditingDurationMinutes, Keywords, LastModifiedBy (+5 more)
+
+### Community 82 - "Project CLAUDE.md Conventions"
+Cohesion: 0.29
+Nodes (5): graphify, Code exploration: use graphify, not raw file reads, graphify, Project Conventions — ole-extractor, YDK workflow
+
+### Community 83 - "C# Engineering Playbook"
+Cohesion: 0.20
+Nodes (9): 14. Performance principles, 15. Tooling and automated enforcement, 17. Definition of done, 18. Keeping the playbook useful, 19. Relationship to the agent skill, 1.1 Defaults for repositories generated by `dotnet-webapi-clean`, 1. How to apply this playbook, C# / .NET Engineering Best Practices (+1 more)
+
+### Community 84 - "Benchmarks Config Extensions Lock"
+Cohesion: 0.11
+Nodes (19): Microsoft.Extensions.DependencyInjection.Abstractions@10.0.0, Microsoft.Extensions.Primitives@2.1.1, Microsoft.Extensions.DependencyInjection.Abstractions, contentHash, dependencies, resolved, type, contentHash (+11 more)
+
+### Community 85 - "Tests Lock Project Dependencies"
+Cohesion: 0.07
+Nodes (32): b2xtranslator.doc@[1.0.0, ), b2xtranslator.ppt@[1.0.0, ), DocumentFormat.OpenXml@3.5.1, DocumentFormat.OpenXml.Features@[3.5.1, ), DocumentFormat.OpenXml.Framework@3.5.1, Microsoft.Extensions.DependencyInjection@[10.0.0, ), NPOI.Core@[2.8.0, ), OpenMcdf@[3.2.0, ) (+24 more)
+
+### Community 87 - "Max File Size Guard Tests"
+Cohesion: 0.25
+Nodes (6): FileTooLargeException, ActualBytes, Code, LimitBytes, StatusCode, ExtractionHelperFileTooLargeTests
+
+### Community 89 - "Tests Extract Validation Exceptions"
+Cohesion: 0.15
+Nodes (10): UnsupportedFormatException, Code, DetectedMimeType, StatusCode, MainExtractorExtractValidationTests, Spied, Extractor, Helper (+2 more)
+
+### Community 90 - "Strategy Test System Imports"
+Cohesion: 0.11
+Nodes (6): ExtractorOLE.Tests.PowerPoint, ExtractorOLE.Handlers, ExtractorOLE.Tests.Architecture, ExtractorOLE.Helpers.FileTypeStrategy, ExtractorOLE.Tests.Doc, ExtractorOLE.Tests.MultiEmbedding
+
+### Community 93 - "Specs Overview And Testing Strategy"
+Cohesion: 0.11
+Nodes (21): ADR-002, Adversarial Review, Auth & Security, Component Architecture, Detection Component, Open Component, Overview, Problem Statement (+13 more)
+
+### Community 95 - "Extraction And Dataset Specs"
+Cohesion: 0.10
+Nodes (19): Content-Only MIME Detection Rule, Format Family (LegacyOle vs Ooxml), Format Kind (Word/Excel/PowerPoint), Subfile Scope (First-Layer Extraction), Corpus Composition, Corpus Manifest, Dataset Curation, Provenance & Licensing (+11 more)
+
+### Community 98 - "Project Rules Doc"
+Cohesion: 0.33
+Nodes (6): Brownfield Constraints, Conventions, Known Gotchas, Library Stack (locked), Product Context, Project Rules
+
+### Community 100 - "Core Lock Dependency Listing"
+Cohesion: 0.12
+Nodes (23): dependencies, BouncyCastle.Cryptography@[2.6.2, ), Enums.NET@[5.0.0, ), ExtendedNumerics.BigDecimal@[2025.1001.2.129, ), MathNet.Numerics.Signed@[5.0.0, ), Microsoft.IO.RecyclableMemoryStream@[3.0.1, ), Microsoft.SourceLink.GitHub@[10.0.401, ), SharpZipLib@[1.4.2, ) (+15 more)
+
+### Community 102 - "Benchmarks Lock Project Dependencies"
+Cohesion: 0.09
+Nodes (22): b2xtranslator.doc@[1.0.0, ), b2xtranslator.ppt@[1.0.0, ), DocumentFormat.OpenXml.Features@[3.5.1, ), DocumentFormat.OpenXml.Framework@3.5.1, Microsoft.Extensions.DependencyInjection@[10.0.0, ), NPOI.Core@[2.8.0, ), OpenMcdf@[3.2.0, ), contentHash (+14 more)
+
+### Community 103 - "Tests Extract Request Dispatch"
+Cohesion: 0.19
+Nodes (3): MainExtractorDispatchIntegrationTests, MainExtractorExtractRequestTests, ZipFallbackOpenStrategyTests
+
+### Community 106 - "Tests Detect MIME Corpus Manifest"
+Cohesion: 0.14
+Nodes (9): DetectMimeTypeCorpusManifestTests, ExpectedDetectedFormat, Enum, MimeType, ManifestRoot, Samples, ManifestSample, ExpectedDetectedFormat (+1 more)
+
+### Community 108 - "MIME Type Mapper Tests"
+Cohesion: 0.19
+Nodes (3): IMimeTypeMapper, MimeTypeMapper, ExtractionHelperSplitTests
+
+### Community 111 - "SampleGen Lock Dependency Listing"
+Cohesion: 0.12
+Nodes (23): dependencies, BouncyCastle.Cryptography@[2.6.2, ), Enums.NET@[5.0.0, ), ExtendedNumerics.BigDecimal@[2025.1001.2.129, ), MathNet.Numerics.Signed@[5.0.0, ), Microsoft.IO.RecyclableMemoryStream@[3.0.1, ), Microsoft.SourceLink.GitHub@[10.0.401, ), SharpZipLib@[1.4.2, ) (+15 more)
+
+### Community 113 - "C# Async And Concurrency"
+Cohesion: 0.20
+Nodes (10): 4.1 Keep asynchronous code asynchronous, 4.2 Pass cancellation tokens end to end, 4.3 Set explicit timeouts for outbound calls, 4.4 Do not use `async void` except for event handlers, 4.5 Do not fire-and-forget background work, 4.6 Bound parallel work, 4.7 Protect shared mutable state, 4.8 Use `IAsyncEnumerable<T>` for genuine streams (+2 more)
+
+### Community 114 - "Tests Lock Net10 Package Graph"
+Cohesion: 0.07
+Nodes (29): type, contentHash, resolved, type, net10.0, contentHash, resolved, type (+21 more)
+
+### Community 115 - "XLS Text Extractor"
+Cohesion: 0.24
+Nodes (5): XlsTextExtractor, CfbFileSystems, XlsWorkbooks, LoadCount, XlsTextExtractorTests
+
+### Community 117 - "C# Data Access EF Core"
+Cohesion: 0.20
+Nodes (10): 9.1 Prevent N+1 queries, 9.2 Paginate collection endpoints and queries, 9.3 Parameterize SQL, 9.4 Keep transactions short and database-focused, 9.5 Use `AsNoTracking()` for read-only EF Core queries, 9.6 Save once per unit of work, not once per row, 9.7 Understand deferred execution and enumeration, 9.8 Keep `IQueryable` inside the data-access boundary (+2 more)
+
+### Community 123 - "PPT Open Strategy"
+Cohesion: 0.18
+Nodes (7): PowerPointFormatMetadata, HasMacros, NotesSlideCount, SlideCount, PptOpenStrategy, PptFirstLayerEmbeddedWalkTests, PptOpenStrategyTests
+
+### Community 124 - "Core Lock Net10 Package Graph"
+Cohesion: 0.12
+Nodes (17): type, net10.0, contentHash, resolved, type, contentHash, resolved, type (+9 more)
+
+### Community 125 - "StressHarness Lock Net10 Package Graph"
+Cohesion: 0.10
+Nodes (21): type, net10.0, contentHash, resolved, type, b2xtranslator, Microsoft.SourceLink.Common, npoi.core (+13 more)
+
+### Community 126 - "StressHarness Lock Project Dependencies"
+Cohesion: 0.13
+Nodes (15): b2xtranslator.doc@[1.0.0, ), b2xtranslator.ppt@[1.0.0, ), DocumentFormat.OpenXml.Features@[3.5.1, ), Microsoft.Extensions.DependencyInjection@[10.0.0, ), NPOI.Core@[2.8.0, ), OpenMcdf@[3.2.0, ), dependencies, type (+7 more)
+
+### Community 127 - "Read Counting Stream"
+Cohesion: 0.17
+Nodes (7): ReadCountingStream, BytesRead, CanRead, CanSeek, CanWrite, Length, Position
+
+### Community 128 - "Doc Memory Profile Harness"
+Cohesion: 0.21
+Nodes (3): AllocListener, InMem, P
+
+### Community 130 - "SampleGen Lock BouncyCastle"
+Cohesion: 0.50
+Nodes (4): contentHash, resolved, type, BouncyCastle.Cryptography
+
+### Community 132 - "Benchmarks Lock SourceLink"
+Cohesion: 0.12
+Nodes (16): Microsoft.Build.Tasks.Git@10.0.401, Microsoft.SourceLink.Common@10.0.401, System.IO.Hashing@10.0.12, Microsoft.Build.Tasks.Git, Microsoft.SourceLink.Common, System.IO.Hashing, contentHash, dependencies (+8 more)
+
+### Community 136 - "Extraction Telemetry And Profiling"
+Cohesion: 0.07
+Nodes (17): 2026-08-22 — T-eeb6684b: Downgrade ExtractorOLE.csproj to net8.0, Activity Log, PR #4, Task T-eeb6684b: downgrade to net8.0, 1. Capture a trace for one sample, 2. Open the trace, 3. Live counters against the StressHarness, 4. Findings (+9 more)
+
+### Community 141 - "Core Lock SourceLink"
+Cohesion: 0.12
+Nodes (16): Microsoft.Build.Tasks.Git@10.0.401, Microsoft.SourceLink.Common@10.0.401, System.IO.Hashing@10.0.12, Microsoft.Build.Tasks.Git, Microsoft.SourceLink.Common, System.IO.Hashing, contentHash, dependencies (+8 more)
+
+### Community 143 - "StressHarness Lock SourceLink"
+Cohesion: 0.12
+Nodes (16): Microsoft.Build.Tasks.Git@10.0.401, Microsoft.SourceLink.Common@10.0.401, System.IO.Hashing@10.0.12, Microsoft.Build.Tasks.Git, Microsoft.SourceLink.Common, System.IO.Hashing, contentHash, dependencies (+8 more)
+
+### Community 147 - "Tests Lock SourceLink"
+Cohesion: 0.12
+Nodes (16): Microsoft.Build.Tasks.Git@10.0.401, Microsoft.SourceLink.Common@10.0.401, System.IO.Hashing@10.0.12, Microsoft.Build.Tasks.Git, Microsoft.SourceLink.Common, System.IO.Hashing, contentHash, dependencies (+8 more)
+
+### Community 148 - "ADR-004 Legacy Doc Ppt Parsing"
+Cohesion: 0.33
+Nodes (6): ADR-004: Legacy .doc/.ppt body-text parsing (b2xtranslator, not NPOI), Alternatives Considered, Consequences, Context, Decision, Status
+
+### Community 149 - "Benchmark Columns And Program"
+Cohesion: 0.16
+Nodes (4): ExtractorOLE.Benchmarks, Tier100MbConfig, Tier10MbConfig, TierConfig
+
+### Community 150 - "C# Error Handling Guidelines"
+Cohesion: 0.25
+Nodes (8): 2.1 Never swallow an exception, 2.2 Catch only exceptions you can handle, 2.3 Preserve stack traces and causes, 2.4 Log an unhandled failure once, at the boundary, 2.5 Do not use exceptions as normal control flow, 2.6 Fail fast with guard clauses, 2.7 Use one consistent global error response, 2. Error handling and exceptions
+
+### Community 151 - "Doc Sample Generator"
+Cohesion: 0.25
+Nodes (3): DocSampleGeneratorTests, DocSampleGenerator, Format
+
+### Community 152 - "Library Tradeoffs Tables"
+Cohesion: 0.40
+Nodes (5): Cross-cutting note, Library Tradeoffs — Office File MIME Detection & Extraction, Table 1: OOXML parsing/metadata/text/embeddings (docx/xlsx/pptx), Table 2: Legacy OLE (doc/xls/ppt) parsing/metadata/text, Table 3: Raw CFB introspection for mime-sniffing and generic subfile walking
+
+### Community 153 - "MainExtractor Options And Size Limits"
+Cohesion: 0.20
+Nodes (5): MainExtractor, MainExtractorOoxmlSingleOpenTests, MainExtractorOptionsCtorTests, NullRegistry, MainExtractorXlsSingleLoadTests
+
+### Community 155 - "SampleGenerator Lock SourceLink"
+Cohesion: 0.12
+Nodes (16): Microsoft.Build.Tasks.Git@10.0.401, Microsoft.SourceLink.Common@10.0.401, System.IO.Hashing@10.0.12, Microsoft.Build.Tasks.Git, Microsoft.SourceLink.Common, System.IO.Hashing, contentHash, dependencies (+8 more)
+
+### Community 156 - "Tests Lock xunit Core"
+Cohesion: 0.14
+Nodes (14): xunit.extensibility.core@[2.9.2], xunit.extensibility.execution@[2.9.2], xunit.core, xunit.extensibility.execution, contentHash, dependencies, resolved, type (+6 more)
+
+### Community 158 - "NPOI Research Spike"
+Cohesion: 0.20
+Nodes (10): API surface relevant to our use case, Citations / links, Library name, License — IMPORTANT FINDING, Maintenance signal, NPOI — Research Spike, Performance signal, Strengths (+2 more)
+
+### Community 172 - "DOCX Samples And Text Extractor"
+Cohesion: 0.18
+Nodes (5): DocxTextExtractor, DocxTextExtractorTests, MacroEmbedSampleGeneratorTests, DocxSampleGenerator, Format
+
+### Community 173 - "Read-Only View Guard Streams"
+Cohesion: 0.15
+Nodes (6): ReadOnlyView, CanRead, CanSeek, CanWrite, Length, Position
+
+### Community 174 - "Tests Lock xunit Packages"
+Cohesion: 0.17
+Nodes (12): xunit.analyzers@1.16.0, xunit.assert@2.9.2, xunit.core@[2.9.2], xunit, contentHash, dependencies, requested, resolved (+4 more)
+
+### Community 175 - "Tests Lock Test SDK"
+Cohesion: 0.20
+Nodes (10): Microsoft.CodeCoverage@17.11.1, Microsoft.TestPlatform.TestHost@17.11.1, contentHash, dependencies, requested, resolved, type, Microsoft.NET.Test.Sdk (+2 more)
+
+### Community 176 - "Benchmarks Lock Logging And DI"
+Cohesion: 0.18
+Nodes (11): Microsoft.Extensions.Configuration.Binder@2.1.1, Microsoft.Extensions.Logging.Abstractions@2.1.1, Microsoft.Extensions.Options@2.1.1, contentHash, dependencies, resolved, type, Microsoft.Extensions.Logging (+3 more)
+
+### Community 178 - "Benchmarks Lock b2x Doc Ppt"
+Cohesion: 0.25
+Nodes (8): dependencies, type, dependencies, type, b2xtranslator@[2.0.0, ), b2xtranslator, b2xtranslator.doc, b2xtranslator.ppt
+
+### Community 179 - "Benchmarks Lock Diagnostics Client"
+Cohesion: 0.22
+Nodes (9): Microsoft.Bcl.AsyncInterfaces@1.1.0, Microsoft.Extensions.Logging@2.1.1, contentHash, dependencies, resolved, type, Microsoft.Diagnostics.NETCore.Client, Microsoft.Bcl.AsyncInterfaces (+1 more)
+
+### Community 180 - "Benchmarks Lock System.Management"
+Cohesion: 0.22
+Nodes (9): Microsoft.NETCore.Platforms@5.0.0, System.CodeDom@5.0.0, System.Management, contentHash, dependencies, resolved, type, Microsoft.NETCore.Platforms (+1 more)
+
+### Community 182 - "Benchmarks Lock SkiaSharp"
+Cohesion: 0.22
+Nodes (9): SkiaSharp.NativeAssets.macOS@3.119.4, SkiaSharp.NativeAssets.Win32@3.119.4, SkiaSharp.NativeAssets.macOS, SkiaSharp.NativeAssets.Win32, SkiaSharp, contentHash, dependencies, resolved (+1 more)
+
+### Community 184 - "Core Lock b2x Doc Ppt"
+Cohesion: 0.25
+Nodes (8): dependencies, type, dependencies, type, b2xtranslator@[2.0.0, ), b2xtranslator, b2xtranslator.doc, b2xtranslator.ppt
+
+### Community 185 - "Core Lock OpenXml Features"
+Cohesion: 0.25
+Nodes (8): DocumentFormat.OpenXml@3.5.1, contentHash, dependencies, requested, resolved, type, DocumentFormat.OpenXml, DocumentFormat.OpenXml.Features
+
+### Community 186 - "Core Lock OpenXml"
+Cohesion: 0.25
+Nodes (8): DocumentFormat.OpenXml.Framework@3.5.1, contentHash, dependencies, requested, resolved, type, DocumentFormat.OpenXml.Framework, DocumentFormat.OpenXml
+
+### Community 187 - "Core Lock DependencyInjection"
+Cohesion: 0.25
+Nodes (8): Microsoft.Extensions.DependencyInjection.Abstractions@10.0.0, Microsoft.Extensions.DependencyInjection.Abstractions, contentHash, dependencies, requested, resolved, type, Microsoft.Extensions.DependencyInjection
+
+### Community 188 - "Core Lock SkiaSharp"
+Cohesion: 0.22
+Nodes (9): SkiaSharp.NativeAssets.macOS@3.119.4, SkiaSharp.NativeAssets.Win32@3.119.4, SkiaSharp.NativeAssets.macOS, SkiaSharp.NativeAssets.Win32, SkiaSharp, contentHash, dependencies, resolved (+1 more)
+
+### Community 189 - "Core Lock OpenXml Framework"
+Cohesion: 0.25
+Nodes (8): System.IO.Packaging@10.0.2, contentHash, dependencies, requested, resolved, type, System.IO.Packaging, DocumentFormat.OpenXml.Framework
+
+### Community 190 - "StressHarness Lock b2x Doc Ppt"
+Cohesion: 0.25
+Nodes (8): dependencies, type, dependencies, type, b2xtranslator@[2.0.0, ), b2xtranslator, b2xtranslator.doc, b2xtranslator.ppt
+
+### Community 191 - "StressHarness Lock SkiaSharp"
+Cohesion: 0.22
+Nodes (9): SkiaSharp.NativeAssets.macOS@3.119.4, SkiaSharp.NativeAssets.Win32@3.119.4, SkiaSharp.NativeAssets.macOS, SkiaSharp.NativeAssets.Win32, SkiaSharp, contentHash, dependencies, resolved (+1 more)
+
+### Community 192 - "Tests Lock b2x Doc Ppt"
+Cohesion: 0.25
+Nodes (8): dependencies, type, dependencies, type, b2xtranslator@[2.0.0, ), b2xtranslator, b2xtranslator.doc, b2xtranslator.ppt
+
+### Community 193 - "Tests Lock TestPlatform Host"
+Cohesion: 0.22
+Nodes (9): Microsoft.TestPlatform.ObjectModel@17.11.1, Newtonsoft.Json@13.0.1, contentHash, dependencies, resolved, type, Microsoft.TestPlatform.TestHost, Microsoft.TestPlatform.ObjectModel (+1 more)
+
+### Community 194 - "Tests Lock SkiaSharp"
+Cohesion: 0.22
+Nodes (9): SkiaSharp.NativeAssets.macOS@3.119.4, SkiaSharp.NativeAssets.Win32@3.119.4, SkiaSharp.NativeAssets.macOS, SkiaSharp.NativeAssets.Win32, SkiaSharp, contentHash, dependencies, resolved (+1 more)
+
+### Community 196 - "SampleGenerator Lock OpenXml Features"
+Cohesion: 0.25
+Nodes (8): DocumentFormat.OpenXml@3.5.1, contentHash, dependencies, requested, resolved, type, DocumentFormat.OpenXml, DocumentFormat.OpenXml.Features
+
+### Community 197 - "SampleGenerator Lock OpenXml"
+Cohesion: 0.25
+Nodes (8): DocumentFormat.OpenXml.Framework@3.5.1, contentHash, dependencies, requested, resolved, type, DocumentFormat.OpenXml.Framework, DocumentFormat.OpenXml
+
+### Community 198 - "SampleGenerator Lock DependencyInjection"
+Cohesion: 0.25
+Nodes (8): Microsoft.Extensions.DependencyInjection.Abstractions@10.0.0, Microsoft.Extensions.DependencyInjection.Abstractions, contentHash, dependencies, requested, resolved, type, Microsoft.Extensions.DependencyInjection
+
+### Community 199 - "SampleGenerator Lock SkiaSharp"
+Cohesion: 0.22
+Nodes (9): SkiaSharp.NativeAssets.macOS@3.119.4, SkiaSharp.NativeAssets.Win32@3.119.4, SkiaSharp.NativeAssets.macOS, SkiaSharp.NativeAssets.Win32, SkiaSharp, contentHash, dependencies, resolved (+1 more)
+
+### Community 200 - "SampleGenerator Lock OpenXml Framework"
+Cohesion: 0.25
+Nodes (8): System.IO.Packaging@10.0.2, contentHash, dependencies, requested, resolved, type, System.IO.Packaging, DocumentFormat.OpenXml.Framework
+
+### Community 202 - "Benchmarks Lock CodeAnalysis Common"
+Cohesion: 0.29
+Nodes (7): Microsoft.CodeAnalysis.Analyzers@3.3.3, contentHash, dependencies, resolved, type, Microsoft.CodeAnalysis.Common, Microsoft.CodeAnalysis.Analyzers
+
+### Community 203 - "Benchmarks Lock CodeAnalysis CSharp"
+Cohesion: 0.29
+Nodes (7): Microsoft.CodeAnalysis.Common@[4.1.0], contentHash, dependencies, resolved, type, Microsoft.CodeAnalysis.CSharp, Microsoft.CodeAnalysis.Common
+
+### Community 204 - "Benchmarks Lock Diagnostics Runtime"
+Cohesion: 0.29
+Nodes (7): Microsoft.Diagnostics.NETCore.Client@0.2.251802, contentHash, dependencies, resolved, type, Microsoft.Diagnostics.Runtime, Microsoft.Diagnostics.NETCore.Client
+
+### Community 205 - "Tests PPT Text Extractor"
+Cohesion: 0.16
+Nodes (7): ADR-005: Authoring legacy .doc/.ppt (and .xls) test samples in SampleGenerator, Alternatives Considered, Decision, Status, PptTextExtractor, PptTextExtractorTests, PptTextFixtureBuilder
+
+### Community 206 - "Benchmarks Lock Config Binder"
+Cohesion: 0.29
+Nodes (7): Microsoft.Extensions.Configuration@2.1.1, contentHash, dependencies, resolved, type, Microsoft.Extensions.Configuration.Binder, Microsoft.Extensions.Configuration
+
+### Community 208 - "Benchmarks Lock Configuration"
+Cohesion: 0.29
+Nodes (7): Microsoft.Extensions.Configuration.Abstractions@2.1.1, contentHash, dependencies, resolved, type, Microsoft.Extensions.Configuration, Microsoft.Extensions.Configuration.Abstractions
+
+### Community 209 - "Benchmarks Lock OpenXml Framework"
+Cohesion: 0.29
+Nodes (7): System.IO.Packaging@10.0.2, contentHash, dependencies, resolved, type, System.IO.Packaging, DocumentFormat.OpenXml.Framework
+
+### Community 210 - "StressHarness Lock OpenXml"
+Cohesion: 0.29
+Nodes (7): DocumentFormat.OpenXml.Framework@3.5.1, contentHash, dependencies, resolved, type, DocumentFormat.OpenXml.Framework, DocumentFormat.OpenXml
+
+### Community 211 - "StressHarness Lock DependencyInjection"
+Cohesion: 0.29
+Nodes (7): Microsoft.Extensions.DependencyInjection.Abstractions@10.0.0, Microsoft.Extensions.DependencyInjection.Abstractions, contentHash, dependencies, resolved, type, Microsoft.Extensions.DependencyInjection
+
+### Community 212 - "StressHarness Lock OpenXml Framework"
+Cohesion: 0.29
+Nodes (7): System.IO.Packaging@10.0.2, contentHash, dependencies, resolved, type, System.IO.Packaging, DocumentFormat.OpenXml.Framework
+
+### Community 214 - "Tests Lock DependencyInjection"
+Cohesion: 0.29
+Nodes (7): Microsoft.Extensions.DependencyInjection.Abstractions@10.0.0, Microsoft.Extensions.DependencyInjection.Abstractions, contentHash, dependencies, resolved, type, Microsoft.Extensions.DependencyInjection
+
+### Community 215 - "Tests Lock OpenXml Framework"
+Cohesion: 0.29
+Nodes (7): System.IO.Packaging@10.0.2, contentHash, dependencies, resolved, type, System.IO.Packaging, DocumentFormat.OpenXml.Framework
+
+### Community 216 - "Tests Lock xunit Extensibility Core"
+Cohesion: 0.29
+Nodes (7): xunit.abstractions@2.0.3, xunit.extensibility.core, contentHash, dependencies, resolved, type, xunit.abstractions
+
+### Community 218 - "Benchmarks Lock Package Graph"
+Cohesion: 0.06
+Nodes (35): type, contentHash, resolved, type, net10.0, contentHash, resolved, type (+27 more)
+
+### Community 219 - "Extraction Benchmarks Tiers"
+Cohesion: 0.20
+Nodes (8): Extract100MbBenchmarks, Tier, Extract10MbBenchmarks, Tier, ExtractionBenchmarks, Sample, SampleIds, Tier
+
+### Community 222 - "Core Lock OpenMcdf"
+Cohesion: 0.40
+Nodes (5): OpenMcdf, contentHash, requested, resolved, type
+
+### Community 223 - "Allocated Per Input Byte Column"
+Cohesion: 0.20
+Nodes (9): AllocatedPerInputByteColumn, AlwaysShow, Category, ColumnName, Id, IsNumeric, Legend, PriorityInCategory (+1 more)
+
+### Community 225 - "P95 Target Column"
+Cohesion: 0.18
+Nodes (9): P95TargetColumn, AlwaysShow, Category, ColumnName, Id, IsNumeric, Legend, PriorityInCategory (+1 more)
+
+### Community 226 - "Zip Fallback Open Strategy"
+Cohesion: 0.22
+Nodes (6): Flavor, Excel, PowerPoint, Word, ZipFallbackOpenStrategy, FakeOpenStrategy
+
+### Community 228 - "Tests Lock OpenMcdf"
+Cohesion: 0.40
+Nodes (5): OpenMcdf, contentHash, requested, resolved, type
+
+### Community 229 - "Tests Lock xunit Runner"
+Cohesion: 0.40
+Nodes (5): xunit.runner.visualstudio, contentHash, requested, resolved, type
+
+### Community 230 - "xunit Runner JSON Config"
+Cohesion: 0.40
+Nodes (4): maxParallelThreads, parallelizeAssembly, parallelizeTestCollections, $schema
+
+### Community 231 - "SampleGenerator Lock OpenMcdf"
+Cohesion: 0.40
+Nodes (5): OpenMcdf, contentHash, requested, resolved, type
+
+### Community 232 - "Benchmarks Lock BDN Annotations"
+Cohesion: 0.50
+Nodes (4): contentHash, resolved, type, BenchmarkDotNet.Annotations
+
+### Community 233 - "Bench Lock Extensions Primitives"
+Cohesion: 0.50
+Nodes (4): contentHash, resolved, type, Microsoft.Extensions.Primitives
+
+### Community 235 - "Benchmarks Lock CommandLineParser"
+Cohesion: 0.50
+Nodes (4): contentHash, resolved, type, CommandLineParser
+
+### Community 237 - "Benchmarks Lock BigDecimal"
+Cohesion: 0.50
+Nodes (4): contentHash, resolved, type, ExtendedNumerics.BigDecimal
+
+### Community 238 - "Benchmarks Lock Capstone"
+Cohesion: 0.50
+Nodes (4): contentHash, resolved, type, Gee.External.Capstone
+
+### Community 239 - "C# Pull Request Checklist"
+Cohesion: 0.29
+Nodes (7): 16. Pull request checklist, Async and concurrency, Configuration and resources, Contracts and data, Correctness and errors, Logging and diagnostics, Tests and maintainability
+
+### Community 240 - "Benchmarks Sample Generator Registry"
+Cohesion: 0.09
+Nodes (14): GeneratedSample, Content, FileName, ISampleGenerator, Format, SampleFormat, Doc, Docx (+6 more)
+
+### Community 242 - "Benchmarks Lock Async Interfaces"
+Cohesion: 0.50
+Nodes (4): contentHash, resolved, type, Microsoft.Bcl.AsyncInterfaces
+
+### Community 244 - "Benchmarks Lock Platform Abstractions"
+Cohesion: 0.50
+Nodes (4): contentHash, resolved, type, Microsoft.DotNet.PlatformAbstractions
+
+### Community 245 - "C# Testing Guidelines"
+Cohesion: 0.33
+Nodes (6): 11.1 Test observable behavior, not implementation details, 11.2 Keep expected values independent, 11.3 One behavior per test; use descriptive names, 11.4 Every bug fix should include a regression test, 11.5 Test the boundaries and failure paths, 11. Testing
+
+### Community 246 - "Benchmarks Lock Logging Abstractions"
+Cohesion: 0.50
+Nodes (4): contentHash, resolved, type, Microsoft.Extensions.Logging.Abstractions
+
+### Community 247 - "Benchmarks Lock RecyclableMemoryStream"
+Cohesion: 0.50
+Nodes (4): contentHash, resolved, type, Microsoft.IO.RecyclableMemoryStream
+
+### Community 248 - "C# Naming And Maintainability"
+Cohesion: 0.33
+Nodes (6): 12.1 Name things for the reader, 12.2 Delete dead code, 12.3 Comments explain why, not what, 12.4 Keep methods focused and at one level of abstraction, 12.5 Keep layers and responsibilities clear, 12. Naming, structure, and maintainability
+
+### Community 249 - "Benchmarks Lock OpenMcdf Package"
+Cohesion: 0.50
+Nodes (4): OpenMcdf, contentHash, resolved, type
+
+### Community 251 - "Benchmarks Lock SharpZipLib"
+Cohesion: 0.50
+Nodes (4): SharpZipLib, contentHash, resolved, type
+
+### Community 252 - "Bench Lock Skia Linux Assets"
+Cohesion: 0.50
+Nodes (4): SkiaSharp.NativeAssets.Linux.NoDependencies, contentHash, resolved, type
+
+### Community 254 - "C# Security Baseline"
+Cohesion: 0.33
+Nodes (6): 13.1 Treat all external input as untrusted, 13.2 Check authorization and resource ownership, 13.3 Do not construct executable content from raw input, 13.4 Handle passwords with a purpose-built password hasher, 13.5 Keep dependencies maintained, 13. Security baseline
+
+### Community 256 - "Core Lock BouncyCastle"
+Cohesion: 0.50
+Nodes (4): contentHash, resolved, type, BouncyCastle.Cryptography
+
+### Community 259 - "Core Lock MathNet"
+Cohesion: 0.50
+Nodes (4): contentHash, resolved, type, MathNet.Numerics.Signed
+
+### Community 260 - "C# Logging And Observability"
+Cohesion: 0.33
+Nodes (6): 3.1 Use structured logging, 3.2 Choose log levels deliberately, 3.3 Never log secrets or sensitive data, 3.4 Make requests traceable, 3.5 Avoid logging inside hot loops, 3. Logging and observability
+
+### Community 261 - "Core Lock RecyclableMemoryStream"
+Cohesion: 0.50
+Nodes (4): contentHash, resolved, type, Microsoft.IO.RecyclableMemoryStream
+
+### Community 262 - "Core Lock SourceLink Common"
+Cohesion: 0.50
+Nodes (4): contentHash, resolved, type, Microsoft.SourceLink.Common
+
+### Community 263 - "Core Lock SharpZipLib"
+Cohesion: 0.50
+Nodes (4): SharpZipLib, contentHash, resolved, type
+
+### Community 264 - "C# Configuration And DI"
+Cohesion: 0.33
+Nodes (6): 7.1 Keep environment-specific values out of code, 7.2 Never commit secrets, 7.3 Validate configuration at startup, 7.4 Use dependency injection correctly, 7.5 Reuse HTTP clients safely, 7. Configuration, dependency injection, and secrets
+
+### Community 265 - "Core Lock IO Hashing"
+Cohesion: 0.50
+Nodes (4): System.IO.Hashing, contentHash, resolved, type
+
+### Community 266 - "MIME Detection Spec"
+Cohesion: 0.33
+Nodes (6): Extensibility, Guardrails, How Detection Works, Macro-Enabled Variants, MIME Detection, Purpose
+
+### Community 267 - "C# Nullability And Domain Modeling"
+Cohesion: 0.40
+Nodes (5): 5.1 Enable nullable reference types, 5.2 Validate untrusted data at boundaries, 5.3 Make invalid states hard to represent, 5.4 Use framework capabilities before inventing replacements, 5. Nullability, validation, and domain modeling
+
+### Community 268 - "StressHarness Lock BouncyCastle"
+Cohesion: 0.50
+Nodes (4): contentHash, resolved, type, BouncyCastle.Cryptography
+
+### Community 269 - "StressHarness Lock Enums.NET"
+Cohesion: 0.50
+Nodes (4): contentHash, resolved, type, Enums.NET
+
+### Community 270 - "StressHarness Lock MathNet"
+Cohesion: 0.50
+Nodes (4): contentHash, resolved, type, MathNet.Numerics.Signed
+
+### Community 271 - "StressHarness Lock DI Abstractions"
+Cohesion: 0.50
+Nodes (4): contentHash, resolved, type, Microsoft.Extensions.DependencyInjection.Abstractions
+
+### Community 272 - "C# API Contracts And Data Models"
+Cohesion: 0.40
+Nodes (5): 6.1 Never expose persistence entities directly from an API, 6.2 Treat published API contracts as compatibility commitments, 6.3 Use decimal types for money, 6.4 Use consistent error responses and status codes, 6. API contracts and data models
+
+### Community 274 - "StressHarness Lock Skia Linux"
+Cohesion: 0.50
+Nodes (4): SkiaSharp.NativeAssets.Linux.NoDependencies, contentHash, resolved, type
+
+### Community 275 - "C# JSON Serialization"
+Cohesion: 0.40
+Nodes (5): 8.1 Configure serialization once and reuse it, 8.2 Be explicit about contract-sensitive behavior, 8.3 Prefer one serialization system per boundary, 8.4 Consider cycles and untrusted polymorphic data, 8. JSON serialization
+
+### Community 276 - "StressHarness Lock Skia Win32"
+Cohesion: 0.50
+Nodes (4): SkiaSharp.NativeAssets.Win32, contentHash, resolved, type
+
+### Community 277 - "StressHarness Lock IO Hashing"
+Cohesion: 0.50
+Nodes (4): System.IO.Hashing, contentHash, resolved, type
+
+### Community 279 - "Benchmarks Lock Threading Analyzers"
+Cohesion: 0.40
+Nodes (5): contentHash, requested, resolved, type, Microsoft.VisualStudio.Threading.Analyzers
+
+### Community 281 - "Tests Lock StressHarness Reference"
+Cohesion: 0.40
+Nodes (5): ExtractorOLE@[1.0.0, ), dependencies, type, extractorole.stressharness, ExtractorOLE
+
+### Community 282 - "Core Lock Threading Analyzers"
+Cohesion: 0.40
+Nodes (5): contentHash, requested, resolved, type, Microsoft.VisualStudio.Threading.Analyzers
+
+### Community 283 - "StressHarness Lock Threading Analyzers"
+Cohesion: 0.40
+Nodes (5): contentHash, requested, resolved, type, Microsoft.VisualStudio.Threading.Analyzers
+
+### Community 284 - "Tests Lock CodeCoverage"
+Cohesion: 0.50
+Nodes (4): contentHash, resolved, type, Microsoft.CodeCoverage
+
+### Community 286 - "Tests Lock SourceLink Common"
+Cohesion: 0.50
+Nodes (4): contentHash, resolved, type, Microsoft.SourceLink.Common
+
+### Community 288 - "Tests Lock Threading Analyzers"
+Cohesion: 0.40
+Nodes (5): contentHash, requested, resolved, type, Microsoft.VisualStudio.Threading.Analyzers
+
+### Community 289 - "Tests Lock Skia Linux"
+Cohesion: 0.50
+Nodes (4): SkiaSharp.NativeAssets.Linux.NoDependencies, contentHash, resolved, type
+
+### Community 290 - "Tests Lock Skia macOS"
+Cohesion: 0.50
+Nodes (4): SkiaSharp.NativeAssets.macOS, contentHash, resolved, type
+
+### Community 291 - "Tests Lock Skia Win32"
+Cohesion: 0.50
+Nodes (4): SkiaSharp.NativeAssets.Win32, contentHash, resolved, type
+
+### Community 292 - "SampleGenerator Lock Threading Analyzers"
+Cohesion: 0.40
+Nodes (5): contentHash, requested, resolved, type, Microsoft.VisualStudio.Threading.Analyzers
+
+### Community 293 - "C# Resource Management And Time"
+Cohesion: 0.50
+Nodes (4): 10.1 Dispose resources deterministically, 10.2 Store and transmit UTC instants, 10.3 Inject time-dependent behavior, 10. Resource management and time
+
+### Community 294 - "Tests Lock xunit Analyzers"
+Cohesion: 0.50
+Nodes (4): xunit.analyzers, contentHash, resolved, type
+
+### Community 295 - "Tests Lock xunit Assert"
+Cohesion: 0.50
+Nodes (4): xunit.assert, contentHash, resolved, type
+
+### Community 296 - "Tests Lock ZString"
+Cohesion: 0.50
+Nodes (4): ZString, contentHash, resolved, type
+
+### Community 297 - "Core Lock Enums.NET Entry"
+Cohesion: 0.50
+Nodes (4): contentHash, resolved, type, Enums.NET
+
+### Community 298 - "Core Lock DI Abstractions Entry"
+Cohesion: 0.50
+Nodes (4): contentHash, resolved, type, Microsoft.Extensions.DependencyInjection.Abstractions
+
+### Community 299 - "SampleGenerator Lock MathNet"
+Cohesion: 0.50
+Nodes (4): contentHash, resolved, type, MathNet.Numerics.Signed
+
+### Community 300 - "Benchmarks Lock TraceEvent"
+Cohesion: 0.50
+Nodes (4): contentHash, resolved, type, Microsoft.Diagnostics.Tracing.TraceEvent
+
+### Community 301 - "SampleGenerator Lock SharpZipLib"
+Cohesion: 0.50
+Nodes (4): SharpZipLib, contentHash, resolved, type
+
+### Community 302 - "SampleGenerator Lock Skia Linux"
+Cohesion: 0.50
+Nodes (4): SkiaSharp.NativeAssets.Linux.NoDependencies, contentHash, resolved, type
+
+### Community 303 - "SampleGen Lock Net10 Core Deps"
+Cohesion: 0.13
+Nodes (15): net10.0, contentHash, resolved, type, contentHash, resolved, type, Microsoft.Extensions.DependencyInjection.Abstractions (+7 more)
+
+### Community 304 - "StressHarness Lock RecyclableStream"
+Cohesion: 0.50
+Nodes (4): contentHash, resolved, type, Microsoft.IO.RecyclableMemoryStream
+
+### Community 306 - "SampleGenerator Lock IO Packaging"
+Cohesion: 0.50
+Nodes (4): System.IO.Packaging, contentHash, resolved, type
+
+### Community 307 - "SampleGenerator Lock ZString"
+Cohesion: 0.50
+Nodes (4): ZString, contentHash, resolved, type
+
+### Community 308 - "SampleGen Lock SourceLink Common"
+Cohesion: 0.50
+Nodes (4): contentHash, resolved, type, Microsoft.SourceLink.Common
+
+### Community 309 - "Benchmarks Lock SourceLink Common"
+Cohesion: 0.50
+Nodes (4): contentHash, resolved, type, Microsoft.SourceLink.Common
+
+### Community 310 - "SampleGen Lock Skia Win32"
+Cohesion: 0.50
+Nodes (4): SkiaSharp.NativeAssets.Win32, contentHash, resolved, type
+
+### Community 311 - "Benchmarks Lock IO Packaging"
+Cohesion: 0.50
+Nodes (4): System.IO.Packaging, contentHash, resolved, type
+
+### Community 312 - "Benchmarks Lock ZString"
+Cohesion: 0.50
+Nodes (4): ZString, contentHash, resolved, type
+
+### Community 314 - "Core Lock Skia Win32"
+Cohesion: 0.50
+Nodes (4): SkiaSharp.NativeAssets.Win32, contentHash, resolved, type
+
+### Community 315 - "Core Lock ZString"
+Cohesion: 0.50
+Nodes (4): ZString, contentHash, resolved, type
+
+### Community 316 - "StressHarness Lock BigDecimal"
+Cohesion: 0.50
+Nodes (4): contentHash, resolved, type, ExtendedNumerics.BigDecimal
+
+### Community 319 - "Tests Lock Enums.NET"
+Cohesion: 0.50
+Nodes (4): contentHash, resolved, type, Enums.NET
+
+### Community 320 - "Tests Lock DI Abstractions"
+Cohesion: 0.50
+Nodes (4): contentHash, resolved, type, Microsoft.Extensions.DependencyInjection.Abstractions
+
+### Community 321 - "Tests Lock SharpZipLib"
+Cohesion: 0.50
+Nodes (4): SharpZipLib, contentHash, resolved, type
+
+### Community 331 - "README Project Overview"
 Cohesion: 0.29
 Nodes (7): Build & test, Development workflow, Documentation, Library stack, ole-extractor, Project structure, Supported formats
 
-### Community 332 - "BenchmarkSampleGenerator.cs"
-Cohesion: 0.40
-Nodes (4): system_io_compression, system_security_cryptography, system_text_regularexpressions, system_xml_linq
-
-### Community 334 - ".ExtractText"
-Cohesion: 0.40
-Nodes (3): WordprocessingDocument, WordprocessingDocument, Paragraph
-
-### Community 335 - "Breaking changes"
-Cohesion: 0.67
-Nodes (3): Breaking changes, Changelog, Unreleased
-
 ## Knowledge Gaps
-- **1451 isolated node(s):** `check-task-complete.sh script`, `Id`, `ColumnName`, `Legend`, `AlwaysShow` (+1446 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 1834 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **35 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **235 isolated node(s):** `BodyText`, `Embeddings`, `Metadata`, `VbaProject`, `Format` (+230 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 1131 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **22 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `ExtractionHelper` connect `ExtractionHelper` to `SampleSpec`, `.Open`, `ExtractCorpusManifestTests`, `ExtractorOLE.DTOs`, `DocSampleGenerator`, `.Extract`, `EmbeddedFileExtractor`, `XlsOpenStrategy`, `PowerPointOpenStrategy`, `ExcelFormatMetadata`, `PptSampleGenerator`, `DocumentExtractionResult`, `DetectMimeTypeCorpusManifestTests`, `DocOpenStrategy`, `PptTextExtractorTests`, `IExtractionHelper`, `PptxSharedPartSubfileTests`, `FileTooLargeException`, `PptFirstLayerEmbeddedWalkTests`, `OfficeMimeType`, `SampleFormat`, `.Open`, `.Register`, `PptOpenStrategy`?**
-  _High betweenness centrality (0.042) - this node is a cross-community bridge._
-- **Why does `SampleSpec` connect `SampleSpec` to `.Open`, `XlsxSampleGenerator`, `MainExtractorStreamInputTests`, `LegacyCfbStreamInputTests`, `DocSampleGenerator`, `.Extract`, `OoxmlMimeDetector`, `PowerPointOpenStrategy`, `MacroEmbedSampleGeneratorTests`, `EmbeddedContentSpec`, `PptxSampleGenerator`, `ExtractionHelper`, `PptSampleGenerator`, `.Generate`, `IParsedDocumentTextExtractor`, `.Generate`, `StreamPreflightGuardrailTests`, `ZipFallbackOpenStrategyTests`, `MainExtractorDispatchIntegrationTests`, `.Generate`, `MainExtractorExtractRequestTests`, `GeneratedSample`, `DetectedFormat`, `BenchmarkSampleGenerator`, `.Open`?**
-  _High betweenness centrality (0.034) - this node is a cross-community bridge._
-- **Why does `DocumentExtractionResult` connect `DocumentExtractionResult` to `SampleSpec`, `.Open`, `npoi_hssf_usermodel`, `ExtractCorpusManifestTests`, `MainExtractorStreamInputTests`, `DocSampleGenerator`, `.Extract`, `EmbeddedFileExtractor`, `IOpenStrategy`, `XlsOpenStrategy`, `Stream`, `MimeTypeMapper`, `DocOpenStrategy`, `IExtractionHelper`, `FileMetadata`, `PptxSharedPartSubfileTests`, `ExtractManyAsyncTests`, `ExtractionBenchmarks`, `ExtractorOleException`, `BatchExtractionResult`, `SampleFormat`, `.Open`, `PptOpenStrategy`?**
-  _High betweenness centrality (0.025) - this node is a cross-community bridge._
-- **Are the 64 inferred relationships involving `SampleSpec` (e.g. with `.CombiningCharacterSequence_NotNormalized()` and `.EmptyBody_ReturnsEmptyString_NeverNull()`) actually correct?**
-  _`SampleSpec` has 64 INFERRED edges - model-reasoned connections that need verification._
+- **Why does `MainExtractor` connect `MainExtractor Options And Size Limits` to `DI Registry Guardrail Tests`, `Tests XLSX Text Extraction`, `Tests PPT Samples And Batch Extract`, `Extract Corpus Manifest Tests`, `ADR Stream Input Spike`, `Tests Stream Input Extraction`, `Extraction Request Telemetry`, `Tests Legacy CFB Stream Input`, `Doc Sample Generator`, `Truncated Container Parse Errors`, `Format Dispatch Registry`, `DOCX Samples And Text Extractor`, `Oversized Nested Content Guardrails`, `Extraction Helper Fakes`, `Stream Preflight Guardrail Tests`, `Tests PPT Text Extractor`, `Max File Size Guard Tests`, `Tests Extract Validation Exceptions`, `Extraction Benchmarks Tiers`, `Tests Extract Request Dispatch`, `MIME Type Mapper Tests`, `Tests Benchmark Sample Generator`?**
+  _High betweenness centrality (0.044) - this node is a cross-community bridge._
+- **Are the 66 inferred relationships involving `SampleSpec` (e.g. with `.CombiningCharacterSequence_NotNormalized()` and `.EmptyBody_ReturnsEmptyString_NeverNull()`) actually correct?**
+  _`SampleSpec` has 66 INFERRED edges - model-reasoned connections that need verification._
+- **What connects `BodyText`, `Embeddings`, `Metadata` to the rest of the system?**
+  _235 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Should `DI Registry Guardrail Tests` be split into smaller, more focused modules?**
+  _Cohesion score 0.14634146341463414 - nodes in this community are weakly interconnected._
+- **Why does `DocumentExtractionResult` connect `Embedded File Extractor Results` to `Tests PPT Samples And Batch Extract`, `Mime Detection DTOs And Detectors`, `Tests Stream Input Extraction`, `Doc Open Strategy`, `Stream Parse-Time Guard`, `Doc Sample Generator`, `MainExtractor Options And Size Limits`, `Truncated Container Parse Errors`, `Format Dispatch Registry`, `XLS Open Strategy`, `Tests PowerPoint Open Strategy`, `Excel Open Strategy Tests`, `Extraction Helper Fakes`, `Word Metadata And Open Strategy`, `Extraction Input Wrapper`, `File Metadata DTO`, `Pptx Shared Part Subfiles`, `Extraction Benchmarks Tiers`, `Zip Fallback Open Strategy`, `Tests Benchmark Sample Generator`, `PPT Open Strategy`?**
+  _High betweenness centrality (0.028) - this node is a cross-community bridge._
 - **Are the 78 inferred relationships involving `ExtractionHelper` (e.g. with `.Register()` and `.Open_DocWithContainerEmbeddedObject_ReturnsOneOpaqueSubfileItem()`) actually correct?**
   _`ExtractionHelper` has 78 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 45 inferred relationships involving `MimeDetectionRequest` (e.g. with `.DetectMimeType_FilePath_DetectsFormat_AndReleasesFile()` and `.DetectMimeType_InputStream_DetectsFormat_AndLeavesStreamOpen()`) actually correct?**
-  _`MimeDetectionRequest` has 45 INFERRED edges - model-reasoned connections that need verification._
-- **What connects `check-task-complete.sh script`, `Id`, `ColumnName` to the rest of the system?**
-  _1451 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Should `Tests XLS And PPT Sample Generators` be split into smaller, more focused modules?**
+  _Cohesion score 0.08313725490196078 - nodes in this community are weakly interconnected._

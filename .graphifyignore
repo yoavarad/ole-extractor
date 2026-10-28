@@ -4,3 +4,7 @@
 # practice. Keep it out of the corpus entirely.
 third_party/
 samples/adversarial/
+
+# ydk workflow state/reports and GitHub config: process tooling, not project code.
+.ydk/
+.github/

@@ -74,16 +74,13 @@ jobs:
 
       - name: Restore
         if: env.RUN_CI == 'true'
-        run: |
-          dotnet restore ExtractorOle/ExtractorOLE/ExtractorOLE.csproj
-          dotnet restore SampleGenerator/SampleGenerator.csproj
+        run: dotnet restore ExtractorOle/ExtractorOle.slnx
 
-      # Same targets as the local ydk dotnet-format gate: production projects only.
+      # Same target as the local ydk dotnet-format gate: the whole solution.
+      # Vendored third_party projects (pulled in via project references) are excluded: not ours to format.
       - name: Format check
         if: env.RUN_CI == 'true'
-        run: |
-          dotnet format ExtractorOle/ExtractorOLE/ExtractorOLE.csproj --verify-no-changes --no-restore
-          dotnet format SampleGenerator/SampleGenerator.csproj --verify-no-changes --no-restore
+        run: dotnet format ExtractorOle/ExtractorOle.slnx --verify-no-changes --no-restore --exclude third_party
 
   build-test:
     needs: changes
