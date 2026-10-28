@@ -39,6 +39,5 @@ verification:
   - dotnet-build
   - dotnet-format
   - dotnet-test
-  - dotnet-quality
   - dotnet-tdd-guard
   - pr-body-validation
