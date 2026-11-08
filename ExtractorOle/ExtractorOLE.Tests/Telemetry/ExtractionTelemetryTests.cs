@@ -73,7 +73,7 @@ namespace ExtractorOLE.Tests.Telemetry
             };
             listener.SetMeasurementEventCallback<double>((inst, m, tags, _) =>
             {
-                if (inst.Name != "extractor.stage.duration") return;
+                if (!inFlow.Value || inst.Name != "extractor.stage.duration") return;
                 foreach (var t in tags) if (t.Key == "stage") lock (stagesSeen) stagesSeen.Add((string)t.Value!);
             });
             listener.SetMeasurementEventCallback<long>((inst, m, tags, _) =>
