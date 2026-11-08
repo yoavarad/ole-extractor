@@ -27,13 +27,16 @@ The unit of isolation is the **leaf property**. Each of the twelve source-derive
 properties, each leaf property of the applicable format-metadata shape, the flat text, and each
 individual embedded item succeed or fail independently of every other one.
 
-Only container-open failures remain fatal: `file-too-large`, `password-protected`,
-`unsupported-format`, `truncated-container`, `corrupt-file` in its container-level role, and
-null-request / null-required-field argument validation. Nothing is extractable from a container
+The fatal set is exactly: `file-too-large`, `password-protected`, `unsupported-format`,
+`truncated-container`, `corrupt-file` in its container-level role, `oversized-nested-content` in
+its open-time role only, null-request / null-required-field argument validation, and any undeclared
+exception raised while the container is still being opened. Nothing is extractable from a container
 that will not open, so a partial result there would carry no information the thrown error does not
-already carry more precisely. `corrupt-file` keeps both roles, split on whether the container
-opened. `oversized-nested-content` and any undeclared exception raised while populating one leaf
-become per-field.
+already carry more precisely — and there is no result object to attach a field error to in the
+first place. `corrupt-file` and `oversized-nested-content` each keep two roles, split on the same
+question: had the container finished opening? After a successful open, a `corrupt-file` source
+record behind one leaf, an `oversized-nested-content` breach on one leaf, and any undeclared
+exception raised while populating one leaf all become per-field.
 
 A failed leaf is left at its no-value state — null, empty string, absent from the list, or the
 type's default for a non-nullable count or flag — and never at a placeholder or sentinel. The
@@ -44,11 +47,15 @@ counts and flags it is the *only* discriminator, since their defaults are indist
 genuine zeroes and falses. The originating exception type stays off the public surface and goes to
 telemetry.
 
-Field paths are dotted from the result root using the result's own public property names, with a
-0-based bracket index for list elements, and the index is the source walk position rather than the
-returned-list position so that it stays meaningful for an item that is absent from the list. The
-convention is specified in `docs/project-rules.md` and `docs/specs/extraction.md`; the rule is
-testable as `ydk:req:extraction/per-field-error-isolation`.
+Field paths are dotted from the result root using the result's own public C# property names rather
+than this spec's entity names — `Metadata.Created`, not `GeneralMetadata.CreatedAt` — because a
+path has to match character-for-character the property the caller just read as null, or every
+caller translates before it can act. A failed embedded item is keyed by its package path, as
+`EmbeddedFiles[word/embeddings/oleObject1.bin]`, not by a position: the item is absent from the
+returned list, so no position in that list identifies it, and the package path is the one
+identifier both sides can see. The convention is specified in `docs/project-rules.md` and
+`docs/specs/extraction.md`; the rule is testable as
+`ydk:req:extraction/per-field-error-isolation`.
 
 ## Alternatives Considered
 - **Four coarse output groups** (general metadata / format metadata / text / subfiles each
@@ -77,9 +84,9 @@ change is in which inputs throw.
 | Before | After | Migration |
 |---|---|---|
 | Any parse failure after the container opened threw and returned no result | The call returns a result with the affected leaves at their no-value state and a `FieldErrors` entry for each | Callers relying on a throw to mean "this file is bad" must check whether `FieldErrors` is non-empty. Callers that only read values are unaffected, except that they now get the readable parts of a damaged file instead of an exception. |
-| A declared-oversize embedded item failed the whole extraction | That one item is skipped with an `OVERSIZED_NESTED_CONTENT` field error; the rest of the document extracts | Stop catching this error around `Extract()` for extraction; it is still thrown by mime detection. |
+| A declared-oversize embedded item failed the whole extraction | That one item is skipped with an `OVERSIZED_NESTED_CONTENT` field error; the rest of the document extracts | Keep catching this error around `Extract()` only for the open-time case (the container's own declared structure breaches a cap, which is still fatal); a breach on a single item after a successful open no longer throws. It is still always thrown by mime detection. |
 | Text extraction returned an empty string on failure, silently | Empty string plus a `FieldErrors` entry at `ExtractedText` | A caller treating empty text as "no text" must now check `FieldErrors` to keep that reading correct. |
-| An unreadable embedded item was omitted and written to the console | Omitted and recorded as a field error at its walk-order path | Callers comparing subfile counts against expectations can now account for the gap. |
+| An unreadable embedded item was omitted and written to the console | Omitted and recorded as a field error keyed by its package path | Callers comparing subfile counts against expectations can now account for the gap, and can match the gap to a place in the container. |
 
 Batch extraction is unchanged: a file with only field errors is a batch success carrying a
 populated result, not a batch item error. The per-item error channel keeps exactly the fatal set
@@ -97,5 +104,12 @@ above as its causes.
   content now assert a populated result plus a specific field-error entry, not a thrown exception.
   An empty text field with no field error, or a short subfile list with no field error, becomes a
   test failure — which is the regression guard against the silent behavior returning.
-- `FieldErrors` is a new public vocabulary. Its error codes are closed and shared with the thrown
-  errors, so adding a per-field cause is a spec change, not an ad-hoc string.
+- `FieldErrors` is a new public vocabulary of exactly three codes, closed, so adding a per-field
+  cause is a spec change rather than an ad-hoc string. Two of the three — `CORRUPT_FILE` and
+  `OVERSIZED_NESTED_CONTENT` — are also the codes of thrown errors, in their field-level roles.
+  The third, `UNEXPECTED_FIELD_FAILURE`, has no error manifest and is never thrown out of the
+  call, so the vocabulary overlaps the thrown set without being drawn from it.
+- One item can fail without the caller learning how many others were never looked at. If the
+  enumeration of the container's items faults part-way, the fault gets one bare `EmbeddedFiles`
+  entry and the items past it are simply absent. That blind spot is accepted: the alternative is
+  reporting items whose existence is not known, which would be a fabrication.

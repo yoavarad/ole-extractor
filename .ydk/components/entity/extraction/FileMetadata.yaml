@@ -6,6 +6,16 @@ description: >
   the format exposes (OLE SummaryInformation/DocumentSummaryInformation for
   legacy formats, OOXML Core/Extended Properties for OOXML formats). Fields
   the source format doesn't provide are null, not omitted.
+
+  The twelve source-derived properties (Title through LastPrintedAt) are the
+  whole of this entity's per-field isolation surface: each can fail on its
+  own and be reported as a [ydk:entity:extraction/FieldError], per
+  [ydk:req:extraction/per-field-error-isolation]. The three required,
+  non-nullable properties listed first — FileSizeBytes, ExactMimeType,
+  FormatFamily — are outside that set and cannot fail once the container has
+  opened, because they derive from the request and the caller-supplied
+  detection verdict rather than from a parsed source record. They therefore
+  never appear in a field path.
 fields:
   FileSizeBytes:
     type: long

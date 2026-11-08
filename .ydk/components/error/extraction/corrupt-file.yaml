@@ -35,7 +35,7 @@ triggers:
   - "Container-level (thrown): a CFB directory chain is present but truncated/inconsistent partway through, so the storage tree cannot be walked"
   - "Field-level (FieldError, not thrown): the container opened, but one general- or format-metadata property's source record in the property store is unparseable — that one property is left null/default and reported at its field path"
   - "Field-level (FieldError, not thrown): the container opened, but the body-text records cannot be flattened — ExtractedText is the empty string and the failure is reported at path ExtractedText"
-  - "Field-level (FieldError, not thrown): the container opened, but one embedded item's own bytes are unreadable — that item is omitted from the subfile list and reported at its EmbeddedFiles[...] path"
+  - "Field-level (FieldError, not thrown): the container opened, but one embedded item's own bytes are unreadable — that item is omitted from the subfile list and reported at EmbeddedFiles[<its package path>]"
 related:
   - ydk:contract:extraction/extract
   - ydk:entity:extraction/FieldError

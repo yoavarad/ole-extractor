@@ -11,23 +11,30 @@ description: >
   separate, measured performance target over realistic files, not something
   this check tests against.
 
-  Reported differently by the two contracts.
-  [ydk:contract:extraction/detect-mime-type] throws it: detection has no
-  per-field channel and is a single verdict, so a bomb-shaped input is
-  refused outright. [ydk:contract:extraction/extract] does NOT throw it
-  once the container has opened — the guard is enforced per item, the one
-  item whose declared size or depth breaches a cap is skipped before any
-  buffer is allocated for it, and the breach is recorded as a
-  [ydk:entity:extraction/FieldError] with code OVERSIZED_NESTED_CONTENT at
-  that item's field path, per
-  [ydk:req:extraction/per-field-error-isolation]. The guard is still a hard
-  ceiling — nothing oversize is ever allocated — but one bomb-shaped
+  Reported differently by the two contracts, and on
+  [ydk:contract:extraction/extract] it has two roles of its own, split by
+  whether the container had finished opening when the cap was breached.
+  [ydk:contract:extraction/detect-mime-type] always throws it: detection has
+  no per-field channel and produces a single verdict, so a bomb-shaped input
+  is refused outright.
+  OPEN-TIME (fatal, thrown) on [ydk:contract:extraction/extract]: the
+  structure that breaches a cap is the container's own declared structure,
+  detected while the container is still being opened. This fails the whole
+  call — nothing is extractable, and there is no result object yet for a
+  FieldError to live on, so a partial report is not available even in
+  principle. This is the role the adversarial declared-size-bomb fixture
+  exercises.
+  PER-LEAF (not thrown): the container opened, and one embedded item's own
+  declared size or depth breaches a cap. That item is skipped before any
+  buffer is allocated for it and the breach is recorded as a
+  [ydk:entity:extraction/FieldError] with code OVERSIZED_NESTED_CONTENT
+  keyed by that item's package path, per
+  [ydk:req:extraction/per-field-error-isolation], so one bomb-shaped
   embedding no longer denies the caller the rest of an otherwise-good
-  document. A breach found while the container itself is being opened
-  (before any leaf is populated) is still fatal, because there is then no
-  result to attach a FieldError to. The status_code / detail_template /
-  response_shape below describe the thrown form; in the field-level form
-  only the `code` crosses over.
+  document. The guard is unchanged in both roles — a hard ceiling, enforced
+  before any allocation; what differs is only who pays for the breach. The
+  status_code / detail_template / response_shape below describe the thrown
+  form; in the per-leaf form only the `code` crosses over.
 status_code: 422
 code: OVERSIZED_NESTED_CONTENT
 detail_template: "Rejected: declared internal size/nesting (${declaredMetric}) exceeds configured limits."
@@ -36,10 +43,10 @@ response_shape:
   detail: string
   declaredMetric: string
 triggers:
-  - A ZIP entry's declared uncompressed size exceeds the configured per-entry cap before decompression begins
-  - Total declared uncompressed size across all entries exceeds the configured total cap
-  - CFB sector/FAT chain length implies a file size wildly larger than FileBytes.Length
-  - Embedded-object nesting exceeds the depth guard (relevant if a future version recurses into subfiles; v1 only extracts first-layer, so this mainly guards against a maliciously deep single-layer directory/FAT structure)
+  - "Open-time (fatal on both contracts): total declared uncompressed size across all entries exceeds the configured total cap"
+  - "Open-time (fatal on both contracts): CFB sector/FAT chain length implies a file size wildly larger than FileBytes.Length"
+  - "Open-time (fatal on both contracts): a maliciously deep single-layer directory/FAT structure exceeds the depth guard while the container is being opened (v1 extracts first-layer only, so recursion into subfiles is not a source of depth; the guard stays in place for a future version that does recurse)"
+  - "Per-leaf (FieldError on [ydk:contract:extraction/extract], thrown on [ydk:contract:extraction/detect-mime-type]): one embedded item's declared uncompressed size exceeds the configured per-entry cap before decompression begins — that item is skipped and reported at its package path"
 related:
   - ydk:contract:extraction/extract
   - ydk:contract:extraction/detect-mime-type
