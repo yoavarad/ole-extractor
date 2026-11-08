@@ -38,8 +38,9 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
             }
             catch
             {
+                // Parse failures propagate so ParseTimeErrorGuard can report the cause (#287).
                 pres?.Dispose();
-                return null;
+                throw;
             }
         }
 

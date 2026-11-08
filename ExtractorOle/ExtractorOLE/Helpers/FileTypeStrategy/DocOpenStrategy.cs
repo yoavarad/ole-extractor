@@ -1,5 +1,6 @@
 using ExtractorOLE.Helpers.Input;
 using ExtractorOLE.DTOs;
+using ExtractorOLE.Helpers.Guardrails;
 using NPOI.HPSF;
 using NPOI.POIFS.FileSystem;
 using System;
@@ -58,36 +59,30 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
 
         private DocumentExtractionResult? OpenFrom(Stream source)
         {
+            // Library exceptions propagate so ParseTimeErrorGuard can report the cause (#287).
+            var result = new DocumentExtractionResult();
+            // NPOIFSFileSystem implements ICloseable, not IDisposable, so it is closed
+            // explicitly in a finally block rather than via a using statement.
+            var fs = CfbFileSystems.Open(source);
             try
             {
-                var result = new DocumentExtractionResult();
-                // NPOIFSFileSystem implements ICloseable, not IDisposable, so it is closed
-                // explicitly in a finally block rather than via a using statement.
-                var fs = CfbFileSystems.Open(source);
-                try
+                var summary = ReadSummaryInformation(fs.Root);
+                if (summary != null)
                 {
-                    var summary = ReadSummaryInformation(fs.Root);
-                    if (summary != null)
-                    {
-                        MetadataConversions.Apply(summary, result.Metadata);
-                    }
-
-                    var docSummary = ReadDocumentSummaryInformation(fs.Root);
-                    result.FormatMetadata = BuildWordFormatMetadata(fs.Root, summary, docSummary);
-
-                    _helper.ExtractFirstLayerEmbedded(result, fs.Root);
+                    MetadataConversions.Apply(summary, result.Metadata);
                 }
-                finally
-                {
-                    fs.Close();
-                }
-                result.MimeType = _helper.MimeFor(OfficeMimeType.WordLegacy);
-                return result;
+
+                var docSummary = ReadDocumentSummaryInformation(fs.Root);
+                result.FormatMetadata = BuildWordFormatMetadata(fs.Root, summary, docSummary);
+
+                _helper.ExtractFirstLayerEmbedded(result, fs.Root);
             }
-            catch
+            finally
             {
-                return null;
+                fs.Close();
             }
+            result.MimeType = _helper.MimeFor(OfficeMimeType.WordLegacy);
+            return result;
         }
 
         // A property-set stream that is absent or unparsable is a normal, expected state for
@@ -100,7 +95,7 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
             {
                 return PropertySetFactory.Create(root, SummaryInformation.DEFAULT_STREAM_NAME) as SummaryInformation;
             }
-            catch
+            catch (Exception ex) when (ParseFailure.IsParseFailure(ex))
             {
                 return null;
             }
@@ -114,7 +109,7 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
             {
                 return PropertySetFactory.Create(root, DocumentSummaryInformation.DEFAULT_STREAM_NAME) as DocumentSummaryInformation;
             }
-            catch
+            catch (Exception ex) when (ParseFailure.IsParseFailure(ex))
             {
                 return null;
             }

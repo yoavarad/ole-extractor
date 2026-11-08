@@ -1,3 +1,5 @@
+using System;
+
 namespace ExtractorOLE.Exceptions
 {
     // [ydk:error:extraction/corrupt-file]
@@ -9,7 +11,13 @@ namespace ExtractorOLE.Exceptions
         public string ParseFailureReason { get; }
 
         public CorruptFileException(string detectedMimeType, string parseFailureReason)
-            : base($"File could not be parsed as {detectedMimeType}: {parseFailureReason}")
+            : this(detectedMimeType, parseFailureReason, null)
+        {
+        }
+
+        // innerException is the format library's parse exception, when there is one (#287).
+        public CorruptFileException(string detectedMimeType, string parseFailureReason, Exception? innerException)
+            : base($"File could not be parsed as {detectedMimeType}: {parseFailureReason}", innerException)
         {
             DetectedMimeType = detectedMimeType;
             ParseFailureReason = parseFailureReason;

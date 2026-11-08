@@ -4,6 +4,11 @@ using System.IO;
 
 namespace ExtractorOLE.Helpers.FileTypeStrategy
 {
+    /// <summary>
+    /// Opens one format's container. Input that cannot be parsed makes Open throw the format
+    /// library's exception, which ParseTimeErrorGuard reports as corrupt-file with that exception
+    /// as InnerException (#287); built-in strategies do not return null for it.
+    /// </summary>
     public interface IOpenStrategy
     {
         DocumentExtractionResult? Open(byte[] fileBytes);

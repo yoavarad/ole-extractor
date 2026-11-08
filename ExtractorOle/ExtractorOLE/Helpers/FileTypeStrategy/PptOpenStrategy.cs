@@ -1,6 +1,7 @@
 using ExtractorOLE.Helpers.Input;
 using DocumentFormat.OpenXml.Packaging;
 using ExtractorOLE.DTOs;
+using ExtractorOLE.Helpers.Guardrails;
 using NPOI.HPSF;
 using NPOI.POIFS.FileSystem;
 using System;
@@ -57,36 +58,22 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
             DocumentExtractionResult result;
             // One NPOIFSFileSystem over the original .ppt bytes serves both the metadata/macro read
             // and the first-layer embedded walk (each open re-reads the whole compound file).
-            NPOIFSFileSystem fs;
-            try
-            {
-                fs = _openFileSystem(cfbSource);
-            }
-            catch
-            {
-                // Not a readable compound file at all -- nothing to open.
-                return null;
-            }
+            // A compound file or property set that cannot be read propagates the library exception
+            // so ParseTimeErrorGuard can report the cause (#287).
+            NPOIFSFileSystem fs = _openFileSystem(cfbSource);
 
             try
             {
-                try
+                var (metadata, hasMacros) = ReadFileMetadataAndMacroFlag(fs);
+                result = new DocumentExtractionResult
                 {
-                    var (metadata, hasMacros) = ReadFileMetadataAndMacroFlag(fs);
-                    result = new DocumentExtractionResult
-                    {
-                        Metadata = metadata,
-                        MimeType = _helper.MimeFor(OfficeMimeType.PowerPointLegacy),
-                        // SlideCount/NotesSlideCount are populated below, best-effort, from the
-                        // converted body; HasMacros is already final here since it's sourced from the
-                        // original file directly, independent of whether body conversion succeeds.
-                        FormatMetadata = new PowerPointFormatMetadata { HasMacros = hasMacros },
-                    };
-                }
-                catch
-                {
-                    return null;
-                }
+                    Metadata = metadata,
+                    MimeType = _helper.MimeFor(OfficeMimeType.PowerPointLegacy),
+                    // SlideCount/NotesSlideCount are populated below, best-effort, from the
+                    // converted body; HasMacros is already final here since it's sourced from the
+                    // original file directly, independent of whether body conversion succeeds.
+                    FormatMetadata = new PowerPointFormatMetadata { HasMacros = hasMacros },
+                };
 
                 // First-layer embedded objects/media are read directly off the *original* .ppt's raw
                 // CFB structure (T-12dfd045), independent of whether body conversion below succeeds.
@@ -94,7 +81,7 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
                 {
                     _helper.ExtractFirstLayerEmbedded(result, fs);
                 }
-                catch (Exception ex)
+                catch (Exception ex) when (ParseFailure.IsParseFailure(ex))
                 {
                     Console.WriteLine($"Ppt first-layer embedded walk failed: {ex.Message}");
                 }
@@ -113,7 +100,7 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
             {
                 PopulateBodyContent(convertToPptx, result);
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ParseFailure.IsParseFailure(ex))
             {
                 Console.WriteLine($"Ppt body conversion failed, returning metadata-only result: {ex.Message}");
             }

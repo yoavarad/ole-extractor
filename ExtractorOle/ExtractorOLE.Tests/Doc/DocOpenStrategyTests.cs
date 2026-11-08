@@ -202,11 +202,10 @@ namespace ExtractorOLE.Tests.Doc
         }
 
         [Fact]
-        public void Open_CorruptBytes_ReturnsNull()
+        public void Open_CorruptBytes_ThrowsTheLibraryParseException()
         {
-            var result = new DocOpenStrategy(new ExtractionHelper()).Open(new byte[] { 0x00, 0x01, 0x02, 0x03 });
-
-            Assert.Null(result);
+            // #287: the parse exception propagates so Extract can carry it as InnerException.
+            Assert.ThrowsAny<Exception>(() => new DocOpenStrategy(new ExtractionHelper()).Open(new byte[] { 0x00, 0x01, 0x02, 0x03 }));
         }
 
         [Fact]
