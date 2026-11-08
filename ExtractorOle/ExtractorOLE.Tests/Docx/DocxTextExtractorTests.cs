@@ -92,7 +92,7 @@ namespace ExtractorOLE.Tests.Docx
             Assert.Contains(topLevelText, result);
             Assert.Contains(tableCellText, result);
         }
-    
+
         private static string ExtractFrom(Body body)
         {
             using var stream = new MemoryStream();
@@ -130,5 +130,5 @@ namespace ExtractorOLE.Tests.Docx
 
             Assert.Equal("keep added", result);
         }
-}
+    }
 }
