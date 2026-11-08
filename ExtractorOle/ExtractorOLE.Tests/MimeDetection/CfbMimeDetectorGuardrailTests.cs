@@ -123,7 +123,7 @@ namespace ExtractorOLE.Tests.MimeDetection
                 FileBytes = Array.Empty<byte>(),
                 FileName = "irrelevant.bin"
             };
-            var detector = new CfbMimeDetector(new MimeDetectionLimits { MaxFileSizeBytes = 0 });
+            var detector = new CfbMimeDetector(new MimeDetectionLimits { MaxFileSizeBytes = 1 });
 
             var result = detector.Detect(request);
 

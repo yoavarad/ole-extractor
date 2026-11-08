@@ -223,36 +223,14 @@ namespace ExtractorOLE.Helpers
             }
         }
 
-        // Reads a stream into an exactly-sized array with a single copy when length is known;
-        // otherwise falls back to a MemoryStream.
-        private static byte[] ReadAllBytes(Stream input, long length)
+        // Reads a stream to the end. Never sizes the buffer from a declared length (CFB directory
+        // size, zip entry length): those come from untrusted headers, and a lying value would
+        // force a huge up-front allocation. The MemoryStream grows only with bytes actually read.
+        private static byte[] ReadAllBytes(Stream input)
         {
-            if (length < 0 || length > Array.MaxLength)
-            {
-                using var ms = new MemoryStream();
-                input.CopyTo(ms);
-                return TakeBytes(ms);
-            }
-
-            var bytes = new byte[length];
-            int read = 0;
-            while (read < bytes.Length)
-            {
-                int n = input.Read(bytes, read, bytes.Length - read);
-                if (n <= 0) break;
-                read += n;
-            }
-
-            if (read == bytes.Length)
-            {
-                return bytes;
-            }
-
-            // Stream shorter than advertised: trim, then drain any remainder defensively.
-            using var tail = new MemoryStream();
-            tail.Write(bytes, 0, read);
-            input.CopyTo(tail);
-            return TakeBytes(tail);
+            using var ms = new MemoryStream();
+            input.CopyTo(ms);
+            return TakeBytes(ms);
         }
 
         // Hands off the MemoryStream's backing array when it is exactly full (no copy);
@@ -302,7 +280,7 @@ namespace ExtractorOLE.Helpers
         private static void ExtractCfbStream(DocumentEntry stream, List<EmbeddedFileItem> fileList)
         {
             using var input = new DocumentInputStream(stream);
-            byte[] extractedBytes = ReadAllBytes(input, stream.Size);
+            byte[] extractedBytes = ReadAllBytes(input);
 
             fileList.Add(new EmbeddedFileItem
             {
@@ -463,7 +441,7 @@ namespace ExtractorOLE.Helpers
             {
                 using (Stream partStream = part.GetStream())
                 {
-                    byte[] extractedBytes = ReadAllBytes(partStream, partStream.CanSeek ? partStream.Length : -1);
+                    byte[] extractedBytes = ReadAllBytes(partStream);
 
                     var item = new EmbeddedFileItem
                     {

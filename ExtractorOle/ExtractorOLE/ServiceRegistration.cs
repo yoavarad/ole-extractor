@@ -14,7 +14,7 @@ namespace ExtractorOLE
 {
     public static class ServiceRegistration
     {
-        public static void Register(IServiceCollection services)
+        public static void Register(IServiceCollection services, MimeDetectionLimits? limits = null)
         {
             // Core helpers: mime mapping, mime detection and embedded-file extraction,
             // with IExtractionHelper as a thin facade over the three.
@@ -31,7 +31,7 @@ namespace ExtractorOLE
             services.AddSingleton(sp => new ExtractionGuardrails(sp.GetRequiredService<MimeDetectionLimits>()));
 
             // Mime detection (legacy CFB family)
-            services.AddSingleton(new MimeDetectionLimits());
+            services.AddSingleton(limits ?? new MimeDetectionLimits());
             services.AddSingleton<ICfbMimeDetector, CfbMimeDetector>();
 
             // Mime detection (OOXML family)
