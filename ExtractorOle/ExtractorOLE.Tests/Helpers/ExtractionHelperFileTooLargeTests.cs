@@ -40,10 +40,10 @@ namespace ExtractorOLE.Tests.Helpers
             }
         }
 
-        private static (IExtractionHelper helper, MimeDetectionLimits limits, SpyDetector trailingSpy) BuildThroughProductionDi()
+        private static (IExtractionHelper helper, MimeDetectionLimits limits, SpyDetector trailingSpy) BuildThroughProductionDi(MimeDetectionLimits? configured = null)
         {
             var services = new ServiceCollection();
-            ServiceRegistration.Register(services);
+            ServiceRegistration.Register(services, configured);
             using var provider = services.BuildServiceProvider();
             var real = provider.GetRequiredService<IMimeDetectionRegistry>();
             var spy = new SpyDetector();
@@ -94,16 +94,15 @@ namespace ExtractorOLE.Tests.Helpers
         [Fact]
         public void DetectMimeType_MaxFileSizeIsReadFromConfiguration_ChangingLimitChangesAcceptedBehavior()
         {
-            var (helper, limits, spy) = BuildThroughProductionDi();
+            var (helper, _, spy) = BuildThroughProductionDi(new MimeDetectionLimits { MaxFileSizeBytes = 10 });
             ResetParseCounters();
             var request = new MimeDetectionRequest { FileBytes = new byte[20], FileName = "small.docx" };
 
-            limits.MaxFileSizeBytes = 10;
             var ex = Assert.Throws<FileTooLargeException>(() => helper.DetectMimeType(request));
             Assert.Equal(10, ex.LimitBytes);
             AssertNoFormatParsingHappened(spy);
 
-            limits.MaxFileSizeBytes = 20; // exactly at the limit: accepted
+            (helper, _, spy) = BuildThroughProductionDi(new MimeDetectionLimits { MaxFileSizeBytes = 20 }); // exactly at the limit: accepted
             var result = helper.DetectMimeType(request);
 
             Assert.Equal(DetectedFormat.Unknown, result.DetectedFormat);
