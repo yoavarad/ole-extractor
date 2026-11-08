@@ -92,5 +92,43 @@ namespace ExtractorOLE.Tests.Docx
             Assert.Contains(topLevelText, result);
             Assert.Contains(tableCellText, result);
         }
-    }
+    
+        private static string ExtractFrom(Body body)
+        {
+            using var stream = new MemoryStream();
+            using (var document = WordprocessingDocument.Create(stream, WordprocessingDocumentType.Document))
+            {
+                var mainPart = document.AddMainDocumentPart();
+                mainPart.Document = new Document(body);
+                mainPart.Document.Save();
+            }
+
+            return new DocxTextExtractor().ExtractText(stream.ToArray());
+        }
+
+        [Fact]
+        public void TextBoxParagraph_TextAppearsOnce()
+        {
+            var inner = new Paragraph(new Run(new Text("boxed")));
+            var outer = new Paragraph(
+                new Run(new Text("before ")),
+                new Run(new Picture(new DocumentFormat.OpenXml.Vml.Shape(new DocumentFormat.OpenXml.Vml.TextBox(new TextBoxContent(inner))))));
+            var result = ExtractFrom(new Body(outer));
+
+            Assert.Equal(1, System.Text.RegularExpressions.Regex.Count(result, "boxed"));
+            Assert.Contains("before", result);
+        }
+
+        [Fact]
+        public void TrackedChanges_DeletedTextExcluded_InsertedTextKept()
+        {
+            var p = new Paragraph(
+                new Run(new Text("keep ")),
+                new DeletedRun(new Run(new DeletedText("gone"))),
+                new InsertedRun(new Run(new Text("added"))));
+            var result = ExtractFrom(new Body(p));
+
+            Assert.Equal("keep added", result);
+        }
+}
 }
