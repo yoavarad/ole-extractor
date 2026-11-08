@@ -27,7 +27,7 @@ execution:
   task_timeout_minutes: 30
   worktree_isolation: true
 ai:
-  provider: anthropic
+  provider: subagent
   model_tiers:
     smart: claude-sonnet-5-5
     fast: claude-sonnet-5-5
