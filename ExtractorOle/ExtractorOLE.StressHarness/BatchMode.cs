@@ -60,7 +60,20 @@ namespace ExtractorOLE.StressHarness
             }
 
             Console.WriteLine(mismatches == 0 ? "[PASS] batch output identical to serial Extract()" : "[FAIL] batch output differs from serial Extract()");
-            if (mismatches > 0) Environment.ExitCode = 1;
+            Environment.ExitCode = ExitCodeFor(serial.Count, serialOk, mismatches);
+        }
+
+        // Adversarial samples fail identically in serial and batch (caught as mismatches otherwise), so
+        // per-item errors are expected; the run fails when nothing succeeded or batch diverged from serial.
+        internal static int ExitCodeFor(int serialTotal, int serialOk, long mismatches)
+        {
+            if (serialOk == 0 || mismatches > 0)
+            {
+                Console.WriteLine($"[FAIL] serial succeeded: {serialOk}/{serialTotal}, mismatches: {mismatches}");
+                return 1;
+            }
+
+            return 0;
         }
 
         // Adversarial samples can make detection throw; such items then fail per-item in Extract.

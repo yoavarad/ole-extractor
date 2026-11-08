@@ -12,6 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="ExtractorOLE.Tests" />
     <ProjectReference Include="..\ExtractorOLE\ExtractorOLE.csproj" />
   </ItemGroup>
 
