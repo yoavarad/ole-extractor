@@ -31,6 +31,7 @@ namespace ExtractorOLE.Tests.PowerPoint
     /// their not-determinable defaults (0/null) in every test here; HasMacros does not
     /// depend on body conversion and is asserted directly.
     /// </summary>
+    [Collection("ConsoleRedirect")]
     public class PptOpenStrategyTests
     {
         private static byte[] BuildPptFixtureBytes(string? title, string? author, DateTime? created, DateTime? lastSaved, string? lastAuthor)
@@ -191,6 +192,75 @@ namespace ExtractorOLE.Tests.PowerPoint
 
             Assert.True(dict.ContainsKey(OfficeMimeType.PowerPointLegacy));
             Assert.IsType<PptOpenStrategy>(dict[OfficeMimeType.PowerPointLegacy]);
+        }
+
+        private static readonly string[] SlideLeafPaths = { "FormatMetadata.SlideCount", "FormatMetadata.NotesSlideCount" };
+
+        // #308: a failed body conversion is reported at the two slide leaves, with no Console output.
+        [Fact]
+        public void Open_BodyConversionFails_ReportsBothSlideLeavesAndWritesNoConsoleOutput()
+        {
+            var bytes = BuildMacroEnabledPptFixtureBytes("Deck");
+            var strategy = new PptOpenStrategy(new ExtractionHelper(), s => new NPOIFSFileSystem(s),
+                _ => throw new InvalidDataException("conversion failed"));
+            var originalOut = Console.Out;
+            using var captured = new StringWriter();
+            Console.SetOut(captured);
+
+            DocumentExtractionResult? result;
+            try
+            {
+                result = strategy.Open(bytes);
+            }
+            finally
+            {
+                Console.SetOut(originalOut);
+            }
+
+            Assert.NotNull(result);
+            Assert.Equal(SlideLeafPaths, result!.FieldErrors.ConvertAll(e => e.FieldPath));
+            Assert.All(result.FieldErrors, e => Assert.Equal(FieldErrorCode.CorruptFile, e.Code));
+            var formatMetadata = (PowerPointFormatMetadata)result.FormatMetadata!;
+            Assert.Equal(0, formatMetadata.SlideCount);
+            Assert.Null(formatMetadata.NotesSlideCount);
+            Assert.True(formatMetadata.HasMacros);
+            Assert.Equal("Deck", result.Metadata.Title);
+            Assert.Equal(string.Empty, captured.ToString());
+        }
+
+        [Fact]
+        public void Open_EmbeddedWalkThrows_ReportsBareEmbeddedFilesAndWritesNoConsoleOutput()
+        {
+            var bytes = BuildPptFixtureBytes("Deck", null, null, null, null);
+            var helper = new ExtractionHelper(new MimeTypeMapper(), new OfficeMimeTypeDetector(new ExtractorOLE.Registry.MimeDetectionRegistry(Array.Empty<ExtractorOLE.Helpers.MimeDetection.IMimeTypeDetector>())), new ThrowingEmbeddedFileExtractor());
+            var originalOut = Console.Out;
+            using var captured = new StringWriter();
+            Console.SetOut(captured);
+
+            DocumentExtractionResult? result;
+            try
+            {
+                result = new PptOpenStrategy(helper).Open(bytes);
+            }
+            finally
+            {
+                Console.SetOut(originalOut);
+            }
+
+            Assert.NotNull(result);
+            Assert.Contains(result!.FieldErrors, e => e.FieldPath == "EmbeddedFiles" && e.Code == FieldErrorCode.UnexpectedFieldFailure);
+            Assert.Equal("Deck", result.Metadata.Title);
+            Assert.DoesNotContain("embedded walk", captured.ToString(), StringComparison.OrdinalIgnoreCase);
+            Assert.Equal(string.Empty, captured.ToString());
+        }
+
+        private sealed class ThrowingEmbeddedFileExtractor : IEmbeddedFileExtractor
+        {
+            public void ExtractMetadataAndEmbedded(DocumentFormat.OpenXml.Packaging.OpenXmlPackage package, DocumentFormat.OpenXml.Packaging.OpenXmlPart? rootPart, DocumentExtractionResult result) { }
+            public void ExtractFirstLayerEmbedded(DocumentExtractionResult result, DocumentFormat.OpenXml.Packaging.OpenXmlPart rootPart) => throw new InvalidOperationException("walk");
+            public void ExtractFirstLayerEmbedded(DocumentExtractionResult result, HSSFWorkbook workbook) => throw new InvalidOperationException("walk");
+            public void ExtractFirstLayerEmbedded(DocumentExtractionResult result, NPOIFSFileSystem fs) => throw new InvalidOperationException("walk");
+            public void ExtractFirstLayerEmbedded(DocumentExtractionResult result, DirectoryEntry root) => throw new InvalidOperationException("walk");
         }
     }
 }
