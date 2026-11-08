@@ -10,6 +10,24 @@ description: >
   against malicious input; [ydk:nfr:extraction/memory-ceiling] is a
   separate, measured performance target over realistic files, not something
   this check tests against.
+
+  Reported differently by the two contracts.
+  [ydk:contract:extraction/detect-mime-type] throws it: detection has no
+  per-field channel and is a single verdict, so a bomb-shaped input is
+  refused outright. [ydk:contract:extraction/extract] does NOT throw it
+  once the container has opened — the guard is enforced per item, the one
+  item whose declared size or depth breaches a cap is skipped before any
+  buffer is allocated for it, and the breach is recorded as a
+  [ydk:entity:extraction/FieldError] with code OVERSIZED_NESTED_CONTENT at
+  that item's field path, per
+  [ydk:req:extraction/per-field-error-isolation]. The guard is still a hard
+  ceiling — nothing oversize is ever allocated — but one bomb-shaped
+  embedding no longer denies the caller the rest of an otherwise-good
+  document. A breach found while the container itself is being opened
+  (before any leaf is populated) is still fatal, because there is then no
+  result to attach a FieldError to. The status_code / detail_template /
+  response_shape below describe the thrown form; in the field-level form
+  only the `code` crosses over.
 status_code: 422
 code: OVERSIZED_NESTED_CONTENT
 detail_template: "Rejected: declared internal size/nesting (${declaredMetric}) exceeds configured limits."
@@ -25,5 +43,7 @@ triggers:
 related:
   - ydk:contract:extraction/extract
   - ydk:contract:extraction/detect-mime-type
+  - ydk:entity:extraction/FieldError
+  - ydk:req:extraction/per-field-error-isolation
   - ydk:nfr:extraction/memory-ceiling
   - ydk:nfr:extraction/nesting-depth-guard

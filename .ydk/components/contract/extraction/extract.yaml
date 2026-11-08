@@ -17,10 +17,36 @@ methods:
       gets undefined per-format-field behavior, not a guaranteed error — mime
       detection is a separate, required upstream step
       ([ydk:contract:extraction/detect-mime-type]).
+
+      Fails the whole call only when the container cannot be opened, so
+      nothing is extractable. Once the container is open, every remaining
+      failure is isolated to the leaf it affects and reported in
+      ExtractionResult.FieldErrors instead of thrown, per
+      [ydk:req:extraction/per-field-error-isolation] — the call returns a
+      result whose unreadable leaves are at their no-value state and whose
+      [ydk:entity:extraction/FieldError] entries say which ones those are.
     errors:
       - ydk:error:extraction/file-too-large
-      - ydk:error:extraction/corrupt-file
       - ydk:error:extraction/password-protected
       - ydk:error:extraction/unsupported-format
       - ydk:error:extraction/truncated-container
+      - ydk:error:extraction/corrupt-file
+    field_errors:
+      - ydk:error:extraction/corrupt-file
       - ydk:error:extraction/oversized-nested-content
+    notes: >
+      The `errors` list is the fatal set: these abort the call. The
+      `field_errors` list is reported through
+      ExtractionResult.FieldErrors and never thrown.
+      [ydk:error:extraction/corrupt-file] appears in both because it has two
+      roles — fatal when the container's own structure is unparseable, and
+      per-field when the container opened but one leaf's source record is
+      unparseable. [ydk:error:extraction/oversized-nested-content] is no
+      longer fatal for extraction: a single oversize declared item is
+      dropped with a FieldError while the rest of the document extracts (it
+      remains fatal on [ydk:contract:extraction/detect-mime-type], which has
+      no per-field channel). An exception no component declared, raised while
+      populating one leaf, is likewise reported per-field with the reserved
+      UNEXPECTED_FIELD_FAILURE code and has no error manifest because it is
+      never thrown. A null request object or a null required request field
+      is rejected by argument validation before any of this runs.

@@ -1,0 +1,60 @@
+$schema: ydk:schema:entity
+id: ydk:entity:extraction/FieldError
+description: >
+  One leaf property of the extraction result that could not be populated,
+  while the call as a whole succeeded. Carried in
+  ExtractionResult.FieldErrors. A FieldError is the only thing that
+  distinguishes "the document does not record this value" from "we could not
+  read the value the document records" — a failed leaf is left null, empty,
+  or at its type's default, never at a placeholder or sentinel value, so the
+  value alone cannot tell a caller which of the two happened. Produced only
+  for failures that occur after the container has been opened successfully;
+  a container that cannot be opened at all fails the whole call instead
+  ([ydk:contract:extraction/extract]).
+fields:
+  FieldPath:
+    type: string
+    required: true
+    description: >
+      Dotted path identifying the failed leaf, rooted at the extraction
+      result and spelled with the result's own public property names, with a
+      0-based bracket index for an element of a list: "Metadata.Created",
+      "FormatMetadata.PageCount", "ExtractedText", "EmbeddedFiles[2]". The
+      bracket index is the item's 0-based position in the source container's
+      embedded-item walk order, NOT its position in the returned list (a
+      failed item is absent from that list, so returned positions shift) and
+      NOT the 1-based <N> in the item's generated FileName. The bare
+      collection path "EmbeddedFiles", with no index, is used for an item
+      that failed before its walk position was determined. Never empty,
+      never null.
+  Code:
+    type: enum
+    values: [CORRUPT_FILE, OVERSIZED_NESTED_CONTENT, UNEXPECTED_FIELD_FAILURE]
+    required: true
+    description: >
+      Machine-readable cause. CORRUPT_FILE and OVERSIZED_NESTED_CONTENT are
+      the codes of [ydk:error:extraction/corrupt-file] and
+      [ydk:error:extraction/oversized-nested-content] in their field-level
+      role — same vocabulary as the thrown errors, so a caller handling both
+      channels switches on one set of codes. UNEXPECTED_FIELD_FAILURE is
+      reserved for an exception no component declared, caught while
+      populating one leaf; it has no error manifest because it is never
+      thrown out of the call. This list is closed: a new per-field cause
+      means a new value here and a spec change, not an ad-hoc string.
+  Message:
+    type: string
+    required: true
+    description: >
+      Human-readable explanation of why this leaf could not be populated,
+      naming the field and the source record or part that failed. For
+      display and logs, not for branching — callers branch on Code. The
+      originating exception's type, message, and stack are deliberately NOT
+      carried here: they go to the telemetry/log sink, so the public result
+      does not pin the extraction call to a backing library's exception
+      taxonomy.
+relationships:
+  - target: ydk:entity:extraction/ExtractionResult
+    kind: list-member-of
+    description: FieldError is the element type of ExtractionResult.FieldErrors.
+indexes: []
+crud: []
