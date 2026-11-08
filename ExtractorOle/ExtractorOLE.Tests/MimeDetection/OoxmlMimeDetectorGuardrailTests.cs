@@ -144,7 +144,7 @@ namespace ExtractorOLE.Tests.MimeDetection
                 FileBytes = Array.Empty<byte>(),
                 FileName = "irrelevant.docx"
             };
-            var detector = new OoxmlMimeDetector(new MimeDetectionLimits { MaxFileSizeBytes = 0 });
+            var detector = new OoxmlMimeDetector(new MimeDetectionLimits { MaxFileSizeBytes = 1 });
 
             var result = detector.Detect(request);
 

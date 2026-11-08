@@ -26,9 +26,8 @@ namespace ExtractorOLE.Tests.Registry
         private static MainExtractor BuildExtractor(long? maxFileSizeBytes = null)
         {
             var services = new ServiceCollection();
-            ServiceRegistration.Register(services);
+            ServiceRegistration.Register(services, maxFileSizeBytes != null ? new MimeDetectionLimits { MaxFileSizeBytes = maxFileSizeBytes.Value } : null);
             var provider = services.BuildServiceProvider();
-            if (maxFileSizeBytes != null) provider.GetRequiredService<MimeDetectionLimits>().MaxFileSizeBytes = maxFileSizeBytes.Value;
             return provider.GetRequiredService<MainExtractor>();
         }
 

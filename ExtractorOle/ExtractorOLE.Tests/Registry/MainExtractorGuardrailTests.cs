@@ -134,12 +134,9 @@ namespace ExtractorOLE.Tests.Registry
         public void Extract_ThroughProductionDi_ReadsLimitFromSharedConfiguration()
         {
             var services = new ServiceCollection();
-            ServiceRegistration.Register(services);
+            ServiceRegistration.Register(services, new MimeDetectionLimits { MaxFileSizeBytes = 10 });
             using var provider = services.BuildServiceProvider();
             var extractor = provider.GetRequiredService<MainExtractor>();
-            var limits = provider.GetRequiredService<MimeDetectionLimits>();
-
-            limits.MaxFileSizeBytes = 10;
 
             Assert.Throws<FileTooLargeException>(() => extractor.Extract(Request(new byte[11])));
         }
