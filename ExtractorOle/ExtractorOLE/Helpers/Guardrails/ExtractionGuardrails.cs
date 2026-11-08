@@ -77,6 +77,20 @@ namespace ExtractorOLE.Helpers.Guardrails
                 metric = $"CFB FAT sector count {fatSectors} at sector size {sectorSize} bytes implies {cfbTotal} bytes total (limit {limit})";
             }
 
+            if (metric == null)
+            {
+                // Declared sizes are attacker-written; enforce the caps on bytes actually inflated.
+                try
+                {
+                    ZipInflationGuard.Enforce(stream, _limits.MaxZipEntryCount, _limits.MaxDeclaredEntryBytes, _limits.MaxDeclaredNestedContentBytes);
+                }
+                catch (OversizedNestedContentException ex)
+                {
+                    metric = ex.DeclaredMetric;
+                    limit = _limits.MaxDeclaredNestedContentBytes;
+                }
+            }
+
             if (metric != null)
             {
                 _log($"[Extract] oversized-nested-content: fileName='{fileName}', fileBytes={length}, limitBytes={limit}, {metric}");
