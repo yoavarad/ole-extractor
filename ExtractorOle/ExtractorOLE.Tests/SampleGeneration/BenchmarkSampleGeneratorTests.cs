@@ -71,6 +71,31 @@ namespace ExtractorOLE.Tests.SampleGeneration
             Assert.False(string.IsNullOrWhiteSpace(result.ExtractedText));
         }
 
+        // Same threshold as ExtractionBenchmarks (#185): real samples carry text on the order of size/3.
+        private static bool IsScaledToSize(int textChars, int sizeBytes) => textChars >= sizeBytes / 100;
+
+        [Fact]
+        public void IsScaledToSize_PaddedSample_Fails()
+        {
+            Assert.False(IsScaledToSize(283, 10_000_000));
+            Assert.True(IsScaledToSize(3_000_000, 10_000_000));
+        }
+
+        [Fact]
+        public void WriteAll_MissingManifest_ReturnsFalse()
+        {
+            var dir = Path.Combine(Path.GetTempPath(), "bench-" + Guid.NewGuid().ToString("N"));
+            try
+            {
+                Assert.False(BenchmarkSampleGenerator.WriteAll(dir, Path.Combine(dir, "nope.json")));
+                Assert.False(BenchmarkSampleGenerator.WriteAll(dir, null));
+            }
+            finally
+            {
+                if (Directory.Exists(dir)) Directory.Delete(dir, true);
+            }
+        }
+
         // #165: the doc sample used to be the 283-char multilingual.doc fixture padded with an unread
         // "Data" stream, so Extract() cost stayed flat (~37ms at 100MB) and the doc rows measured
         // nothing. The body text must scale with the target like the other text formats.
@@ -115,7 +140,9 @@ namespace ExtractorOLE.Tests.SampleGeneration
         {
             public SkipUnlessGeneratedAttribute()
             {
-                if (!Directory.Exists(RepoPath("samples/benchmark")))
+                // CI must generate the samples (#293), so a missing directory there is a failure, not a skip.
+                var inCi = string.Equals(Environment.GetEnvironmentVariable("CI"), "true", StringComparison.OrdinalIgnoreCase);
+                if (!inCi && !Directory.Exists(RepoPath("samples/benchmark")))
                 {
                     Skip = "samples/benchmark/ not generated: dotnet run --project SampleGenerator -- --benchmark";
                 }
@@ -167,6 +194,8 @@ namespace ExtractorOLE.Tests.SampleGeneration
             var result = ExtractThroughPublicContract(bytes, Path.GetFileName(path));
 
             Assert.False(string.IsNullOrWhiteSpace(result.ExtractedText));
+            Assert.True(IsScaledToSize(result.ExtractedText.Length, bytes.Length),
+                $"{path} extracted only {result.ExtractedText.Length} chars from {bytes.Length} bytes; the size is padding.");
         }
     }
 }

@@ -68,13 +68,18 @@ namespace SampleGenerator.Generators
 
         /// <summary>
         /// Writes all 12 samples into <paramref name="outputDir"/>, prints
-        /// "path bytes sha256" per file and, when a manifest exists, compares
-        /// each SHA-256 with its <c>benchmarkSamples</c> entry. Returns false on
-        /// any mismatch or missing entry.
+        /// "path bytes sha256" per file and compares each SHA-256 with its
+        /// <c>benchmarkSamples</c> entry. Returns false on any mismatch or missing
+        /// entry, and when the manifest is absent or unreadable (#293).
         /// </summary>
         public static bool WriteAll(string outputDir, string? manifestPath)
         {
             var expected = LoadManifestHashes(manifestPath);
+            if (expected is null)
+            {
+                Console.Error.WriteLine($"Benchmark manifest missing or unreadable: {manifestPath ?? "(none)"}; cannot verify samples.");
+                return false;
+            }
             Directory.CreateDirectory(outputDir);
             var allMatch = true;
 
@@ -87,14 +92,10 @@ namespace SampleGenerator.Generators
                     File.WriteAllBytes(path, content);
 
                     var sha = Convert.ToHexString(SHA256.HashData(content)).ToLowerInvariant();
-                    var verdict = "";
-                    if (expected is not null)
-                    {
-                        var key = $"samples/benchmark/{FileName(format, tier)}";
-                        var match = expected.TryGetValue(key, out var want) && want == sha;
-                        allMatch &= match;
-                        verdict = match ? " MATCHES-MANIFEST" : " MISMATCH-VS-MANIFEST";
-                    }
+                    var key = $"samples/benchmark/{FileName(format, tier)}";
+                    var match = expected.TryGetValue(key, out var want) && want == sha;
+                    allMatch &= match;
+                    var verdict = match ? " MATCHES-MANIFEST" : " MISMATCH-VS-MANIFEST";
                     Console.WriteLine($"{path} {content.Length} {sha}{verdict}");
                 }
             }
@@ -106,16 +107,23 @@ namespace SampleGenerator.Generators
         {
             if (manifestPath is null || !File.Exists(manifestPath)) return null;
 
-            using var doc = JsonDocument.Parse(File.ReadAllText(manifestPath));
-            var hashes = new Dictionary<string, string>();
-            if (doc.RootElement.TryGetProperty("benchmarkSamples", out var entries))
+            try
             {
-                foreach (var entry in entries.EnumerateArray())
+                using var doc = JsonDocument.Parse(File.ReadAllText(manifestPath));
+                var hashes = new Dictionary<string, string>();
+                if (doc.RootElement.TryGetProperty("benchmarkSamples", out var entries))
                 {
-                    hashes[entry.GetProperty("path").GetString()!] = entry.GetProperty("sha256").GetString()!;
+                    foreach (var entry in entries.EnumerateArray())
+                    {
+                        hashes[entry.GetProperty("path").GetString()!] = entry.GetProperty("sha256").GetString()!;
+                    }
                 }
+                return hashes;
             }
-            return hashes;
+            catch (Exception ex) when (ex is JsonException or IOException or InvalidOperationException or KeyNotFoundException)
+            {
+                return null;
+            }
         }
 
         // ---- OOXML ----
