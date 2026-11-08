@@ -55,7 +55,7 @@ namespace ExtractorOLE.Tests.Telemetry
             foreach (var stage in Stages)
             {
                 var a = Assert.Single(mine, x => x.OperationName == stage);
-                Assert.Equal(DocxMime, a.GetTagItem("format"));
+                Assert.Equal("Word", a.GetTagItem("format"));
                 Assert.Equal((long)bytes.Length, a.GetTagItem("size"));
             }
         }
@@ -66,6 +66,7 @@ namespace ExtractorOLE.Tests.Telemetry
             var bytes = Sample();
             var stagesSeen = new HashSet<string>();
             long total = 0;
+            var inFlow = new AsyncLocal<bool>();
             using var listener = new MeterListener
             {
                 InstrumentPublished = (i, l) => { if (i.Meter.Name == ExtractionTelemetry.MeterName) l.EnableMeasurementEvents(i); },
@@ -77,14 +78,46 @@ namespace ExtractorOLE.Tests.Telemetry
             });
             listener.SetMeasurementEventCallback<long>((inst, m, tags, _) =>
             {
-                if (inst.Name == "extractor.bytes.processed") Interlocked.Add(ref total, m);
+                if (inFlow.Value && inst.Name == "extractor.bytes.processed") Interlocked.Add(ref total, m);
             });
             listener.Start();
 
+            inFlow.Value = true;
             Build().Extract(new ExtractionRequest { FileBytes = bytes, FileName = "s.docx", DetectedMimeType = DocxMime });
 
             foreach (var stage in Stages) Assert.Contains(stage, stagesSeen);
-            Assert.True(Interlocked.Read(ref total) >= bytes.Length);
+            Assert.Equal(bytes.Length, Interlocked.Read(ref total));
+        }
+
+        [Fact]
+        public void Extract_ArbitraryMime_UsesFixedTag_AndEchoIsCapped()
+        {
+            var mime = new string('x', 5000);
+            var formatTags = new HashSet<string>();
+            var inFlow = new AsyncLocal<bool>();
+            using var listener = new MeterListener
+            {
+                InstrumentPublished = (i, l) => { if (i.Meter.Name == ExtractionTelemetry.MeterName) l.EnableMeasurementEvents(i); },
+            };
+            listener.SetMeasurementEventCallback<double>((inst, m, tags, _) =>
+            {
+                if (!inFlow.Value) return;
+                foreach (var t in tags) if (t.Key == "format") lock (formatTags) formatTags.Add((string)t.Value!);
+            });
+            listener.SetMeasurementEventCallback<long>((inst, m, tags, _) =>
+            {
+                if (!inFlow.Value) return;
+                foreach (var t in tags) if (t.Key == "format") lock (formatTags) formatTags.Add((string)t.Value!);
+            });
+            listener.Start();
+
+            inFlow.Value = true;
+            var ex = Assert.Throws<ExtractorOLE.Exceptions.UnsupportedFormatException>(() =>
+                Build().Extract(new ExtractionRequest { FileBytes = Sample(), FileName = "s.bin", DetectedMimeType = mime }));
+
+            Assert.Equal("unsupported", Assert.Single(formatTags));
+            Assert.True(ex.DetectedMimeType.Length <= 100);
+            Assert.True(ex.Message.Length < 300);
         }
     }
 }

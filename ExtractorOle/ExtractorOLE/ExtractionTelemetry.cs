@@ -22,6 +22,12 @@ namespace ExtractorOLE
         private static readonly Counter<long> BytesProcessed =
             Meter.CreateCounter<long>("extractor.bytes.processed", "By", "Input bytes processed");
 
+        internal const string UnsupportedFormatTag = "unsupported";
+
+        // Once per Extract (not per stage), so the counter equals the input size.
+        internal static void RecordBytes(long size, string format) =>
+            BytesProcessed.Add(size, new KeyValuePair<string, object?>("format", format));
+
         internal static StageScope Stage(string stage, string format, long size) => new(stage, format, size);
 
         // Per-field failure sink (#303): the exception's type, message and stack go to the current
@@ -38,7 +44,6 @@ namespace ExtractorOLE
             private readonly Activity? _activity;
             private readonly string _stage;
             private readonly string _format;
-            private readonly long _size;
             private readonly long _start;
             private readonly bool _metrics;
 
@@ -46,8 +51,7 @@ namespace ExtractorOLE
             {
                 _stage = stage;
                 _format = format;
-                _size = size;
-                _metrics = StageDuration.Enabled || BytesProcessed.Enabled;
+                _metrics = StageDuration.Enabled;
                 _activity = Source.HasListeners() ? Source.StartActivity(stage) : null;
                 _activity?.SetTag("format", format);
                 _activity?.SetTag("size", size);
@@ -62,7 +66,6 @@ namespace ExtractorOLE
                 StageDuration.Record(ms,
                     new KeyValuePair<string, object?>("stage", _stage),
                     new KeyValuePair<string, object?>("format", _format));
-                BytesProcessed.Add(_size, new KeyValuePair<string, object?>("stage", _stage));
             }
         }
     }

@@ -69,12 +69,15 @@ namespace ExtractorOLE
             // Owns the FileStream opened for FilePath; disposed after ReleaseParsedDocument below,
             // because an OOXML package opened from it reads the stream lazily (ADR-008).
             using var input = ExtractionInput.From(request);
-            var mime = request.DetectedMimeType;
+            var resolved = ResolveFormat(request.DetectedMimeType);
+            // Bounded telemetry tag: caller-supplied mime never reaches a tag/label (#284).
+            var mime = resolved?.ToString() ?? ExtractionTelemetry.UnsupportedFormatTag;
             var size = input.Length;
+            ExtractionTelemetry.RecordBytes(size, mime);
             using (ExtractionTelemetry.Stage("guardrails", mime, size))
                 _guardrails.Enforce(request, input); // after null checks, before any parsing/dispatch (T-3335d397)
 
-            var format = ResolveFormat(request.DetectedMimeType)
+            var format = resolved
                          ?? throw new Exceptions.UnsupportedFormatException(request.DetectedMimeType);
 
             using (ExtractionTelemetry.Stage("preflight", mime, size))
