@@ -5,7 +5,6 @@ using b2xtranslator.OpenXmlLib;
 using b2xtranslator.StructuredStorage.Reader;
 using b2xtranslator.WordprocessingMLMapping;
 using ExtractorOLE.Helpers;
-using System;
 using System.IO;
 using B2xWordprocessingDocument = b2xtranslator.OpenXmlLib.WordprocessingML.WordprocessingDocument;
 

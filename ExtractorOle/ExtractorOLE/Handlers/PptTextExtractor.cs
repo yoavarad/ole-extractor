@@ -1,6 +1,5 @@
 using ExtractorOLE.Abstractions;
 using ExtractorOLE.Helpers.FileTypeStrategy;
-using System;
 
 namespace ExtractorOLE.Handlers
 {
@@ -15,7 +14,7 @@ namespace ExtractorOLE.Handlers
     // conversion or Unicode normalization is applied anywhere on this path
     // ([ydk:req:extraction/unicode-fidelity]).
     //
-    // Returns string.Empty (never null) when the file has no textual content or cannot be converted.
+    // Returns string.Empty (never null) when the file has no textual content; a file that cannot be converted throws.
     internal class PptTextExtractor : IParsedDocumentTextExtractor
     {
         private readonly PptxTextExtractor _pptxTextExtractor = new PptxTextExtractor();

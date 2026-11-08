@@ -3,7 +3,6 @@ using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Drawing;
 using ExtractorOLE.Helpers.FileTypeStrategy;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
