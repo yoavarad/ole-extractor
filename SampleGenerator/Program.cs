@@ -208,6 +208,20 @@ void GenerateAdversarialSamples()
     var corruptedPath = Path.Combine(adversarialDir, "corrupt-embedded-object.docx");
     File.WriteAllBytes(corruptedPath, corruptedBytes);
     Console.WriteLine($"Generated adversarial corrupt-embedded-object docx: {corruptedPath} ({corruptedBytes.Length} bytes)");
+
+    // Per-field error isolation fixtures (ydk:req:extraction/per-field-error-isolation): each opens
+    // as a docx without throwing, then fails on exactly one leaf.
+    foreach (var (fileName, bytes) in new[]
+    {
+        ("corrupt-body-text.docx", AdversarialDocxSampleGenerator.BuildCorruptBodyText()),
+        ("oversized-embedded-object.docx", AdversarialDocxSampleGenerator.BuildOversizedEmbeddedObject()),
+        ("faulting-embedded-enumeration.docx", AdversarialDocxSampleGenerator.BuildFaultingEmbeddedEnumeration()),
+    })
+    {
+        var path = Path.Combine(adversarialDir, fileName);
+        File.WriteAllBytes(path, bytes);
+        Console.WriteLine($"Generated adversarial {fileName}: {path} ({bytes.Length} bytes)");
+    }
 }
 
 // docs/specs/dataset-curation.md's shared adversarial set (not per-format):
