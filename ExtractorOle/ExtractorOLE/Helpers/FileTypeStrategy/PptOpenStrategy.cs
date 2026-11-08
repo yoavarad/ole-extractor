@@ -72,16 +72,15 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
             {
                 try
                 {
-                    var (metadata, hasMacros) = ReadFileMetadataAndMacroFlag(fs);
                     result = new DocumentExtractionResult
                     {
-                        Metadata = metadata,
                         MimeType = _helper.MimeFor(OfficeMimeType.PowerPointLegacy),
-                        // SlideCount/NotesSlideCount are populated below, best-effort, from the
-                        // converted body; HasMacros is already final here since it's sourced from the
-                        // original file directly, independent of whether body conversion succeeds.
-                        FormatMetadata = new PowerPointFormatMetadata { HasMacros = hasMacros },
                     };
+                    var hasMacros = ReadFileMetadataAndMacroFlag(fs, result);
+                    // SlideCount/NotesSlideCount are populated below, best-effort, from the
+                    // converted body; HasMacros is already final here since it's sourced from the
+                    // original file directly, independent of whether body conversion succeeds.
+                    result.FormatMetadata = new PowerPointFormatMetadata { HasMacros = hasMacros };
                 }
                 catch
                 {
@@ -121,20 +120,19 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
             return result;
         }
 
-        private static (FileMetadata Metadata, bool HasMacros) ReadFileMetadataAndMacroFlag(NPOIFSFileSystem fs)
+        // Populates result.Metadata (each property isolated, see MetadataConversions.Apply) and
+        // returns the macro-presence flag.
+        private static bool ReadFileMetadataAndMacroFlag(NPOIFSFileSystem fs, DocumentExtractionResult result)
         {
             var propsDoc = new HPSFPropertiesOnlyDocument(fs);
 
-            var metadata = new FileMetadata();
             var summary = propsDoc.SummaryInformation;
             if (summary != null)
             {
-                MetadataConversions.Apply(summary, metadata);
+                MetadataConversions.Apply(summary, result);
             }
 
-            bool hasMacros = fs.Root.HasEntryCaseInsensitive(MacrosStorageName);
-
-            return (metadata, hasMacros);
+            return fs.Root.HasEntryCaseInsensitive(MacrosStorageName);
         }
 
         private static void PopulateBodyContent(Func<byte[]> convertToPptx, DocumentExtractionResult result)

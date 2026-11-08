@@ -69,7 +69,7 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
                     var summary = ReadSummaryInformation(fs.Root);
                     if (summary != null)
                     {
-                        MetadataConversions.Apply(summary, result.Metadata);
+                        MetadataConversions.Apply(summary, result);
                     }
 
                     var docSummary = ReadDocumentSummaryInformation(fs.Root);
