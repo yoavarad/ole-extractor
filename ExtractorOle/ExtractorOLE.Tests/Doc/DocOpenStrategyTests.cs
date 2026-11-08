@@ -9,6 +9,7 @@ using NPOI.POIFS.FileSystem;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using Xunit;
 
 namespace ExtractorOLE.Tests.Doc
@@ -199,6 +200,34 @@ namespace ExtractorOLE.Tests.Doc
             Assert.Null(formatMetadata.Manager);
             Assert.Null(formatMetadata.Template);
             Assert.False(formatMetadata.HasMacros);
+        }
+
+        // #286: a throwing first-layer embedded walk must not discard the metadata already read.
+        [Fact]
+        public void Open_EmbeddedWalkThrows_StillReturnsFileAndFormatMetadata()
+        {
+            var bytes = BuildDocFixtureBytes("Quarterly Report", "Jane Doe", null, null, null);
+            var helper = DispatchProxy.Create<IExtractionHelper, ThrowingEmbeddedWalkProxy>();
+            ((ThrowingEmbeddedWalkProxy)(object)helper).Inner = new ExtractionHelper();
+
+            var result = new DocOpenStrategy(helper).Open(bytes);
+
+            Assert.NotNull(result);
+            Assert.Equal("Quarterly Report", result!.Metadata.Title);
+            Assert.IsType<WordFormatMetadata>(result.FormatMetadata);
+        }
+
+        public class ThrowingEmbeddedWalkProxy : DispatchProxy
+        {
+            public IExtractionHelper Inner { get; set; } = null!;
+
+            protected override object? Invoke(MethodInfo? targetMethod, object?[]? args)
+            {
+                if (targetMethod!.Name == nameof(IExtractionHelper.ExtractFirstLayerEmbedded))
+                    throw new InvalidOperationException("malformed ObjectPool");
+                try { return targetMethod.Invoke(Inner, args); }
+                catch (TargetInvocationException e) { throw e.InnerException!; }
+            }
         }
 
         [Fact]
