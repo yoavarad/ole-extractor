@@ -187,6 +187,47 @@ namespace ExtractorOLE.Tests.Excel
             Assert.Equal(expected.EnumerateRunes().ToArray(), result.EnumerateRunes().ToArray());
         }
 
+        private static byte[] BuildXlsxWithInlineStringCell(InlineString inline)
+        {
+            using var stream = new MemoryStream();
+            using (var document = SpreadsheetDocument.Create(stream, SpreadsheetDocumentType.Workbook))
+            {
+                var workbookPart = document.AddWorkbookPart();
+                workbookPart.Workbook = new Workbook();
+                var worksheetPart = workbookPart.AddNewPart<WorksheetPart>();
+                var sheetData = new SheetData();
+                var row = new Row { RowIndex = 1 };
+                row.Append(new Cell { CellReference = "A1", DataType = CellValues.InlineString, InlineString = inline });
+                sheetData.Append(row);
+                worksheetPart.Worksheet = new Worksheet(sheetData);
+                var sheets = workbookPart.Workbook.AppendChild(new Sheets());
+                sheets.Append(new Sheet { Id = workbookPart.GetIdOfPart(worksheetPart), SheetId = 1, Name = "Sheet1" });
+                workbookPart.Workbook.Save();
+            }
+            return stream.ToArray();
+        }
+
+        [Fact]
+        public void RichInlineString_YieldsAllRunText()
+        {
+            var inline = new InlineString(
+                new Run(new Text("Hello ")),
+                new Run(new RunProperties(new Bold()), new Text("rich ")),
+                new Run(new Text("world")));
+
+            var result = new XlsxTextExtractor().ExtractText(BuildXlsxWithInlineStringCell(inline));
+
+            Assert.Equal("Hello rich world", result);
+        }
+
+        [Fact]
+        public void PlainInlineString_Unchanged()
+        {
+            var result = new XlsxTextExtractor().ExtractText(BuildXlsxWithInlineStringCell(new InlineString(new Text("plain"))));
+
+            Assert.Equal("plain", result);
+        }
+
         [Fact]
         public void CorruptBytes_ReturnsEmptyString_NeverThrows()
         {
