@@ -38,7 +38,7 @@ namespace ExtractorOLE.Tests.SampleGeneration
 
             Assert.NotNull(word.MainDocumentPart);
             Assert.NotEmpty(word.MainDocumentPart!.Parts);
-            var ex = Assert.ThrowsAny<Exception>(() => word.MainDocumentPart.Document.Body!.InnerText.ToString());
+            var ex = Assert.ThrowsAny<Exception>(() => word.MainDocumentPart!.Document!.Body!.InnerText.ToString());
         }
 
         [Fact]
