@@ -8,39 +8,56 @@ description: >
   read the value the document records" — a failed leaf is left null, empty,
   or at its type's default, never at a placeholder or sentinel value, so the
   value alone cannot tell a caller which of the two happened. Produced only
-  for failures that occur after the container has been opened successfully;
-  a container that cannot be opened at all fails the whole call instead
-  ([ydk:contract:extraction/extract]).
+  for failures that occur after the container has been opened successfully.
+  Anything that fails the container open itself — including a
+  nesting-depth-guard breach in the container's own declared structure, and
+  any undeclared exception raised during the open — fails the whole call
+  instead, because there is then no result object for a FieldError to live
+  on ([ydk:contract:extraction/extract] holds the fatal set).
 fields:
   FieldPath:
     type: string
     required: true
     description: >
       Dotted path identifying the failed leaf, rooted at the extraction
-      result and spelled with the result's own public property names, with a
-      0-based bracket index for an element of a list: "Metadata.Created",
-      "FormatMetadata.PageCount", "ExtractedText", "EmbeddedFiles[2]". The
-      bracket index is the item's 0-based position in the source container's
-      embedded-item walk order, NOT its position in the returned list (a
-      failed item is absent from that list, so returned positions shift) and
-      NOT the 1-based <N> in the item's generated FileName. The bare
-      collection path "EmbeddedFiles", with no index, is used for an item
-      that failed before its walk position was determined. Never empty,
-      never null.
+      result and spelled with the result's own public C# property names, not
+      the entity names this spec uses to describe the model — the path must
+      match character-for-character the property the caller just read as
+      null, so no translation step is ever needed. Examples:
+      "Metadata.Created", "Metadata.Title", "FormatMetadata.PageCount",
+      "ExtractedText". A failed embedded item is keyed by its package path,
+      never by a number:
+      "EmbeddedFiles[word/embeddings/oleObject1.bin]",
+      "EmbeddedFiles[ObjectPool/_1234/EPRINT]" — the same package-path value
+      a readable item carries on [ydk:entity:extraction/SubfileItem]. The
+      bare collection path "EmbeddedFiles", with no key, is used when a
+      failing item's package path is unknown or empty, and once for a fault
+      in the enumeration of the container's items itself (items never
+      reached are absent from the list and are not individually reported).
+      The naming bridge, the key rules and the accepted blind spot are in
+      docs/specs/extraction.md. Never empty, never null.
   Code:
     type: enum
     values: [CORRUPT_FILE, OVERSIZED_NESTED_CONTENT, UNEXPECTED_FIELD_FAILURE]
     required: true
     description: >
-      Machine-readable cause. CORRUPT_FILE and OVERSIZED_NESTED_CONTENT are
-      the codes of [ydk:error:extraction/corrupt-file] and
+      Machine-readable cause, chosen by the cause and not by the leaf:
+      the source record behind the leaf is unreadable or malformed ->
+      CORRUPT_FILE; the leaf is an item that breached a
+      [ydk:nfr:extraction/nesting-depth-guard] cap ->
+      OVERSIZED_NESTED_CONTENT; anything else ->
+      UNEXPECTED_FIELD_FAILURE. The third is the residual bucket for a
+      failure mode the spec did not anticipate, so it is never used where
+      either of the first two fits.
+      The vocabulary is only partly shared with the thrown errors:
+      CORRUPT_FILE and OVERSIZED_NESTED_CONTENT are the codes of
+      [ydk:error:extraction/corrupt-file] and
       [ydk:error:extraction/oversized-nested-content] in their field-level
-      role — same vocabulary as the thrown errors, so a caller handling both
-      channels switches on one set of codes. UNEXPECTED_FIELD_FAILURE is
-      reserved for an exception no component declared, caught while
-      populating one leaf; it has no error manifest because it is never
-      thrown out of the call. This list is closed: a new per-field cause
-      means a new value here and a spec change, not an ad-hoc string.
+      roles, so a caller handling both channels sees those two names in
+      each, while UNEXPECTED_FIELD_FAILURE has no error manifest and is
+      never thrown out of the call at all. This list is closed: a new
+      per-field cause means a new value here and a spec change, not an
+      ad-hoc string and not a looser reading of UNEXPECTED_FIELD_FAILURE.
   Message:
     type: string
     required: true

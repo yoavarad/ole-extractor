@@ -21,6 +21,17 @@ fields:
       "<prefix>_<N><ext>" (N = 1-based list position): prefix slide_image for an image
       part hosted one hop below the main part (pptx slide, xlsx worksheet), embedded_object
       for every other item (see docs/specs/extraction.md, Subfiles).
+  PackagePath:
+    type: string
+    required: true
+    description: >
+      Where the item sits in the container — the OOXML part URI
+      ("word/embeddings/oleObject1.bin") or the legacy CFB storage/stream
+      path ("ObjectPool/_1234/EPRINT"). Stable across extractions and
+      independent of the returned list's ordering, which is why it, and not
+      a position, is the key a [ydk:entity:extraction/FieldError] uses to
+      name an item that could not be read
+      ([ydk:req:extraction/per-field-error-isolation]).
   SizeBytes:
     type: long
     required: true

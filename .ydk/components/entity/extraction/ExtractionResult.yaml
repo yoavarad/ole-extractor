@@ -48,9 +48,10 @@ fields:
       call itself succeeded. Empty list (not null) on a fully-successful
       extraction; additive, so a caller that ignores it sees exactly the
       pre-existing result shape. Entries are in population order (general
-      metadata, then format metadata, then text, then embedded items in walk
-      order) with at most one entry per distinct field path, per
-      [ydk:req:extraction/per-field-error-isolation]. This collection is the
+      metadata, then format metadata, then text, then embedded items in the
+      order the container enumerates them) with at most one entry per
+      distinct field path — only the bare key-less "EmbeddedFiles" path may
+      repeat — per [ydk:req:extraction/per-field-error-isolation]. This collection is the
       only way to tell a leaf the document does not record from a leaf we
       could not read.
 relationships:

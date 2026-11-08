@@ -17,28 +17,49 @@ rule: >
   non-nullable count or flag is at its type's default (0, false, empty
   list). For every failed leaf, Extract() MUST append exactly one FieldError
   to ExtractionResult.FieldErrors, identifying the leaf by the field-path
-  convention in docs/specs/extraction.md and carrying a Code from that
-  entity's closed vocabulary. The FieldErrors entry is the sole
+  convention in docs/specs/extraction.md — the result's own public C#
+  property names, so "Metadata.Created" and not "GeneralMetadata.CreatedAt",
+  and a failed embedded item keyed by its package path as
+  "EmbeddedFiles[<package path>]" rather than by any number — and carrying a
+  Code from that entity's closed three-value vocabulary, selected by cause:
+  an unreadable or malformed source record behind the leaf -> CORRUPT_FILE,
+  a nesting-guard breach on that leaf -> OVERSIZED_NESTED_CONTENT, anything
+  else -> UNEXPECTED_FIELD_FAILURE. The FieldErrors entry is the sole
   discriminator between a genuinely-absent/zero/false value and a value
   that could not be read, so a caller that must tell those apart MUST
   consult FieldErrors rather than inspecting the value.
   FieldErrors MUST be an empty collection, never null, when every leaf was
   populated. Entries MUST be in population order (general metadata, then
-  format metadata, then text, then embedded items in walk order), and MUST
-  carry at most one entry per distinct field path — with the single
-  exception of the index-less "EmbeddedFiles" path, which repeats once per
-  item whose walk position could not be determined.
-  Only the container-open failures remain fatal:
-  [ydk:error:extraction/file-too-large],
+  format metadata, then text, then embedded items in the order the container
+  enumerates them), and MUST carry at most one entry per distinct field path
+  — with the single exception of the key-less "EmbeddedFiles" path, which
+  MAY repeat: once per failing item whose package path is unknown or empty,
+  plus at most once more for a fault in the enumeration of the container's
+  items itself. Items never reached because of such a fault are absent from
+  the returned list and MUST NOT be individually reported; that is the one
+  accepted blind spot.
+  The fatal set is exactly: [ydk:error:extraction/file-too-large],
   [ydk:error:extraction/password-protected],
   [ydk:error:extraction/unsupported-format],
   [ydk:error:extraction/truncated-container],
-  [ydk:error:extraction/corrupt-file] in its container-level role, and
-  null-request/null-required-field argument validation.
-  [ydk:error:extraction/oversized-nested-content],
-  [ydk:error:extraction/corrupt-file] in its field-level role, and any
-  undeclared exception raised while populating one leaf MUST be reported
-  per-field instead of thrown.
+  [ydk:error:extraction/corrupt-file] in its container-level role,
+  [ydk:error:extraction/oversized-nested-content] in its open-time role
+  only, null-request/null-required-field argument validation, and any
+  undeclared exception raised while the container is still being opened
+  (which propagates unwrapped, since no result exists to carry a
+  FieldError).
+  [ydk:error:extraction/corrupt-file] in its field-level role,
+  [ydk:error:extraction/oversized-nested-content] on a single leaf after a
+  successful open, and any undeclared exception raised while populating one
+  leaf MUST be reported per-field instead of thrown.
+  The required FileMetadata properties that derive from the request and the
+  caller-supplied detection verdict rather than from a parsed source record
+  — FileSizeBytes, ExactMimeType, FormatFamily — are outside the isolated
+  set: they cannot fail after a successful open and MUST NOT appear in a
+  field path. A defaulted non-nullable leaf MUST NOT be reconciled against a
+  succeeding sibling leaf (no recomputing SheetCount from SheetNames, no
+  clearing SheetNames to match a zero SheetCount); the inconsistency is
+  expected and FieldErrors is what explains it.
 failure_behavior: >
   N/A as a runtime error — this rule governs how other failures are
   reported. A violation is either a thrown call-level failure where a
@@ -57,12 +78,14 @@ related_components:
   - ydk:error:extraction/corrupt-file
   - ydk:error:extraction/oversized-nested-content
 acceptance_criteria:
-  - "Test: every corpus sample that extracts cleanly returns FieldErrors as an empty, non-null collection — asserted for all 6 formats, so an always-populated or always-null collection fails."
-  - "Test: a file whose general-metadata property store has one unreadable property extracts successfully, leaves that one property null, leaves the other eleven populated as the manifest records them, and returns exactly one FieldError whose FieldPath is that property's dotted path and whose Code is CORRUPT_FILE."
-  - "Test: a format-metadata leaf failure (e.g. an xls whose sheet records cannot be counted) returns SheetCount as 0 plus a FieldError at FormatMetadata.SheetCount, and the same sample's other format-metadata leaves are still populated — proving the caller can distinguish a failed count from a genuine 0 only via FieldErrors."
-  - "Test: a sample whose body text cannot be flattened returns ExtractedText as the empty string AND a FieldError at ExtractedText — an empty string with no FieldErrors entry fails the test, which is the regression guard against today's silent-empty behavior."
-  - "Test: the adversarial corrupt-embedded-object sample extracts successfully, omits only the bad item from EmbeddedFiles, keeps every good item, and returns one FieldError whose FieldPath is EmbeddedFiles[<walk index of the bad item>] — asserting the walk index, not the returned-list position."
-  - "Test: an embedded item whose declared internal size exceeds the nesting-depth guard is dropped with a FieldError whose Code is OVERSIZED_NESTED_CONTENT, and Extract() does not throw."
-  - "Test: each of file-too-large, password-protected, unsupported-format, truncated-container, zero-length input, a container that cannot be opened at all, and a null request/null required field still throws — asserting the thrown error, and asserting that no result object is returned, so the fatal set cannot silently drift into the per-field channel."
-  - "Test: ExtractManyAsync over a batch containing one field-error-only file reports that item as Succeeded with a non-null Result carrying the FieldErrors and a null Error — a field error is never a batch item error."
-  - "Test: FieldErrors contains no duplicate FieldPath values for any corpus or adversarial sample, except for repeated index-less EmbeddedFiles entries."
+  - "Fixture note: a sample 'extracts cleanly' means a sample whose samples/manifest.json entry expects zero FieldErrors; the manifest must therefore record an expected-FieldErrors set (field path + code per entry, empty for every clean sample) for every entry it already covers, which the implementation task adds alongside the fixtures below. Fixtures that exist today: samples/adversarial/corrupt-container.docx, samples/adversarial/corrupt-embedded-object.docx, samples/adversarial/oversized-declared-size-bomb.doc, samples/adversarial/password-protected.docx, samples/adversarial/truncated-container.docx, samples/adversarial/zero-byte.docx. Every fixture marked TO-AUTHOR below does NOT exist yet and must be authored by the implementation task."
+  - "Test: every corpus sample whose manifest entry expects zero FieldErrors returns FieldErrors as an empty, non-null collection — asserted for all 6 formats, so an always-populated or always-null collection fails."
+  - "Test (fixture samples/adversarial/corrupt-metadata-property.doc, TO-AUTHOR): a file whose general-metadata property store has one unreadable property extracts successfully, leaves that one property null, leaves the other eleven populated as the manifest records them, and returns exactly one FieldError whose FieldPath is that property's dotted path in C# spelling (e.g. Metadata.Created, never GeneralMetadata.CreatedAt) and whose Code is CORRUPT_FILE."
+  - "Test (fixture samples/adversarial/corrupt-sheet-records.xls, TO-AUTHOR): a format-metadata leaf failure returns SheetCount as 0 plus a FieldError at FormatMetadata.SheetCount, and the same sample's other format-metadata leaves — SheetNames included — are still populated; the test asserts that SheetNames is NOT cleared to agree with the zero count, proving both that the caller can distinguish a failed count from a genuine 0 only via FieldErrors and that no leaf is reconciled against a sibling."
+  - "Test (fixture samples/adversarial/corrupt-body-text.docx, TO-AUTHOR): a sample whose body text cannot be flattened returns ExtractedText as the empty string AND a FieldError at ExtractedText — an empty string with no FieldErrors entry fails the test, which is the regression guard against today's silent-empty behavior."
+  - "Test (fixture samples/adversarial/corrupt-embedded-object.docx, exists): the sample extracts successfully, omits only the bad item from EmbeddedFiles, keeps every good item, and returns one FieldError whose FieldPath is EmbeddedFiles[<that item's package path>] — asserting the package-path key against the value the item itself would have carried, and asserting that the key is not a number of any kind."
+  - "Test (fixture samples/adversarial/oversized-embedded-object.docx, TO-AUTHOR): an embedded item whose declared internal size exceeds the nesting-depth guard is dropped with a FieldError whose Code is OVERSIZED_NESTED_CONTENT at that item's package path, and Extract() does not throw. The existing samples/adversarial/oversized-declared-size-bomb.doc exercises the open-time role instead and must still throw, so this per-leaf case needs its own fixture."
+  - "Test (fixtures samples/adversarial/unnamed-embedded-storage.doc and samples/adversarial/faulting-embedded-enumeration.docx, both TO-AUTHOR): a failing item whose package path is unknown or empty is reported at the bare key-less EmbeddedFiles path; and a container whose item enumeration faults part-way yields exactly one bare EmbeddedFiles entry for the whole fault, with the items past the fault absent from EmbeddedFiles and NOT individually reported."
+  - "Test: each of file-too-large (size limit driven by configuration, no fixture needed), password-protected (samples/adversarial/password-protected.docx), unsupported-format (a detected-format value outside the six, no fixture needed), truncated-container (samples/adversarial/truncated-container.docx), zero-length input (samples/adversarial/zero-byte.docx), a container that cannot be opened at all (samples/adversarial/corrupt-container.docx), an open-time nesting-guard breach (samples/adversarial/oversized-declared-size-bomb.doc) and a null request/null required field still throws — asserting the thrown error, and asserting that no result object is returned, so the fatal set cannot silently drift into the per-field channel."
+  - "Test: ExtractManyAsync over a batch containing one field-error-only file (reuse samples/adversarial/corrupt-embedded-object.docx) reports that item as Succeeded with a non-null Result carrying the FieldErrors and a null Error — a field error is never a batch item error."
+  - "Test: FieldErrors contains no duplicate FieldPath values for any corpus or adversarial sample, except for repeated bare key-less EmbeddedFiles entries."

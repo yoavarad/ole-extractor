@@ -18,11 +18,13 @@ methods:
       detection is a separate, required upstream step
       ([ydk:contract:extraction/detect-mime-type]).
 
-      Fails the whole call only when the container cannot be opened, so
-      nothing is extractable. Once the container is open, every remaining
-      failure is isolated to the leaf it affects and reported in
-      ExtractionResult.FieldErrors instead of thrown, per
-      [ydk:req:extraction/per-field-error-isolation] — the call returns a
+      Fails the whole call for the fatal set in `errors` below and for
+      nothing else — that set is enumerated, not derived from one test, since
+      argument validation runs before a byte is read and unsupported-format
+      is decided from the supplied detected-format value alone. Once the
+      container is open, every remaining failure is isolated to the leaf it
+      affects and reported in ExtractionResult.FieldErrors instead of thrown,
+      per [ydk:req:extraction/per-field-error-isolation] — the call returns a
       result whose unreadable leaves are at their no-value state and whose
       [ydk:entity:extraction/FieldError] entries say which ones those are.
     errors:
@@ -31,22 +33,36 @@ methods:
       - ydk:error:extraction/unsupported-format
       - ydk:error:extraction/truncated-container
       - ydk:error:extraction/corrupt-file
+      - ydk:error:extraction/oversized-nested-content
     field_errors:
       - ydk:error:extraction/corrupt-file
       - ydk:error:extraction/oversized-nested-content
     notes: >
       The `errors` list is the fatal set: these abort the call. The
       `field_errors` list is reported through
-      ExtractionResult.FieldErrors and never thrown.
-      [ydk:error:extraction/corrupt-file] appears in both because it has two
-      roles — fatal when the container's own structure is unparseable, and
-      per-field when the container opened but one leaf's source record is
-      unparseable. [ydk:error:extraction/oversized-nested-content] is no
-      longer fatal for extraction: a single oversize declared item is
-      dropped with a FieldError while the rest of the document extracts (it
-      remains fatal on [ydk:contract:extraction/detect-mime-type], which has
-      no per-field channel). An exception no component declared, raised while
-      populating one leaf, is likewise reported per-field with the reserved
-      UNEXPECTED_FIELD_FAILURE code and has no error manifest because it is
-      never thrown. A null request object or a null required request field
-      is rejected by argument validation before any of this runs.
+      ExtractionResult.FieldErrors and never thrown. Two errors appear in
+      both lists because each has two roles, split on the same question —
+      had the container finished opening?
+      [ydk:error:extraction/corrupt-file] is fatal when the container's own
+      structure is unparseable and per-field when the container opened but
+      one leaf's source record is unparseable.
+      [ydk:error:extraction/oversized-nested-content] is fatal when a
+      nesting-depth-guard cap is breached by the container's own declared
+      structure during the open, since there is then no result to attach a
+      FieldError to, and per-field when a single leaf item breaches a cap
+      after a successful open — that item is dropped while the rest of the
+      document extracts. It remains wholly fatal on
+      [ydk:contract:extraction/detect-mime-type], which has no per-field
+      channel.
+      Code selection on a FieldError follows the cause, not the leaf: an
+      unreadable or malformed source record behind that leaf -> CORRUPT_FILE;
+      a nesting-guard breach on that leaf -> OVERSIZED_NESTED_CONTENT;
+      anything else -> UNEXPECTED_FIELD_FAILURE, the residual bucket for a
+      failure mode the spec did not anticipate. UNEXPECTED_FIELD_FAILURE has
+      no error manifest and is never thrown out of the call, so the
+      three-value vocabulary is only partly shared with the thrown errors.
+      A null request object or a null required request field is rejected by
+      argument validation before any of this runs; an undeclared exception
+      raised while the container is still being opened is fatal too and
+      propagates unwrapped as raised, with no FieldError possible because no
+      result exists yet.
