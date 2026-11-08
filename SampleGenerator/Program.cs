@@ -209,6 +209,20 @@ void GenerateAdversarialSamples()
     File.WriteAllBytes(corruptedPath, corruptedBytes);
     Console.WriteLine($"Generated adversarial corrupt-embedded-object docx: {corruptedPath} ({corruptedBytes.Length} bytes)");
 
+    // Per-field error isolation fixtures (ydk:req:extraction/per-field-error-isolation): each opens
+    // as a docx without throwing, then fails on exactly one leaf.
+    foreach (var (fileName, bytes) in new[]
+    {
+        ("corrupt-body-text.docx", AdversarialDocxSampleGenerator.BuildCorruptBodyText()),
+        ("oversized-embedded-object.docx", AdversarialDocxSampleGenerator.BuildOversizedEmbeddedObject()),
+        ("faulting-embedded-enumeration.docx", AdversarialDocxSampleGenerator.BuildFaultingEmbeddedEnumeration()),
+    })
+    {
+        var path = Path.Combine(adversarialDir, fileName);
+        File.WriteAllBytes(path, bytes);
+        Console.WriteLine($"Generated adversarial {fileName}: {path} ({bytes.Length} bytes)");
+    }
+
     // Legacy per-field-isolation fixtures (ADR-005 hand-written CFB): each carries exactly one
     // failure beside otherwise-readable content.
     WriteAdversarial(adversarialDir, "corrupt-metadata-property.doc", AdversarialSampleGenerator.BuildCorruptMetadataPropertyDoc());
