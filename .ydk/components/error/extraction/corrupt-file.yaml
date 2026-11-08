@@ -6,6 +6,22 @@ description: >
   claims — e.g. a truncated CFB FAT chain, an unreadable ZIP central
   directory, or a part that fails XML well-formedness. This is a data
   problem, not a bug in the caller.
+
+  This error has two roles, split by whether the container could be opened.
+  CONTAINER-LEVEL (fatal, thrown): the container's own structure is
+  unparseable, so no document is ever opened and nothing is extractable —
+  Extract() throws and returns no result. FIELD-LEVEL (not thrown): the
+  container opened, but one leaf's source record is unparseable — a single
+  property store entry, a body-text record, or one embedded item's bytes.
+  Extract() then leaves that leaf at its no-value state and records a
+  [ydk:entity:extraction/FieldError] with code CORRUPT_FILE at that leaf's
+  field path, per [ydk:req:extraction/per-field-error-isolation]. Which role
+  applies is decided solely by whether the container opened — not by the
+  exception's type, the backing library that raised it, or how deep in the
+  document the bad record sits. The status_code / detail_template /
+  response_shape below describe the container-level role; in the field-level
+  role only the `code` crosses over, carried on the FieldError alongside its
+  own field path and message.
 status_code: 422
 code: CORRUPT_FILE
 detail_template: "File could not be parsed as ${detectedMimeType}: ${parseFailureReason}"
@@ -14,8 +30,13 @@ response_shape:
   detail: string
   detectedMimeType: string
 triggers:
-  - Extract() is called on bytes that pass mime detection's lightweight structural sniff but fail full parsing by the format library (NPOI or DocumentFormat.OpenXml)
-  - A ZIP central directory is present but individual OOXML parts fail to open or are not well-formed XML
-  - A CFB directory chain is present but truncated/inconsistent partway through
+  - "Container-level (thrown): Extract() is called on bytes that pass mime detection's lightweight structural sniff but the container itself cannot be opened by the format library (NPOI or DocumentFormat.OpenXml)"
+  - "Container-level (thrown): a ZIP central directory is present but the package cannot be opened, or the main document part fails to open or is not well-formed XML"
+  - "Container-level (thrown): a CFB directory chain is present but truncated/inconsistent partway through, so the storage tree cannot be walked"
+  - "Field-level (FieldError, not thrown): the container opened, but one general- or format-metadata property's source record in the property store is unparseable — that one property is left null/default and reported at its field path"
+  - "Field-level (FieldError, not thrown): the container opened, but the body-text records cannot be flattened — ExtractedText is the empty string and the failure is reported at path ExtractedText"
+  - "Field-level (FieldError, not thrown): the container opened, but one embedded item's own bytes are unreadable — that item is omitted from the subfile list and reported at its EmbeddedFiles[...] path"
 related:
   - ydk:contract:extraction/extract
+  - ydk:entity:extraction/FieldError
+  - ydk:req:extraction/per-field-error-isolation

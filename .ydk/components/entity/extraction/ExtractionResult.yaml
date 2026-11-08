@@ -23,7 +23,10 @@ fields:
     required: true
     description: >
       Flattened plain text content of the document body. Empty string (not
-      null) when the document has no extractable text. Must preserve all
+      null) when the document has no extractable text, and also when text
+      flattening failed — the two are distinguished only by a FieldErrors
+      entry at path "ExtractedText", per
+      [ydk:req:extraction/per-field-error-isolation]. Must preserve all
       Unicode content faithfully — see
       [ydk:req:extraction/unicode-fidelity].
   Subfiles:
@@ -32,11 +35,31 @@ fields:
     required: true
     description: >
       First-layer embedded objects and inline media found in the document.
-      Empty list (not null) when none are present.
+      Empty list (not null) when none are present. An item that could not be
+      read is absent from this list and reported in FieldErrors instead, so
+      a short list is not evidence that the document had fewer items — see
+      [ydk:req:extraction/per-field-error-isolation].
+  FieldErrors:
+    type: list<ref>
+    ref_target: ydk:entity:extraction/FieldError
+    required: true
+    description: >
+      Leaf properties of this result that could not be populated, while the
+      call itself succeeded. Empty list (not null) on a fully-successful
+      extraction; additive, so a caller that ignores it sees exactly the
+      pre-existing result shape. Entries are in population order (general
+      metadata, then format metadata, then text, then embedded items in walk
+      order) with at most one entry per distinct field path, per
+      [ydk:req:extraction/per-field-error-isolation]. This collection is the
+      only way to tell a leaf the document does not record from a leaf we
+      could not read.
 relationships:
   - target: ydk:entity:extraction/FileMetadata
     kind: has-one
   - target: ydk:entity:extraction/SubfileItem
     kind: has-many
+  - target: ydk:entity:extraction/FieldError
+    kind: has-many
+    description: FieldError is the element type of ExtractionResult.FieldErrors.
 indexes: []
 crud: []
