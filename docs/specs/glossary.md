@@ -34,3 +34,12 @@ DO NOT USE: "text handler", "text extractor" as a bare noun (use the full term).
 
 **Corpus / sample** — a single test file in the curated dataset (`dataset-curation.md`). "Corpus" refers to the whole collection; "sample" to one file within it.
 DO NOT USE: "fixture" (overloaded testing-framework term), "test file" alone (ambiguous with unit test source files).
+
+**Leaf property** — a single value on the extraction result that succeeds or fails independently of every other value (see [ydk:req:extraction/per-field-error-isolation]). Includes each source-derived metadata property, the flat text, and each subfile.
+DO NOT USE: "field" alone (ambiguous with request fields and component manifest fields), "attribute".
+
+**Field path** — the dotted address of a leaf property from the extraction result root; a failed subfile is addressed by its package path in brackets (for legacy containers, the storage path inside the container). Grammar and examples are on [ydk:entity:extraction/FieldError].
+DO NOT USE: "field name", "property path".
+
+**Field error** — one record of a leaf property that could not be populated while the call as a whole succeeded: a field path, a code and a message ([ydk:entity:extraction/FieldError]).
+DO NOT USE: "partial error", "warning".
