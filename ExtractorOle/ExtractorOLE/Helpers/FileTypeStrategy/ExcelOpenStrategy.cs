@@ -1,6 +1,7 @@
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using ExtractorOLE.DTOs;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -21,13 +22,21 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
         // Reads the seekable stream lazily (#192, ADR-008); the caller owns and disposes it.
         public DocumentExtractionResult? Open(Stream input)
         {
-            SpreadsheetDocument? excel = null;
+            SpreadsheetDocument excel;
+            try
+            {
+                excel = OpenXmlPackages.OpenSpreadsheet(input);
+            }
+            catch (Exception ex) when (StrategyIsolation.IsOpenFailure(ex))
+            {
+                return null;
+            }
+
             try
             {
                 var result = new DocumentExtractionResult();
-                excel = OpenXmlPackages.OpenSpreadsheet(input);
-                _helper.ExtractMetadataAndEmbedded(excel, excel.WorkbookPart, result);
-                result.FormatMetadata = BuildExcelFormatMetadata(excel.WorkbookPart);
+                StrategyIsolation.PopulateEmbedded(result, () => _helper.ExtractMetadataAndEmbedded(excel, excel.WorkbookPart, result));
+                result.FormatMetadata = BuildExcelFormatMetadata(excel.WorkbookPart, result);
                 if (string.IsNullOrEmpty(result.MimeType) && excel.CoreFilePropertiesPart != null)
                 {
                     result.MimeType = excel.CoreFilePropertiesPart.ContentType ?? string.Empty;
@@ -37,10 +46,15 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
                 result.ParsedDocument = excel;
                 return result;
             }
+            catch (Exception ex) when (StrategyIsolation.IsOpenFailure(ex))
+            {
+                excel.Dispose();
+                return null;
+            }
             catch
             {
-                excel?.Dispose();
-                return null;
+                excel.Dispose();
+                throw;
             }
         }
 
@@ -52,24 +66,30 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
         // extra presence check is needed here beyond the null propagation itself.
         // HasMacros is true when the workbook part carries a VbaProjectPart (the OOXML
         // macro storage for xlsm/xltm/xlsb-with-macros).
-        private static ExcelFormatMetadata BuildExcelFormatMetadata(WorkbookPart? workbookPart)
+        // Each field is its own leaf at FormatMetadata.<Name>; SheetCount and SheetNames are read
+        // independently and never reconciled. A failed leaf keeps its default (0 / empty / null / false).
+        private static ExcelFormatMetadata BuildExcelFormatMetadata(WorkbookPart? workbookPart, DocumentExtractionResult result)
         {
-            var sheetNames = workbookPart?.Workbook?.Sheets?
-                .Elements<Sheet>()
-                .Select(sheet => sheet.Name?.Value ?? string.Empty)
-                .ToList() ?? new List<string>();
+            var fm = new ExcelFormatMetadata();
 
-            var activeTab = workbookPart?.Workbook?.BookViews?
-                .Elements<WorkbookView>()
-                .FirstOrDefault()?.ActiveTab;
+            void Leaf(string name, Action populate) => StrategyIsolation.PopulateLeaf(result, name, populate);
 
-            return new ExcelFormatMetadata
+            Leaf(nameof(ExcelFormatMetadata.SheetCount), () =>
+                fm.SheetCount = workbookPart?.Workbook?.Sheets?.Elements<Sheet>().Count() ?? 0);
+            Leaf(nameof(ExcelFormatMetadata.SheetNames), () =>
+                fm.SheetNames = workbookPart?.Workbook?.Sheets?
+                    .Elements<Sheet>()
+                    .Select(sheet => sheet.Name?.Value ?? string.Empty)
+                    .ToList() ?? new List<string>());
+            Leaf(nameof(ExcelFormatMetadata.ActiveSheetIndex), () =>
             {
-                SheetCount = sheetNames.Count,
-                SheetNames = sheetNames,
-                ActiveSheetIndex = activeTab != null ? (int)activeTab.Value : (int?)null,
-                HasMacros = workbookPart?.VbaProjectPart != null,
-            };
+                var activeTab = workbookPart?.Workbook?.BookViews?
+                    .Elements<WorkbookView>()
+                    .FirstOrDefault()?.ActiveTab;
+                fm.ActiveSheetIndex = activeTab != null ? (int)activeTab.Value : (int?)null;
+            });
+            Leaf(nameof(ExcelFormatMetadata.HasMacros), () => fm.HasMacros = workbookPart?.VbaProjectPart != null);
+            return fm;
         }
     }
 }

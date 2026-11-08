@@ -58,35 +58,37 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
 
         private DocumentExtractionResult? OpenFrom(Stream source)
         {
+            // NPOIFSFileSystem implements ICloseable, not IDisposable, so it is closed
+            // explicitly in a finally block rather than via a using statement.
+            NPOIFSFileSystem fs;
+            try
+            {
+                fs = CfbFileSystems.Open(source);
+            }
+            catch (Exception ex) when (StrategyIsolation.IsOpenFailure(ex))
+            {
+                return null;
+            }
+
             try
             {
                 var result = new DocumentExtractionResult();
-                // NPOIFSFileSystem implements ICloseable, not IDisposable, so it is closed
-                // explicitly in a finally block rather than via a using statement.
-                var fs = CfbFileSystems.Open(source);
-                try
+                var summary = ReadSummaryInformation(fs.Root);
+                if (summary != null)
                 {
-                    var summary = ReadSummaryInformation(fs.Root);
-                    if (summary != null)
-                    {
-                        MetadataConversions.Apply(summary, result);
-                    }
-
-                    var docSummary = ReadDocumentSummaryInformation(fs.Root);
-                    result.FormatMetadata = BuildWordFormatMetadata(fs.Root, summary, docSummary);
-
-                    _helper.ExtractFirstLayerEmbedded(result, fs.Root);
+                    MetadataConversions.Apply(summary, result);
                 }
-                finally
-                {
-                    fs.Close();
-                }
+
+                var docSummary = ReadDocumentSummaryInformation(fs.Root);
+                result.FormatMetadata = BuildWordFormatMetadata(fs.Root, summary, docSummary, result);
+
+                StrategyIsolation.PopulateEmbedded(result, () => _helper.ExtractFirstLayerEmbedded(result, fs.Root));
                 result.MimeType = _helper.MimeFor(OfficeMimeType.WordLegacy);
                 return result;
             }
-            catch
+            finally
             {
-                return null;
+                fs.Close();
             }
         }
 
@@ -122,25 +124,26 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
 
         // Page/word/character counts and Template come from SummaryInformation; paragraph/line
         // counts and Company/Manager come from DocumentSummaryInformation - mirrors the OOXML
-        // path's field-to-source mapping (WordOpenStrategy.BuildWordFormatMetadata), just off
-        // the legacy CFB property streams instead of app.xml. A count property is left null when
-        // its underlying HPSF property is absent (NPOI's Get*IntValue returns 0 for "absent",
-        // indistinguishable from a real 0 without checking WasNull right after the read).
+        // path's field-to-source mapping. A count is null when its HPSF property is absent (see
+        // ReadNullableInt). Each field is its own leaf at FormatMetadata.<Name>; a failed leaf
+        // keeps its default.
         private static WordFormatMetadata BuildWordFormatMetadata(
-            DirectoryNode root, SummaryInformation? summary, DocumentSummaryInformation? docSummary)
+            DirectoryNode root, SummaryInformation? summary, DocumentSummaryInformation? docSummary, DocumentExtractionResult result)
         {
-            return new WordFormatMetadata
-            {
-                PageCount = ReadNullableInt(summary, s => s.PageCount),
-                WordCount = ReadNullableInt(summary, s => s.WordCount),
-                CharacterCount = ReadNullableInt(summary, s => s.CharCount),
-                ParagraphCount = ReadNullableInt(docSummary, d => d.ParCount),
-                LineCount = ReadNullableInt(docSummary, d => d.LineCount),
-                Company = docSummary?.Company,
-                Manager = docSummary?.Manager,
-                Template = summary?.Template,
-                HasMacros = root.HasEntryCaseInsensitive(VbaMacrosStorageName),
-            };
+            var fm = new WordFormatMetadata();
+
+            void Leaf(string name, Action populate) => StrategyIsolation.PopulateLeaf(result, name, populate);
+
+            Leaf(nameof(WordFormatMetadata.PageCount), () => fm.PageCount = ReadNullableInt(summary, s => s.PageCount));
+            Leaf(nameof(WordFormatMetadata.WordCount), () => fm.WordCount = ReadNullableInt(summary, s => s.WordCount));
+            Leaf(nameof(WordFormatMetadata.CharacterCount), () => fm.CharacterCount = ReadNullableInt(summary, s => s.CharCount));
+            Leaf(nameof(WordFormatMetadata.ParagraphCount), () => fm.ParagraphCount = ReadNullableInt(docSummary, d => d.ParCount));
+            Leaf(nameof(WordFormatMetadata.LineCount), () => fm.LineCount = ReadNullableInt(docSummary, d => d.LineCount));
+            Leaf(nameof(WordFormatMetadata.Company), () => fm.Company = docSummary?.Company);
+            Leaf(nameof(WordFormatMetadata.Manager), () => fm.Manager = docSummary?.Manager);
+            Leaf(nameof(WordFormatMetadata.Template), () => fm.Template = summary?.Template);
+            Leaf(nameof(WordFormatMetadata.HasMacros), () => fm.HasMacros = root.HasEntryCaseInsensitive(VbaMacrosStorageName));
+            return fm;
         }
 
         private static int? ReadNullableInt<T>(T? propertySet, Func<T, int> selector) where T : PropertySet
