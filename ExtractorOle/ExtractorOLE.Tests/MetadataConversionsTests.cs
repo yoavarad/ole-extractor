@@ -17,6 +17,16 @@ namespace ExtractorOLE.Tests
             Assert.Null(MetadataConversions.EditTimeToMinutes(0));
 
         [Theory]
+        [InlineData(long.MaxValue)]
+        [InlineData((long)int.MaxValue * 600_000_000L + 600_000_000L)]
+        public void EditTimeToMinutes_ResultAboveIntMaxIsNull(long editTime) =>
+            Assert.Null(MetadataConversions.EditTimeToMinutes(editTime));
+
+        [Fact]
+        public void EditTimeToMinutes_IntMaxBoundaryConverts() =>
+            Assert.Equal(int.MaxValue, MetadataConversions.EditTimeToMinutes((long)int.MaxValue * 600_000_000L));
+
+        [Theory]
         [InlineData(null)]
         [InlineData("")]
         [InlineData("abc")]
