@@ -18,7 +18,9 @@ namespace ExtractorOLE.Helpers
 
         // OLE EditTime is a FILETIME duration in 100 ns units; OOXML TotalTime is already minutes.
         public static int? EditTimeToMinutes(long editTime100Ns) =>
-            editTime100Ns > 0 ? (int)(editTime100Ns / 600_000_000L) : null;
+            editTime100Ns > 0 && editTime100Ns / 600_000_000L <= int.MaxValue
+                ? (int)(editTime100Ns / 600_000_000L)
+                : null;
 
         public static DateTime? ToUtcOrNull(DateTime? value) =>
             value == null || value == default(DateTime) ? null : value.Value.ToUniversalTime();
