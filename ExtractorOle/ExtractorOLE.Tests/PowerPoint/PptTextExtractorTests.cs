@@ -148,7 +148,7 @@ namespace ExtractorOLE.Tests.PowerPoint
             ServiceRegistration.Register(services);
             var provider = services.BuildServiceProvider();
 
-            var dict = provider.GetRequiredService<IDictionary<OfficeMimeType, ITextExtractor>>();
+            var dict = provider.GetRequiredService<IReadOnlyDictionary<OfficeMimeType, ITextExtractor>>();
 
             Assert.True(dict.ContainsKey(OfficeMimeType.PowerPointLegacy));
             Assert.IsType<PptTextExtractor>(dict[OfficeMimeType.PowerPointLegacy]);
