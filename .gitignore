@@ -50,3 +50,7 @@ BenchmarkDotNet.Artifacts/
 .ydk/proofs/
 .ydk/state.json
 .ydk/todos.yaml
+
+# ydk subagent LLM handoff: request/response JSON written by LLM-backed
+# commands under ai.provider=subagent, regenerated on every rerun
+.ydk/llm/
