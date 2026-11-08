@@ -423,10 +423,14 @@ namespace ExtractorOLE.Tests.Registry
             using (var input = ExtractionInput.From(request))
             {
                 new ExtractionGuardrails(new MimeDetectionLimits(), _ => { }).Enforce(request, input);
+                // #276: guardrails now inflate ZIP entries once to count bytes actually produced,
+                // so only the preflight (below) keeps the headers-and-tail-only read property.
+                var afterGuardrails = counting.BytesRead;
                 ParseTimeErrorGuard.Preflight(input.Stream!, isOoxmlFormat: true);
+                Assert.True(counting.BytesRead - afterGuardrails < 100_000, $"preflight read {counting.BytesRead - afterGuardrails} of {bytes.Length} bytes");
             }
 
-            Assert.True(counting.BytesRead < 100_000, $"read {counting.BytesRead} of {bytes.Length} bytes");
+            Assert.True(counting.BytesRead < 2 * bytes.Length, $"read {counting.BytesRead} of {bytes.Length} bytes");
             Assert.True(counting.CanRead);
         }
 

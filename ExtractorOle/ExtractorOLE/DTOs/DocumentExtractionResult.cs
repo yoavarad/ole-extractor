@@ -24,6 +24,10 @@ namespace ExtractorOLE.DTOs
         // Requirement #4: A list of the first-layer embedded files
         public List<EmbeddedFileItem> EmbeddedFiles { get; set; } = new();
 
+        // [ydk:entity:extraction/FieldError]: leaves that could not be populated, in population
+        // order. Empty, never null, when every leaf was populated.
+        public List<FieldError> FieldErrors { get; set; } = new();
+
         // Per-request handoff (#168): what the open strategy already parsed/converted, for the
         // matching IParsedDocumentTextExtractor to reuse instead of re-parsing the input bytes.
         // Internal so it is not part of the public result; MainExtractor clears it after use.
