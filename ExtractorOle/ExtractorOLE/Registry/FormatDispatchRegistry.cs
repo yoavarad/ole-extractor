@@ -14,12 +14,12 @@ namespace ExtractorOLE.Registry
     /// </summary>
     public sealed class FormatDispatchRegistry : IFormatDispatchRegistry
     {
-        private readonly IDictionary<OfficeMimeType, IOpenStrategy> _openStrategies;
-        private readonly IDictionary<OfficeMimeType, ITextExtractor> _textExtractors;
+        private readonly IReadOnlyDictionary<OfficeMimeType, IOpenStrategy> _openStrategies;
+        private readonly IReadOnlyDictionary<OfficeMimeType, ITextExtractor> _textExtractors;
 
         public FormatDispatchRegistry(
-            IDictionary<OfficeMimeType, IOpenStrategy> openStrategies,
-            IDictionary<OfficeMimeType, ITextExtractor> textExtractors)
+            IReadOnlyDictionary<OfficeMimeType, IOpenStrategy> openStrategies,
+            IReadOnlyDictionary<OfficeMimeType, ITextExtractor> textExtractors)
         {
             _openStrategies = openStrategies ?? throw new ArgumentNullException(nameof(openStrategies));
             _textExtractors = textExtractors ?? throw new ArgumentNullException(nameof(textExtractors));
