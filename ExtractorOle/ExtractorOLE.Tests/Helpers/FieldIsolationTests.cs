@@ -82,6 +82,7 @@ namespace ExtractorOLE.Tests.Helpers
             FieldIsolation.TryPopulate(result, "Metadata.Title", () => throw new FormatException());
             FieldIsolation.TryPopulate(result, "Metadata.Title", () => throw new InvalidOperationException());
 
+            // First failure on a path wins; a later one on the same path is not appended.
             var error = Assert.Single(result.FieldErrors);
             Assert.Equal(FieldErrorCode.CorruptFile, error.Code);
         }
@@ -114,6 +115,16 @@ namespace ExtractorOLE.Tests.Helpers
             // InsufficientMemoryException derives from OutOfMemoryException (which CA2201 reserves).
             Assert.Throws<InsufficientMemoryException>(() =>
                 FieldIsolation.TryPopulate(result, "ExtractedText", () => throw new InsufficientMemoryException()));
+            Assert.Empty(result.FieldErrors);
+        }
+
+        [Fact]
+        public void TryPopulate_Cancellation_IsNotCaught()
+        {
+            var result = new DocumentExtractionResult();
+
+            Assert.Throws<OperationCanceledException>(() =>
+                FieldIsolation.TryPopulate(result, "ExtractedText", () => throw new OperationCanceledException()));
             Assert.Empty(result.FieldErrors);
         }
 

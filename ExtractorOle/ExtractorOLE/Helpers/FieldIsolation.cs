@@ -19,7 +19,8 @@ namespace ExtractorOLE.Helpers
             string.IsNullOrEmpty(packagePath) ? EmbeddedFilesPath : $"{EmbeddedFilesPath}[{packagePath}]";
 
         // Returns true when populate completed. On failure the leaf is left as populate left it;
-        // callers must not write a placeholder. OutOfMemoryException is never caught.
+        // callers must not write a placeholder. OutOfMemoryException is never caught, and
+        // cancellation (OperationCanceledException) propagates instead of becoming a field error.
         internal static bool TryPopulate(DocumentExtractionResult result, string fieldPath, Action populate)
         {
             ArgumentNullException.ThrowIfNull(result);
@@ -31,21 +32,27 @@ namespace ExtractorOLE.Helpers
                 populate();
                 return true;
             }
-            catch (Exception ex) when (ex is not OutOfMemoryException)
+            catch (Exception ex) when (ex is not OutOfMemoryException and not OperationCanceledException)
             {
                 var code = Classify(ex);
-                ExtractionTelemetry.RecordFieldFailure(fieldPath, code, ex);
 
-                // One entry per distinct path; only the bare collection name may repeat.
+                // One entry per distinct path (first failure wins); only the bare collection name
+                // may repeat. Recorded before telemetry so a sink failure cannot lose the entry.
+                // Telemetry still sees every failure, including a deduplicated one.
                 if (fieldPath == EmbeddedFilesPath || !result.FieldErrors.Exists(e => e.FieldPath == fieldPath))
                 {
                     result.FieldErrors.Add(new FieldError(fieldPath, code, MessageFor(fieldPath, code)));
                 }
+                ExtractionTelemetry.RecordFieldFailure(fieldPath, code, ex);
                 return false;
             }
         }
 
         // Chosen by cause, not by leaf. UnexpectedFieldFailure only when neither other code fits.
+        // The CorruptFile set is deliberately conservative: exceptions that signal a malformed
+        // record by type. FormatException is included because populate code parses source
+        // values; generic faults (IndexOutOfRange, ArgumentOutOfRange, ...) stay residual since
+        // they equally signal a bug in our own code.
         internal static FieldErrorCode Classify(Exception exception) => exception switch
         {
             OversizedNestedContentException => FieldErrorCode.OversizedNestedContent,
