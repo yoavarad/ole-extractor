@@ -14,35 +14,17 @@ namespace ExtractorOLE.Handlers
     {
         public string ExtractText(byte[] fileBytes)
         {
-            try
+            using (var ppt = OpenXmlPackages.OpenPresentation(fileBytes))
             {
-                using (var ppt = OpenXmlPackages.OpenPresentation(fileBytes))
-                {
-                    return ExtractText(ppt);
-                }
+                return ExtractText(ppt);
             }
-            catch (Exception)
-            {
-                // swallow and return empty on failure
-            }
-
-            return string.Empty;
         }
 
         // parsedDocument is the package PowerPointOpenStrategy already opened (#167); caller owns it.
         public string? ExtractText(object parsedDocument)
         {
             if (parsedDocument is not PresentationDocument ppt) return null;
-            try
-            {
-                return ExtractText(ppt);
-            }
-            catch (Exception)
-            {
-                // swallow and return empty on failure
-            }
-
-            return string.Empty;
+            return ExtractText(ppt);
         }
 
         private static string ExtractText(PresentationDocument ppt)

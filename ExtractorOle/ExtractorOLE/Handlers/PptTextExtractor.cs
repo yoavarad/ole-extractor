@@ -22,32 +22,14 @@ namespace ExtractorOLE.Handlers
 
         public string ExtractText(byte[] fileBytes)
         {
-            try
-            {
-                return _pptxTextExtractor.ExtractText(PptToPptxConverter.Convert(fileBytes));
-            }
-            catch (Exception)
-            {
-                // swallow and return empty text on failure
-            }
-
-            return string.Empty;
+            return _pptxTextExtractor.ExtractText(PptToPptxConverter.Convert(fileBytes));
         }
 
         // parsedDocument is the converted .pptx bytes PptOpenStrategy already produced (#168).
         public string? ExtractText(object parsedDocument)
         {
             if (parsedDocument is not byte[] pptxBytes) return null;
-            try
-            {
-                return _pptxTextExtractor.ExtractText(pptxBytes);
-            }
-            catch (Exception)
-            {
-                // swallow and return empty text on failure
-            }
-
-            return string.Empty;
+            return _pptxTextExtractor.ExtractText(pptxBytes);
         }
     }
 }

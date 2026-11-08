@@ -100,7 +100,9 @@ namespace ExtractorOLE
                     // Byte fallback for stream input re-buffers the file (only when the extractor
                     // cannot read ParsedDocument). An open OOXML package seeks before every read, so
                     // rewinding the shared stream here is safe.
-                    result.ExtractedText = ExtractText(extractor, result, () => input.Bytes);
+                    // A throwing extractor leaves the empty default and records one FieldError.
+                    FieldIsolation.TryPopulate(result, nameof(DocumentExtractionResult.ExtractedText),
+                        () => result.ExtractedText = ExtractText(extractor, result, () => input.Bytes));
                 }
             }
             finally
