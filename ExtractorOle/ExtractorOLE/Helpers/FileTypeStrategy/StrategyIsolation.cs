@@ -21,13 +21,13 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
 
         // Declared container-open failures: the library rejected the bytes as malformed or
         // unsupported (maps to CorruptFile). Anything else at open is undeclared and propagates.
-        // Encrypted-document exceptions are not in this set; they map to password-protected.
+        // NullReferenceException is included because NPOI surfaces some garbage compound-file
+        // directories that way. Encrypted-document exceptions are not in this set; they map to password-protected.
         internal static bool IsOpenFailure(Exception ex) =>
             FieldIsolation.Classify(ex) == FieldErrorCode.CorruptFile
             || ex is IOException
             || ex is ArgumentException
             || ex is NPOI.HSSF.OldExcelFormatException
-            // NPOI surfaces some garbage compound-file directories as a NullReferenceException.
             || ex is NullReferenceException;
     }
 }
