@@ -16,7 +16,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python .claude/hooks/guard.py"
+            "command": "python \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard.py\""
           }
         ]
       },
@@ -34,7 +34,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python .claude/hooks/verify_pr_body.py",
+            "command": "python \"$CLAUDE_PROJECT_DIR/.claude/hooks/verify_pr_body.py\"",
             "timeout": 120,
             "statusMessage": "Validating PR body..."
           }
@@ -55,7 +55,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/check-task-complete.sh"
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/check-task-complete.sh\""
           }
         ]
       }
