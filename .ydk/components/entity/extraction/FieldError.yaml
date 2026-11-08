@@ -23,19 +23,23 @@ fields:
       result and spelled with the result's own public C# property names, not
       the entity names this spec uses to describe the model — the path must
       match character-for-character the property the caller just read as
-      null, so no translation step is ever needed. Examples:
-      "Metadata.Created", "Metadata.Title", "FormatMetadata.PageCount",
-      "ExtractedText". A failed embedded item is keyed by its package path,
-      never by a number:
-      "EmbeddedFiles[word/embeddings/oleObject1.bin]",
-      "EmbeddedFiles[ObjectPool/_1234/EPRINT]" — the same package-path value
-      a readable item carries on [ydk:entity:extraction/SubfileItem]. The
-      bare collection path "EmbeddedFiles", with no key, is used when a
-      failing item's package path is unknown or empty, and once for a fault
-      in the enumeration of the container's items itself (items never
-      reached are absent from the list and are not individually reported).
-      The naming bridge, the key rules and the accepted blind spot are in
-      docs/specs/extraction.md. Never empty, never null.
+      null, so no translation step is ever needed.
+      Name mapping (entity -> C# property): on the result, GeneralMetadata ->
+      Metadata and Subfiles -> EmbeddedFiles; on FileMetadata, Author ->
+      Creator, CreatedAt -> Created, ModifiedAt -> Modified, LastPrintedAt ->
+      LastPrinted; every other property keeps its entity name.
+      Examples: "Metadata.Created", "Metadata.Title",
+      "FormatMetadata.PageCount", "ExtractedText". A failed subfile is keyed
+      by its package path, never by a number: "EmbeddedFiles[word/embeddings/oleObject1.bin]",
+      "EmbeddedFiles[ObjectPool/_1234/EPRINT]". The package path is the OOXML
+      part URI, or for legacy containers the storage/stream path inside the
+      container, and is the same value a readable subfile carries on
+      [ydk:entity:extraction/SubfileItem]. List positions are not used
+      because they shift when items are omitted. The bare collection path
+      "EmbeddedFiles", with no key, is used when a failing subfile's package
+      path is unknown or empty, and once for a fault in the enumeration of
+      the container's subfiles itself (subfiles never reached are absent from
+      the list and are not individually reported). Never empty, never null.
   Code:
     type: enum
     values: [CORRUPT_FILE, OVERSIZED_NESTED_CONTENT, UNEXPECTED_FIELD_FAILURE]
