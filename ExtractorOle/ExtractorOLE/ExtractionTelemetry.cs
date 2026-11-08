@@ -1,3 +1,4 @@
+using ExtractorOLE.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -22,6 +23,15 @@ namespace ExtractorOLE
             Meter.CreateCounter<long>("extractor.bytes.processed", "By", "Input bytes processed");
 
         internal static StageScope Stage(string stage, string format, long size) => new(stage, format, size);
+
+        // Per-field failure sink (#303): the exception's type, message and stack go to the current
+        // activity as an exception event, never onto the result. No-op without a listener.
+        internal static void RecordFieldFailure(string fieldPath, FieldErrorCode code, Exception exception) =>
+            Activity.Current?.AddException(exception, new TagList
+            {
+                { "field.path", fieldPath },
+                { "field.code", code.ToString() },
+            });
 
         internal readonly struct StageScope : IDisposable
         {
