@@ -2,6 +2,7 @@ using ExtractorOLE.DTOs;
 using System;
 using System.IO;
 using System.IO.Compression;
+using System.Xml;
 using System.Xml.Linq;
 
 namespace ExtractorOLE.Helpers.FileTypeStrategy
@@ -61,7 +62,7 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
             return null;
         }
 
-        private enum Flavor { Word, Excel, PowerPoint }
+        internal enum Flavor { Word, Excel, PowerPoint }
 
         private IOpenStrategy Strategy(Flavor f) => f switch
         {
@@ -70,7 +71,10 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
             _ => _ppt,
         };
 
-        private static Flavor? DetectFlavor(Stream input)
+        // [Content_Types].xml is tiny in any real package; anything past this is not parsed.
+        private const int MaxContentTypesBytes = 1024 * 1024;
+
+        internal static Flavor? DetectFlavor(Stream input)
         {
             try
             {
@@ -78,7 +82,18 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
                 var entry = zip.GetEntry("[Content_Types].xml");
                 if (entry == null) return null;
                 using var stream = entry.Open();
-                var doc = XDocument.Load(stream);
+                var capped = new MemoryStream();
+                var buf = new byte[8192];
+                int n;
+                while ((n = stream.Read(buf, 0, buf.Length)) > 0)
+                {
+                    if (capped.Length + n > MaxContentTypesBytes) return null; // oversized: trial opens instead
+                    capped.Write(buf, 0, n);
+                }
+                capped.Position = 0;
+                var settings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Prohibit, XmlResolver = null };
+                using var reader = XmlReader.Create(capped, settings);
+                var doc = XDocument.Load(reader);
                 foreach (var e in doc.Descendants())
                 {
                     var ct = (string?)e.Attribute("ContentType");
