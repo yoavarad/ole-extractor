@@ -127,7 +127,7 @@ namespace ExtractorOLE.Handlers
 
             if (dataType == CellValues.InlineString)
             {
-                return cell.InlineString?.Text?.Text;
+                return cell.InlineString?.InnerText;
             }
 
             return null;
