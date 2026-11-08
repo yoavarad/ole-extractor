@@ -1,13 +1,134 @@
+using System.IO.Compression;
+using System.Text;
+using System.Text.RegularExpressions;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Wordprocessing;
+using ExtractorOLE.DTOs;
 using ExtractorOLE.Helpers;
+using ExtractorOLE.Helpers.FileTypeStrategy;
 using System.IO;
 using System.Reflection;
 using Xunit;
 
 namespace ExtractorOLE.Tests.Helpers
 {
-    // #277: buffers must grow with bytes actually read, never from a declared (untrusted) length.
+    // #304: the OOXML metadata path isolates each FileMetadata property, including each of the
+    // ten core.xml properties, which the SDK would otherwise parse (and fail) all at once.
     public class EmbeddedFileExtractorTests
     {
+        private static readonly DateTime Created = new(2024, 1, 2, 3, 4, 5, DateTimeKind.Utc);
+        private static readonly DateTime Modified = new(2024, 2, 3, 4, 5, 6, DateTimeKind.Utc);
+
+        [Fact]
+        public void ExtractMetadata_ReadableCoreProperties_ArePopulatedWithNoErrors()
+        {
+            var result = new WordOpenStrategy(new ExtractionHelper()).Open(BuildDocx());
+
+            Assert.NotNull(result);
+            Assert.Empty(result!.FieldErrors);
+            Assert.Equal("Docx title", result.Metadata.Title);
+            Assert.Equal(Created, result.Metadata.Created!.Value.ToUniversalTime());
+            Assert.Equal(Modified, result.Metadata.Modified!.Value.ToUniversalTime());
+        }
+
+        // Per-element reads must give the same Created value and Kind the SDK's CoreFileProperties did.
+        [Theory]
+        [InlineData("2024-01-02T03:04:05Z")]
+        [InlineData("2024-01-02T03:04:05+02:00")]
+        [InlineData("2024-01-02T03:04:05")]
+        public void ExtractMetadata_CreatedMatchesSdkParsing(string stored)
+        {
+            var bytes = RewriteEntry(BuildDocx(), "dcterms:created", xml =>
+                Regex.Replace(xml, "(<dcterms:created[^>]*>)[^<]*(</dcterms:created>)", "${1}" + stored + "${2}"));
+            DateTime? sdk;
+            using (var doc = WordprocessingDocument.Open(new MemoryStream(bytes), false))
+            {
+                sdk = doc.CoreFilePropertiesPart!.CoreFileProperties!.Created;
+            }
+
+            var result = new WordOpenStrategy(new ExtractionHelper()).Open(bytes);
+
+            Assert.NotNull(result);
+            Assert.Empty(result!.FieldErrors);
+            Assert.Equal(sdk, result.Metadata.Created);
+            Assert.Equal(sdk!.Value.Kind, result.Metadata.Created!.Value.Kind);
+        }
+
+        [Fact]
+        public void ExtractMetadata_CorePartNotWellFormed_FailsTheTenCoreLeavesOnly()
+        {
+            var bytes = RewriteEntry(BuildDocx(), "dcterms:created", xml => xml.Replace("</dcterms:created>", "", StringComparison.Ordinal));
+
+            var result = new WordOpenStrategy(new ExtractionHelper()).Open(bytes);
+
+            Assert.NotNull(result);
+            Assert.Equal(10, result!.FieldErrors.Count);
+            Assert.All(result.FieldErrors, e => Assert.Equal(FieldErrorCode.CorruptFile, e.Code));
+            Assert.DoesNotContain(result.FieldErrors, e => e.FieldPath == "Metadata.EditingDurationMinutes" || e.FieldPath == "Metadata.ApplicationName");
+            Assert.Null(result.Metadata.Title);
+        }
+
+        [Fact]
+        public void ExtractMetadata_OneUnreadableCoreProperty_LosesOnlyThatProperty()
+        {
+            var bytes = RewriteEntry(BuildDocx(), "dcterms:created", xml =>
+                Regex.Replace(xml, "(<dcterms:created[^>]*>)[^<]*(</dcterms:created>)", "${1}not-a-date${2}"));
+
+            var result = new WordOpenStrategy(new ExtractionHelper()).Open(bytes);
+
+            Assert.NotNull(result);
+            var error = Assert.Single(result!.FieldErrors);
+            Assert.Equal("Metadata.Created", error.FieldPath);
+            Assert.Equal(FieldErrorCode.CorruptFile, error.Code);
+            Assert.Null(result.Metadata.Created);
+            Assert.Equal("Docx title", result.Metadata.Title);
+            Assert.Equal("Docx author", result.Metadata.Creator);
+            Assert.NotNull(result.Metadata.Modified);
+        }
+
+        private static byte[] BuildDocx()
+        {
+            using var ms = new MemoryStream();
+            using (var document = WordprocessingDocument.Create(ms, DocumentFormat.OpenXml.WordprocessingDocumentType.Document))
+            {
+                var mainPart = document.AddMainDocumentPart();
+                mainPart.Document = new Document(new Body(new Paragraph(new Run(new Text("hello")))));
+                mainPart.Document.Save();
+                document.PackageProperties.Title = "Docx title";
+                document.PackageProperties.Creator = "Docx author";
+                document.PackageProperties.Created = Created;
+                document.PackageProperties.Modified = Modified;
+            }
+            return ms.ToArray();
+        }
+
+        // Rewrites the one package entry whose XML contains marker (the core-properties part name
+        // is generated by the SDK, so it is found by content rather than by a fixed path).
+        private static byte[] RewriteEntry(byte[] zipBytes, string marker, Func<string, string> rewrite)
+        {
+            using var ms = new MemoryStream();
+            ms.Write(zipBytes);
+            using (var zip = new ZipArchive(ms, ZipArchiveMode.Update, leaveOpen: true))
+            {
+                string? xml = null;
+                ZipArchiveEntry? entry = null;
+                foreach (var candidate in zip.Entries)
+                {
+                    using var reader = new StreamReader(candidate.Open(), Encoding.UTF8);
+                    var text = reader.ReadToEnd();
+                    if (text.Contains(marker, StringComparison.Ordinal)) { entry = candidate; xml = text; break; }
+                }
+                if (entry == null || xml == null) throw new InvalidOperationException($"no entry contains {marker}");
+                var entryName = entry.FullName;
+                entry.Delete();
+                var replaced = zip.CreateEntry(entryName);
+                using var writer = new StreamWriter(replaced.Open(), new UTF8Encoding(false));
+                writer.Write(rewrite(xml));
+            }
+            return ms.ToArray();
+        }
+
+        // #277: buffers must grow with bytes actually read, never from a declared (untrusted) length.
         private sealed class LyingLengthStream : MemoryStream
         {
             public LyingLengthStream(byte[] data) : base(data) { }

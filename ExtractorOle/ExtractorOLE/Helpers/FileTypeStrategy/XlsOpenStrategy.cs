@@ -34,7 +34,7 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
                 var summary = workbook.SummaryInformation;
                 if (summary != null)
                 {
-                    MetadataConversions.Apply(summary, result.Metadata);
+                    MetadataConversions.Apply(summary, result);
                 }
 
                 result.FormatMetadata = BuildExcelFormatMetadata(workbook);

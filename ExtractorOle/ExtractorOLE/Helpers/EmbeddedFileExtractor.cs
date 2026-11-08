@@ -4,8 +4,11 @@ using NPOI.HSSF.UserModel;
 using NPOI.POIFS.FileSystem;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace ExtractorOLE.Helpers
 {
@@ -34,28 +37,35 @@ namespace ExtractorOLE.Helpers
         {
             if (package == null) return;
 
+            // [ydk:req:extraction/per-field-error-isolation]: each property is its own leaf at
+            // "Metadata.<CSharpName>"; the part is read inside each leaf so an unreadable part
+            // costs exactly the properties it sources.
+            var m = result.Metadata;
             var extendedPropsPart = package.GetPartsOfType<ExtendedFilePropertiesPart>().FirstOrDefault();
-            if (extendedPropsPart?.Properties != null)
+            if (extendedPropsPart != null)
             {
-                result.Metadata.EditingDurationMinutes = MetadataConversions.ParseInt(extendedPropsPart.Properties.TotalTime?.Text);
-                result.Metadata.ApplicationName = MetadataConversions.NullIfEmpty(extendedPropsPart.Properties.Application?.Text);
+                PopulateMetadata(result, nameof(FileMetadata.EditingDurationMinutes), () => m.EditingDurationMinutes = MetadataConversions.ParseInt(extendedPropsPart.Properties?.TotalTime?.Text));
+                PopulateMetadata(result, nameof(FileMetadata.ApplicationName), () => m.ApplicationName = MetadataConversions.NullIfEmpty(extendedPropsPart.Properties?.Application?.Text));
             }
 
             var corePart = package.GetPartsOfType<CoreFilePropertiesPart>().FirstOrDefault();
 
-            if (corePart?.CoreFileProperties != null)
+            if (corePart != null)
             {
-                var props = corePart.CoreFileProperties;
-                result.Metadata.Title = props.Title;
-                result.Metadata.Creator = props.Creator;
-                result.Metadata.Created = props.Created;
-                result.Metadata.Modified = props.Modified;
-                result.Metadata.LastModifiedBy = props.LastModifiedBy;
-                result.Metadata.Subject = MetadataConversions.NullIfEmpty(props.Subject);
-                result.Metadata.Comments = MetadataConversions.NullIfEmpty(props.Description);
-                result.Metadata.RevisionNumber = MetadataConversions.ParseInt(props.Revision);
-                result.Metadata.LastPrinted = props.LastPrinted;
-                result.Metadata.Keywords = MetadataConversions.NullIfEmpty(props.Keywords);
+                // The SDK's CoreFileProperties parses every element at once, so one malformed
+                // value would cost all ten; each element is read on its own instead. The part is
+                // loaded once, and a part that is not well-formed fails every leaf it sources.
+                var core = new Lazy<XElement?>(() => LoadCoreProperties(corePart));
+                PopulateMetadata(result, nameof(FileMetadata.Title), () => m.Title = CoreText(core.Value, Dc + "title"));
+                PopulateMetadata(result, nameof(FileMetadata.Creator), () => m.Creator = CoreText(core.Value, Dc + "creator"));
+                PopulateMetadata(result, nameof(FileMetadata.Created), () => m.Created = CoreDate(core.Value, DcTerms + "created"));
+                PopulateMetadata(result, nameof(FileMetadata.Modified), () => m.Modified = CoreDate(core.Value, DcTerms + "modified"));
+                PopulateMetadata(result, nameof(FileMetadata.LastModifiedBy), () => m.LastModifiedBy = CoreText(core.Value, Cp + "lastModifiedBy"));
+                PopulateMetadata(result, nameof(FileMetadata.Subject), () => m.Subject = MetadataConversions.NullIfEmpty(CoreText(core.Value, Dc + "subject")));
+                PopulateMetadata(result, nameof(FileMetadata.Comments), () => m.Comments = MetadataConversions.NullIfEmpty(CoreText(core.Value, Dc + "description")));
+                PopulateMetadata(result, nameof(FileMetadata.RevisionNumber), () => m.RevisionNumber = MetadataConversions.ParseInt(CoreText(core.Value, Cp + "revision")));
+                PopulateMetadata(result, nameof(FileMetadata.LastPrinted), () => m.LastPrinted = CoreDate(core.Value, Cp + "lastPrinted"));
+                PopulateMetadata(result, nameof(FileMetadata.Keywords), () => m.Keywords = MetadataConversions.NullIfEmpty(CoreText(core.Value, Cp + "keywords")));
 
                 if (string.IsNullOrEmpty(result.MimeType) && !string.IsNullOrEmpty(corePart.ContentType))
                 {
@@ -68,6 +78,36 @@ namespace ExtractorOLE.Helpers
                 ExtractFirstLayerEmbedded(result, rootPart);
             }
         }
+
+        private static readonly XNamespace Cp = "http://schemas.openxmlformats.org/package/2006/metadata/core-properties";
+        private static readonly XNamespace Dc = "http://purl.org/dc/elements/1.1/";
+        private static readonly XNamespace DcTerms = "http://purl.org/dc/terms/";
+
+        // core.xml is a handful of short elements; anything larger is not a real core part.
+        private const long MaxCorePropertiesChars = 1_000_000;
+
+        private static XElement? LoadCoreProperties(CoreFilePropertiesPart corePart)
+        {
+            using var stream = corePart.GetStream(FileMode.Open, FileAccess.Read);
+            using var reader = XmlReader.Create(stream, new XmlReaderSettings { DtdProcessing = DtdProcessing.Prohibit, XmlResolver = null, MaxCharactersInDocument = MaxCorePropertiesChars });
+            return XDocument.Load(reader).Root;
+        }
+
+        // Absent element -> null; present element -> its text, as the SDK reports it.
+        private static string? CoreText(XElement? core, XName name) => core?.Element(name)?.Value;
+
+        // W3CDTF timestamp, parsed as the SDK did (zoned -> Local, no zone -> Unspecified); an
+        // unparsable value throws FormatException (a malformed source record).
+        private static DateTime? CoreDate(XElement? core, XName name)
+        {
+            var text = CoreText(core, name);
+            return string.IsNullOrWhiteSpace(text)
+                ? null
+                : DateTime.Parse(text.Trim(), CultureInfo.InvariantCulture);
+        }
+
+        private static void PopulateMetadata(DocumentExtractionResult result, string propertyName, Action populate) =>
+            FieldIsolation.TryPopulate(result, MetadataConversions.MetadataPath(propertyName), populate);
 
         // A subfile is a distinct package part ([ydk:req:extraction/subfile-scope] speaks of
         // embeddings/ and media parts, not relationships): every image / OLE-embedding part
