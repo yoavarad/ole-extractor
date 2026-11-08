@@ -28,9 +28,15 @@ namespace ExtractorOLE.Tests.StressHarness
             var samples = MakeSamples(10);
             var options = new LoadGenerationOptions(Concurrency: 50, Iterations: 200);
 
+            // Barrier of exactly Concurrency participants: no call can finish until all 50 are in flight.
+            using var barrier = new Barrier(options.Concurrency);
             Func<byte[], int> op = bytes =>
             {
-                Thread.Sleep(20);
+                if (!barrier.SignalAndWait(TimeSpan.FromSeconds(30)))
+                {
+                    throw new TimeoutException("Fewer than 50 operations were running concurrently within the 30s timeout.");
+                }
+
                 return bytes.Length;
             };
 
@@ -94,10 +100,16 @@ namespace ExtractorOLE.Tests.StressHarness
 
             var events = new ConcurrentBag<(byte[] Sample, long StartTicks, long EndTicks)>();
 
+            // Each batch of 20 callers meets at the barrier, so their [start, end] intervals all overlap.
+            using var barrier = new Barrier(options.Concurrency);
             Func<byte[], int> op = bytes =>
             {
                 var start = Stopwatch();
-                Thread.Sleep(15);
+                if (!barrier.SignalAndWait(TimeSpan.FromSeconds(30)))
+                {
+                    throw new TimeoutException("Fewer than 20 operations were running concurrently within the 30s timeout.");
+                }
+
                 var end = Stopwatch();
                 events.Add((bytes, start, end));
                 return bytes.Length;
