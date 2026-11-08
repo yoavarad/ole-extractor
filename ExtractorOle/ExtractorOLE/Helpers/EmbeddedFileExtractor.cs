@@ -267,13 +267,40 @@ namespace ExtractorOLE.Helpers
                     BinaryData = extractedBytes,
                     PackagePath = storage.Name,
                     SizeInBytes = extractedBytes.LongLength,
-                    FileName = storage.Name,
+                    FileName = SanitizeFileName(storage.Name),
                 });
             }
             finally
             {
                 target.Close();
             }
+        }
+
+        // CFB entry names are attacker-controlled. FileName must be safe for consumers that write
+        // files by name: keep only the last segment after any path separator, drop "." / ".."
+        // segments, and replace control characters. PackagePath stays raw as an opaque label.
+        internal static string SanitizeFileName(string name)
+        {
+            string last = string.Empty;
+            foreach (string segment in (name ?? string.Empty).Split('/', '\\'))
+            {
+                if (segment.Length > 0 && segment != "." && segment != "..")
+                {
+                    last = segment;
+                }
+            }
+
+            var chars = last.ToCharArray();
+            for (int i = 0; i < chars.Length; i++)
+            {
+                if (char.IsControl(chars[i]) || chars[i] == ':')
+                {
+                    chars[i] = '_';
+                }
+            }
+
+            string result = new string(chars).Trim();
+            return result.Length == 0 || result.Trim('.').Length == 0 ? "unnamed" : result;
         }
 
         // Reads one root-level CFB stream (the "Pictures" media blob) as one opaque subfile.
@@ -287,7 +314,7 @@ namespace ExtractorOLE.Helpers
                 BinaryData = extractedBytes,
                 PackagePath = stream.Name,
                 SizeInBytes = extractedBytes.LongLength,
-                FileName = stream.Name,
+                FileName = SanitizeFileName(stream.Name),
             });
         }
 
@@ -336,7 +363,7 @@ namespace ExtractorOLE.Helpers
                             BinaryData = extractedBytes,
                             PackagePath = $"ObjectPool/{objectDir.Name}",
                             SizeInBytes = extractedBytes.LongLength,
-                            FileName = objectDir.Name,
+                            FileName = SanitizeFileName(objectDir.Name),
                         };
 
                         fileList.Add(item);
