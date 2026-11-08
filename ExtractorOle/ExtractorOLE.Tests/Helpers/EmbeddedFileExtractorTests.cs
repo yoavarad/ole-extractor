@@ -29,6 +29,43 @@ namespace ExtractorOLE.Tests.Helpers
             Assert.Equal(Modified, result.Metadata.Modified!.Value.ToUniversalTime());
         }
 
+        // Per-element reads must give the same Created value and Kind the SDK's CoreFileProperties did.
+        [Theory]
+        [InlineData("2024-01-02T03:04:05Z")]
+        [InlineData("2024-01-02T03:04:05+02:00")]
+        [InlineData("2024-01-02T03:04:05")]
+        public void ExtractMetadata_CreatedMatchesSdkParsing(string stored)
+        {
+            var bytes = RewriteEntry(BuildDocx(), "dcterms:created", xml =>
+                Regex.Replace(xml, "(<dcterms:created[^>]*>)[^<]*(</dcterms:created>)", "${1}" + stored + "${2}"));
+            DateTime? sdk;
+            using (var doc = WordprocessingDocument.Open(new MemoryStream(bytes), false))
+            {
+                sdk = doc.CoreFilePropertiesPart!.CoreFileProperties!.Created;
+            }
+
+            var result = new WordOpenStrategy(new ExtractionHelper()).Open(bytes);
+
+            Assert.NotNull(result);
+            Assert.Empty(result!.FieldErrors);
+            Assert.Equal(sdk, result.Metadata.Created);
+            Assert.Equal(sdk!.Value.Kind, result.Metadata.Created!.Value.Kind);
+        }
+
+        [Fact]
+        public void ExtractMetadata_CorePartNotWellFormed_FailsTheTenCoreLeavesOnly()
+        {
+            var bytes = RewriteEntry(BuildDocx(), "dcterms:created", xml => xml.Replace("</dcterms:created>", "", StringComparison.Ordinal));
+
+            var result = new WordOpenStrategy(new ExtractionHelper()).Open(bytes);
+
+            Assert.NotNull(result);
+            Assert.Equal(10, result!.FieldErrors.Count);
+            Assert.All(result.FieldErrors, e => Assert.Equal(FieldErrorCode.CorruptFile, e.Code));
+            Assert.DoesNotContain(result.FieldErrors, e => e.FieldPath == "Metadata.EditingDurationMinutes" || e.FieldPath == "Metadata.ApplicationName");
+            Assert.Null(result.Metadata.Title);
+        }
+
         [Fact]
         public void ExtractMetadata_OneUnreadableCoreProperty_LosesOnlyThatProperty()
         {

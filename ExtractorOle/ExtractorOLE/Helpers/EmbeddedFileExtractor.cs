@@ -83,23 +83,27 @@ namespace ExtractorOLE.Helpers
         private static readonly XNamespace Dc = "http://purl.org/dc/elements/1.1/";
         private static readonly XNamespace DcTerms = "http://purl.org/dc/terms/";
 
+        // core.xml is a handful of short elements; anything larger is not a real core part.
+        private const long MaxCorePropertiesChars = 1_000_000;
+
         private static XElement? LoadCoreProperties(CoreFilePropertiesPart corePart)
         {
             using var stream = corePart.GetStream(FileMode.Open, FileAccess.Read);
-            using var reader = XmlReader.Create(stream, new XmlReaderSettings { DtdProcessing = DtdProcessing.Prohibit, XmlResolver = null });
+            using var reader = XmlReader.Create(stream, new XmlReaderSettings { DtdProcessing = DtdProcessing.Prohibit, XmlResolver = null, MaxCharactersInDocument = MaxCorePropertiesChars });
             return XDocument.Load(reader).Root;
         }
 
         // Absent element -> null; present element -> its text, as the SDK reports it.
         private static string? CoreText(XElement? core, XName name) => core?.Element(name)?.Value;
 
-        // W3CDTF timestamp; an unparsable value throws FormatException (a malformed source record).
+        // W3CDTF timestamp, parsed as the SDK did (zoned -> Local, no zone -> Unspecified); an
+        // unparsable value throws FormatException (a malformed source record).
         private static DateTime? CoreDate(XElement? core, XName name)
         {
             var text = CoreText(core, name);
             return string.IsNullOrWhiteSpace(text)
                 ? null
-                : DateTime.Parse(text.Trim(), CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal);
+                : DateTime.Parse(text.Trim(), CultureInfo.InvariantCulture);
         }
 
         private static void PopulateMetadata(DocumentExtractionResult result, string propertyName, Action populate) =>
