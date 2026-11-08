@@ -39,5 +39,24 @@ namespace ExtractorOLE.Tests.SampleGeneration
             Assert.NotEmpty(AdversarialDocxSampleGenerator.BuildOversizedEmbeddedObject());
             Assert.NotEmpty(AdversarialDocxSampleGenerator.BuildFaultingEmbeddedEnumeration());
         }
+
+        [Theory]
+        [InlineData("corrupt-metadata-property.doc")]
+        [InlineData("corrupt-sheet-records.xls")]
+        [InlineData("unnamed-embedded-storage.doc")]
+        public void AdversarialFlag_LegacyFixtureIsCommitted(string fileName)
+        {
+            var relative = Path.Combine("samples", "adversarial", fileName);
+            for (var dir = new DirectoryInfo(AppContext.BaseDirectory); dir != null; dir = dir.Parent)
+            {
+                var candidate = Path.Combine(dir.FullName, relative);
+                if (File.Exists(candidate))
+                {
+                    Assert.True(new FileInfo(candidate).Length > 0);
+                    return;
+                }
+            }
+            Assert.Fail($"{relative} not found");
+        }
     }
 }

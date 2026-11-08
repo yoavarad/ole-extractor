@@ -222,6 +222,19 @@ void GenerateAdversarialSamples()
         File.WriteAllBytes(path, bytes);
         Console.WriteLine($"Generated adversarial {fileName}: {path} ({bytes.Length} bytes)");
     }
+
+    // Legacy per-field-isolation fixtures (ADR-005 hand-written CFB): each carries exactly one
+    // failure beside otherwise-readable content.
+    WriteAdversarial(adversarialDir, "corrupt-metadata-property.doc", AdversarialSampleGenerator.BuildCorruptMetadataPropertyDoc());
+    WriteAdversarial(adversarialDir, "corrupt-sheet-records.xls", AdversarialSampleGenerator.BuildCorruptSheetRecordsXls());
+    WriteAdversarial(adversarialDir, "unnamed-embedded-storage.doc", AdversarialSampleGenerator.BuildUnnamedEmbeddedStorageDoc());
+}
+
+void WriteAdversarial(string dir, string fileName, byte[] bytes)
+{
+    var path = Path.Combine(dir, fileName);
+    File.WriteAllBytes(path, bytes);
+    Console.WriteLine($"Generated adversarial {fileName}: {path} ({bytes.Length} bytes)");
 }
 
 // docs/specs/dataset-curation.md's shared adversarial set (not per-format):
