@@ -8,5 +8,6 @@ namespace ExtractorOLE.Exceptions
         public abstract int StatusCode { get; }
         public string Detail => Message;
         protected ExtractorOleException(string message) : base(message) { }
+        protected ExtractorOleException(string message, Exception? innerException) : base(message, innerException) { }
     }
 }

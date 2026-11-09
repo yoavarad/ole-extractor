@@ -37,16 +37,9 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
         // Reads the seekable stream lazily (#192, ADR-008); the caller owns and disposes it.
         public DocumentExtractionResult? Open(Stream input)
         {
-            // Open step: only a package that cannot be opened at all yields null.
-            PresentationDocument pres;
-            try
-            {
-                pres = OpenXmlPackages.OpenPresentation(input);
-            }
-            catch
-            {
-                return null;
-            }
+            // Open step: a package that cannot be opened propagates the library exception so
+            // ParseTimeErrorGuard can report the cause (#287).
+            PresentationDocument pres = OpenXmlPackages.OpenPresentation(input);
 
             // Populate step: leaves are isolated; anything else propagates unwrapped.
             try
@@ -65,7 +58,8 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
             }
             catch
             {
-                pres.Dispose();
+                // Parse failures propagate so ParseTimeErrorGuard can report the cause (#287).
+                pres?.Dispose();
                 throw;
             }
         }

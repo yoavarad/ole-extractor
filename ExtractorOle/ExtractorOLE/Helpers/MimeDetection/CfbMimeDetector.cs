@@ -1,6 +1,7 @@
 using ExtractorOLE.Configuration;
 using ExtractorOLE.DTOs;
 using ExtractorOLE.Exceptions;
+using ExtractorOLE.Helpers.Guardrails;
 using ExtractorOLE.Helpers.Input;
 using OpenMcdf;
 using System;
@@ -71,6 +72,9 @@ namespace ExtractorOLE.Helpers.MimeDetection
                 throw new OversizedNestedContentException(metric);
             }
 
+            // A read fault of the caller's stream, or out-of-memory, propagates instead of being
+            // reported as Unknown (#287).
+            var source = new FaultTrackingStream(stream);
             try
             {
                 // Test-observability only: proves guards above short-circuit before
@@ -78,7 +82,7 @@ namespace ExtractorOLE.Helpers.MimeDetection
                 s_openMcdfParseAttempts.Increment();
 
                 stream.Position = 0;
-                using var root = RootStorage.Open(new NonClosingStream(stream));
+                using var root = RootStorage.Open(source);
 
                 HashSet<string> entryNames = root.EnumerateEntries()
                     .Select(entry => entry.Name)
@@ -101,9 +105,9 @@ namespace ExtractorOLE.Helpers.MimeDetection
 
                 return UnknownResult();
             }
-            catch (Exception)
+            catch (Exception ex) when (ParseFailure.IsParseFailure(ex, source))
             {
-                // Not a CFB file, or a corrupt/unsupported one -- Unknown, never throw.
+                // Not a CFB file, or a corrupt/unsupported one -- Unknown.
                 return UnknownResult();
             }
         }
