@@ -54,7 +54,7 @@ namespace ExtractorOLE.Tests.SampleGeneration
                 Assert.True(archive.GetEntry(AdversarialDocxSampleGenerator.GoodEmbeddingEntry)!.Length < limits.MaxDeclaredEntryBytes);
             }
 
-            var guardrails = new ExtractionGuardrails(limits, _ => { });
+            var guardrails = new ExtractionGuardrails(limits);
             guardrails.Enforce(new ExtractionRequest { FileName = "oversized-embedded-object.docx", FileBytes = bytes });
 
             using var stream = new MemoryStream(bytes);

@@ -2,6 +2,7 @@ using ExtractorOLE.Abstractions;
 using ExtractorOLE.Helpers.Guardrails;
 using ExtractorOLE.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System.Collections.Frozen;
 using System.Collections.Generic;
 using ExtractorOLE.DTOs;
@@ -29,7 +30,10 @@ namespace ExtractorOLE
 
             // Pre-parse Extract guardrails, sharing the one configured limits instance
             // with mime detection (ydk:nfr:extraction/max-file-size, nesting-depth-guard).
-            services.AddSingleton(sp => new ExtractionGuardrails(sp.GetRequiredService<MimeDetectionLimits>()));
+            // Rejections log through the host's ILogger when AddLogging is configured; silent otherwise.
+            services.AddSingleton(sp => new ExtractionGuardrails(
+                sp.GetRequiredService<MimeDetectionLimits>(),
+                sp.GetService<ILogger<ExtractionGuardrails>>()));
 
             // Mime detection (legacy CFB family)
             services.AddSingleton(limits ?? new MimeDetectionLimits());

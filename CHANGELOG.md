@@ -12,5 +12,6 @@
 ### Breaking changes
 - `DetectedFormatEnum` is renamed to `DetectedFormat`, and `OfficeMimeTypeEnum` is renamed to `OfficeMimeType` (CA1711). The values are unchanged. Rename the types where you use them.
 - A null required request field now throws `ArgumentNullException` with `ParamName = "request"` (CA2208). Before, `ParamName` was the property name (`"FileBytes"`, `"FileName"` or `"DetectedMimeType"`). The exception message now names the property. This applies to both `Extract` and `DetectMimeType`. Code that read `ParamName` should check `Message` instead.
+- `ExtractionGuardrails` now takes an optional `ILogger<ExtractionGuardrails>` instead of an `Action<string>` rejection callback (#280). Guardrail rejections no longer write to the console: with no logger they are silent, and `ServiceRegistration.Register` uses the host's `ILogger<ExtractionGuardrails>` when logging is registered. Rejection log entries are `Warning` level with structured sizes and limits and no longer include the caller's `FileName`. Pass an `ILogger` where you passed a callback.
 
 See [ADR-009](docs/adrs/009-analyzer-compliance-over-api-stability.md) for the reasoning and migration table.

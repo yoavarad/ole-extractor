@@ -3,6 +3,8 @@ using ExtractorOLE.Configuration;
 using ExtractorOLE.DTOs;
 using ExtractorOLE.Exceptions;
 using ExtractorOLE.Helpers.MimeDetection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using System;
 using System.IO;
 
@@ -14,41 +16,51 @@ namespace ExtractorOLE.Helpers.Guardrails
     /// buffer allocation: rejects an over-limit byte length
     /// (<see cref="FileTooLargeException"/>) and ZIP/CFB headers whose DECLARED sizes
     /// exceed the caps (<see cref="OversizedNestedContentException"/>). Every rejection
-    /// is logged with file size, filename and the configured limit.
+    /// is logged through <see cref="ILogger"/> with file size and the configured limit; the
+    /// caller-supplied filename is never logged (PII, CR/LF log forging). With no logger the
+    /// guardrails are silent.
     /// </summary>
-    public class ExtractionGuardrails
+    public partial class ExtractionGuardrails
     {
         private readonly MimeDetectionLimits _limits;
-        private readonly Action<string> _log;
+        private readonly ILogger _logger;
 
-        public ExtractionGuardrails(MimeDetectionLimits limits, Action<string>? logRejection = null)
+        public ExtractionGuardrails(MimeDetectionLimits limits, ILogger<ExtractionGuardrails>? logger = null)
         {
             _limits = limits ?? throw new ArgumentNullException(nameof(limits));
-            _log = logRejection ?? (message => Console.WriteLine(message));
+            _logger = logger ?? NullLogger<ExtractionGuardrails>.Instance;
         }
+
+        [LoggerMessage(EventId = 1, EventName = "FileTooLarge", Level = LogLevel.Warning,
+            Message = "Extract rejected: file-too-large, actualBytes={ActualBytes}, limitBytes={LimitBytes}")]
+        private static partial void LogFileTooLarge(ILogger logger, long actualBytes, long limitBytes);
+
+        [LoggerMessage(EventId = 2, EventName = "OversizedNestedContent", Level = LogLevel.Warning,
+            Message = "Extract rejected: oversized-nested-content, fileBytes={FileBytes}, limitBytes={LimitBytes}, {Metric}")]
+        private static partial void LogOversizedNestedContent(ILogger logger, long fileBytes, long limitBytes, string metric);
 
         public void Enforce(ExtractionRequest request)
         {
             var bytes = request?.FileBytes;
             if (bytes == null) return;
 
-            Enforce(request!.FileName, bytes.LongLength, () => new MemoryStream(bytes, writable: false));
+            Enforce(bytes.LongLength, () => new MemoryStream(bytes, writable: false));
         }
 
         // Stream/path input (#192, #193): the size check uses the stream length, so an over-limit
         // file is rejected before anything is read; the declared-size header checks then read only
         // the headers they need from the stream, never buffering the whole file.
-        internal void Enforce(ExtractionRequest request, ExtractionInput input) =>
-            Enforce(request.FileName, input.Length, () => input.OriginalBytes != null
+        internal void Enforce(ExtractionInput input) =>
+            Enforce(input.Length, () => input.OriginalBytes != null
                 ? new MemoryStream(input.OriginalBytes, writable: false)
                 : input.Stream!);
 
         // openStream is only called once the length check passes; a byte[] is wrapped without copying.
-        private void Enforce(string fileName, long length, Func<Stream> openStream)
+        private void Enforce(long length, Func<Stream> openStream)
         {
             if (length > _limits.MaxFileSizeBytes)
             {
-                _log($"[Extract] file-too-large: fileName='{fileName}', actualBytes={length}, limitBytes={_limits.MaxFileSizeBytes}");
+                LogFileTooLarge(_logger, length, _limits.MaxFileSizeBytes);
                 throw new FileTooLargeException(length, _limits.MaxFileSizeBytes);
             }
 
@@ -93,7 +105,7 @@ namespace ExtractorOLE.Helpers.Guardrails
 
             if (metric != null)
             {
-                _log($"[Extract] oversized-nested-content: fileName='{fileName}', fileBytes={length}, limitBytes={limit}, {metric}");
+                LogOversizedNestedContent(_logger, length, limit, metric);
                 throw new OversizedNestedContentException(metric);
             }
         }

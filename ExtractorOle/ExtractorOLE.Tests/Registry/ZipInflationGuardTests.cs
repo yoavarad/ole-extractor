@@ -40,7 +40,7 @@ namespace ExtractorOLE.Tests.Registry
         }
 
         private static void Run(byte[] bytes, MimeDetectionLimits limits) =>
-            new ExtractionGuardrails(limits, _ => { }).Enforce(new ExtractionRequest { FileName = "x.docx", FileBytes = bytes });
+            new ExtractionGuardrails(limits).Enforce(new ExtractionRequest { FileName = "x.docx", FileBytes = bytes });
 
         [Fact]
         public void ForgedZeroSizeHeaders_InflatingPastEntryCap_Throws()
