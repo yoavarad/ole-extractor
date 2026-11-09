@@ -3,6 +3,7 @@ using SampleGenerator.Fixtures;
 using System;
 using System.IO;
 using Xunit;
+using ExtractorOLE.Helpers;
 
 namespace ExtractorOLE.Tests.Doc
 {
@@ -121,6 +122,18 @@ namespace ExtractorOLE.Tests.Doc
         public void ExtractText_EmptyBytes_Throws()
         {
             Assert.ThrowsAny<Exception>(() => new DocTextExtractor().ExtractText(Array.Empty<byte>()));
+        }
+
+        // #290: the sheet/slide/embedded loops observe the Extract call's cancellation token.
+        [Fact]
+        public void ExtractText_CancelledToken_ThrowsBeforeConversion()
+        {
+            var bytes = File.ReadAllBytes(FindRepoRootFile(MultilingualFixturePath));
+            using var cts = new System.Threading.CancellationTokenSource();
+            cts.Cancel();
+            using var scope = ExtractionCancellation.Enter(cts.Token);
+
+            Assert.ThrowsAny<OperationCanceledException>(() => new DocTextExtractor().ExtractText(bytes));
         }
     }
 }

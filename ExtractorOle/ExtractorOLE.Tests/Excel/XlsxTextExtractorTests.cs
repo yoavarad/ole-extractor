@@ -10,6 +10,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using Xunit;
+using ExtractorOLE.Helpers;
 
 namespace ExtractorOLE.Tests.Excel
 {
@@ -232,6 +233,18 @@ namespace ExtractorOLE.Tests.Excel
         public void CorruptBytes_Throws()
         {
             Assert.ThrowsAny<Exception>(() => new XlsxTextExtractor().ExtractText(new byte[] { 0x00, 0x01, 0x02, 0x03 }));
+        }
+
+        // #290: the sheet/slide/embedded loops observe the Extract call's cancellation token.
+        [Fact]
+        public void ExtractText_CancelledToken_ThrowsOperationCanceled()
+        {
+            var bytes = BuildXlsxWithNumericCell(42.0);
+            using var cts = new System.Threading.CancellationTokenSource();
+            cts.Cancel();
+            using var scope = ExtractionCancellation.Enter(cts.Token);
+
+            Assert.ThrowsAny<OperationCanceledException>(() => new XlsxTextExtractor().ExtractText(bytes));
         }
     }
 }

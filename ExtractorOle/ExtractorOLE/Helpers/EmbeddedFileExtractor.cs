@@ -141,6 +141,7 @@ namespace ExtractorOLE.Helpers
                 {
                     foreach (var partPair in host.Parts)
                     {
+                        ExtractionCancellation.ThrowIfCancellationRequested();
                         var nestedPart = partPair.OpenXmlPart;
                         if (!seen.Add(nestedPart.Uri)) continue;
 
@@ -174,6 +175,7 @@ namespace ExtractorOLE.Helpers
             {
                 foreach (HSSFObjectData obj in workbook.GetAllEmbeddedObjects())
                 {
+                    ExtractionCancellation.ThrowIfCancellationRequested();
                     ExtractHssfObjectData(obj, result, ref index);
                 }
             });
@@ -182,6 +184,7 @@ namespace ExtractorOLE.Helpers
             {
                 foreach (HSSFPictureData pic in workbook.GetAllPictures())
                 {
+                    ExtractionCancellation.ThrowIfCancellationRequested();
                     ExtractHssfPictureData(pic, result, ref index);
                 }
             });
@@ -210,6 +213,7 @@ namespace ExtractorOLE.Helpers
 
             foreach (var entry in topLevelEntries)
             {
+                ExtractionCancellation.ThrowIfCancellationRequested();
                 if (!entry.IsDirectoryEntry) continue;
 
                 FieldIsolation.TryPopulate(result, FieldIsolation.SubfilePath(entry.Name),
@@ -408,6 +412,7 @@ namespace ExtractorOLE.Helpers
             {
                 foreach (var entry in objectPool)
                 {
+                    ExtractionCancellation.ThrowIfCancellationRequested();
                     ExtractDocObjectPoolEntry(entry, result, ref index);
                 }
             });

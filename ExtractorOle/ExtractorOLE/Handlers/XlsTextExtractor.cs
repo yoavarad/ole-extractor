@@ -5,6 +5,7 @@ using NPOI.SS.UserModel;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using ExtractorOLE.Helpers;
 
 namespace ExtractorOLE.Handlers
 {
@@ -46,9 +47,11 @@ namespace ExtractorOLE.Handlers
 
             for (int sheetIndex = 0; sheetIndex < workbook.NumberOfSheets; sheetIndex++)
             {
+                ExtractionCancellation.ThrowIfCancellationRequested();
                 var sheet = workbook.GetSheetAt(sheetIndex);
                 foreach (IRow row in sheet)
                 {
+                    ExtractionCancellation.ThrowIfCancellationRequested();
                     var cellTexts = new List<string>();
                     foreach (ICell cell in row)
                     {

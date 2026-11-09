@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using Xunit;
 using A = DocumentFormat.OpenXml.Drawing;
+using ExtractorOLE.Helpers;
 
 namespace ExtractorOLE.Tests.PowerPoint
 {
@@ -264,6 +265,18 @@ namespace ExtractorOLE.Tests.PowerPoint
             }
 
             return ms.ToArray();
+        }
+
+        // #290: the sheet/slide/embedded loops observe the Extract call's cancellation token.
+        [Fact]
+        public void ExtractText_CancelledToken_ThrowsOperationCanceled()
+        {
+            var bytes = new PptxSampleGenerator().Generate(new SampleSpec { BodyText = "slide" }).Content;
+            using var cts = new System.Threading.CancellationTokenSource();
+            cts.Cancel();
+            using var scope = ExtractionCancellation.Enter(cts.Token);
+
+            Assert.ThrowsAny<OperationCanceledException>(() => new PptxTextExtractor().ExtractText(bytes));
         }
     }
 }

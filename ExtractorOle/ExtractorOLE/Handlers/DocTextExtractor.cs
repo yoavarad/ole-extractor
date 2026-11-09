@@ -49,12 +49,15 @@ namespace ExtractorOLE.Handlers
         // MemoryStream instead.
         private static byte[] ConvertToDocx(Stream docStream)
         {
+            // b2xtranslator has no cancellation hook (#290): the token is checked only between conversion stages.
+            ExtractionCancellation.ThrowIfCancellationRequested();
             docStream.Position = 0;
             var output = new MemoryStream();
             using (var reader = new StructuredStorageReader(docStream))
             {
                 var doc = new WordDocument(reader);
                 var outType = Converter.DetectOutputType(doc);
+                ExtractionCancellation.ThrowIfCancellationRequested();
 
                 // Converter.Convert disposes (closes) the output package itself, so no `using`
                 // here - a second Close would serialize the package a second time.
@@ -62,6 +65,7 @@ namespace ExtractorOLE.Handlers
                 Converter.Convert(doc, docx);
             }
 
+            ExtractionCancellation.ThrowIfCancellationRequested();
             // The zip archive disposes `output` on close; ToArray() still works on a disposed MemoryStream.
             return output.ToArray();
         }

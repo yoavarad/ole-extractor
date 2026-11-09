@@ -6,6 +6,7 @@ using b2xtranslator.PresentationMLMapping;
 using b2xtranslator.StructuredStorage.Reader;
 using System;
 using System.IO;
+using ExtractorOLE.Helpers;
 
 namespace ExtractorOLE.Helpers.FileTypeStrategy
 {
@@ -29,6 +30,8 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
 
         public static byte[] Convert(Stream pptStream)
         {
+            // b2xtranslator has no cancellation hook (#290): the token is checked only between conversion stages.
+            ExtractionCancellation.ThrowIfCancellationRequested();
             ConvertCallCount++;
             var output = new MemoryStream();
             pptStream.Position = 0;
@@ -37,6 +40,7 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
             {
                 var ppt = new PowerpointDocument(reader);
                 var outType = Converter.DetectOutputType(ppt);
+                ExtractionCancellation.ThrowIfCancellationRequested();
 
                 // No `using` here: Converter.Convert disposes (closes) the package itself, and a
                 // second Close() would serialize the package a second time.
@@ -44,6 +48,7 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
                 Converter.Convert(ppt, pptx);
             }
 
+            ExtractionCancellation.ThrowIfCancellationRequested();
             // The zip archive disposes `output` on close; ToArray() still works on a disposed MemoryStream.
             return output.ToArray();
         }
