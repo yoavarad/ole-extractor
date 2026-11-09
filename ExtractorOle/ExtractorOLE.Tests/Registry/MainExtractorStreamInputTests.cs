@@ -214,7 +214,8 @@ namespace ExtractorOLE.Tests.Registry
 
             // An Excel open of a Word package fails; the stream must survive it.
             var excel = new ExcelOpenStrategy(helper);
-            var failed = Record.Exception(() => excel.Open(stream));
+            var failed = excel.Open(stream);
+            Assert.Null(failed);
             Assert.True(stream.CanRead);
             Assert.True(stream.CanSeek);
 
@@ -223,7 +224,6 @@ namespace ExtractorOLE.Tests.Registry
             Assert.NotNull(result);
             ((IDisposable)result!.ParsedDocument!).Dispose();
             Assert.True(stream.CanRead);
-            _ = failed;
         }
 
         [Fact]
