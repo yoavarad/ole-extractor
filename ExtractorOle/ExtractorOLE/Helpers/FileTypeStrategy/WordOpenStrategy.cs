@@ -1,5 +1,6 @@
 using DocumentFormat.OpenXml.Packaging;
 using ExtractorOLE.DTOs;
+using System;
 using System.IO;
 
 namespace ExtractorOLE.Helpers.FileTypeStrategy
@@ -22,17 +23,17 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
             try
             {
                 var result = new DocumentExtractionResult();
-                word = OpenXmlPackages.OpenWord(input);
-                _helper.ExtractMetadataAndEmbedded(word, word.MainDocumentPart, result);
-                if (string.IsNullOrEmpty(result.MimeType) && word.CoreFilePropertiesPart != null)
+                var wordDoc = word = OpenXmlPackages.OpenWord(input);
+                StrategyIsolation.PopulateEmbedded(result, () => _helper.ExtractMetadataAndEmbedded(wordDoc, wordDoc.MainDocumentPart, result));
+                if (string.IsNullOrEmpty(result.MimeType) && wordDoc.CoreFilePropertiesPart != null)
                 {
-                    result.MimeType = word.CoreFilePropertiesPart.ContentType ?? string.Empty;
+                    result.MimeType = wordDoc.CoreFilePropertiesPart.ContentType ?? string.Empty;
                 }
 
-                result.FormatMetadata = BuildWordFormatMetadata(word);
+                result.FormatMetadata = BuildWordFormatMetadata(wordDoc, result);
 
                 // Kept open for DocxTextExtractor (#167); MainExtractor disposes it.
-                result.ParsedDocument = word;
+                result.ParsedDocument = wordDoc;
                 return result;
             }
             catch
@@ -50,22 +51,25 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
         // absent entirely, e.g. for a minimally-authored docx). HasMacros is true when
         // the package carries a VBA project part (docm), which is how the OOXML SDK
         // exposes the macro storage regardless of the document's file extension.
-        private static WordFormatMetadata BuildWordFormatMetadata(WordprocessingDocument word)
+        // Each field is its own leaf at FormatMetadata.<Name>; a failed leaf keeps its default.
+        private static WordFormatMetadata BuildWordFormatMetadata(WordprocessingDocument word, DocumentExtractionResult result)
         {
-            var props = word.ExtendedFilePropertiesPart?.Properties;
+            // Read once; a part that cannot be parsed fails every leaf it sources.
+            var props = new Lazy<DocumentFormat.OpenXml.ExtendedProperties.Properties?>(() => word.ExtendedFilePropertiesPart?.Properties);
+            var fm = new WordFormatMetadata();
 
-            return new WordFormatMetadata
-            {
-                PageCount = ParseNullableInt(props?.Pages?.Text),
-                WordCount = ParseNullableInt(props?.Words?.Text),
-                CharacterCount = ParseNullableInt(props?.Characters?.Text),
-                ParagraphCount = ParseNullableInt(props?.Paragraphs?.Text),
-                LineCount = ParseNullableInt(props?.Lines?.Text),
-                Company = props?.Company?.Text,
-                Manager = props?.Manager?.Text,
-                Template = props?.Template?.Text,
-                HasMacros = word.MainDocumentPart?.VbaProjectPart != null,
-            };
+            void Leaf(string name, Action populate) => StrategyIsolation.PopulateLeaf(result, name, populate);
+
+            Leaf(nameof(WordFormatMetadata.PageCount), () => fm.PageCount = ParseNullableInt(props.Value?.Pages?.Text));
+            Leaf(nameof(WordFormatMetadata.WordCount), () => fm.WordCount = ParseNullableInt(props.Value?.Words?.Text));
+            Leaf(nameof(WordFormatMetadata.CharacterCount), () => fm.CharacterCount = ParseNullableInt(props.Value?.Characters?.Text));
+            Leaf(nameof(WordFormatMetadata.ParagraphCount), () => fm.ParagraphCount = ParseNullableInt(props.Value?.Paragraphs?.Text));
+            Leaf(nameof(WordFormatMetadata.LineCount), () => fm.LineCount = ParseNullableInt(props.Value?.Lines?.Text));
+            Leaf(nameof(WordFormatMetadata.Company), () => fm.Company = props.Value?.Company?.Text);
+            Leaf(nameof(WordFormatMetadata.Manager), () => fm.Manager = props.Value?.Manager?.Text);
+            Leaf(nameof(WordFormatMetadata.Template), () => fm.Template = props.Value?.Template?.Text);
+            Leaf(nameof(WordFormatMetadata.HasMacros), () => fm.HasMacros = word.MainDocumentPart?.VbaProjectPart != null);
+            return fm;
         }
 
         private static int? ParseNullableInt(string? text) =>

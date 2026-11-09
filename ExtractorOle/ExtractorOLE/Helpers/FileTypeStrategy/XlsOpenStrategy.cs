@@ -2,8 +2,10 @@ using ExtractorOLE.Helpers.Input;
 using ExtractorOLE.DTOs;
 using NPOI.HSSF.Record;
 using NPOI.HSSF.UserModel;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.ExceptionServices;
 
 namespace ExtractorOLE.Helpers.FileTypeStrategy
 {
@@ -20,56 +22,145 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
             _helper = helper;
         }
 
-        public DocumentExtractionResult? Open(byte[] fileBytes) => OpenFrom(new MemoryStream(fileBytes));
+        public DocumentExtractionResult? Open(byte[] fileBytes) => OpenFrom(() => new MemoryStream(fileBytes));
 
         // Reads the caller's seekable stream directly (#194, ADR-008): NPOI reads it block by block without buffering it (#236). The caller owns and disposes it.
-        public DocumentExtractionResult? Open(Stream input) => OpenFrom(new NonClosingStream(input));
+        public DocumentExtractionResult? Open(Stream input) => OpenFrom(() => new NonClosingStream(input));
 
-        private DocumentExtractionResult? OpenFrom(Stream source)
+        private DocumentExtractionResult? OpenFrom(Func<Stream> openSource)
         {
-            // Library exceptions propagate: ParseTimeErrorGuard maps an encrypted document to
-            // password-protected and a parse failure to corrupt-file with the cause (#287).
+            HSSFWorkbook workbook;
+            try
+            {
+                workbook = XlsWorkbooks.Load(openSource());
+            }
+            catch (Exception ex) when (ex is not NPOI.HSSF.OldExcelFormatException && StrategyIsolation.IsOpenFailure(ex))
+            {
+                // BIFF5 and older (OldExcelFormatException) and encrypted documents are left to
+                // ParseTimeErrorGuard. Anything else the library rejected may leave an intact compound
+                // file with only the sheet records unreadable; if it is not, the original failure is rethrown.
+                return OpenWithoutWorkbook(openSource, ex);
+            }
+
+            // Everything past the container open is isolated per leaf.
             var result = new DocumentExtractionResult();
-            var workbook = XlsWorkbooks.Load(source);
-            var summary = workbook.SummaryInformation;
+            NPOI.HPSF.SummaryInformation? summary = null;
+            try
+            {
+                summary = workbook.SummaryInformation;
+            }
+            catch (Exception ex) when (StrategyIsolation.IsOpenFailure(ex))
+            {
+                // Unparsable property set: FileMetadata stays null.
+            }
             if (summary != null)
             {
                 MetadataConversions.Apply(summary, result);
             }
 
-            result.FormatMetadata = BuildExcelFormatMetadata(workbook);
+            result.FormatMetadata = BuildExcelFormatMetadata(workbook, result);
 
-            _helper.ExtractFirstLayerEmbedded(result, workbook);
+            StrategyIsolation.PopulateEmbedded(result, () => _helper.ExtractFirstLayerEmbedded(result, workbook));
             // Handed to XlsTextExtractor so the workbook is parsed once; MainExtractor releases it.
             result.ParsedDocument = workbook;
             result.MimeType = _helper.MimeFor(OfficeMimeType.ExcelLegacy);
             return result;
         }
 
-        // Sheet count/names come straight off the workbook. ActiveSheetIndex is only
-        // populated when the file actually carries a WindowOneRecord (the BIFF record
-        // that holds the active-sheet index) - HSSFWorkbook.ActiveSheetIndex always
-        // returns a value because NPOI synthesizes a default WindowOneRecord on read
-        // when one is missing, so presence must be checked on the underlying record
-        // list directly rather than trusting that property alone. HasMacros is true
-        // when the compound file's root storage contains a VBA project.
-        private static ExcelFormatMetadata BuildExcelFormatMetadata(HSSFWorkbook workbook)
+        // The container is a readable compound file but the workbook did not assemble (corrupt sheet
+        // records): SheetCount fails with the load failure while the sheet names, active sheet and
+        // macro flag are still read independently from the workbook globals / directory.
+        private DocumentExtractionResult OpenWithoutWorkbook(Func<Stream> openSource, Exception loadFailure)
         {
-            var sheetNames = new List<string>(workbook.NumberOfSheets);
-            for (int i = 0; i < workbook.NumberOfSheets; i++)
+            // A failed load may have closed or advanced the stream, so the source is opened afresh.
+            // A failure here (including a read fault of the caller's stream) propagates to ParseTimeErrorGuard.
+            var fs = CfbFileSystems.Open(openSource());
+
+            try
             {
-                sheetNames.Add(workbook.GetSheetName(i));
+                var root = fs.Root;
+                var streamName = root.HasEntryCaseInsensitive("Workbook") ? "Workbook"
+                    : root.HasEntryCaseInsensitive("Book") ? "Book" : null;
+                if (streamName == null)
+                {
+                    ExceptionDispatchInfo.Capture(loadFailure).Throw();
+                    return null!; // unreachable
+                }
+
+                var result = new DocumentExtractionResult();
+                NPOI.HPSF.SummaryInformation? summary = null;
+                try
+                {
+                    summary = NPOI.HPSF.PropertySetFactory.Create(root, NPOI.HPSF.SummaryInformation.DEFAULT_STREAM_NAME) as NPOI.HPSF.SummaryInformation;
+                }
+                catch (Exception ex) when (StrategyIsolation.IsOpenFailure(ex))
+                {
+                    // Absent or unparsable property set: FileMetadata stays null.
+                }
+                if (summary != null) MetadataConversions.Apply(summary, result);
+
+                // The globals substream (BoundSheet / WindowOne records) is read once and shared by the leaves that need it.
+                var globals = new Lazy<NPOI.HSSF.Model.InternalWorkbook>(() =>
+                    NPOI.HSSF.Model.InternalWorkbook.CreateWorkbook(RecordFactory.CreateRecords(root.CreateDocumentInputStream(streamName))));
+                var fm = new ExcelFormatMetadata();
+                void Leaf(string name, Action populate) => StrategyIsolation.PopulateLeaf(result, name, populate);
+
+                Leaf(nameof(ExcelFormatMetadata.SheetCount), () => ExceptionDispatchInfo.Capture(loadFailure).Throw());
+                Leaf(nameof(ExcelFormatMetadata.SheetNames), () =>
+                {
+                    var names = new List<string>(globals.Value.NumSheets);
+                    for (int i = 0; i < globals.Value.NumSheets; i++) names.Add(globals.Value.GetSheetName(i));
+                    fm.SheetNames = names;
+                });
+                Leaf(nameof(ExcelFormatMetadata.ActiveSheetIndex), () =>
+                {
+                    var window = globals.Value.FindFirstRecordBySid(WindowOneRecord.sid) as WindowOneRecord;
+                    fm.ActiveSheetIndex = window?.ActiveSheetIndex;
+                });
+                Leaf(nameof(ExcelFormatMetadata.HasMacros), () => fm.HasMacros = root.HasEntryCaseInsensitive(VbaProjectStorageName));
+                result.FormatMetadata = fm;
+
+                // The embedded walk needs the assembled workbook.
+                StrategyIsolation.PopulateEmbedded(result, () => ExceptionDispatchInfo.Capture(loadFailure).Throw());
+                result.MimeType = _helper.MimeFor(OfficeMimeType.ExcelLegacy);
+                return result;
             }
-
-            bool hasRecordedActiveSheet = workbook.InternalWorkbook.FindFirstRecordBySid(WindowOneRecord.sid) != null;
-
-            return new ExcelFormatMetadata
+            finally
             {
-                SheetCount = workbook.NumberOfSheets,
-                SheetNames = sheetNames,
-                ActiveSheetIndex = hasRecordedActiveSheet ? workbook.ActiveSheetIndex : (int?)null,
-                HasMacros = workbook.Directory != null && workbook.Directory.HasEntryCaseInsensitive(VbaProjectStorageName),
-            };
+                fs.Close();
+            }
+        }
+
+        // Each field is its own leaf at FormatMetadata.<Name>; SheetCount and SheetNames are read
+        // independently and never reconciled. A failed leaf keeps its default (0 / empty / null / false).
+        // ActiveSheetIndex is only populated when the file carries a WindowOneRecord: NPOI synthesizes a
+        // default on read, so presence is checked on the record list. HasMacros is true when the root
+        // storage contains a VBA project.
+        private static ExcelFormatMetadata BuildExcelFormatMetadata(HSSFWorkbook workbook, DocumentExtractionResult result)
+        {
+            var fm = new ExcelFormatMetadata();
+
+            void Leaf(string name, Action populate) => StrategyIsolation.PopulateLeaf(result, name, populate);
+
+            Leaf(nameof(ExcelFormatMetadata.SheetCount), () => fm.SheetCount = workbook.NumberOfSheets);
+            Leaf(nameof(ExcelFormatMetadata.SheetNames), () =>
+            {
+                // Built locally and assigned only when complete, so a failure leaves the names empty.
+                var names = new List<string>(workbook.NumberOfSheets);
+                for (int i = 0; i < workbook.NumberOfSheets; i++)
+                {
+                    names.Add(workbook.GetSheetName(i));
+                }
+                fm.SheetNames = names;
+            });
+            Leaf(nameof(ExcelFormatMetadata.ActiveSheetIndex), () =>
+            {
+                bool hasRecordedActiveSheet = workbook.InternalWorkbook.FindFirstRecordBySid(WindowOneRecord.sid) != null;
+                fm.ActiveSheetIndex = hasRecordedActiveSheet ? workbook.ActiveSheetIndex : (int?)null;
+            });
+            Leaf(nameof(ExcelFormatMetadata.HasMacros), () =>
+                fm.HasMacros = workbook.Directory != null && workbook.Directory.HasEntryCaseInsensitive(VbaProjectStorageName));
+            return fm;
         }
     }
 }
