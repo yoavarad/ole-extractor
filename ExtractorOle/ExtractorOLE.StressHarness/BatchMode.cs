@@ -26,8 +26,11 @@ namespace ExtractorOLE.StressHarness
             var extractor = provider.GetRequiredService<MainExtractor>();
             var helper = provider.GetRequiredService<IExtractionHelper>();
 
-            var samples = Program.LoadSamples(samplesDir);
-            var mimes = samples.Select(bytes => DetectMime(helper, bytes)).ToList();
+            var named = Program.LoadNamedSamples(samplesDir, out var resolvedDirectory);
+            var samples = named.Select(n => n.Bytes).ToList();
+            var expectedFailures = ExpectedFailures.Load(resolvedDirectory);
+            var failingSamples = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var mimes = named.Select(n => DetectMime(helper, n.Bytes, n.Name, failingSamples)).ToList();
             var requests = Enumerable.Range(0, repeat)
                 .SelectMany(_ => samples.Select((bytes, i) => new ExtractionRequest
                 {
@@ -42,6 +45,14 @@ namespace ExtractorOLE.StressHarness
             // Serial baseline; also warms JIT/caches before the timed runs.
             var serial = requests.Select(req => Outcome(() => extractor.Extract(req))).ToList();
             int serialOk = serial.Count(o => o.StartsWith("ok|", StringComparison.Ordinal));
+            for (int k = 0; k < serial.Count; k++)
+            {
+                if (!serial[k].StartsWith("ok|", StringComparison.Ordinal))
+                {
+                    failingSamples.Add(named[k % named.Count].Name);
+                }
+            }
+
             Console.WriteLine($"Serial baseline: {serialOk}/{serial.Count} succeeded");
 
             long mismatches = 0;
@@ -60,31 +71,35 @@ namespace ExtractorOLE.StressHarness
             }
 
             Console.WriteLine(mismatches == 0 ? "[PASS] batch output identical to serial Extract()" : "[FAIL] batch output differs from serial Extract()");
-            Environment.ExitCode = ExitCodeFor(serial.Count, serialOk, mismatches);
+            Environment.ExitCode = ExitCodeFor(expectedFailures, failingSamples, mismatches);
         }
 
-        // Adversarial samples fail identically in serial and batch (caught as mismatches otherwise), so
-        // per-item errors are expected; the run fails when nothing succeeded or batch diverged from serial.
-        internal static int ExitCodeFor(int serialTotal, int serialOk, long mismatches)
+        // Adversarial samples fail identically in serial and batch (caught as mismatches otherwise): the run
+        // fails when the failing set (serial Extract or DetectMime failures) differs from the expected-failures
+        // set in either direction, or batch diverged from serial.
+        internal static int ExitCodeFor(IReadOnlySet<string> expected, IReadOnlySet<string> failing, long mismatches)
         {
-            if (serialOk == 0 || mismatches > 0)
+            int setCode = ExpectedFailures.ExitCodeFor(expected, failing);
+            if (mismatches > 0)
             {
-                Console.WriteLine($"[FAIL] serial succeeded: {serialOk}/{serialTotal}, mismatches: {mismatches}");
+                Console.WriteLine($"[FAIL] mismatches: {mismatches}");
                 return 1;
             }
 
-            return 0;
+            return setCode;
         }
 
-        // Adversarial samples can make detection throw; such items then fail per-item in Extract.
-        private static string DetectMime(IExtractionHelper helper, byte[] bytes)
+        // A detection failure counts as a failing sample; the request then carries a generic mime and fails per-item in Extract.
+        private static string DetectMime(IExtractionHelper helper, byte[] bytes, string name, HashSet<string> failingSamples)
         {
             try
             {
                 return helper.MimeFor(helper.DetectMimeTypeFromBytes(bytes)) ?? string.Empty;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine($"[detect] {name} failed: {ex.Message}");
+                failingSamples.Add(name);
                 return "application/octet-stream";
             }
         }

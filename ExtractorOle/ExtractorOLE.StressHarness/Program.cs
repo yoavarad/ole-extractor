@@ -40,7 +40,9 @@ namespace ExtractorOLE.StressHarness
             int iterations = args.Length > 1 && int.TryParse(args[1], out var i) ? i : DefaultIterations;
             string? samplesDir = args.Length > 2 ? args[2] : null;
 
-            var samples = LoadSamples(samplesDir);
+            var named = LoadNamedSamples(samplesDir, out var resolvedDirectory);
+            var samples = named.Select(n => n.Bytes).ToList();
+            var expectedFailures = ExpectedFailures.Load(resolvedDirectory);
 
             Console.WriteLine($"Samples: {samples.Count} | Concurrency: {concurrency} | Iterations: {iterations}");
 
@@ -67,9 +69,9 @@ namespace ExtractorOLE.StressHarness
 
             // Single-threaded baseline per sample, used below to detect
             // shared-mutable-state corruption once Extract runs concurrently.
-            int baselineFailures = 0;
+            var failingSamples = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             var baselines = new Dictionary<byte[], DocumentExtractionResult?>(ReferenceEqualityComparer.Instance);
-            foreach (var sample in samples)
+            foreach (var (name, sample) in named)
             {
                 try
                 {
@@ -79,7 +81,7 @@ namespace ExtractorOLE.StressHarness
                 {
                     Console.WriteLine($"[baseline] sample failed: {ex.Message}");
                     baselines[sample] = null;
-                    baselineFailures++;
+                    failingSamples.Add(name);
                 }
             }
 
@@ -143,29 +145,35 @@ namespace ExtractorOLE.StressHarness
                 mismatches,
                 samples.Count);
 
-            Environment.ExitCode = ExitCodeFor(samples.Count, baselineFailures, Interlocked.Read(ref unexpectedFailures), mismatches);
+            Environment.ExitCode = ExitCodeFor(expectedFailures, failingSamples, Interlocked.Read(ref unexpectedFailures), mismatches);
         }
 
-        // Adversarial samples legitimately fail, so a failed baseline is expected; the run fails when
-        // every baseline failed, a sample that passed its baseline fails under load, or results diverge.
-        internal static int ExitCodeFor(int sampleCount, int baselineFailures, long unexpectedFailures, long mismatches)
+        // Adversarial samples legitimately fail: the run fails when the baseline-failing set differs from the
+        // expected-failures set (either direction), a sample that passed its baseline fails under load, or results diverge.
+        internal static int ExitCodeFor(IReadOnlySet<string> expected, IReadOnlySet<string> failing, long unexpectedLoadFailures, long mismatches)
         {
-            if (baselineFailures >= sampleCount || unexpectedFailures > 0 || mismatches > 0)
+            int setCode = ExpectedFailures.ExitCodeFor(expected, failing);
+            if (unexpectedLoadFailures > 0 || mismatches > 0)
             {
-                Console.WriteLine($"[FAIL] baseline failures: {baselineFailures}/{sampleCount}, unexpected load failures: {unexpectedFailures}, mismatches: {mismatches}");
+                Console.WriteLine($"[FAIL] unexpected load failures: {unexpectedLoadFailures}, mismatches: {mismatches}");
                 return 1;
             }
 
-            return 0;
+            return setCode;
         }
 
-        internal static List<byte[]> LoadSamples(string? samplesDir)
+        internal static List<byte[]> LoadSamples(string? samplesDir) =>
+            LoadNamedSamples(samplesDir, out _).Select(n => n.Bytes).ToList();
+
+        /// <summary>Samples keyed by path relative to the samples directory ('/'-separated); also returns the directory used.</summary>
+        internal static List<(string Name, byte[] Bytes)> LoadNamedSamples(string? samplesDir, out string? resolvedDirectory)
         {
-            var samples = new List<byte[]>();
+            var samples = new List<(string Name, byte[] Bytes)>();
             var directory = !string.IsNullOrWhiteSpace(samplesDir) && Directory.Exists(samplesDir)
                 ? samplesDir
                 : FindDefaultSamplesDirectory();
 
+            resolvedDirectory = directory;
             if (directory is not null)
             {
                 foreach (var file in Directory.EnumerateFiles(directory, "*", SearchOption.AllDirectories))
@@ -175,14 +183,14 @@ namespace ExtractorOLE.StressHarness
                         continue;
                     }
 
-                    samples.Add(File.ReadAllBytes(file));
+                    samples.Add((Path.GetRelativePath(directory, file).Replace(Path.DirectorySeparatorChar, '/'), File.ReadAllBytes(file)));
                 }
             }
 
             if (samples.Count == 0)
             {
                 Console.WriteLine("No sample directory provided (or it was empty) - generating a synthetic in-memory .docx sample.");
-                samples.Add(CreateSyntheticDocx());
+                samples.Add(("synthetic.docx", CreateSyntheticDocx()));
             }
 
             return samples;
