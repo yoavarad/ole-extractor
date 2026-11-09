@@ -15,7 +15,10 @@ rule: >
   a placeholder or sentinel: a nullable property is null, ExtractedText is
   the empty string, a failed embedded item is absent from the list, a
   non-nullable count or flag is at its type's default (0, false, empty
-  list). For every failed leaf, Extract() MUST append exactly one FieldError
+  list). Sole exception: workbook (xls/xlsx) ExtractedText is read per
+  sheet, so when only some sheets fail it MUST keep the text of the
+  readable sheets, and its one FieldError then means the text is
+  incomplete rather than absent. For every failed leaf, Extract() MUST append exactly one FieldError
   to ExtractionResult.FieldErrors, identifying the leaf by the field-path
   convention in docs/specs/extraction.md — the result's own public C#
   property names, so "Metadata.Created" and not "GeneralMetadata.CreatedAt",

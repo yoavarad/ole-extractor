@@ -7,6 +7,8 @@
 - `MainExtractor.Extract(ExtractionRequest, CancellationToken)`: a new overload; `Extract(ExtractionRequest)` is unchanged and calls it with `CancellationToken.None`. A cancelled token throws `OperationCanceledException` before the input is opened. A token cancelled during the call is checked at each stage boundary and in the built-in sheet, slide and embedded-file loops. Cancellation is never recorded as a field error. The legacy .doc/.ppt conversion (b2xtranslator) has no cancellation hook, so the token is checked only before and after each conversion stage. Custom `IOpenStrategy`/`ITextExtractor` implementations are not given the token; it is checked before and after them.
 
 ### Changed
+- Workbook text (xls, xlsx) is read sheet by sheet (#288): a sheet that fails no longer discards the text of the other sheets. `ExtractedText` keeps the readable sheets' text and one `FieldErrors` entry at `ExtractedText` marks it incomplete. Before, one bad sheet left `ExtractedText` empty. A caller that took an `ExtractedText` field error to mean "no text" should read it as "not all of the text".
+- An OOXML package sent under the xlsx mime type whose main part is not a workbook (for example a docx) now reports a `CorruptFile` field error at `ExtractedText` instead of returning empty text with no error, as the docx and pptx paths already did (#288).
 - `ExtractManyAsync` now passes its cancellation token to each in-flight `Extract`. Cancelling it fails the batch with `OperationCanceledException`; an item that observes the cancellation is not reported as a `BatchExtractionResult.Error`.
 
 ### Breaking changes

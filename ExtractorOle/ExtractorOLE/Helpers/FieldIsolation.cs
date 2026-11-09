@@ -32,7 +32,7 @@ namespace ExtractorOLE.Helpers
                 populate();
                 return true;
             }
-            catch (Exception ex) when (ex is not OutOfMemoryException and not OperationCanceledException)
+            catch (Exception ex) when (IsIsolatable(ex))
             {
                 var code = Classify(ex);
 
@@ -47,6 +47,11 @@ namespace ExtractorOLE.Helpers
                 return false;
             }
         }
+
+        // A failure that may cost one leaf (or one part of a leaf) instead of the call: everything
+        // except out-of-memory and cancellation.
+        internal static bool IsIsolatable(Exception exception) =>
+            exception is not OutOfMemoryException and not OperationCanceledException;
 
         // Chosen by cause, not by leaf. UnexpectedFieldFailure only when neither other code fits.
         // The CorruptFile set is deliberately conservative: exceptions that signal a malformed

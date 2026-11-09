@@ -1,5 +1,8 @@
+using ExtractorOLE.Abstractions;
 using ExtractorOLE.DTOs;
 using ExtractorOLE.Helpers;
+using ExtractorOLE.Helpers.FileTypeStrategy;
+using ExtractorOLE.Registry;
 using Microsoft.Extensions.DependencyInjection;
 using SampleGenerator.Abstractions;
 using SampleGenerator.Generators;
@@ -17,13 +20,13 @@ namespace ExtractorOLE.Tests.Registry
     {
         private const string DocxMime = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 
-        private static DocumentExtractionResult Extract(byte[] bytes, string fileName)
+        private static DocumentExtractionResult Extract(byte[] bytes, string fileName, string mime = DocxMime)
         {
             var services = new ServiceCollection();
             ServiceRegistration.Register(services);
             using var provider = services.BuildServiceProvider();
             return provider.GetRequiredService<MainExtractor>().Extract(
-                new ExtractionRequest { FileBytes = bytes, FileName = fileName, DetectedMimeType = DocxMime });
+                new ExtractionRequest { FileBytes = bytes, FileName = fileName, DetectedMimeType = mime });
         }
 
         // Valid package whose document.xml is not well-formed XML: opens fine, body read throws.
@@ -60,6 +63,63 @@ namespace ExtractorOLE.Tests.Registry
 
             Assert.Equal(string.Empty, result.ExtractedText);
             Assert.Empty(result.FieldErrors);
+        }
+
+        private const string PptxMime = "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+        private const string XlsxMime = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
+        // Package opens under the mime but its main part is another flavor: reported, not silent "".
+        [Theory]
+        [InlineData(XlsxMime, "docx")]
+        [InlineData(PptxMime, "docx")]
+        [InlineData(DocxMime, "xlsx")]
+        public void WrongFlavorPackage_EmptyTextAndCorruptFileFieldError(string mime, string sampleKind)
+        {
+            byte[] bytes = sampleKind == "docx"
+                ? new DocxSampleGenerator().Generate(new SampleSpec { BodyText = "hello" }).Content
+                : new XlsxSampleGenerator().Generate(new SampleSpec { BodyText = "hello" }).Content;
+
+            var result = Extract(bytes, "wrong-flavor." + sampleKind, mime);
+
+            Assert.Equal(string.Empty, result.ExtractedText);
+            var error = Assert.Single(result.FieldErrors, e => e.FieldPath == "ExtractedText");
+            Assert.Equal(FieldErrorCode.CorruptFile, error.Code);
+        }
+
+        // OutOfMemoryException is not isolatable: it propagates instead of becoming a FieldError.
+        [Fact]
+        public void TextExtractorOutOfMemory_Propagates()
+        {
+            var services = new ServiceCollection();
+            ServiceRegistration.Register(services);
+            using var provider = services.BuildServiceProvider();
+            var registry = new OomRegistry(provider.GetRequiredService<IFormatDispatchRegistry>());
+            var extractor = new MainExtractor(provider.GetRequiredService<IExtractionHelper>(), registry);
+            var request = new ExtractionRequest
+            {
+                FileBytes = new DocxSampleGenerator().Generate(new SampleSpec { BodyText = "hello" }).Content,
+                FileName = "oom.docx",
+                DetectedMimeType = DocxMime,
+            };
+
+            Assert.ThrowsAny<OutOfMemoryException>(() => extractor.Extract(request));
+        }
+
+        private sealed class OomRegistry : IFormatDispatchRegistry
+        {
+            private readonly IFormatDispatchRegistry _inner;
+
+            public OomRegistry(IFormatDispatchRegistry inner) => _inner = inner;
+
+            public IOpenStrategy? GetOpenStrategy(OfficeMimeType format) => _inner.GetOpenStrategy(format);
+
+            public ITextExtractor? GetTextExtractor(OfficeMimeType format) => new OomExtractor();
+
+            private sealed class OomExtractor : ITextExtractor
+            {
+                // An OutOfMemoryException (CA2201 reserves the base type).
+                public string ExtractText(byte[] fileBytes) => throw new InsufficientMemoryException();
+            }
         }
     }
 }
