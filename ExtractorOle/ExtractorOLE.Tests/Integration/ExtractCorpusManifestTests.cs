@@ -40,13 +40,6 @@ namespace ExtractorOLE.Tests.Integration
             "Keywords", "ApplicationName",
         };
 
-        // Extractor-generated subfile names are "<prefix>_<index><ext>" with prefix embedded_object
-        // or slide_image (rule: docs/specs/extraction.md, Subfiles). Manifest entries recording that
-        // scheme are compared to the extractor's names exactly; this only tells them apart from
-        // curated third-party entries that record the raw part file name (image1.png).
-        private static readonly Regex ExtractorFileName =
-            new(@"^(?:embedded_object|slide_image)_\d+\.\w+$", RegexOptions.Compiled);
-
         private static string FindRepoRootFile(string relativePath)
         {
             var dir = new DirectoryInfo(AppContext.BaseDirectory);
@@ -289,14 +282,10 @@ namespace ExtractorOLE.Tests.Integration
                 expected.Select(e => (e.GetProperty("packagePath").GetString()!, e.GetProperty("sizeInBytes").GetInt64())).OrderBy(t => t).ToList(),
                 actual.Select(a => (a.PackagePath, a.SizeInBytes)).OrderBy(t => t).ToList());
 
-            // File names are compared exactly, prefix included, and in order when the manifest records
-            // extractor-scheme names; curated third-party entries record the raw part file name
-            // (image1.png) instead.
-            var expectedNames = expected.Select(e => e.GetProperty("fileName").GetString()!).ToList();
-            if (expectedNames.All(n => ExtractorFileName.IsMatch(n)))
-            {
-                Assert.Equal(expectedNames, actual.Select(a => a.FileName).ToList());
-            }
+            // File names are compared exactly, prefix included, and in order.
+            Assert.Equal(
+                expected.Select(e => e.GetProperty("fileName").GetString()!).ToList(),
+                actual.Select(a => a.FileName).ToList());
         }
     }
 }
