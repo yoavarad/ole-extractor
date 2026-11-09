@@ -27,35 +27,17 @@ namespace ExtractorOLE.Handlers
     {
         public string ExtractText(byte[] fileBytes)
         {
-            try
+            using (var doc = OpenXmlPackages.OpenSpreadsheet(fileBytes))
             {
-                using (var doc = OpenXmlPackages.OpenSpreadsheet(fileBytes))
-                {
-                    return ExtractText(doc);
-                }
+                return ExtractText(doc);
             }
-            catch (Exception)
-            {
-                // swallow and return empty
-            }
-
-            return string.Empty;
         }
 
         // parsedDocument is the package ExcelOpenStrategy already opened (#167); caller owns it.
         public string? ExtractText(object parsedDocument)
         {
             if (parsedDocument is not SpreadsheetDocument doc) return null;
-            try
-            {
-                return ExtractText(doc);
-            }
-            catch (Exception)
-            {
-                // swallow and return empty
-            }
-
-            return string.Empty;
+            return ExtractText(doc);
         }
 
         private static string ExtractText(SpreadsheetDocument doc)

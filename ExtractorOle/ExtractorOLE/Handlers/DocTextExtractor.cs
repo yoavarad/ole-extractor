@@ -5,7 +5,6 @@ using b2xtranslator.OpenXmlLib;
 using b2xtranslator.StructuredStorage.Reader;
 using b2xtranslator.WordprocessingMLMapping;
 using ExtractorOLE.Helpers;
-using System;
 using System.IO;
 using B2xWordprocessingDocument = b2xtranslator.OpenXmlLib.WordprocessingML.WordprocessingDocument;
 
@@ -26,9 +25,8 @@ namespace ExtractorOLE.Handlers
     // multilingual fixture (Hebrew/Arabic/Persian/Russian/Latin/CJK, emoji incl. ZWJ/skin-tone
     // sequences, and a decomposed combining-character sequence).
     //
-    // An unreadable or unconvertible .doc yields string.Empty rather than throwing: b2xtranslator
-    // is unmaintained since 2018 (ADR-004), so a record shape it doesn't handle must not take down
-    // the extraction. Never returns null.
+    // An unreadable or unconvertible .doc throws; MainExtractor records it as a FieldError at
+    // ExtractedText (per-field error isolation). A genuinely empty body returns string.Empty.
     internal class DocTextExtractor : IParsedDocumentTextExtractor
     {
         private readonly DocxTextExtractor _docxTextExtractor = new();
@@ -43,18 +41,8 @@ namespace ExtractorOLE.Handlers
             return ExtractFrom(new NonClosingStream(docStream));
         }
 
-        private string ExtractFrom(Stream docStream)
-        {
-            try
-            {
-                return _docxTextExtractor.ExtractText(ConvertToDocx(docStream));
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Doc body conversion failed, returning empty text: {ex.Message}");
-                return string.Empty;
-            }
-        }
+        private string ExtractFrom(Stream docStream) =>
+            _docxTextExtractor.ExtractText(ConvertToDocx(docStream));
 
         // Runs entirely in memory (#169): b2xtranslator's public Create() only targets a file path,
         // so InMemoryWordprocessingDocument overrides the package's Close() to serialize into a

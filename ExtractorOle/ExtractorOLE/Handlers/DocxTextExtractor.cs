@@ -13,35 +13,17 @@ namespace ExtractorOLE.Handlers
     {
         public string ExtractText(byte[] fileBytes)
         {
-            try
+            using (var word = OpenXmlPackages.OpenWord(fileBytes))
             {
-                using (var word = OpenXmlPackages.OpenWord(fileBytes))
-                {
-                    return ExtractText(word);
-                }
+                return ExtractText(word);
             }
-            catch (Exception)
-            {
-                // swallow and return empty text on failure
-            }
-
-            return string.Empty;
         }
 
         // parsedDocument is the package WordOpenStrategy already opened (#167); caller owns it.
         public string? ExtractText(object parsedDocument)
         {
             if (parsedDocument is not WordprocessingDocument word) return null;
-            try
-            {
-                return ExtractText(word);
-            }
-            catch (Exception)
-            {
-                // swallow and return empty text on failure
-            }
-
-            return string.Empty;
+            return ExtractText(word);
         }
 
         private static string ExtractText(WordprocessingDocument word)
