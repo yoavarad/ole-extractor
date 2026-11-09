@@ -155,11 +155,54 @@ namespace ExtractorOLE.Tests.PowerPoint
         }
 
         [Fact]
-        public void Open_CorruptBytes_ReturnsNull()
+        public void Open_CorruptBytes_ThrowsTheLibraryParseException()
         {
-            var result = new PowerPointOpenStrategy(new ExtractionHelper()).Open(new byte[] { 0x00, 0x01, 0x02, 0x03 });
+            // #287: the parse exception propagates so Extract can carry it as InnerException.
+            Assert.ThrowsAny<Exception>(() => new PowerPointOpenStrategy(new ExtractionHelper()).Open(new byte[] { 0x00, 0x01, 0x02, 0x03 }));
+        }
 
-            Assert.Null(result);
+        // #308: each pptx format-metadata leaf fails alone at FormatMetadata.<Leaf>.
+        public static TheoryData<string> LeafNames => new()
+        {
+            nameof(PowerPointFormatMetadata.SlideCount),
+            nameof(PowerPointFormatMetadata.NotesSlideCount),
+            nameof(PowerPointFormatMetadata.HasMacros),
+        };
+
+        [Theory]
+        [MemberData(nameof(LeafNames))]
+        public void Open_OneFailingLeafSource_LosesOnlyThatLeaf(string failing)
+        {
+            var bytes = BuildPptxFixture(totalSlideCount: 3, notesSlideIndexes: new HashSet<int> { 0, 2 }, vbaProject: new byte[] { 1, 2, 3, 4 });
+            var strategy = new PowerPointOpenStrategy(
+                new ExtractionHelper(),
+                p => failing == nameof(PowerPointFormatMetadata.SlideCount) ? throw new FormatException("x") : p!.SlideParts.Count(),
+                p => failing == nameof(PowerPointFormatMetadata.NotesSlideCount) ? throw new FormatException("x") : 2,
+                p => failing == nameof(PowerPointFormatMetadata.HasMacros) ? throw new FormatException("x") : true);
+
+            var result = strategy.Open(bytes);
+
+            Assert.NotNull(result);
+            var error = Assert.Single(result!.FieldErrors);
+            Assert.Equal("FormatMetadata." + failing, error.FieldPath);
+            Assert.Equal(FieldErrorCode.CorruptFile, error.Code);
+            var formatMetadata = Assert.IsType<PowerPointFormatMetadata>(result.FormatMetadata);
+            Assert.Equal(failing == nameof(PowerPointFormatMetadata.SlideCount) ? 0 : 3, formatMetadata.SlideCount);
+            Assert.Equal(failing == nameof(PowerPointFormatMetadata.NotesSlideCount) ? null : 2, formatMetadata.NotesSlideCount);
+            Assert.Equal(failing != nameof(PowerPointFormatMetadata.HasMacros), formatMetadata.HasMacros);
+        }
+
+        [Fact]
+        public void Open_UndeclaredExceptionAfterOpen_PropagatesUnwrapped()
+        {
+            var bytes = BuildPptxFixture(totalSlideCount: 1, notesSlideIndexes: new HashSet<int>());
+            var strategy = new PowerPointOpenStrategy(
+                new ExtractionHelper(),
+                p => 1,
+                p => throw new InsufficientMemoryException(),
+                p => false);
+
+            Assert.Throws<InsufficientMemoryException>(() => strategy.Open(bytes));
         }
     }
 }

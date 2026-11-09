@@ -27,35 +27,17 @@ namespace ExtractorOLE.Handlers
     {
         public string ExtractText(byte[] fileBytes)
         {
-            try
+            using (var ms = new MemoryStream(fileBytes))
             {
-                using (var ms = new MemoryStream(fileBytes))
-                {
-                    return Walk(XlsWorkbooks.Load(ms));
-                }
+                return Walk(XlsWorkbooks.Load(ms));
             }
-            catch (Exception)
-            {
-                // swallow and return empty text on failure
-            }
-
-            return string.Empty;
         }
 
         // parsedDocument is the workbook XlsOpenStrategy already loaded; caller owns it.
         public string? ExtractText(object parsedDocument)
         {
             if (parsedDocument is not HSSFWorkbook workbook) return null;
-            try
-            {
-                return Walk(workbook);
-            }
-            catch (Exception)
-            {
-                // swallow and return empty text on failure
-            }
-
-            return string.Empty;
+            return Walk(workbook);
         }
 
         private static string Walk(HSSFWorkbook workbook)

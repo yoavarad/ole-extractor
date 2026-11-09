@@ -149,12 +149,9 @@ namespace ExtractorOLE.Tests.Excel
         }
 
         [Fact]
-        public void CorruptBytes_ReturnsEmptyString_NeverThrows()
+        public void CorruptBytes_Throws()
         {
-            var result = new XlsTextExtractor().ExtractText(new byte[] { 0x00, 0x01, 0x02, 0x03 });
-
-            Assert.NotNull(result);
-            Assert.Equal(string.Empty, result);
+            Assert.ThrowsAny<Exception>(() => new XlsTextExtractor().ExtractText(new byte[] { 0x00, 0x01, 0x02, 0x03 }));
         }
     }
 }

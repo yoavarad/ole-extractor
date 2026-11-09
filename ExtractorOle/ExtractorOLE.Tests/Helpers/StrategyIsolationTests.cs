@@ -38,20 +38,19 @@ namespace ExtractorOLE.Tests.Helpers
         }
 
         [Fact]
-        public void IsOpenFailure_DeclaredTypes_True()
+        public void IsOpenFailure_LibraryParseFailures_True()
         {
             Assert.True(StrategyIsolation.IsOpenFailure(new InvalidDataException("x")));
             Assert.True(StrategyIsolation.IsOpenFailure(new IOException("x")));
             Assert.True(StrategyIsolation.IsOpenFailure(new ArgumentException("x")));
-            Assert.True(StrategyIsolation.IsOpenFailure(new CorruptFileException("application/msword", "x")));
         }
 
         [Fact]
-        public void IsOpenFailure_UndeclaredTypes_False()
+        public void IsOpenFailure_NonParseFailures_False()
         {
-            Assert.False(StrategyIsolation.IsOpenFailure(new InvalidOperationException("x")));
-            Assert.False(StrategyIsolation.IsOpenFailure(new DivideByZeroException("x")));
-            Assert.False(StrategyIsolation.IsOpenFailure(new NotSupportedException("x")));
+            Assert.False(StrategyIsolation.IsOpenFailure(new ObjectDisposedException("x")));
+            Assert.False(StrategyIsolation.IsOpenFailure(new CorruptFileException("application/msword", "x")));
+            Assert.False(StrategyIsolation.IsOpenFailure(new NPOI.EncryptedDocumentException("x")));
         }
     }
 }

@@ -156,7 +156,7 @@ jobs:
         run: |
           set -o pipefail
           status=0
-          for proj in ExtractorOle/ExtractorOLE/ExtractorOLE.csproj SampleGenerator/SampleGenerator.csproj ExtractorOle/ExtractorOLE.Tests/ExtractorOLE.Tests.csproj; do
+          for proj in ExtractorOle/ExtractorOLE/ExtractorOLE.csproj SampleGenerator/SampleGenerator.csproj ExtractorOle/ExtractorOLE.Tests/ExtractorOLE.Tests.csproj ExtractorOle/ExtractorOLE.Benchmarks/ExtractorOLE.Benchmarks.csproj; do
             echo "::group::$proj"
             out=$(dotnet list "$proj" package --vulnerable --include-transitive)
             echo "$out"

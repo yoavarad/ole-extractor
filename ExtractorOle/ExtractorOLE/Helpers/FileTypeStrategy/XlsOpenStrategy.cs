@@ -5,6 +5,7 @@ using NPOI.HSSF.UserModel;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.ExceptionServices;
 
 namespace ExtractorOLE.Helpers.FileTypeStrategy
 {
@@ -33,20 +34,15 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
             {
                 workbook = XlsWorkbooks.Load(openSource());
             }
-            catch (NPOI.HSSF.OldExcelFormatException)
+            catch (Exception ex) when (ex is not NPOI.HSSF.OldExcelFormatException && StrategyIsolation.IsOpenFailure(ex))
             {
-                // BIFF5 and older: not a workbook this library can open.
-                return null;
-            }
-            catch (Exception ex) when (StrategyIsolation.IsOpenFailure(ex))
-            {
-                // Encrypted-document exceptions are not open failures: Extract maps them to password-protected.
-                // The compound file may still be intact with only the sheet records unreadable.
+                // BIFF5 and older (OldExcelFormatException) and encrypted documents are left to
+                // ParseTimeErrorGuard. Anything else the library rejected may leave an intact compound
+                // file with only the sheet records unreadable; if it is not, the original failure is rethrown.
                 return OpenWithoutWorkbook(openSource, ex);
             }
 
-            // Everything past the container open is isolated per leaf; an undeclared failure
-            // here is not a parse failure and propagates.
+            // Everything past the container open is isolated per leaf.
             var result = new DocumentExtractionResult();
             NPOI.HPSF.SummaryInformation? summary = null;
             try
@@ -74,25 +70,22 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
         // The container is a readable compound file but the workbook did not assemble (corrupt sheet
         // records): SheetCount fails with the load failure while the sheet names, active sheet and
         // macro flag are still read independently from the workbook globals / directory.
-        private DocumentExtractionResult? OpenWithoutWorkbook(Func<Stream> openSource, Exception loadFailure)
+        private DocumentExtractionResult OpenWithoutWorkbook(Func<Stream> openSource, Exception loadFailure)
         {
-            NPOI.POIFS.FileSystem.NPOIFSFileSystem fs;
-            try
-            {
-                // A failed load may have closed or advanced the stream, so the source is opened afresh.
-                fs = CfbFileSystems.Open(openSource());
-            }
-            catch (Exception ex) when (StrategyIsolation.IsOpenFailure(ex))
-            {
-                return null;
-            }
+            // A failed load may have closed or advanced the stream, so the source is opened afresh.
+            // A failure here (including a read fault of the caller's stream) propagates to ParseTimeErrorGuard.
+            var fs = CfbFileSystems.Open(openSource());
 
             try
             {
                 var root = fs.Root;
                 var streamName = root.HasEntryCaseInsensitive("Workbook") ? "Workbook"
                     : root.HasEntryCaseInsensitive("Book") ? "Book" : null;
-                if (streamName == null) return null;
+                if (streamName == null)
+                {
+                    ExceptionDispatchInfo.Capture(loadFailure).Throw();
+                    return null!; // unreachable
+                }
 
                 var result = new DocumentExtractionResult();
                 NPOI.HPSF.SummaryInformation? summary = null;
@@ -112,7 +105,7 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
                 var fm = new ExcelFormatMetadata();
                 void Leaf(string name, Action populate) => StrategyIsolation.PopulateLeaf(result, name, populate);
 
-                Leaf(nameof(ExcelFormatMetadata.SheetCount), () => System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(loadFailure).Throw());
+                Leaf(nameof(ExcelFormatMetadata.SheetCount), () => ExceptionDispatchInfo.Capture(loadFailure).Throw());
                 Leaf(nameof(ExcelFormatMetadata.SheetNames), () =>
                 {
                     var names = new List<string>(globals.Value.NumSheets);
@@ -128,7 +121,7 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
                 result.FormatMetadata = fm;
 
                 // The embedded walk needs the assembled workbook.
-                StrategyIsolation.PopulateEmbedded(result, () => System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(loadFailure).Throw());
+                StrategyIsolation.PopulateEmbedded(result, () => ExceptionDispatchInfo.Capture(loadFailure).Throw());
                 result.MimeType = _helper.MimeFor(OfficeMimeType.ExcelLegacy);
                 return result;
             }

@@ -108,12 +108,14 @@ namespace ExtractorOLE.Tests.Metadata
         }
 
         [Fact]
-        public void WordOpen_NotAPackage_ReturnsNull() =>
-            Assert.Null(new WordOpenStrategy(new ExtractionHelper()).Open(new byte[] { 1, 2, 3, 4 }));
+        public void WordOpen_NotAPackage_Throws() =>
+            // Container-open failures propagate; ParseTimeErrorGuard maps them to corrupt-file (#287).
+            Assert.ThrowsAny<Exception>(() => new WordOpenStrategy(new ExtractionHelper()).Open(new byte[] { 1, 2, 3, 4 }));
 
         [Fact]
-        public void ExcelOpen_NotAPackage_ReturnsNull() =>
-            Assert.Null(new ExcelOpenStrategy(new ExtractionHelper()).Open(new byte[] { 1, 2, 3, 4 }));
+        public void ExcelOpen_NotAPackage_Throws() =>
+            // Container-open failures propagate; ParseTimeErrorGuard maps them to corrupt-file (#287).
+            Assert.ThrowsAny<Exception>(() => new ExcelOpenStrategy(new ExtractionHelper()).Open(new byte[] { 1, 2, 3, 4 }));
 
         // A valid package whose workbook.xml (xlsx) / app.xml (docx) is replaced with malformed XML.
         private static byte[] BuildPackageWithMalformedPart(bool spreadsheet)

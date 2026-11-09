@@ -19,11 +19,6 @@ namespace ExtractorOLE.StressHarness
             LoadGenerationOptions options,
             CancellationToken cancellationToken = default)
         {
-            var latencies = new ConcurrentBag<double>();
-            long failures = 0;
-            int inFlight = 0;
-            int peakConcurrency = 0;
-
             // The default ThreadPool only injects new worker threads gradually
             // (hill-climbing, roughly one every ~500ms once starved), which caps
             // how many concurrent operations can actually start well below
@@ -35,10 +30,37 @@ namespace ExtractorOLE.StressHarness
             // slot our own operations need to reach the requested peak.
             var warmThreads = options.Concurrency + Math.Max(8, options.Concurrency / 20);
             ThreadPool.GetMinThreads(out var currentMinWorker, out var currentMinIocp);
-            if (currentMinWorker < warmThreads)
+            var raisedMinThreads = currentMinWorker < warmThreads;
+            if (raisedMinThreads)
             {
                 ThreadPool.SetMinThreads(warmThreads, currentMinIocp);
             }
+
+            try
+            {
+                return await RunCoreAsync(operation, samples, options, warmThreads, cancellationToken).ConfigureAwait(false);
+            }
+            finally
+            {
+                if (raisedMinThreads)
+                {
+                    ThreadPool.SetMinThreads(currentMinWorker, currentMinIocp);
+                }
+            }
+        }
+
+        private static async Task<LoadGenerationSummary> RunCoreAsync<TResult>(
+            Func<byte[], TResult> operation,
+            IReadOnlyList<byte[]> samples,
+            LoadGenerationOptions options,
+            int warmThreads,
+            CancellationToken cancellationToken)
+        {
+            var latencies = new ConcurrentBag<double>();
+            long failures = 0;
+            int inFlight = 0;
+            int peakConcurrency = 0;
+
             await WarmUpThreadPoolAsync(warmThreads).ConfigureAwait(false);
 
             using var gate = new SemaphoreSlim(options.Concurrency);

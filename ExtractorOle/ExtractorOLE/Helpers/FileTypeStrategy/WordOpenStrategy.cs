@@ -19,39 +19,27 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
         // Reads the seekable stream lazily (#192, ADR-008); the caller owns and disposes it.
         public DocumentExtractionResult? Open(Stream input)
         {
-            WordprocessingDocument word;
-            try
-            {
-                word = OpenXmlPackages.OpenWord(input);
-            }
-            catch (Exception ex) when (StrategyIsolation.IsOpenFailure(ex))
-            {
-                return null;
-            }
-
+            WordprocessingDocument? word = null;
             try
             {
                 var result = new DocumentExtractionResult();
-                StrategyIsolation.PopulateEmbedded(result, () => _helper.ExtractMetadataAndEmbedded(word, word.MainDocumentPart, result));
-                if (string.IsNullOrEmpty(result.MimeType) && word.CoreFilePropertiesPart != null)
+                var wordDoc = word = OpenXmlPackages.OpenWord(input);
+                StrategyIsolation.PopulateEmbedded(result, () => _helper.ExtractMetadataAndEmbedded(wordDoc, wordDoc.MainDocumentPart, result));
+                if (string.IsNullOrEmpty(result.MimeType) && wordDoc.CoreFilePropertiesPart != null)
                 {
-                    result.MimeType = word.CoreFilePropertiesPart.ContentType ?? string.Empty;
+                    result.MimeType = wordDoc.CoreFilePropertiesPart.ContentType ?? string.Empty;
                 }
 
-                result.FormatMetadata = BuildWordFormatMetadata(word, result);
+                result.FormatMetadata = BuildWordFormatMetadata(wordDoc, result);
 
                 // Kept open for DocxTextExtractor (#167); MainExtractor disposes it.
-                result.ParsedDocument = word;
+                result.ParsedDocument = wordDoc;
                 return result;
-            }
-            catch (Exception ex) when (StrategyIsolation.IsOpenFailure(ex))
-            {
-                word.Dispose();
-                return null;
             }
             catch
             {
-                word.Dispose();
+                // Parse failures propagate so ParseTimeErrorGuard can report the cause (#287).
+                word?.Dispose();
                 throw;
             }
         }

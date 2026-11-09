@@ -55,7 +55,7 @@ namespace ExtractorOLE.Tests.Registry
         };
 
         private static IOpenStrategy LegacyStrategy(string mime) =>
-            BuildProvider().GetRequiredService<IDictionary<OfficeMimeType, IOpenStrategy>>()[LegacyKind(mime)];
+            BuildProvider().GetRequiredService<IReadOnlyDictionary<OfficeMimeType, IOpenStrategy>>()[LegacyKind(mime)];
 
         private static ZipFallbackOpenStrategy BuildZipFallback()
         {
@@ -219,14 +219,13 @@ namespace ExtractorOLE.Tests.Registry
         }
 
         [Fact]
-        public void ZipFallback_StreamThatIsNotAZip_ReturnsNull_AndLeavesStreamOpen()
+        public void ZipFallback_StreamThatIsNotAZip_ThrowsParseException_AndLeavesStreamOpen()
         {
             var bytes = Enumerable.Repeat((byte)0x41, 64).ToArray();
             using var stream = new MemoryStream(bytes, false);
 
-            var result = BuildZipFallback().Open(stream);
-
-            Assert.Null(result);
+            // #287: every flavor fails to parse, so the last parse exception propagates.
+            Assert.ThrowsAny<Exception>(() => BuildZipFallback().Open(stream));
             Assert.True(stream.CanRead);
         }
 

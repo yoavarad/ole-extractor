@@ -27,5 +27,18 @@ namespace ExtractorOLE.Tests
 
             Assert.Equal(104_857_600, provider.GetRequiredService<MimeDetectionLimits>().MaxFileSizeBytes);
         }
+
+        [Fact]
+        public void Register_DispatchDictionaries_AreNotResolvableAsMutable()
+        {
+            var services = new ServiceCollection();
+            ServiceRegistration.Register(services);
+            using var provider = services.BuildServiceProvider();
+
+            Assert.Null(provider.GetService<System.Collections.Generic.IDictionary<ExtractorOLE.DTOs.OfficeMimeType, ExtractorOLE.Helpers.FileTypeStrategy.IOpenStrategy>>());
+            Assert.Null(provider.GetService<System.Collections.Generic.IDictionary<ExtractorOLE.DTOs.OfficeMimeType, ExtractorOLE.Abstractions.ITextExtractor>>());
+            Assert.IsNotType<System.Collections.Generic.Dictionary<ExtractorOLE.DTOs.OfficeMimeType, ExtractorOLE.Helpers.FileTypeStrategy.IOpenStrategy>>(
+                provider.GetRequiredService<System.Collections.Generic.IReadOnlyDictionary<ExtractorOLE.DTOs.OfficeMimeType, ExtractorOLE.Helpers.FileTypeStrategy.IOpenStrategy>>());
+        }
     }
 }

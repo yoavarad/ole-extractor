@@ -22,38 +22,26 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
         // Reads the seekable stream lazily (#192, ADR-008); the caller owns and disposes it.
         public DocumentExtractionResult? Open(Stream input)
         {
-            SpreadsheetDocument excel;
-            try
-            {
-                excel = OpenXmlPackages.OpenSpreadsheet(input);
-            }
-            catch (Exception ex) when (StrategyIsolation.IsOpenFailure(ex))
-            {
-                return null;
-            }
-
+            SpreadsheetDocument? excel = null;
             try
             {
                 var result = new DocumentExtractionResult();
-                StrategyIsolation.PopulateEmbedded(result, () => _helper.ExtractMetadataAndEmbedded(excel, excel.WorkbookPart, result));
-                result.FormatMetadata = BuildExcelFormatMetadata(excel.WorkbookPart, result);
-                if (string.IsNullOrEmpty(result.MimeType) && excel.CoreFilePropertiesPart != null)
+                var excelDoc = excel = OpenXmlPackages.OpenSpreadsheet(input);
+                StrategyIsolation.PopulateEmbedded(result, () => _helper.ExtractMetadataAndEmbedded(excelDoc, excelDoc.WorkbookPart, result));
+                result.FormatMetadata = BuildExcelFormatMetadata(excelDoc.WorkbookPart, result);
+                if (string.IsNullOrEmpty(result.MimeType) && excelDoc.CoreFilePropertiesPart != null)
                 {
-                    result.MimeType = excel.CoreFilePropertiesPart.ContentType ?? string.Empty;
+                    result.MimeType = excelDoc.CoreFilePropertiesPart.ContentType ?? string.Empty;
                 }
 
                 // Kept open for XlsxTextExtractor (#167); MainExtractor disposes it.
-                result.ParsedDocument = excel;
+                result.ParsedDocument = excelDoc;
                 return result;
-            }
-            catch (Exception ex) when (StrategyIsolation.IsOpenFailure(ex))
-            {
-                excel.Dispose();
-                return null;
             }
             catch
             {
-                excel.Dispose();
+                // Parse failures propagate so ParseTimeErrorGuard can report the cause (#287).
+                excel?.Dispose();
                 throw;
             }
         }

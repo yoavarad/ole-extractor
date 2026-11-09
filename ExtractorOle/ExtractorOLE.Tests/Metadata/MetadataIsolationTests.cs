@@ -129,7 +129,8 @@ namespace ExtractorOLE.Tests.Metadata
             var result = new PptOpenStrategy(new ExtractionHelper()).Open(ms.ToArray());
 
             Assert.NotNull(result);
-            var error = Assert.Single(result!.FieldErrors);
+            // The synthetic fixture has no convertible slide body, so the two slide leaves also report (#308).
+            var error = Assert.Single(result!.FieldErrors, e => e.FieldPath.StartsWith("Metadata.", StringComparison.Ordinal));
             Assert.Equal("Metadata.Created", error.FieldPath);
             Assert.Equal(FieldErrorCode.CorruptFile, error.Code);
             Assert.Null(result.Metadata.Created);

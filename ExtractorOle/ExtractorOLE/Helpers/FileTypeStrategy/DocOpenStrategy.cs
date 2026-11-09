@@ -1,5 +1,6 @@
 using ExtractorOLE.Helpers.Input;
 using ExtractorOLE.DTOs;
+using ExtractorOLE.Helpers.Guardrails;
 using NPOI.HPSF;
 using NPOI.POIFS.FileSystem;
 using System;
@@ -58,21 +59,13 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
 
         private DocumentExtractionResult? OpenFrom(Stream source)
         {
+            // Library exceptions propagate so ParseTimeErrorGuard can report the cause (#287).
+            var result = new DocumentExtractionResult();
             // NPOIFSFileSystem implements ICloseable, not IDisposable, so it is closed
             // explicitly in a finally block rather than via a using statement.
-            NPOIFSFileSystem fs;
+            var fs = CfbFileSystems.Open(source);
             try
             {
-                fs = CfbFileSystems.Open(source);
-            }
-            catch (Exception ex) when (StrategyIsolation.IsOpenFailure(ex))
-            {
-                return null;
-            }
-
-            try
-            {
-                var result = new DocumentExtractionResult();
                 var summary = ReadSummaryInformation(fs.Root);
                 if (summary != null)
                 {
@@ -83,13 +76,13 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
                 result.FormatMetadata = BuildWordFormatMetadata(fs.Root, summary, docSummary, result);
 
                 StrategyIsolation.PopulateEmbedded(result, () => _helper.ExtractFirstLayerEmbedded(result, fs.Root));
-                result.MimeType = _helper.MimeFor(OfficeMimeType.WordLegacy);
-                return result;
             }
             finally
             {
                 fs.Close();
             }
+            result.MimeType = _helper.MimeFor(OfficeMimeType.WordLegacy);
+            return result;
         }
 
         // A property-set stream that is absent or unparsable is a normal, expected state for
@@ -102,7 +95,7 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
             {
                 return PropertySetFactory.Create(root, SummaryInformation.DEFAULT_STREAM_NAME) as SummaryInformation;
             }
-            catch
+            catch (Exception ex) when (ParseFailure.IsParseFailure(ex))
             {
                 return null;
             }
@@ -116,7 +109,7 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
             {
                 return PropertySetFactory.Create(root, DocumentSummaryInformation.DEFAULT_STREAM_NAME) as DocumentSummaryInformation;
             }
-            catch
+            catch (Exception ex) when (ParseFailure.IsParseFailure(ex))
             {
                 return null;
             }

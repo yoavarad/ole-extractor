@@ -226,11 +226,10 @@ namespace ExtractorOLE.Tests.Excel
         }
 
         [Fact]
-        public void Open_CorruptBytes_ReturnsNull()
+        public void Open_CorruptBytes_ThrowsTheLibraryParseException()
         {
-            var result = new XlsOpenStrategy(new ExtractionHelper()).Open(new byte[] { 0x00, 0x01, 0x02, 0x03 });
-
-            Assert.Null(result);
+            // #287: the parse exception propagates so Extract can carry it as InnerException.
+            Assert.ThrowsAny<Exception>(() => new XlsOpenStrategy(new ExtractionHelper()).Open(new byte[] { 0x00, 0x01, 0x02, 0x03 }));
         }
 
         [Fact]
@@ -240,7 +239,7 @@ namespace ExtractorOLE.Tests.Excel
             ServiceRegistration.Register(services);
             var provider = services.BuildServiceProvider();
 
-            var dict = provider.GetRequiredService<IDictionary<OfficeMimeType, IOpenStrategy>>();
+            var dict = provider.GetRequiredService<IReadOnlyDictionary<OfficeMimeType, IOpenStrategy>>();
 
             Assert.True(dict.ContainsKey(OfficeMimeType.ExcelLegacy));
             Assert.IsType<XlsOpenStrategy>(dict[OfficeMimeType.ExcelLegacy]);
@@ -320,8 +319,8 @@ namespace ExtractorOLE.Tests.Excel
             var recoveredPayload = ReadOlePackagePayload(objectItems[0].BinaryData);
             Assert.Equal(validPayload, recoveredPayload);
 
-            var logged = capturedOut.ToString();
-            Assert.Contains("corrupt", logged, StringComparison.OrdinalIgnoreCase);
+            Assert.StartsWith("EmbeddedFiles[embedded_object_", Assert.Single(result.FieldErrors).FieldPath);
+            Assert.Equal(string.Empty, capturedOut.ToString());
         }
     }
 }

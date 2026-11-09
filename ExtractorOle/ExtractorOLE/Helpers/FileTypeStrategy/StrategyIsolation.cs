@@ -1,4 +1,5 @@
 using ExtractorOLE.DTOs;
+using ExtractorOLE.Helpers.Guardrails;
 using System;
 using System.IO;
 
@@ -19,15 +20,11 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
         internal static bool PopulateEmbedded(DocumentExtractionResult result, Action walk) =>
             FieldIsolation.TryPopulate(result, FieldIsolation.EmbeddedFilesPath, walk);
 
-        // Declared container-open failures: the library rejected the bytes as malformed or
-        // unsupported (maps to CorruptFile). Anything else at open is undeclared and propagates.
-        // NullReferenceException is included because NPOI surfaces some garbage compound-file
-        // directories that way. Encrypted-document exceptions are not in this set; they map to password-protected.
+        // A library rejection of the container bytes that may still leave part of the file readable
+        // (the .xls fallback). Reuses ParseFailure so a caller-stream or resource fault (out-of-memory,
+        // disposed, cancelled, own typed errors) is never absorbed; an encrypted document is left to
+        // ParseTimeErrorGuard (password-protected).
         internal static bool IsOpenFailure(Exception ex) =>
-            FieldIsolation.Classify(ex) == FieldErrorCode.CorruptFile
-            || ex is IOException
-            || ex is ArgumentException
-            || ex is NPOI.HSSF.OldExcelFormatException
-            || ex is NullReferenceException;
+            ex is not NPOI.EncryptedDocumentException && ParseFailure.IsParseFailure(ex);
     }
 }
