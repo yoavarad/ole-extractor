@@ -233,7 +233,25 @@ namespace SampleGenerator.Generators
                     }
                 }
             }
-            return output.ToArray();
+            return PinHostAttributes(output.ToArray());
+        }
+
+        // ZipArchive stamps each central-directory record with the host OS (version-made-by high
+        // byte: 3 on Linux, 0 on Windows) and Unix file-mode external attributes on Linux, so the
+        // same entries hash differently per platform. Pin both to the Windows/FAT values.
+        private static byte[] PinHostAttributes(byte[] zip)
+        {
+            var eocd = zip.AsSpan().LastIndexOf(new byte[] { 0x50, 0x4B, 0x05, 0x06 });
+            var offset = (int)BitConverter.ToUInt32(zip, eocd + 16);
+            var count = BitConverter.ToUInt16(zip, eocd + 10);
+            for (var i = 0; i < count; i++)
+            {
+                zip[offset + 5] = 0;
+                Array.Clear(zip, offset + 38, 4);
+                offset += 46 + BitConverter.ToUInt16(zip, offset + 28)
+                    + BitConverter.ToUInt16(zip, offset + 30) + BitConverter.ToUInt16(zip, offset + 32);
+            }
+            return zip;
         }
 
         // "word/_rels/document.xml.rels" belongs to "word/document.xml"; "_rels/.rels" to the package.
