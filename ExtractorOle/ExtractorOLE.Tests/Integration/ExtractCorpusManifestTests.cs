@@ -19,6 +19,9 @@ namespace ExtractorOLE.Tests.Integration
     //                                  confirmedSubstrings), exact metadata, exact subfile list.
     // Nothing here asserts only "text is non-empty".
     //
+    // Every entry also records expectedFieldErrors (fieldPath + code, empty for a clean sample), the
+    // per-field errors Extract must return alongside the result; a missing key fails the entry.
+    //
     // Every manifest metadata key is asserted against FileMetadata; an unknown key fails the test
     // so a new manifest key never goes silently unasserted. Manifest names map to FileMetadata as:
     // Author -> Creator, Created -> Created, Modified -> Modified (entity CreatedAt/ModifiedAt/Author
@@ -80,8 +83,12 @@ namespace ExtractorOLE.Tests.Integration
                 DetectedMimeType = MimeTypeFor(entry),
             };
 
+            var expectedFieldErrors = ReadExpectedFieldErrors(entry);
+
             if (entry.TryGetProperty("expectedBehavior", out var behavior))
             {
+                // A rejected sample throws, so there is no result to carry field errors.
+                Assert.Empty(expectedFieldErrors);
                 AssertRejected(behavior, request);
                 return;
             }
@@ -93,6 +100,78 @@ namespace ExtractorOLE.Tests.Integration
             AssertFormatMetadata(entry, result.FormatMetadata);
             AssertText(entry, result.ExtractedText);
             AssertSubfiles(path, entry, result.EmbeddedFiles);
+            AssertFieldErrors(expectedFieldErrors, result.FieldErrors);
+        }
+
+        [Fact]
+        public void Manifest_FieldErrorExpectations_CoverCleanSamplesInEverySupportedFormatAndAtLeastOneFaultedSample()
+        {
+            var extracted = LoadManifestSamples().Where(s => !s.TryGetProperty("expectedBehavior", out _)).ToList();
+            var cleanMimeTypes = extracted
+                .Where(s => ReadExpectedFieldErrors(s).Count == 0)
+                .Select(MimeTypeFor)
+                .ToHashSet();
+
+            foreach (var mime in new[]
+            {
+                OfficeMimeType.Word, OfficeMimeType.Excel, OfficeMimeType.PowerPoint,
+                OfficeMimeType.WordLegacy, OfficeMimeType.ExcelLegacy, OfficeMimeType.PowerPointLegacy,
+            })
+            {
+                Assert.Contains(new ExtractionHelper().MimeFor(mime), cleanMimeTypes);
+            }
+
+            Assert.Contains(extracted, s => ReadExpectedFieldErrors(s).Count > 0);
+        }
+
+        [Fact]
+        public void Manifest_ListsEveryCorpusSampleFile()
+        {
+            var samplesRoot = Path.GetDirectoryName(FindRepoRootFile("samples/manifest.json"))!;
+            var listed = LoadManifestSamples()
+                .Select(s => s.GetProperty("path").GetString()!)
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var group in new[] { "adversarial", "curated", "synthetic" })
+            {
+                foreach (var file in Directory.EnumerateFiles(Path.Combine(samplesRoot, group), "*", SearchOption.AllDirectories))
+                {
+                    var relative = "samples/" + Path.GetRelativePath(samplesRoot, file).Replace(Path.DirectorySeparatorChar, '/');
+                    Assert.Contains(relative, listed);
+                }
+            }
+        }
+
+        private static List<(string FieldPath, string Code)> ReadExpectedFieldErrors(JsonElement entry)
+        {
+            Assert.True(entry.TryGetProperty("expectedFieldErrors", out var errors),
+                $"Manifest entry '{entry.GetProperty("path").GetString()}' has no expectedFieldErrors");
+
+            var parsed = errors.EnumerateArray()
+                .Select(e => (e.GetProperty("fieldPath").GetString()!, e.GetProperty("code").GetString()!))
+                .ToList();
+            AssertNoDuplicatePaths(parsed.Select(e => e.Item1), "manifest expectedFieldErrors");
+            return parsed;
+        }
+
+        private static void AssertNoDuplicatePaths(IEnumerable<string> fieldPaths, string source)
+        {
+            // Only the bare collection name may repeat (one error per failed subfile with an unknown path).
+            var duplicate = fieldPaths.Where(p => p != nameof(DocumentExtractionResult.EmbeddedFiles))
+                .GroupBy(p => p).FirstOrDefault(g => g.Count() > 1);
+            Assert.True(duplicate is null, $"Duplicate FieldPath '{duplicate?.Key}' in {source}");
+        }
+
+        // FieldErrors is never null: empty when clean, otherwise exactly the recorded set (compared
+        // order-insensitively; each error is path + code, the message is display-only).
+        private static void AssertFieldErrors(List<(string FieldPath, string Code)> expected, List<FieldError>? actual)
+        {
+            Assert.NotNull(actual);
+            AssertNoDuplicatePaths(actual.Select(e => e.FieldPath), "extracted FieldErrors");
+            Assert.Equal(
+                expected.OrderBy(e => e.FieldPath, StringComparer.Ordinal).ThenBy(e => e.Code, StringComparer.Ordinal).ToList(),
+                actual.Select(e => (e.FieldPath, e.Code.ToString()))
+                    .OrderBy(e => e.FieldPath, StringComparer.Ordinal).ThenBy(e => e.Item2, StringComparer.Ordinal).ToList());
         }
 
         // Extract trusts the caller-supplied mime type. Adversarial entries whose detection result
