@@ -68,13 +68,18 @@ namespace SampleGenerator.Generators
 
         /// <summary>
         /// Writes all 12 samples into <paramref name="outputDir"/>, prints
-        /// "path bytes sha256" per file and, when a manifest exists, compares
-        /// each SHA-256 with its <c>benchmarkSamples</c> entry. Returns false on
-        /// any mismatch or missing entry.
+        /// "path bytes sha256" per file and compares each SHA-256 with its
+        /// <c>benchmarkSamples</c> entry. Returns false on any mismatch or missing
+        /// entry, and when the manifest is absent or unreadable (#293).
         /// </summary>
         public static bool WriteAll(string outputDir, string? manifestPath)
         {
             var expected = LoadManifestHashes(manifestPath);
+            if (expected is null)
+            {
+                Console.Error.WriteLine($"Benchmark manifest missing or unreadable: {manifestPath ?? "(none)"}; cannot verify samples.");
+                return false;
+            }
             Directory.CreateDirectory(outputDir);
             var allMatch = true;
 
@@ -87,14 +92,10 @@ namespace SampleGenerator.Generators
                     File.WriteAllBytes(path, content);
 
                     var sha = Convert.ToHexString(SHA256.HashData(content)).ToLowerInvariant();
-                    var verdict = "";
-                    if (expected is not null)
-                    {
-                        var key = $"samples/benchmark/{FileName(format, tier)}";
-                        var match = expected.TryGetValue(key, out var want) && want == sha;
-                        allMatch &= match;
-                        verdict = match ? " MATCHES-MANIFEST" : " MISMATCH-VS-MANIFEST";
-                    }
+                    var key = $"samples/benchmark/{FileName(format, tier)}";
+                    var match = expected.TryGetValue(key, out var want) && want == sha;
+                    allMatch &= match;
+                    var verdict = match ? " MATCHES-MANIFEST" : " MISMATCH-VS-MANIFEST";
                     Console.WriteLine($"{path} {content.Length} {sha}{verdict}");
                 }
             }
@@ -106,16 +107,23 @@ namespace SampleGenerator.Generators
         {
             if (manifestPath is null || !File.Exists(manifestPath)) return null;
 
-            using var doc = JsonDocument.Parse(File.ReadAllText(manifestPath));
-            var hashes = new Dictionary<string, string>();
-            if (doc.RootElement.TryGetProperty("benchmarkSamples", out var entries))
+            try
             {
-                foreach (var entry in entries.EnumerateArray())
+                using var doc = JsonDocument.Parse(File.ReadAllText(manifestPath));
+                var hashes = new Dictionary<string, string>();
+                if (doc.RootElement.TryGetProperty("benchmarkSamples", out var entries))
                 {
-                    hashes[entry.GetProperty("path").GetString()!] = entry.GetProperty("sha256").GetString()!;
+                    foreach (var entry in entries.EnumerateArray())
+                    {
+                        hashes[entry.GetProperty("path").GetString()!] = entry.GetProperty("sha256").GetString()!;
+                    }
                 }
+                return hashes;
             }
-            return hashes;
+            catch (Exception ex) when (ex is JsonException or IOException or InvalidOperationException or KeyNotFoundException)
+            {
+                return null;
+            }
         }
 
         // ---- OOXML ----
@@ -225,7 +233,25 @@ namespace SampleGenerator.Generators
                     }
                 }
             }
-            return output.ToArray();
+            return PinHostAttributes(output.ToArray());
+        }
+
+        // ZipArchive stamps each central-directory record with the host OS (version-made-by high
+        // byte: 3 on Linux, 0 on Windows) and Unix file-mode external attributes on Linux, so the
+        // same entries hash differently per platform. Pin both to the Windows/FAT values.
+        private static byte[] PinHostAttributes(byte[] zip)
+        {
+            var eocd = zip.AsSpan().LastIndexOf(new byte[] { 0x50, 0x4B, 0x05, 0x06 });
+            var offset = (int)BitConverter.ToUInt32(zip, eocd + 16);
+            var count = BitConverter.ToUInt16(zip, eocd + 10);
+            for (var i = 0; i < count; i++)
+            {
+                zip[offset + 5] = 0;
+                Array.Clear(zip, offset + 38, 4);
+                offset += 46 + BitConverter.ToUInt16(zip, offset + 28)
+                    + BitConverter.ToUInt16(zip, offset + 30) + BitConverter.ToUInt16(zip, offset + 32);
+            }
+            return zip;
         }
 
         // "word/_rels/document.xml.rels" belongs to "word/document.xml"; "_rels/.rels" to the package.
