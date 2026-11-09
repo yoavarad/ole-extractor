@@ -75,7 +75,7 @@ namespace ExtractorOLE
             var size = input.Length;
             ExtractionTelemetry.RecordBytes(size, mime);
             using (ExtractionTelemetry.Stage("guardrails", mime, size))
-                _guardrails.Enforce(request, input); // after null checks, before any parsing/dispatch (T-3335d397)
+                _guardrails.Enforce(input); // after null checks, before any parsing/dispatch (T-3335d397)
 
             var format = resolved
                          ?? throw new Exceptions.UnsupportedFormatException(request.DetectedMimeType);

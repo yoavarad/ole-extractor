@@ -46,10 +46,10 @@ namespace ExtractorOLE.Tests.Registry
             ServiceRegistration.Register(services);
             using var provider = services.BuildServiceProvider();
             var spy = new SpyRegistry();
-            var log = new List<string>();
-            var guardrails = new ExtractionGuardrails(limits ?? new MimeDetectionLimits(), log.Add);
+            var logger = new CapturingLogger<ExtractionGuardrails>();
+            var guardrails = new ExtractionGuardrails(limits ?? new MimeDetectionLimits(), logger);
             var extractor = new MainExtractor(provider.GetRequiredService<IExtractionHelper>(), spy, guardrails);
-            return (extractor, spy, log);
+            return (extractor, spy, logger.Messages);
         }
 
         private static ExtractionRequest Request(byte[] bytes, string mime = DocxMime, string fileName = "big.docx") =>
@@ -123,7 +123,7 @@ namespace ExtractorOLE.Tests.Registry
         }
 
         [Fact]
-        public void Extract_FileTooLarge_LogsFileSizeFileNameAndLimit()
+        public void Extract_FileTooLarge_LogsFileSizeAndLimitButNotFileName()
         {
             var (extractor, _, log) = Build(new MimeDetectionLimits { MaxFileSizeBytes = 10 });
 
@@ -131,7 +131,7 @@ namespace ExtractorOLE.Tests.Registry
 
             var line = Assert.Single(log);
             Assert.Contains("file-too-large", line);
-            Assert.Contains("huge.docx", line);
+            Assert.DoesNotContain("huge.docx", line);
             Assert.Contains("11", line);
             Assert.Contains("10", line);
         }
@@ -241,7 +241,7 @@ namespace ExtractorOLE.Tests.Registry
         }
 
         [Fact]
-        public void Extract_OversizedNestedContent_LogsFileSizeFileNameAndConfiguredLimit()
+        public void Extract_OversizedNestedContent_LogsFileSizeAndConfiguredLimitButNotFileName()
         {
             var (extractor, _, log) = Build();
             var bytes = BuildZipWithDeclaredSizes(1_500_000_000);
@@ -250,7 +250,7 @@ namespace ExtractorOLE.Tests.Registry
 
             var line = Assert.Single(log);
             Assert.Contains("oversized-nested-content", line);
-            Assert.Contains("bomb.docx", line);
+            Assert.DoesNotContain("bomb.docx", line);
             Assert.Contains(bytes.Length.ToString(CultureInfo.InvariantCulture), line);
             Assert.Contains("1073741824", line); // configured per-entry limit
         }

@@ -201,8 +201,11 @@
       },
       "Microsoft.Extensions.Logging.Abstractions": {
         "type": "Transitive",
-        "resolved": "2.1.1",
-        "contentHash": "XRzK7ZF+O6FzdfWrlFTi1Rgj2080ZDsd46vzOjadHUB0Cz5kOvDG8vI7caa5YFrsHQpcfn0DxtjS4E46N4FZsA=="
+        "resolved": "10.0.0",
+        "contentHash": "FU/IfjDfwaMuKr414SSQNTIti/69bHEMb+QKrskRb26oVqpx3lNFXMjs/RC9ZUuhBhcwDM2BwOgoMw+PZ+beqQ==",
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "10.0.0"
+        }
       },
       "Microsoft.Extensions.Options": {
         "type": "Transitive",
@@ -333,6 +336,7 @@
           "DocumentFormat.OpenXml.Features": "[3.5.1, )",
           "DocumentFormat.OpenXml.Framework": "[3.5.1, )",
           "Microsoft.Extensions.DependencyInjection": "[10.0.0, )",
+          "Microsoft.Extensions.Logging.Abstractions": "[10.0.0, )",
           "NPOI.Core": "[2.8.0, )",
           "OpenMcdf": "[3.2.0, )",
           "b2xtranslator.doc": "[1.0.0, )",

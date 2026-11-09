@@ -241,13 +241,13 @@ namespace ExtractorOLE.Tests.Registry
             var services = new ServiceCollection();
             ServiceRegistration.Register(services);
             using var provider = services.BuildServiceProvider();
-            var log = new List<string>();
+            var logger = new CapturingLogger<ExtractionGuardrails>();
             var limits = new MimeDetectionLimits { MaxDeclaredEntryBytes = 1000, MaxDeclaredNestedContentBytes = 1500 };
             var extractor = new MainExtractor(
                 provider.GetRequiredService<IExtractionHelper>(),
                 provider.GetRequiredService<IFormatDispatchRegistry>(),
-                new ExtractionGuardrails(limits, log.Add));
-            return (extractor, log);
+                new ExtractionGuardrails(limits, logger));
+            return (extractor, logger.Messages);
         }
 
         public static IEnumerable<object[]> OversizedContainers() => new[]
@@ -422,7 +422,7 @@ namespace ExtractorOLE.Tests.Registry
 
             using (var input = ExtractionInput.From(request))
             {
-                new ExtractionGuardrails(new MimeDetectionLimits(), _ => { }).Enforce(request, input);
+                new ExtractionGuardrails(new MimeDetectionLimits()).Enforce(input);
                 // #276: guardrails now inflate ZIP entries once to count bytes actually produced,
                 // so only the preflight (below) keeps the headers-and-tail-only read property.
                 var afterGuardrails = counting.BytesRead;
