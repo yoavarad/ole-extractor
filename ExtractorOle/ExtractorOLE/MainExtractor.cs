@@ -63,9 +63,23 @@ namespace ExtractorOLE
         /// password-protected / truncated-container / corrupt-file errors instead of
         /// returning an empty result.
         /// </summary>
-        public DocumentExtractionResult Extract(ExtractionRequest request)
+        public DocumentExtractionResult Extract(ExtractionRequest request) => Extract(request, CancellationToken.None);
+
+        /// <summary>
+        /// <see cref="Extract(ExtractionRequest)"/> with cancellation (#290). After request validation,
+        /// an already-cancelled token throws <see cref="OperationCanceledException"/> before the input is
+        /// opened or parsed. A token cancelled during the call is observed at the next stage boundary
+        /// (guardrails, preflight, open, text extraction) and inside the built-in sheet, slide and
+        /// embedded-file loops; the call then throws <see cref="OperationCanceledException"/> and returns
+        /// no partial result. Cancellation is never recorded as a field error. The legacy .doc/.ppt
+        /// conversion (b2xtranslator) has no cancellation hook, so one conversion runs to completion and
+        /// the token is checked only before and after it.
+        /// </summary>
+        public DocumentExtractionResult Extract(ExtractionRequest request, CancellationToken cancellationToken)
         {
             ValidateRequest(request);
+            cancellationToken.ThrowIfCancellationRequested();
+            using var cancellationScope = ExtractionCancellation.Enter(cancellationToken);
             // Owns the FileStream opened for FilePath; disposed after ReleaseParsedDocument below,
             // because an OOXML package opened from it reads the stream lazily (ADR-008).
             using var input = ExtractionInput.From(request);
@@ -74,24 +88,28 @@ namespace ExtractorOLE
             var mime = resolved?.ToString() ?? ExtractionTelemetry.UnsupportedFormatTag;
             var size = input.Length;
             ExtractionTelemetry.RecordBytes(size, mime);
+            cancellationToken.ThrowIfCancellationRequested();
             using (ExtractionTelemetry.Stage("guardrails", mime, size))
                 _guardrails.Enforce(request, input); // after null checks, before any parsing/dispatch (T-3335d397)
 
             var format = resolved
                          ?? throw new Exceptions.UnsupportedFormatException(request.DetectedMimeType);
 
+            cancellationToken.ThrowIfCancellationRequested();
             using (ExtractionTelemetry.Stage("preflight", mime, size))
             {
                 // Stream/path input is checked in place, reading only headers/tail (#193).
                 if (input.OriginalBytes != null) ParseTimeErrorGuard.Preflight(input.OriginalBytes, IsOoxml(format));
                 else ParseTimeErrorGuard.Preflight(input.Stream!, IsOoxml(format));
             }
+            cancellationToken.ThrowIfCancellationRequested();
             DocumentExtractionResult result;
             using (ExtractionTelemetry.Stage("open", mime, size))
                 result = ParseTimeErrorGuard.OpenOrThrow(_registry.GetOpenStrategy(format), input, request.DetectedMimeType);
             try
             {
                 result.MimeType = request.DetectedMimeType;
+                cancellationToken.ThrowIfCancellationRequested();
 
                 using var textScope = ExtractionTelemetry.Stage("extract_text", mime, size);
                 var extractor = _registry.GetTextExtractor(format);
@@ -104,6 +122,7 @@ namespace ExtractorOLE
                     FieldIsolation.TryPopulate(result, nameof(DocumentExtractionResult.ExtractedText),
                         () => result.ExtractedText = ExtractText(extractor, result, () => input.Bytes));
                 }
+                cancellationToken.ThrowIfCancellationRequested();
             }
             finally
             {
@@ -118,7 +137,8 @@ namespace ExtractorOLE
         /// <paramref name="maxDegreeOfParallelism"/> (default <see cref="Environment.ProcessorCount"/>)
         /// extractions at once and returns one <see cref="BatchExtractionResult"/> per request, in
         /// input order. An item's exception is captured in its <see cref="BatchExtractionResult.Error"/>
-        /// and does not fail the batch (except <see cref="OutOfMemoryException"/>, which fails it). Cancellation stops new items from starting and throws
+        /// and does not fail the batch (except <see cref="OutOfMemoryException"/>, which fails it). Cancellation stops new items from starting,
+        /// is observed by in-flight items through <see cref="Extract(ExtractionRequest, CancellationToken)"/>, and throws
         /// <see cref="OperationCanceledException"/>.
         /// </summary>
         public async Task<IReadOnlyList<BatchExtractionResult>> ExtractManyAsync(
@@ -132,14 +152,16 @@ namespace ExtractorOLE
 
             var results = new List<BatchExtractionResult>();
             var options = new ParallelOptions { MaxDegreeOfParallelism = dop, CancellationToken = cancellationToken };
-            await Parallel.ForEachAsync(requests.Select((request, index) => (request, index)), options, (item, _) =>
+            await Parallel.ForEachAsync(requests.Select((request, index) => (request, index)), options, (item, itemToken) =>
             {
                 BatchExtractionResult itemResult;
                 try
                 {
-                    itemResult = new BatchExtractionResult { Index = item.index, FileName = item.request?.FileName, Result = Extract(item.request!) };
+                    itemResult = new BatchExtractionResult { Index = item.index, FileName = item.request?.FileName, Result = Extract(item.request!, itemToken) };
                 }
-                catch (Exception ex) when (ex is not OutOfMemoryException)
+                // The batch's own cancellation propagates and fails the batch; it is not an item error.
+                catch (Exception ex) when (ex is not OutOfMemoryException
+                                           && !(ex is OperationCanceledException && itemToken.IsCancellationRequested))
                 {
                     itemResult = new BatchExtractionResult { Index = item.index, FileName = item.request?.FileName, Error = ex };
                 }

@@ -6,6 +6,7 @@ using ExtractorOLE.Helpers.FileTypeStrategy;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ExtractorOLE.Helpers;
 
 namespace ExtractorOLE.Handlers
 {
@@ -35,6 +36,7 @@ namespace ExtractorOLE.Handlers
 
             foreach (var slidePart in GetSlidePartsInDeckOrder(presentationPart))
             {
+                ExtractionCancellation.ThrowIfCancellationRequested();
                 AppendTextLines(sb, slidePart.Slide);
                 AppendTextLines(sb, slidePart.NotesSlidePart?.NotesSlide);
             }

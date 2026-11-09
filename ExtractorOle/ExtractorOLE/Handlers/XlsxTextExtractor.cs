@@ -5,6 +5,7 @@ using ExtractorOLE.Helpers.FileTypeStrategy;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ExtractorOLE.Helpers;
 
 namespace ExtractorOLE.Handlers
 {
@@ -50,11 +51,13 @@ namespace ExtractorOLE.Handlers
 
             foreach (var worksheetPart in workbookPart.WorksheetParts)
             {
+                ExtractionCancellation.ThrowIfCancellationRequested();
                 var sheetData = worksheetPart.Worksheet?.Elements<SheetData>().FirstOrDefault();
                 if (sheetData == null) continue;
 
                 foreach (var row in sheetData.Elements<Row>())
                 {
+                    ExtractionCancellation.ThrowIfCancellationRequested();
                     var cellTexts = new List<string>();
                     foreach (var cell in row.Elements<Cell>())
                     {

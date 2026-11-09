@@ -4,6 +4,10 @@
 
 ### Added
 - `DocumentExtractionResult.FieldErrors` (`List<FieldError>`): one entry per result leaf that could not be populated while the call succeeded, with `FieldPath`, `Code` (`FieldErrorCode`: `CorruptFile`, `OversizedNestedContent`, `UnexpectedFieldFailure`) and `Message`. Empty, never null, when every leaf was populated. Additive: nothing existing changes type. See [ADR-010](docs/adrs/010-partial-results-with-per-field-error-reporting.md).
+- `MainExtractor.Extract(ExtractionRequest, CancellationToken)`: a new overload; `Extract(ExtractionRequest)` is unchanged and calls it with `CancellationToken.None`. A cancelled token throws `OperationCanceledException` before the input is opened. A token cancelled during the call is checked at each stage boundary and in the built-in sheet, slide and embedded-file loops. Cancellation is never recorded as a field error. The legacy .doc/.ppt conversion (b2xtranslator) has no cancellation hook, so the token is checked only before and after each conversion stage. Custom `IOpenStrategy`/`ITextExtractor` implementations are not given the token; it is checked before and after them.
+
+### Changed
+- `ExtractManyAsync` now passes its cancellation token to each in-flight `Extract`. Cancelling it fails the batch with `OperationCanceledException`; an item that observes the cancellation is not reported as a `BatchExtractionResult.Error`.
 
 ### Breaking changes
 - `DetectedFormatEnum` is renamed to `DetectedFormat`, and `OfficeMimeTypeEnum` is renamed to `OfficeMimeType` (CA1711). The values are unchanged. Rename the types where you use them.

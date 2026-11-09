@@ -208,5 +208,24 @@ namespace ExtractorOLE.Tests.Helpers
 
             Assert.Equal(data, result);
         }
+
+        // #290: the sheet/slide/embedded loops observe the Extract call's cancellation token.
+        [Fact]
+        public void ExtractFirstLayerEmbedded_CancelledToken_ThrowsInsteadOfRecordingFieldError()
+        {
+            using var ms = new MemoryStream();
+            ms.Write(BuildDocx());
+            using var package = WordprocessingDocument.Open(ms, true);
+            // One child part so the walk's loop body runs.
+            package.MainDocumentPart!.AddNewPart<StyleDefinitionsPart>();
+            var result = new DocumentExtractionResult();
+            using var cts = new System.Threading.CancellationTokenSource();
+            cts.Cancel();
+            using var scope = ExtractionCancellation.Enter(cts.Token);
+
+            Assert.ThrowsAny<OperationCanceledException>(() =>
+                new EmbeddedFileExtractor(new MimeTypeMapper()).ExtractFirstLayerEmbedded(result, package.MainDocumentPart!));
+            Assert.Empty(result.FieldErrors);
+        }
     }
 }

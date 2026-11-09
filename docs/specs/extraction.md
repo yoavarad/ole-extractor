@@ -71,6 +71,10 @@ Two previously accidental behaviors are now specified: failed flat-text extracti
 
 Batch extraction (ADR-007) is unaffected in shape: a file that produced only field errors is a batch success carrying a populated result with a non-empty field-error collection, never a batch item error. The batch item error channel means "this file could not be extracted at all" and keeps exactly the fatal set above as its causes. A caller scanning a batch therefore looks in two places: item errors for failed files, field errors for partially successful ones.
 
+## Cancellation
+
+[ydk:contract:extraction/extract] accepts an optional cancellation token; omitting it behaves exactly as before. Cancellation is not a domain error and is not in the fatal set above: it ends the call with the platform's standard operation-cancelled exception and no result. Argument validation still runs first; an already-cancelled token then stops the call before the input is opened or parsed. A token cancelled during the call is observed at the next stage boundary (guardrails, preflight, container open, flat text) and inside the built-in per-sheet, per-slide and per-subfile loops. It is never isolated into a [ydk:entity:extraction/FieldError], and in batch extraction it fails the batch rather than becoming an item error. The legacy .doc and .ppt conversion library offers no cancellation hook, so one conversion runs to completion and the token is checked only between conversion stages; this is an accepted limit.
+
 ## Extensibility & DI
 
 Same registry-based dispatch principle as detection ([ydk:req:extraction/format-extensibility]); every component is resolved through dependency injection, continuing the existing scaffold's convention ([ydk:req:extraction/dependency-injection]), not constructed inline.
