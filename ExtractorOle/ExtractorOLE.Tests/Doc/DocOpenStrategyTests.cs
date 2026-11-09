@@ -9,6 +9,7 @@ using NPOI.POIFS.FileSystem;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using Xunit;
 
 namespace ExtractorOLE.Tests.Doc
@@ -201,6 +202,34 @@ namespace ExtractorOLE.Tests.Doc
             Assert.False(formatMetadata.HasMacros);
         }
 
+        // #286: a throwing first-layer embedded walk must not discard the metadata already read.
+        [Fact]
+        public void Open_EmbeddedWalkThrows_StillReturnsFileAndFormatMetadata()
+        {
+            var bytes = BuildDocFixtureBytes("Quarterly Report", "Jane Doe", null, null, null);
+            var helper = DispatchProxy.Create<IExtractionHelper, ThrowingEmbeddedWalkProxy>();
+            ((ThrowingEmbeddedWalkProxy)(object)helper).Inner = new ExtractionHelper();
+
+            var result = new DocOpenStrategy(helper).Open(bytes);
+
+            Assert.NotNull(result);
+            Assert.Equal("Quarterly Report", result!.Metadata.Title);
+            Assert.IsType<WordFormatMetadata>(result.FormatMetadata);
+        }
+
+        public class ThrowingEmbeddedWalkProxy : DispatchProxy
+        {
+            public IExtractionHelper Inner { get; set; } = null!;
+
+            protected override object? Invoke(MethodInfo? targetMethod, object?[]? args)
+            {
+                if (targetMethod!.Name == nameof(IExtractionHelper.ExtractFirstLayerEmbedded))
+                    throw new InvalidOperationException("malformed ObjectPool");
+                try { return targetMethod.Invoke(Inner, args); }
+                catch (TargetInvocationException e) { throw e.InnerException!; }
+            }
+        }
+
         [Fact]
         public void Open_CorruptBytes_ReturnsNull()
         {
@@ -216,11 +245,11 @@ namespace ExtractorOLE.Tests.Doc
             ServiceRegistration.Register(services);
             var provider = services.BuildServiceProvider();
 
-            var openStrategies = provider.GetRequiredService<IDictionary<OfficeMimeType, IOpenStrategy>>();
+            var openStrategies = provider.GetRequiredService<IReadOnlyDictionary<OfficeMimeType, IOpenStrategy>>();
             Assert.True(openStrategies.ContainsKey(OfficeMimeType.WordLegacy));
             Assert.IsType<DocOpenStrategy>(openStrategies[OfficeMimeType.WordLegacy]);
 
-            var textExtractors = provider.GetRequiredService<IDictionary<OfficeMimeType, ITextExtractor>>();
+            var textExtractors = provider.GetRequiredService<IReadOnlyDictionary<OfficeMimeType, ITextExtractor>>();
             Assert.True(textExtractors.ContainsKey(OfficeMimeType.WordLegacy));
             Assert.IsType<DocTextExtractor>(textExtractors[OfficeMimeType.WordLegacy]);
         }

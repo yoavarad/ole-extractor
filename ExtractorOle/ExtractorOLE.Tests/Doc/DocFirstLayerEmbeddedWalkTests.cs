@@ -155,8 +155,8 @@ namespace ExtractorOLE.Tests.Doc
             var recovered = ReadDocumentStream(item.BinaryData, "Package");
             Assert.Equal(validPayload, recovered);
 
-            var logged = capturedOut.ToString();
-            Assert.Contains("corrupt", logged, StringComparison.OrdinalIgnoreCase);
+            Assert.StartsWith("EmbeddedFiles[ObjectPool/", Assert.Single(result.FieldErrors).FieldPath);
+            Assert.Equal(string.Empty, capturedOut.ToString());
         }
 
         [Fact]

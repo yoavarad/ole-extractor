@@ -112,19 +112,15 @@ namespace ExtractorOLE.Tests.Doc
         }
 
         [Fact]
-        public void ExtractText_CorruptBytes_ReturnsEmptyStringNotThrow()
+        public void ExtractText_CorruptBytes_Throws()
         {
-            var text = new DocTextExtractor().ExtractText(new byte[] { 0x00, 0x01, 0x02, 0x03, 0xFF });
-
-            Assert.Equal(string.Empty, text);
+            Assert.ThrowsAny<Exception>(() => new DocTextExtractor().ExtractText(new byte[] { 0x00, 0x01, 0x02, 0x03, 0xFF }));
         }
 
         [Fact]
-        public void ExtractText_EmptyBytes_ReturnsEmptyStringNotThrow()
+        public void ExtractText_EmptyBytes_Throws()
         {
-            var text = new DocTextExtractor().ExtractText(Array.Empty<byte>());
-
-            Assert.Equal(string.Empty, text);
+            Assert.ThrowsAny<Exception>(() => new DocTextExtractor().ExtractText(Array.Empty<byte>()));
         }
     }
 }
