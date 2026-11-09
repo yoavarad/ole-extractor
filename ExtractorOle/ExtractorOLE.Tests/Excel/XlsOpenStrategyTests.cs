@@ -320,8 +320,8 @@ namespace ExtractorOLE.Tests.Excel
             var recoveredPayload = ReadOlePackagePayload(objectItems[0].BinaryData);
             Assert.Equal(validPayload, recoveredPayload);
 
-            var logged = capturedOut.ToString();
-            Assert.Contains("corrupt", logged, StringComparison.OrdinalIgnoreCase);
+            Assert.StartsWith("EmbeddedFiles[embedded_object_", Assert.Single(result.FieldErrors).FieldPath);
+            Assert.Equal(string.Empty, capturedOut.ToString());
         }
     }
 }
