@@ -120,7 +120,8 @@ namespace ExtractorOLE.Tests.PowerPoint
             var item = Assert.Single(result!.EmbeddedFiles);
             Assert.Equal("ValidObject", item.FileName);
             Assert.DoesNotContain(result.EmbeddedFiles, f => f.FileName == "CorruptObject");
-            Assert.Single(result.FieldErrors, e => e.FieldPath == "EmbeddedFiles[CorruptObject]");
+            var error = Assert.Single(result.FieldErrors, e => e.FieldPath == "EmbeddedFiles[CorruptObject]");
+            Assert.Equal(FieldErrorCode.UnexpectedFieldFailure, error.Code);
         }
 
         [Fact]
