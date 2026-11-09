@@ -120,7 +120,10 @@ namespace ExtractorOLE.Tests.PowerPoint
             var item = Assert.Single(result!.EmbeddedFiles);
             Assert.Equal("ValidObject", item.FileName);
             Assert.DoesNotContain(result.EmbeddedFiles, f => f.FileName == "CorruptObject");
-            Assert.Equal("EmbeddedFiles[CorruptObject]", Assert.Single(result.FieldErrors).FieldPath);
+            // The synthetic fixture has no convertible slide body, so the two slide leaves also report (#308).
+            var error = Assert.Single(result.FieldErrors, e => e.FieldPath.StartsWith("EmbeddedFiles[", StringComparison.Ordinal));
+            Assert.Equal("EmbeddedFiles[CorruptObject]", error.FieldPath);
+            Assert.Equal(FieldErrorCode.UnexpectedFieldFailure, error.Code);
         }
 
         [Fact]
