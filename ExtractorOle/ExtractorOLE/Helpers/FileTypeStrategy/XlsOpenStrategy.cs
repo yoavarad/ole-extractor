@@ -44,19 +44,9 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
 
             // Everything past the container open is isolated per leaf.
             var result = new DocumentExtractionResult();
-            NPOI.HPSF.SummaryInformation? summary = null;
-            try
-            {
-                summary = workbook.SummaryInformation;
-            }
-            catch (Exception ex) when (StrategyIsolation.IsOpenFailure(ex))
-            {
-                // Unparsable property set: FileMetadata stays null.
-            }
-            if (summary != null)
-            {
-                MetadataConversions.Apply(summary, result);
-            }
+            // Read from the directory, not workbook.SummaryInformation: NPOI's getter logs and
+            // returns null for an unparsable property set, which would hide the failure (#288).
+            MetadataConversions.ApplySummaryInformation(workbook.Directory, result);
 
             result.FormatMetadata = BuildExcelFormatMetadata(workbook, result);
 
@@ -88,16 +78,8 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
                 }
 
                 var result = new DocumentExtractionResult();
-                NPOI.HPSF.SummaryInformation? summary = null;
-                try
-                {
-                    summary = NPOI.HPSF.PropertySetFactory.Create(root, NPOI.HPSF.SummaryInformation.DEFAULT_STREAM_NAME) as NPOI.HPSF.SummaryInformation;
-                }
-                catch (Exception ex) when (StrategyIsolation.IsOpenFailure(ex))
-                {
-                    // Absent or unparsable property set: FileMetadata stays null.
-                }
-                if (summary != null) MetadataConversions.Apply(summary, result);
+                // Absent property set: FileMetadata stays null; unparsable: each leaf is reported.
+                MetadataConversions.ApplySummaryInformation(root, result);
 
                 // The globals substream (BoundSheet / WindowOne records) is read once and shared by the leaves that need it.
                 var globals = new Lazy<NPOI.HSSF.Model.InternalWorkbook>(() =>

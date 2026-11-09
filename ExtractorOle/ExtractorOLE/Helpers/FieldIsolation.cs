@@ -2,6 +2,7 @@ using DocumentFormat.OpenXml.Packaging;
 using ExtractorOLE.DTOs;
 using ExtractorOLE.Exceptions;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 
@@ -20,7 +21,8 @@ namespace ExtractorOLE.Helpers
 
         // Returns true when populate completed. On failure the leaf is left as populate left it;
         // callers must not write a placeholder. OutOfMemoryException is never caught, and
-        // cancellation (OperationCanceledException) propagates instead of becoming a field error.
+        // cancellation (OperationCanceledException) propagates instead of becoming a field error,
+        // also when wrapped (see IsIsolatable).
         internal static bool TryPopulate(DocumentExtractionResult result, string fieldPath, Action populate)
         {
             ArgumentNullException.ThrowIfNull(result);
@@ -49,9 +51,29 @@ namespace ExtractorOLE.Helpers
         }
 
         // A failure that may cost one leaf (or one part of a leaf) instead of the call: everything
-        // except out-of-memory and cancellation.
-        internal static bool IsIsolatable(Exception exception) =>
-            exception is not OutOfMemoryException and not OperationCanceledException;
+        // except out-of-memory and cancellation, including when either is wrapped anywhere in the
+        // exception's inner chain or in an AggregateException's inner exceptions (#288).
+        internal static bool IsIsolatable(Exception exception)
+        {
+            ArgumentNullException.ThrowIfNull(exception);
+            var pending = new Stack<Exception>();
+            pending.Push(exception);
+            while (pending.Count > 0)
+            {
+                var current = pending.Pop();
+                if (current is OutOfMemoryException or OperationCanceledException) return false;
+                if (current is AggregateException aggregate)
+                {
+                    foreach (var inner in aggregate.InnerExceptions) pending.Push(inner);
+                }
+                else if (current.InnerException != null)
+                {
+                    pending.Push(current.InnerException);
+                }
+            }
+
+            return true;
+        }
 
         // Chosen by cause, not by leaf. UnexpectedFieldFailure only when neither other code fits.
         // The CorruptFile set is deliberately conservative: exceptions that signal a malformed

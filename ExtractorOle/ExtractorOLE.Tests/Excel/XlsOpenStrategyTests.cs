@@ -232,6 +232,125 @@ namespace ExtractorOLE.Tests.Excel
             Assert.ThrowsAny<Exception>(() => new XlsOpenStrategy(new ExtractionHelper()).Open(new byte[] { 0x00, 0x01, 0x02, 0x03 }));
         }
 
+        private static readonly string[] SummaryLeafPaths =
+        {
+            "Metadata.Title", "Metadata.Creator", "Metadata.Created", "Metadata.Modified",
+            "Metadata.LastModifiedBy", "Metadata.Subject", "Metadata.Comments", "Metadata.RevisionNumber",
+            "Metadata.LastPrinted", "Metadata.EditingDurationMinutes", "Metadata.Keywords", "Metadata.ApplicationName",
+        };
+
+        // Replaces the SummaryInformation stream with replacement bytes, or removes it when null.
+        private static byte[] WithSummaryStream(byte[] xlsBytes, byte[]? replacement)
+        {
+            const string streamName = "\u0005SummaryInformation";
+            var fs = new NPOIFSFileSystem(new MemoryStream(xlsBytes));
+            if (fs.Root.HasEntry(streamName)) fs.Root.GetEntry(streamName).Delete();
+            if (replacement != null) fs.Root.CreateDocument(streamName, new MemoryStream(replacement));
+            using var output = new MemoryStream();
+            fs.WriteFileSystem(output);
+            fs.Close();
+            return output.ToArray();
+        }
+
+        [Fact]
+        public void Open_GarbledSummaryInformation_ReportsEveryMetadataLeafAsCorruptAndKeepsWorkbook()
+        {
+            var garbled = new byte[64];
+            Array.Fill(garbled, (byte)0xFF);
+            var bytes = WithSummaryStream(BuildXlsFixtureBytes("t", "a", null, null, null), garbled);
+
+            var result = new XlsOpenStrategy(new ExtractionHelper()).Open(bytes);
+
+            Assert.NotNull(result);
+            var metadataErrors = result!.FieldErrors.Where(e => e.FieldPath.StartsWith("Metadata.", StringComparison.Ordinal)).ToList();
+            Assert.Equal(SummaryLeafPaths.OrderBy(p => p, StringComparer.Ordinal), metadataErrors.Select(e => e.FieldPath).OrderBy(p => p, StringComparer.Ordinal));
+            Assert.All(metadataErrors, e => Assert.Equal(FieldErrorCode.CorruptFile, e.Code));
+            Assert.Equal(1, ((ExcelFormatMetadata)result.FormatMetadata!).SheetCount);
+            Assert.NotNull(result.ParsedDocument);
+        }
+
+        [Fact]
+        public void Open_NoSummaryInformationStream_RecordsNoMetadataFieldErrors()
+        {
+            var bytes = WithSummaryStream(BuildXlsFixtureBytes("t", "a", null, null, null), null);
+
+            var result = new XlsOpenStrategy(new ExtractionHelper()).Open(bytes);
+
+            Assert.NotNull(result);
+            Assert.DoesNotContain(result!.FieldErrors, e => e.FieldPath.StartsWith("Metadata.", StringComparison.Ordinal));
+            Assert.Equal(1, ((ExcelFormatMetadata)result.FormatMetadata!).SheetCount);
+        }
+
+        // A registered picture (no shape on the sheet) whose BLIP record header declares an absurd
+        // length: the workbook still loads, but decoding the drawing group fails when the pictures
+        // are enumerated.
+        private static byte[] BuildXlsWithCorruptPictureBlip()
+        {
+            var pictureBytes = new byte[64];
+            for (int i = 0; i < pictureBytes.Length; i++) pictureBytes[i] = (byte)(i + 1);
+            var wb = new HSSFWorkbook();
+            wb.CreateSheet("Sheet1");
+            wb.AddPicture(pictureBytes, PictureType.PNG);
+            using var written = new MemoryStream();
+            wb.Write(written);
+
+            var fs = new NPOIFSFileSystem(new MemoryStream(written.ToArray()));
+            byte[] book;
+            using (var stream = fs.Root.CreateDocumentInputStream("Workbook"))
+            using (var copy = new MemoryStream())
+            {
+                stream.CopyTo(copy);
+                book = copy.ToArray();
+            }
+
+            // The blip header (options, record id 0xF01E for PNG, 4-byte length) sits just before the payload.
+            int payloadAt = book.AsSpan().IndexOf(pictureBytes.AsSpan(0, 16));
+            Assert.True(payloadAt > 0, "picture payload not found in the Workbook stream");
+            int headerAt = -1;
+            for (int i = payloadAt - 40; i < payloadAt; i++)
+            {
+                if (book[i] == 0x1E && book[i + 1] == 0xF0) headerAt = i - 2;
+            }
+            Assert.True(headerAt > 0, "blip header not found in the Workbook stream");
+            book[headerAt + 4] = 0xFF;
+            book[headerAt + 5] = 0xFF;
+            book[headerAt + 6] = 0xFF;
+            book[headerAt + 7] = 0x7F;
+
+            fs.Root.GetEntry("Workbook").Delete();
+            fs.Root.CreateDocument("Workbook", new MemoryStream(book));
+            using var output = new MemoryStream();
+            fs.WriteFileSystem(output);
+            fs.Close();
+            return output.ToArray();
+        }
+
+        [Fact]
+        public void Open_PicturesEnumerationFaults_RecordsBareEmbeddedFilesErrorsAndKeepsWorkbook()
+        {
+            var bytes = BuildXlsWithCorruptPictureBlip();
+
+            var originalOut = Console.Out;
+            Console.SetOut(new StringWriter());
+            DocumentExtractionResult? result;
+            try
+            {
+                result = new XlsOpenStrategy(new ExtractionHelper()).Open(bytes);
+            }
+            finally
+            {
+                Console.SetOut(originalOut);
+            }
+
+            Assert.NotNull(result);
+            Assert.Empty(result!.EmbeddedFiles);
+            // Both enumeration loops (objects, then pictures) fault on the shared drawing group, one bare error each.
+            var errors = result.FieldErrors.Where(e => e.FieldPath == "EmbeddedFiles").ToList();
+            Assert.Equal(2, errors.Count);
+            Assert.All(errors, e => Assert.Equal(FieldErrorCode.CorruptFile, e.Code));
+            Assert.Equal(1, ((ExcelFormatMetadata)result.FormatMetadata!).SheetCount);
+        }
+
         [Fact]
         public void ServiceRegistration_ResolvesXlsOpenStrategyViaDiRegistryForExcelLegacy()
         {

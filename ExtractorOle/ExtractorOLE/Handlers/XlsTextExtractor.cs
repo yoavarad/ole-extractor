@@ -38,33 +38,36 @@ namespace ExtractorOLE.Handlers
         public string? ExtractText(object parsedDocument) => ExtractText(parsedDocument, onPartFailure: null);
 
         // A failing sheet costs only its own text (rows already read from it, if any, are kept); the
-        // other sheets are still read (#288). Fetching a sheet from the workbook is not per sheet
-        // (HSSF has already parsed every sheet by then).
+        // other sheets are still read (#288). Fetching each sheet is inside that per-sheet boundary.
         public string? ExtractText(object parsedDocument, Action<Exception>? onPartFailure)
         {
             if (parsedDocument is not HSSFWorkbook workbook) return null;
             return Walk(Sheets(workbook), onPartFailure);
         }
 
-        private static IEnumerable<ISheet> Sheets(HSSFWorkbook workbook)
+        // One deferred fetch per sheet, so a sheet that cannot be fetched fails only itself.
+        private static List<Func<ISheet>> Sheets(HSSFWorkbook workbook)
         {
+            var sheets = new List<Func<ISheet>>();
             for (int sheetIndex = 0; sheetIndex < workbook.NumberOfSheets; sheetIndex++)
             {
-                yield return workbook.GetSheetAt(sheetIndex);
+                int index = sheetIndex;
+                sheets.Add(() => workbook.GetSheetAt(index));
             }
+            return sheets;
         }
 
         // With onSheetFailure null, the first failing sheet fails the whole walk.
-        internal static string Walk(IEnumerable<ISheet> sheets, Action<Exception>? onSheetFailure)
+        internal static string Walk(IEnumerable<Func<ISheet>> sheets, Action<Exception>? onSheetFailure)
         {
             var lines = new List<string>();
 
-            foreach (var sheet in sheets)
+            foreach (var getSheet in sheets)
             {
                 ExtractionCancellation.ThrowIfCancellationRequested();
                 try
                 {
-                    AppendSheet(sheet, lines);
+                    AppendSheet(getSheet(), lines);
                 }
                 catch (Exception ex) when (onSheetFailure != null && FieldIsolation.IsIsolatable(ex))
                 {

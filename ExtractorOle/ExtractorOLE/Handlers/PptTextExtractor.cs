@@ -1,4 +1,5 @@
 using ExtractorOLE.Abstractions;
+using System;
 using ExtractorOLE.Helpers.FileTypeStrategy;
 
 namespace ExtractorOLE.Handlers
@@ -25,10 +26,13 @@ namespace ExtractorOLE.Handlers
         }
 
         // parsedDocument is the converted .pptx bytes PptOpenStrategy already produced (#168).
-        public string? ExtractText(object parsedDocument)
+        public string? ExtractText(object parsedDocument) => ExtractText(parsedDocument, onPartFailure: null);
+
+        // Per-slide isolation of the converted deck, as in PptxTextExtractor (#288).
+        public string? ExtractText(object parsedDocument, Action<Exception>? onPartFailure)
         {
             if (parsedDocument is not byte[] pptxBytes) return null;
-            return _pptxTextExtractor.ExtractText(pptxBytes);
+            return PptxTextExtractor.ExtractText(pptxBytes, onPartFailure);
         }
     }
 }

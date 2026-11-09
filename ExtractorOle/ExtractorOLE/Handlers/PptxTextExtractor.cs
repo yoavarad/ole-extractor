@@ -3,6 +3,7 @@ using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Drawing;
 using ExtractorOLE.Helpers.FileTypeStrategy;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,22 +13,31 @@ namespace ExtractorOLE.Handlers
 {
     internal class PptxTextExtractor : IParsedDocumentTextExtractor
     {
-        public string ExtractText(byte[] fileBytes)
+        public string ExtractText(byte[] fileBytes) => ExtractText(fileBytes, onSlideFailure: null);
+
+        // Byte form with per-slide isolation, for PptTextExtractor's converted .pptx (#288).
+        internal static string ExtractText(byte[] fileBytes, Action<Exception>? onSlideFailure)
         {
             using (var ppt = OpenXmlPackages.OpenPresentation(fileBytes))
             {
-                return ExtractText(ppt);
+                return ExtractText(ppt, onSlideFailure);
             }
         }
 
         // parsedDocument is the package PowerPointOpenStrategy already opened (#167); caller owns it.
-        public string? ExtractText(object parsedDocument)
+        public string? ExtractText(object parsedDocument) => ExtractText(parsedDocument, onPartFailure: null);
+
+        // A failing slide costs only its own text (lines already read from it, if any, are kept);
+        // the other slides are still read (#288). The deck's slide list, including resolving its slide
+        // parts, is not per slide: its failure fails the whole text.
+        public string? ExtractText(object parsedDocument, Action<Exception>? onPartFailure)
         {
             if (parsedDocument is not PresentationDocument ppt) return null;
-            return ExtractText(ppt);
+            return ExtractText(ppt, onPartFailure);
         }
 
-        private static string ExtractText(PresentationDocument ppt)
+        // With onSlideFailure null, the first failing slide fails the whole text.
+        private static string ExtractText(PresentationDocument ppt, Action<Exception>? onSlideFailure)
         {
             var presentationPart = ppt.PresentationPart;
             if (presentationPart == null) return string.Empty;
@@ -37,8 +47,15 @@ namespace ExtractorOLE.Handlers
             foreach (var slidePart in GetSlidePartsInDeckOrder(presentationPart))
             {
                 ExtractionCancellation.ThrowIfCancellationRequested();
-                AppendTextLines(sb, slidePart.Slide);
-                AppendTextLines(sb, slidePart.NotesSlidePart?.NotesSlide);
+                try
+                {
+                    AppendTextLines(sb, slidePart.Slide);
+                    AppendTextLines(sb, slidePart.NotesSlidePart?.NotesSlide);
+                }
+                catch (Exception ex) when (onSlideFailure != null && FieldIsolation.IsIsolatable(ex))
+                {
+                    onSlideFailure(ex);
+                }
             }
 
             return sb.ToString().Trim();

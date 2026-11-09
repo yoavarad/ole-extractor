@@ -62,13 +62,36 @@ namespace ExtractorOLE.Tests.Excel
             return proxy;
         }
 
+        private static List<Func<ISheet>> Fetchers(IEnumerable<ISheet> sheets) =>
+            sheets.Select(sheet => (Func<ISheet>)(() => sheet)).ToList();
+
+        [Fact]
+        public void Walk_SheetFetchThrows_KeepsOtherSheetsAndReportsOnce()
+        {
+            var failures = new List<Exception>();
+            var alpha = SheetWith("alpha");
+            var gamma = SheetWith("gamma");
+            var fetchers = new List<Func<ISheet>>
+            {
+                () => alpha,
+                () => throw new InvalidOperationException(),
+                () => gamma,
+            };
+
+            var text = XlsTextExtractor.Walk(fetchers, failures.Add);
+
+            Assert.Contains("alpha", text, StringComparison.Ordinal);
+            Assert.Contains("gamma", text, StringComparison.Ordinal);
+            Assert.IsType<InvalidOperationException>(Assert.Single(failures));
+        }
+
         [Fact]
         public void Walk_BadSheet_WithCallback_KeepsHealthySheetsAndReportsOnce()
         {
             var failures = new List<Exception>();
             var sheets = new[] { SheetWith("alpha"), ThrowingSheet(new InvalidOperationException()), SheetWith("gamma") };
 
-            var text = XlsTextExtractor.Walk(sheets, failures.Add);
+            var text = XlsTextExtractor.Walk(Fetchers(sheets), failures.Add);
 
             Assert.Contains("alpha", text, StringComparison.Ordinal);
             Assert.Contains("gamma", text, StringComparison.Ordinal);
@@ -80,7 +103,7 @@ namespace ExtractorOLE.Tests.Excel
         {
             var sheets = new[] { SheetWith("alpha"), ThrowingSheet(new InvalidOperationException()), SheetWith("gamma") };
 
-            Assert.Throws<InvalidOperationException>(() => XlsTextExtractor.Walk(sheets, onSheetFailure: null));
+            Assert.Throws<InvalidOperationException>(() => XlsTextExtractor.Walk(Fetchers(sheets), onSheetFailure: null));
         }
 
         [Fact]
@@ -90,7 +113,7 @@ namespace ExtractorOLE.Tests.Excel
             // An OutOfMemoryException (CA2201 reserves the base type).
             var sheets = new[] { SheetWith("alpha"), ThrowingSheet(new InsufficientMemoryException()) };
 
-            Assert.ThrowsAny<OutOfMemoryException>(() => XlsTextExtractor.Walk(sheets, failures.Add));
+            Assert.ThrowsAny<OutOfMemoryException>(() => XlsTextExtractor.Walk(Fetchers(sheets), failures.Add));
             Assert.Empty(failures);
         }
 
@@ -100,7 +123,7 @@ namespace ExtractorOLE.Tests.Excel
             var failures = new List<Exception>();
             var sheets = new[] { SheetWith("alpha"), ThrowingSheet(new OperationCanceledException()) };
 
-            Assert.Throws<OperationCanceledException>(() => XlsTextExtractor.Walk(sheets, failures.Add));
+            Assert.Throws<OperationCanceledException>(() => XlsTextExtractor.Walk(Fetchers(sheets), failures.Add));
             Assert.Empty(failures);
         }
 

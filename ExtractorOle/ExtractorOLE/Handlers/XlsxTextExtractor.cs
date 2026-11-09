@@ -38,8 +38,8 @@ namespace ExtractorOLE.Handlers
         public string? ExtractText(object parsedDocument) => ExtractText(parsedDocument, onPartFailure: null);
 
         // A failing worksheet costs only its own text (rows already read from it, if any, are kept);
-        // the other worksheets are still read (#288). The shared-string table and the enumeration of
-        // the worksheet parts are not per sheet: their failure fails the whole text.
+        // the other worksheets are still read (#288). The shared-string table is not per sheet: its
+        // failure fails the whole text.
         public string? ExtractText(object parsedDocument, Action<Exception>? onPartFailure)
         {
             if (parsedDocument is not SpreadsheetDocument doc) return null;
@@ -58,12 +58,13 @@ namespace ExtractorOLE.Handlers
             var sharedStrings = BuildSharedStringLookup(workbookPart);
             var lines = new List<string>();
 
-            foreach (var worksheetPart in workbookPart.WorksheetParts)
+            // Same order as WorkbookPart.WorksheetParts; each part is resolved inside its own boundary.
+            foreach (var pair in workbookPart.Parts)
             {
                 ExtractionCancellation.ThrowIfCancellationRequested();
                 try
                 {
-                    AppendSheet(worksheetPart, sharedStrings, lines);
+                    if (pair.OpenXmlPart is WorksheetPart worksheetPart) AppendSheet(worksheetPart, sharedStrings, lines);
                 }
                 catch (Exception ex) when (onSheetFailure != null && FieldIsolation.IsIsolatable(ex))
                 {
