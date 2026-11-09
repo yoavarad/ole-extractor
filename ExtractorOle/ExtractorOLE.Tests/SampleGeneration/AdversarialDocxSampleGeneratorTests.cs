@@ -69,9 +69,9 @@ namespace ExtractorOLE.Tests.SampleGeneration
             using var word = WordprocessingDocument.Open(stream, false);
 
             var result = new DocumentExtractionResult();
-            var ex = Assert.ThrowsAny<Exception>(() =>
-                new EmbeddedFileExtractor(new MimeTypeMapper()).ExtractFirstLayerEmbedded(result, word.MainDocumentPart!));
-            Assert.True(result.EmbeddedFiles.Count > 0, ex.ToString());
+            new EmbeddedFileExtractor(new MimeTypeMapper()).ExtractFirstLayerEmbedded(result, word.MainDocumentPart!);
+            Assert.True(result.EmbeddedFiles.Count > 0);
+            Assert.Equal("EmbeddedFiles", Assert.Single(result.FieldErrors).FieldPath);
         }
     }
 }

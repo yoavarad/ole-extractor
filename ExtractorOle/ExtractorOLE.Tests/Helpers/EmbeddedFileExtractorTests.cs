@@ -128,6 +128,68 @@ namespace ExtractorOLE.Tests.Helpers
             return ms.ToArray();
         }
 
+        // #310: subfile failures are keyed by package path and never by position.
+        private static byte[] Sample(string fileName)
+        {
+            var relative = Path.Combine("samples", "adversarial", fileName);
+            var dir = new DirectoryInfo(AppContext.BaseDirectory);
+            while (dir != null)
+            {
+                var candidate = Path.Combine(dir.FullName, relative);
+                if (File.Exists(candidate)) return File.ReadAllBytes(candidate);
+                dir = dir.Parent;
+            }
+            throw new FileNotFoundException(relative);
+        }
+
+        [Fact]
+        public void CorruptEmbeddedObject_OneFieldErrorAtPartUri_GoodItemsKept()
+        {
+            var result = new WordOpenStrategy(new ExtractionHelper()).Open(Sample("corrupt-embedded-object.docx"));
+
+            Assert.NotNull(result);
+            var error = Assert.Single(result!.FieldErrors);
+            Assert.Equal(FieldErrorCode.CorruptFile, error.Code);
+            Assert.StartsWith("EmbeddedFiles[", error.FieldPath);
+            var key = error.FieldPath.Substring("EmbeddedFiles[".Length).TrimEnd(']');
+            Assert.False(long.TryParse(key, out _), key);
+            Assert.DoesNotContain(result.EmbeddedFiles, f => f.PackagePath == key);
+            Assert.Equal(2, result.EmbeddedFiles.Count);
+        }
+
+        [Fact]
+        public void OversizedEmbeddedObject_ReportedAtPartUri_NoThrow_GoodItemKept()
+        {
+            var result = new WordOpenStrategy(new ExtractionHelper()).Open(Sample("oversized-embedded-object.docx"));
+
+            Assert.NotNull(result);
+            var error = Assert.Single(result!.FieldErrors);
+            Assert.Equal(FieldErrorCode.OversizedNestedContent, error.Code);
+            Assert.StartsWith("EmbeddedFiles[", error.FieldPath);
+            Assert.Single(result.EmbeddedFiles);
+        }
+
+        [Fact]
+        public void FaultingEmbeddedEnumeration_OneBareEntry_ItemsPastFaultAbsent()
+        {
+            var result = new WordOpenStrategy(new ExtractionHelper()).Open(Sample("faulting-embedded-enumeration.docx"));
+
+            Assert.NotNull(result);
+            var error = Assert.Single(result!.FieldErrors);
+            Assert.Equal("EmbeddedFiles", error.FieldPath);
+            Assert.NotEmpty(result.EmbeddedFiles);
+        }
+
+        [Fact]
+        public void UnnamedEmbeddedStorage_ReportedAtBareEmbeddedFiles_GoodItemKept()
+        {
+            var result = SampleGeneration.DocSampleGeneratorTests.Extract(Sample("unnamed-embedded-storage.doc"), OfficeMimeType.WordLegacy);
+
+            var error = Assert.Single(result.FieldErrors);
+            Assert.Equal("EmbeddedFiles", error.FieldPath);
+            Assert.Equal("ObjectPool/_1", Assert.Single(result.EmbeddedFiles).PackagePath);
+        }
+
         // #277: buffers must grow with bytes actually read, never from a declared (untrusted) length.
         private sealed class LyingLengthStream : MemoryStream
         {
