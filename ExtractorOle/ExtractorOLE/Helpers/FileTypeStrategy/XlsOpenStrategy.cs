@@ -27,33 +27,23 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
 
         private DocumentExtractionResult? OpenFrom(Stream source)
         {
-            try
+            // Library exceptions propagate: ParseTimeErrorGuard maps an encrypted document to
+            // password-protected and a parse failure to corrupt-file with the cause (#287).
+            var result = new DocumentExtractionResult();
+            var workbook = XlsWorkbooks.Load(source);
+            var summary = workbook.SummaryInformation;
+            if (summary != null)
             {
-                var result = new DocumentExtractionResult();
-                var workbook = XlsWorkbooks.Load(source);
-                var summary = workbook.SummaryInformation;
-                if (summary != null)
-                {
-                    MetadataConversions.Apply(summary, result);
-                }
+                MetadataConversions.Apply(summary, result);
+            }
 
-                result.FormatMetadata = BuildExcelFormatMetadata(workbook);
+            result.FormatMetadata = BuildExcelFormatMetadata(workbook);
 
-                _helper.ExtractFirstLayerEmbedded(result, workbook);
-                // Handed to XlsTextExtractor so the workbook is parsed once; MainExtractor releases it.
-                result.ParsedDocument = workbook;
-                result.MimeType = _helper.MimeFor(OfficeMimeType.ExcelLegacy);
-                return result;
-            }
-            catch (NPOI.EncryptedDocumentException)
-            {
-                // Not a parse failure: Extract maps this to password-protected.
-                throw;
-            }
-            catch
-            {
-                return null;
-            }
+            _helper.ExtractFirstLayerEmbedded(result, workbook);
+            // Handed to XlsTextExtractor so the workbook is parsed once; MainExtractor releases it.
+            result.ParsedDocument = workbook;
+            result.MimeType = _helper.MimeFor(OfficeMimeType.ExcelLegacy);
+            return result;
         }
 
         // Sheet count/names come straight off the workbook. ActiveSheetIndex is only

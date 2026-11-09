@@ -1,6 +1,7 @@
 using ExtractorOLE.Configuration;
 using ExtractorOLE.DTOs;
 using ExtractorOLE.Exceptions;
+using ExtractorOLE.Helpers.Guardrails;
 using ExtractorOLE.Helpers.Input;
 using System;
 using System.Buffers.Binary;
@@ -68,6 +69,9 @@ namespace ExtractorOLE.Helpers.MimeDetection
                 throw new OversizedNestedContentException(metric);
             }
 
+            // A read fault of the caller's stream, or out-of-memory, propagates instead of being
+            // reported as Unknown (#287).
+            var source = new FaultTrackingStream(stream);
             try
             {
                 // Test-observability only: proves guards above short-circuit before
@@ -75,7 +79,7 @@ namespace ExtractorOLE.Helpers.MimeDetection
                 s_packageOpenAttempts.Increment();
 
                 stream.Position = 0;
-                using var package = Package.Open(new NonClosingStream(stream), FileMode.Open, FileAccess.Read);
+                using var package = Package.Open(source, FileMode.Open, FileAccess.Read);
 
                 if (package.PartExists(WordDocumentPartUri))
                 {
@@ -94,9 +98,9 @@ namespace ExtractorOLE.Helpers.MimeDetection
 
                 return UnknownResult();
             }
-            catch (Exception)
+            catch (Exception ex) when (ParseFailure.IsParseFailure(ex, source))
             {
-                // Not a ZIP/OPC package, or a corrupt/unsupported one -- Unknown, never throw.
+                // Not a ZIP/OPC package, or a corrupt/unsupported one -- Unknown.
                 return UnknownResult();
             }
         }
