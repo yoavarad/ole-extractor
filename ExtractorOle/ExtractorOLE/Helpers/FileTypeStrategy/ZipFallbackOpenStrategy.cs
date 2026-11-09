@@ -1,7 +1,10 @@
 using ExtractorOLE.DTOs;
+using ExtractorOLE.Helpers.Guardrails;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Runtime.ExceptionServices;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -24,20 +27,7 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
         {
             // Pick the flavor from [Content_Types].xml so a pptx pays one package open, not three.
             var flavor = DetectFlavor(new MemoryStream(fileBytes, false));
-            if (flavor != null)
-            {
-                var r = Strategy(flavor.Value).Open(fileBytes);
-                if (r != null) return r;
-            }
-
-            // Last resort: trial opens in the original order, skipping the flavor already tried.
-            foreach (var f in new[] { Flavor.Word, Flavor.Excel, Flavor.PowerPoint })
-            {
-                if (f == flavor) continue;
-                var r = Strategy(f).Open(fileBytes);
-                if (r != null) return r;
-            }
-            return null;
+            return OpenFirst(flavor, f => Strategy(f).Open(fileBytes));
         }
 
         // Stream input (#194, ADR-008): same flavor pick and trial order, each OOXML strategy opening the caller's
@@ -46,19 +36,41 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
         {
             input.Position = 0;
             var flavor = DetectFlavor(input);
-            if (flavor != null)
+            return OpenFirst(flavor, f =>
             {
                 input.Position = 0;
-                var r = Strategy(flavor.Value).Open(input);
-                if (r != null) return r;
-            }
+                return Strategy(f).Open(input);
+            });
+        }
+
+        // Detected flavor first, then trial opens in the original order, skipping the flavor already
+        // tried. A parse failure moves on to the next flavor; anything else (including an encrypted-document
+        // exception, which Extract maps to password-protected) propagates at once (#287).
+        // When every flavor fails to parse, the last parse failure propagates as the cause.
+        private static DocumentExtractionResult? OpenFirst(Flavor? detected, Func<Flavor, DocumentExtractionResult?> open)
+        {
+            var order = new List<Flavor>(3);
+            if (detected != null) order.Add(detected.Value);
             foreach (var f in new[] { Flavor.Word, Flavor.Excel, Flavor.PowerPoint })
             {
-                if (f == flavor) continue;
-                input.Position = 0;
-                var r = Strategy(f).Open(input);
-                if (r != null) return r;
+                if (f != detected) order.Add(f);
             }
+
+            ExceptionDispatchInfo? lastFailure = null;
+            foreach (var f in order)
+            {
+                try
+                {
+                    var r = open(f);
+                    if (r != null) return r;
+                }
+                catch (Exception ex) when (ex is not NPOI.EncryptedDocumentException && ParseFailure.IsParseFailure(ex))
+                {
+                    lastFailure = ExceptionDispatchInfo.Capture(ex);
+                }
+            }
+
+            lastFailure?.Throw();
             return null;
         }
 
@@ -103,7 +115,7 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
                     if (ct.Contains("presentationml", StringComparison.OrdinalIgnoreCase)) return Flavor.PowerPoint;
                 }
             }
-            catch
+            catch (Exception ex) when (ParseFailure.IsParseFailure(ex))
             {
                 // Unreadable content types: fall back to trial opens.
             }

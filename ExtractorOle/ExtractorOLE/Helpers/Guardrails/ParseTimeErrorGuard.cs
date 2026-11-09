@@ -7,6 +7,7 @@ using System;
 using System.Buffers.Binary;
 using System.IO;
 using System.Linq;
+using System.Runtime.ExceptionServices;
 
 namespace ExtractorOLE.Helpers.Guardrails
 {
@@ -60,29 +61,53 @@ namespace ExtractorOLE.Helpers.Guardrails
         }
 
         /// <summary>
-        /// Runs the format's open strategy. A strategy that yields nothing has failed to parse
-        /// the container (open strategies swallow library exceptions and return null), which is
-        /// corrupt-file; a library-level encrypted-document exception is password-protected.
+        /// Runs the format's open strategy. A format-library parse exception (or a strategy that
+        /// yields nothing) is corrupt-file, with the library exception as InnerException; a
+        /// library-level encrypted-document exception is password-protected. Anything else
+        /// (out-of-memory, a disposed stream, a read fault of the caller's stream) is rethrown
+        /// as-is (#287). A supported format with no registered strategy is a registry
+        /// misconfiguration and throws <see cref="InvalidOperationException"/>.
         /// </summary>
         public static DocumentExtractionResult OpenOrThrow(IOpenStrategy? strategy, byte[] fileBytes, string detectedMimeType) =>
-            OpenOrThrow(strategy, s => s.Open(fileBytes), detectedMimeType);
+            OpenOrThrow(strategy, s => s.Open(fileBytes), null, detectedMimeType);
 
         // Byte[] input keeps calling Open(byte[]); stream/path input calls Open(Stream) (#192).
-        internal static DocumentExtractionResult OpenOrThrow(IOpenStrategy? strategy, ExtractionInput input, string detectedMimeType) =>
-            OpenOrThrow(strategy, s => input.OriginalBytes != null ? s.Open(input.OriginalBytes) : s.Open(input.Stream!), detectedMimeType);
-
-        private static DocumentExtractionResult OpenOrThrow(IOpenStrategy? strategy, Func<IOpenStrategy, DocumentExtractionResult?> open, string detectedMimeType)
+        // Stream input is read through a FaultTrackingStream so a read fault of the caller's
+        // stream is told apart from a parse failure (#287).
+        internal static DocumentExtractionResult OpenOrThrow(IOpenStrategy? strategy, ExtractionInput input, string detectedMimeType)
         {
-            if (strategy == null) return new DocumentExtractionResult();
+            if (input.OriginalBytes != null) return OpenOrThrow(strategy, s => s.Open(input.OriginalBytes), null, detectedMimeType);
+
+            var source = new FaultTrackingStream(input.Stream!);
+            return OpenOrThrow(strategy, s => s.Open(source), source, detectedMimeType);
+        }
+
+        private static DocumentExtractionResult OpenOrThrow(IOpenStrategy? strategy, Func<IOpenStrategy, DocumentExtractionResult?> open, FaultTrackingStream? source, string detectedMimeType)
+        {
+            if (strategy == null)
+            {
+                throw new InvalidOperationException($"No open strategy is registered for supported format '{detectedMimeType}'.");
+            }
 
             DocumentExtractionResult? result;
             try
             {
                 result = open(strategy);
             }
+            catch (Exception) when (source?.Fault != null)
+            {
+                // The caller's stream failed. Rethrow its own exception: a library may have
+                // replaced it (System.IO.Packaging throws FileFormatException with no inner).
+                ExceptionDispatchInfo.Throw(source.Fault);
+                throw; // unreachable: ExceptionDispatchInfo.Throw never returns; kept for flow analysis
+            }
             catch (NPOI.EncryptedDocumentException)
             {
                 throw new PasswordProtectedException();
+            }
+            catch (Exception ex) when (ParseFailure.IsParseFailure(ex, source))
+            {
+                throw new CorruptFileException(detectedMimeType, $"the format library could not parse the container ({ex.GetType().Name})", ex);
             }
 
             return result ?? throw new CorruptFileException(detectedMimeType, "the container structure could not be opened by the format library");
@@ -208,7 +233,7 @@ namespace ExtractorOLE.Helpers.Guardrails
                 encrypted = root.EnumerateEntries()
                     .Any(e => e.Name == "EncryptionInfo" || e.Name == "EncryptedPackage");
             }
-            catch (Exception)
+            catch (Exception ex) when (ParseFailure.IsParseFailure(ex))
             {
                 return;
             }
