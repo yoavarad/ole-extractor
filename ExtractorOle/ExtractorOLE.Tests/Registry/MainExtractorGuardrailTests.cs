@@ -29,9 +29,15 @@ namespace ExtractorOLE.Tests.Registry
         {
             public int Lookups { get; private set; }
 
-            public IOpenStrategy? GetOpenStrategy(OfficeMimeType format) { Lookups++; return null; }
+            public IOpenStrategy? GetOpenStrategy(OfficeMimeType format) { Lookups++; return new EmptyOpenStrategy(); }
 
             public ITextExtractor? GetTextExtractor(OfficeMimeType format) { Lookups++; return null; }
+        }
+
+        // A missing strategy throws (#287), so the spy hands out one that opens to an empty result.
+        private sealed class EmptyOpenStrategy : IOpenStrategy
+        {
+            public DocumentExtractionResult? Open(byte[] fileBytes) => new DocumentExtractionResult();
         }
 
         private static (MainExtractor extractor, SpyRegistry spy, List<string> log) Build(MimeDetectionLimits? limits = null)

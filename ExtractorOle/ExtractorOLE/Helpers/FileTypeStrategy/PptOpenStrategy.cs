@@ -1,6 +1,7 @@
 using ExtractorOLE.Helpers.Input;
 using DocumentFormat.OpenXml.Packaging;
 using ExtractorOLE.DTOs;
+using ExtractorOLE.Helpers.Guardrails;
 using NPOI.HPSF;
 using NPOI.POIFS.FileSystem;
 using System;
@@ -66,38 +67,24 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
             DocumentExtractionResult result;
             // One NPOIFSFileSystem over the original .ppt bytes serves both the metadata/macro read
             // and the first-layer embedded walk (each open re-reads the whole compound file).
-            NPOIFSFileSystem fs;
-            try
-            {
-                fs = _openFileSystem(cfbSource);
-            }
-            catch
-            {
-                // Not a readable compound file at all -- nothing to open.
-                return null;
-            }
+            // A compound file or property set that cannot be read propagates the library exception
+            // so ParseTimeErrorGuard can report the cause (#287).
+            NPOIFSFileSystem fs = _openFileSystem(cfbSource);
 
             try
             {
-                try
+                result = new DocumentExtractionResult
                 {
-                    result = new DocumentExtractionResult
-                    {
-                        MimeType = _helper.MimeFor(OfficeMimeType.PowerPointLegacy),
-                    };
-                    ReadFileMetadata(fs, result);
-                    // SlideCount/NotesSlideCount are populated below, best-effort, from the
-                    // converted body; HasMacros is final here since it's sourced from the
-                    // original file directly, independent of whether body conversion succeeds.
-                    var formatMetadata = new PowerPointFormatMetadata();
-                    result.FormatMetadata = formatMetadata;
-                    FieldIsolation.TryPopulate(result, PowerPointOpenStrategy.LeafPath(nameof(PowerPointFormatMetadata.HasMacros)),
-                        () => formatMetadata.HasMacros = fs.Root.HasEntryCaseInsensitive(MacrosStorageName));
-                }
-                catch
-                {
-                    return null;
-                }
+                    MimeType = _helper.MimeFor(OfficeMimeType.PowerPointLegacy),
+                };
+                ReadFileMetadata(fs, result);
+                // SlideCount/NotesSlideCount are populated below, best-effort, from the
+                // converted body; HasMacros is final here since it's sourced from the
+                // original file directly, independent of whether body conversion succeeds.
+                var formatMetadata = new PowerPointFormatMetadata();
+                result.FormatMetadata = formatMetadata;
+                FieldIsolation.TryPopulate(result, PowerPointOpenStrategy.LeafPath(nameof(PowerPointFormatMetadata.HasMacros)),
+                    () => formatMetadata.HasMacros = fs.Root.HasEntryCaseInsensitive(MacrosStorageName));
 
                 // First-layer embedded objects/media are read directly off the *original* .ppt's raw
                 // CFB structure (T-12dfd045), independent of whether body conversion below succeeds.
