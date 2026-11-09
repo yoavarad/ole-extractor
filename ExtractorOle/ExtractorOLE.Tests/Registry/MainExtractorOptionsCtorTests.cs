@@ -1,6 +1,7 @@
 using ExtractorOLE.Abstractions;
 using ExtractorOLE.Configuration;
 using ExtractorOLE.DTOs;
+using ExtractorOLE.Exceptions;
 using ExtractorOLE.Helpers;
 using ExtractorOLE.Helpers.FileTypeStrategy;
 using ExtractorOLE.Registry;
@@ -30,8 +31,7 @@ namespace ExtractorOLE.Tests.Registry
             var limits = new MimeDetectionLimits { MaxFileSizeBytes = 10 };
             var extractor = new MainExtractor(new ExtractionHelper(limits), new NullRegistry(), limits);
             var ex = Record.Exception(() => extractor.Extract(Req(11)));
-            Assert.NotNull(ex);
-            Assert.Contains("size", ex!.Message, StringComparison.OrdinalIgnoreCase);
+            Assert.IsType<FileTooLargeException>(ex);
         }
 
         [Fact]
@@ -39,7 +39,7 @@ namespace ExtractorOLE.Tests.Registry
         {
             var extractor = new MainExtractor(new ExtractionHelper(), new NullRegistry());
             var ex = Record.Exception(() => extractor.Extract(Req(11)));
-            Assert.True(ex == null || !ex.Message.Contains("size", StringComparison.OrdinalIgnoreCase));
+            Assert.IsNotType<FileTooLargeException>(ex);
         }
     }
 }

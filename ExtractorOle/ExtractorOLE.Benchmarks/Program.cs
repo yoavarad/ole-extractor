@@ -25,5 +25,7 @@ if (cpu) config = config.AddDiagnoser(new EventPipeProfiler(EventPipeProfile.Cpu
 if (alloc) config = config.AddDiagnoser(new EventPipeProfiler(EventPipeProfile.GcVerbose));
 
 // No arguments: run everything instead of showing the interactive switcher menu.
-BenchmarkSwitcher.FromAssembly(typeof(ExtractionBenchmarks).Assembly).Run(args.Length == 0 ? ["--filter", "*"] : args, config);
-return 0;
+var summaries = BenchmarkSwitcher.FromAssembly(typeof(ExtractionBenchmarks).Assembly).Run(args.Length == 0 ? ["--filter", "*"] : args, config);
+
+// BenchmarkDotNet's Run does not set an exit code; fail on critical validation errors (e.g. build failure, invalid setup).
+return summaries.Any(s => s.HasCriticalValidationErrors) ? 1 : 0;

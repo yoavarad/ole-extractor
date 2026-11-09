@@ -1,5 +1,7 @@
+using ExtractorOLE.DTOs;
 using NPOI.HPSF;
 using System;
+using System.IO;
 
 namespace ExtractorOLE.Helpers
 {
@@ -16,25 +18,54 @@ namespace ExtractorOLE.Helpers
 
         // OLE EditTime is a FILETIME duration in 100 ns units; OOXML TotalTime is already minutes.
         public static int? EditTimeToMinutes(long editTime100Ns) =>
-            editTime100Ns > 0 ? (int)(editTime100Ns / 600_000_000L) : null;
+            editTime100Ns > 0 && editTime100Ns / 600_000_000L <= int.MaxValue
+                ? (int)(editTime100Ns / 600_000_000L)
+                : null;
 
         public static DateTime? ToUtcOrNull(DateTime? value) =>
             value == null || value == default(DateTime) ? null : value.Value.ToUniversalTime();
 
-        public static void Apply(NPOI.HPSF.SummaryInformation summary, ExtractorOLE.DTOs.FileMetadata metadata)
+        // [ydk:req:extraction/per-field-error-isolation]: each property is its own leaf at
+        // "Metadata.<CSharpName>", so one unreadable source property costs only that property.
+        public static void Apply(SummaryInformation summary, DocumentExtractionResult result)
         {
-            metadata.Title = summary.Title;
-            metadata.Creator = summary.Author;
-            metadata.Created = summary.CreateDateTime;
-            metadata.Modified = summary.LastSaveDateTime;
-            metadata.LastModifiedBy = summary.LastAuthor;
-            metadata.Subject = NullIfEmpty(summary.Subject);
-            metadata.Comments = NullIfEmpty(summary.Comments);
-            metadata.RevisionNumber = ParseInt(summary.RevNumber);
-            metadata.LastPrinted = ToUtcOrNull(summary.LastPrinted);
-            metadata.EditingDurationMinutes = EditTimeToMinutes(summary.EditTime);
-            metadata.Keywords = NullIfEmpty(summary.Keywords);
-            metadata.ApplicationName = NullIfEmpty(summary.ApplicationName);
+            ArgumentNullException.ThrowIfNull(summary);
+            ArgumentNullException.ThrowIfNull(result);
+            var m = result.Metadata;
+
+            Populate(result, nameof(FileMetadata.Title), () => m.Title = summary.Title);
+            Populate(result, nameof(FileMetadata.Creator), () => m.Creator = summary.Author);
+            Populate(result, nameof(FileMetadata.Created), () => m.Created = summary.CreateDateTime);
+            Populate(result, nameof(FileMetadata.Modified), () => m.Modified = summary.LastSaveDateTime);
+            Populate(result, nameof(FileMetadata.LastModifiedBy), () => m.LastModifiedBy = summary.LastAuthor);
+            Populate(result, nameof(FileMetadata.Subject), () => m.Subject = NullIfEmpty(summary.Subject));
+            Populate(result, nameof(FileMetadata.Comments), () => m.Comments = NullIfEmpty(summary.Comments));
+            Populate(result, nameof(FileMetadata.RevisionNumber), () => m.RevisionNumber = ParseInt(summary.RevNumber));
+            Populate(result, nameof(FileMetadata.LastPrinted), () => m.LastPrinted = ToUtcOrNull(summary.LastPrinted));
+            Populate(result, nameof(FileMetadata.EditingDurationMinutes), () => m.EditingDurationMinutes = EditTimeToMinutes(summary.EditTime));
+            Populate(result, nameof(FileMetadata.Keywords), () => m.Keywords = NullIfEmpty(summary.Keywords));
+            Populate(result, nameof(FileMetadata.ApplicationName), () => m.ApplicationName = NullIfEmpty(summary.ApplicationName));
         }
+
+        // The field path of one FileMetadata property, e.g. "Metadata.Created".
+        internal static string MetadataPath(string propertyName) =>
+            $"{nameof(DocumentExtractionResult.Metadata)}.{propertyName}";
+
+        // NPOI's typed HPSF getters unbox the stored value, so a property whose stored variant
+        // type does not match its specified type (e.g. a VT_I4 where a VT_FILETIME belongs)
+        // surfaces as InvalidCastException. That is a malformed source record, so it is
+        // translated here, at the source read only, rather than widening FieldIsolation.Classify.
+        private static void Populate(DocumentExtractionResult result, string propertyName, Action populate) =>
+            FieldIsolation.TryPopulate(result, MetadataPath(propertyName), () =>
+            {
+                try
+                {
+                    populate();
+                }
+                catch (InvalidCastException ex)
+                {
+                    throw new InvalidDataException($"SummaryInformation property for {propertyName} has an unexpected type.", ex);
+                }
+            });
     }
 }

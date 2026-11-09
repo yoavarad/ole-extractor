@@ -67,6 +67,7 @@ namespace ExtractorOLE.StressHarness
 
             // Single-threaded baseline per sample, used below to detect
             // shared-mutable-state corruption once Extract runs concurrently.
+            int baselineFailures = 0;
             var baselines = new Dictionary<byte[], DocumentExtractionResult?>(ReferenceEqualityComparer.Instance);
             foreach (var sample in samples)
             {
@@ -78,13 +79,29 @@ namespace ExtractorOLE.StressHarness
                 {
                     Console.WriteLine($"[baseline] sample failed: {ex.Message}");
                     baselines[sample] = null;
+                    baselineFailures++;
                 }
             }
 
             long mismatches = 0;
+            long unexpectedFailures = 0;
             DocumentExtractionResult ExtractAndCompare(byte[] bytes)
             {
-                var actual = Extract(bytes);
+                DocumentExtractionResult actual;
+                try
+                {
+                    actual = Extract(bytes);
+                }
+                catch (Exception)
+                {
+                    if (baselines.TryGetValue(bytes, out var passed) && passed is not null)
+                    {
+                        Interlocked.Increment(ref unexpectedFailures);
+                    }
+
+                    throw;
+                }
+
                 if (baselines.TryGetValue(bytes, out var baseline) && baseline is not null &&
                     (actual.MimeType != baseline.MimeType || actual.ExtractedText != baseline.ExtractedText))
                 {
@@ -126,10 +143,20 @@ namespace ExtractorOLE.StressHarness
                 mismatches,
                 samples.Count);
 
-            if (mismatches > 0)
+            Environment.ExitCode = ExitCodeFor(samples.Count, baselineFailures, Interlocked.Read(ref unexpectedFailures), mismatches);
+        }
+
+        // Adversarial samples legitimately fail, so a failed baseline is expected; the run fails when
+        // every baseline failed, a sample that passed its baseline fails under load, or results diverge.
+        internal static int ExitCodeFor(int sampleCount, int baselineFailures, long unexpectedFailures, long mismatches)
+        {
+            if (baselineFailures >= sampleCount || unexpectedFailures > 0 || mismatches > 0)
             {
-                Environment.ExitCode = 1;
+                Console.WriteLine($"[FAIL] baseline failures: {baselineFailures}/{sampleCount}, unexpected load failures: {unexpectedFailures}, mismatches: {mismatches}");
+                return 1;
             }
+
+            return 0;
         }
 
         internal static List<byte[]> LoadSamples(string? samplesDir)

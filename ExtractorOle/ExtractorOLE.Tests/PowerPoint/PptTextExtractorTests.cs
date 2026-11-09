@@ -1,3 +1,4 @@
+using System;
 using ExtractorOLE.Abstractions;
 using ExtractorOLE.DTOs;
 using ExtractorOLE.Handlers;
@@ -122,7 +123,7 @@ namespace ExtractorOLE.Tests.PowerPoint
         }
 
         [Fact]
-        public void ExtractText_CompoundFileWithoutPresentationStreams_ReturnsEmptyStringNotNull()
+        public void ExtractText_CompoundFileWithoutPresentationStreams_Throws()
         {
             // Valid CFB (HPSF property streams only) but no "PowerPoint Document"/"Current User" -- the
             // shape PptOpenStrategyTests' metadata fixtures use; body conversion cannot succeed.
@@ -131,19 +132,13 @@ namespace ExtractorOLE.Tests.PowerPoint
             using var ms = new MemoryStream();
             workbook.Write(ms);
 
-            var text = new PptTextExtractor().ExtractText(ms.ToArray());
-
-            Assert.NotNull(text);
-            Assert.Equal(string.Empty, text);
+            Assert.ThrowsAny<Exception>(() => new PptTextExtractor().ExtractText(ms.ToArray()));
         }
 
         [Fact]
-        public void ExtractText_CorruptBytes_ReturnsEmptyStringNotNull()
+        public void ExtractText_CorruptBytes_Throws()
         {
-            var text = new PptTextExtractor().ExtractText(new byte[] { 0x00, 0x01, 0x02, 0x03 });
-
-            Assert.NotNull(text);
-            Assert.Equal(string.Empty, text);
+            Assert.ThrowsAny<Exception>(() => new PptTextExtractor().ExtractText(new byte[] { 0x00, 0x01, 0x02, 0x03 }));
         }
 
         [Fact]
@@ -153,7 +148,7 @@ namespace ExtractorOLE.Tests.PowerPoint
             ServiceRegistration.Register(services);
             var provider = services.BuildServiceProvider();
 
-            var dict = provider.GetRequiredService<IDictionary<OfficeMimeType, ITextExtractor>>();
+            var dict = provider.GetRequiredService<IReadOnlyDictionary<OfficeMimeType, ITextExtractor>>();
 
             Assert.True(dict.ContainsKey(OfficeMimeType.PowerPointLegacy));
             Assert.IsType<PptTextExtractor>(dict[OfficeMimeType.PowerPointLegacy]);

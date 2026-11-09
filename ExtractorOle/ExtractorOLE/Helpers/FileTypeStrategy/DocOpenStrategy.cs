@@ -69,13 +69,20 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
                 var summary = ReadSummaryInformation(fs.Root);
                 if (summary != null)
                 {
-                    MetadataConversions.Apply(summary, result.Metadata);
+                    MetadataConversions.Apply(summary, result);
                 }
 
                 var docSummary = ReadDocumentSummaryInformation(fs.Root);
                 result.FormatMetadata = BuildWordFormatMetadata(fs.Root, summary, docSummary);
 
-                _helper.ExtractFirstLayerEmbedded(result, fs.Root);
+                try
+                {
+                    _helper.ExtractFirstLayerEmbedded(result, fs.Root);
+                }
+                catch (Exception ex) when (ParseFailure.IsParseFailure(ex))
+                {
+                    Console.WriteLine($"Doc first-layer embedded walk failed: {ex.Message}");
+                }
             }
             finally
             {

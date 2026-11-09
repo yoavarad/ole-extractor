@@ -55,7 +55,7 @@ namespace ExtractorOLE.Tests.Registry
         };
 
         private static IOpenStrategy LegacyStrategy(string mime) =>
-            BuildProvider().GetRequiredService<IDictionary<OfficeMimeType, IOpenStrategy>>()[LegacyKind(mime)];
+            BuildProvider().GetRequiredService<IReadOnlyDictionary<OfficeMimeType, IOpenStrategy>>()[LegacyKind(mime)];
 
         private static ZipFallbackOpenStrategy BuildZipFallback()
         {

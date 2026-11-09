@@ -239,7 +239,7 @@ namespace ExtractorOLE.Tests.Excel
             ServiceRegistration.Register(services);
             var provider = services.BuildServiceProvider();
 
-            var dict = provider.GetRequiredService<IDictionary<OfficeMimeType, IOpenStrategy>>();
+            var dict = provider.GetRequiredService<IReadOnlyDictionary<OfficeMimeType, IOpenStrategy>>();
 
             Assert.True(dict.ContainsKey(OfficeMimeType.ExcelLegacy));
             Assert.IsType<XlsOpenStrategy>(dict[OfficeMimeType.ExcelLegacy]);
@@ -319,8 +319,8 @@ namespace ExtractorOLE.Tests.Excel
             var recoveredPayload = ReadOlePackagePayload(objectItems[0].BinaryData);
             Assert.Equal(validPayload, recoveredPayload);
 
-            var logged = capturedOut.ToString();
-            Assert.Contains("corrupt", logged, StringComparison.OrdinalIgnoreCase);
+            Assert.StartsWith("EmbeddedFiles[embedded_object_", Assert.Single(result.FieldErrors).FieldPath);
+            Assert.Equal(string.Empty, capturedOut.ToString());
         }
     }
 }

@@ -124,7 +124,8 @@ namespace ExtractorOLE.Tests.PowerPoint
             Assert.NotNull(result);
             Assert.Equal(2, result!.EmbeddedFiles.Count);
             Assert.DoesNotContain(result.EmbeddedFiles, f => f.PackagePath == corruptedPartUri);
-            Assert.False(string.IsNullOrEmpty(capturedError.ToString()));
+            Assert.Equal($"EmbeddedFiles[{corruptedPartUri}]", Assert.Single(result.FieldErrors).FieldPath);
+            Assert.Equal(string.Empty, capturedError.ToString());
         }
     }
 }

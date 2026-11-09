@@ -2,6 +2,7 @@ using ExtractorOLE.Abstractions;
 using ExtractorOLE.Helpers.Guardrails;
 using ExtractorOLE.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using ExtractorOLE.DTOs;
 using ExtractorOLE.Handlers;
@@ -58,7 +59,7 @@ namespace ExtractorOLE
             services.AddSingleton<DocOpenStrategy>();
 
             // Map enum to strategy implementation
-            services.AddSingleton<IDictionary<OfficeMimeType, IOpenStrategy>>(sp =>
+            services.AddSingleton<IReadOnlyDictionary<OfficeMimeType, IOpenStrategy>>(sp =>
             {
                 var dict = new Dictionary<OfficeMimeType, IOpenStrategy>
                 {
@@ -70,7 +71,7 @@ namespace ExtractorOLE
                     [OfficeMimeType.PowerPointLegacy] = sp.GetRequiredService<PptOpenStrategy>(),
                     [OfficeMimeType.WordLegacy] = sp.GetRequiredService<DocOpenStrategy>(),
                 };
-                return dict;
+                return dict.ToFrozenDictionary();
             });
 
             // Text-extraction components (one per format, stateless singletons)
@@ -81,7 +82,7 @@ namespace ExtractorOLE
             services.AddSingleton<DocTextExtractor>();
             services.AddSingleton<PptTextExtractor>();
 
-            services.AddSingleton<IDictionary<OfficeMimeType, ITextExtractor>>(sp =>
+            services.AddSingleton<IReadOnlyDictionary<OfficeMimeType, ITextExtractor>>(sp =>
             {
                 var dict = new Dictionary<OfficeMimeType, ITextExtractor>
                 {
@@ -92,15 +93,15 @@ namespace ExtractorOLE
                     [OfficeMimeType.WordLegacy] = sp.GetRequiredService<DocTextExtractor>(),
                     [OfficeMimeType.PowerPointLegacy] = sp.GetRequiredService<PptTextExtractor>(),
                 };
-                return dict;
+                return dict.ToFrozenDictionary();
             });
 
             // Format dispatch registry (ydk:req:extraction/format-extensibility):
             // the single DI-registered seam MainExtractor resolves open/text-extraction
             // components through, keyed by format.
             services.AddSingleton<IFormatDispatchRegistry>(sp => new FormatDispatchRegistry(
-                sp.GetRequiredService<IDictionary<OfficeMimeType, IOpenStrategy>>(),
-                sp.GetRequiredService<IDictionary<OfficeMimeType, ITextExtractor>>()));
+                sp.GetRequiredService<IReadOnlyDictionary<OfficeMimeType, IOpenStrategy>>(),
+                sp.GetRequiredService<IReadOnlyDictionary<OfficeMimeType, ITextExtractor>>()));
 
             // Main extractor
             services.AddSingleton(sp => new MainExtractor(sp.GetRequiredService<IExtractionHelper>(), sp.GetRequiredService<IFormatDispatchRegistry>(), sp.GetRequiredService<ExtractionGuardrails>()));

@@ -183,6 +183,68 @@ namespace ExtractorOLE.Tests.Registry
         }
 
         [Fact]
+        public void OversizedFilePath_IsRejectedFromItsLength_BeforeReading()
+        {
+            var path = Path.GetTempFileName();
+            try
+            {
+                File.WriteAllBytes(path, new byte[11]); // not a valid docx: reading it would raise a different error
+                var request = Request(DocxMime);
+                request.FilePath = path;
+
+                var ex = Assert.Throws<FileTooLargeException>(() => BuildExtractor(maxFileSizeBytes: 10).Extract(request));
+
+                Assert.Equal(11, ex.ActualBytes);
+            }
+            finally
+            {
+                File.Delete(path);
+            }
+        }
+
+        [Fact]
+        public void FailedOoxmlOpenAttempt_LeavesCallerStreamOpen_SoALaterAttemptSucceeds()
+        {
+            var bytes = Generate(DocxMime, "retry after failed open");
+            var services = new ServiceCollection();
+            ServiceRegistration.Register(services);
+            var helper = services.BuildServiceProvider().GetRequiredService<ExtractorOLE.Helpers.IExtractionHelper>();
+            var word = new WordOpenStrategy(helper);
+            using var stream = new MemoryStream(bytes, writable: false);
+
+            // An Excel open of a Word package fails; the stream must survive it.
+            var excel = new ExcelOpenStrategy(helper);
+            var failed = Record.Exception(() => excel.Open(stream));
+            Assert.True(stream.CanRead);
+            Assert.True(stream.CanSeek);
+
+            stream.Position = 0;
+            var result = word.Open(stream);
+            Assert.NotNull(result);
+            ((IDisposable)result!.ParsedDocument!).Dispose();
+            Assert.True(stream.CanRead);
+            _ = failed;
+        }
+
+        [Fact]
+        public void ZipFallback_StreamOpen_ReturnsPackageAndLeavesStreamOpen()
+        {
+            var bytes = Generate(XlsxMime, "fallback trial");
+            var services = new ServiceCollection();
+            ServiceRegistration.Register(services);
+            var helper = services.BuildServiceProvider().GetRequiredService<ExtractorOLE.Helpers.IExtractionHelper>();
+            var fallback = new ZipFallbackOpenStrategy(new WordOpenStrategy(helper), new ExcelOpenStrategy(helper), new PowerPointOpenStrategy(helper));
+            using var stream = new MemoryStream(bytes, writable: false);
+
+            var result = fallback.Open(stream);
+
+            Assert.NotNull(result);
+            Assert.IsType<DocumentFormat.OpenXml.Packaging.SpreadsheetDocument>(result!.ParsedDocument);
+            ((IDisposable)result.ParsedDocument!).Dispose();
+            Assert.True(stream.CanRead);
+        }
+
+        [Fact]
         public void CutShortStreamInput_RaisesTheSameParseTimeErrorAsBytes()
         {
             var bytes = Generate(DocxMime, "cut short");
