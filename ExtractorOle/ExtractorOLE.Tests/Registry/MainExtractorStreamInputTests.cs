@@ -210,14 +210,20 @@ namespace ExtractorOLE.Tests.Registry
             ServiceRegistration.Register(services);
             var helper = services.BuildServiceProvider().GetRequiredService<ExtractorOLE.Helpers.IExtractionHelper>();
             var word = new WordOpenStrategy(helper);
-            using var stream = new MemoryStream(bytes, writable: false);
+            // A non-package stream is a true open failure: a Word-flavored package opened as Excel no longer
+            // throws since per-field isolation (it yields FieldErrors), so corrupt bytes are used instead.
+            using var stream = new MemoryStream();
+            stream.Write(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 });
+            stream.Position = 0;
 
-            // An Excel open of a Word package fails; the stream must survive it.
-            var excel = new ExcelOpenStrategy(helper);
-            Assert.ThrowsAny<Exception>(() => excel.Open(stream));
+            // The failed open must leave the caller's stream usable.
+            Assert.ThrowsAny<Exception>(() => word.Open(stream));
             Assert.True(stream.CanRead);
             Assert.True(stream.CanSeek);
 
+            // Replace the contents with a valid package; the same stream serves the later attempt.
+            stream.SetLength(0);
+            stream.Write(bytes);
             stream.Position = 0;
             var result = word.Open(stream);
             Assert.NotNull(result);
