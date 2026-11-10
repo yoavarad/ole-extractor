@@ -2,6 +2,9 @@
 
 ## Status
 Proposed (2026-11-10). Spec branch `spec/password-decryption`.
+Amended 2026-11-10 by [ADR-013](013-legacy-doc-ppt-decryption.md). Encrypted doc (RC4, RC4 CryptoAPI)
+and ppt (RC4 CryptoAPI) are now decrypted, XOR-obfuscated doc stays deferred, and the statements
+below about today's doc/ppt behaviour are corrected. See "Amendment" at the end.
 
 ## Context
 Until now, decryption was out of scope. Every encrypted file failed as `PASSWORD_PROTECTED`, even
@@ -57,8 +60,9 @@ never checks them. doc/ppt bodies go through b2xtranslator, which has no decrypt
    `THIRD-PARTY-NOTICES` entry records the Apache-2.0 origin (ASF / nissl-lab NPOI).
 3. **New error `INVALID_PASSWORD`** (`ydk:error:extraction/invalid-password`) for a supplied
    password that fails the scheme's verifier. It is fatal only. `PASSWORD_PROTECTED` keeps meaning
-   "no password supplied", and also "encryption this library does not decrypt": encrypted doc/ppt,
-   Extensible encryption and IRM.
+   "no password supplied", and also "encryption this library does not decrypt": XOR-obfuscated
+   doc and other doc schemes outside ADR-013, Extensible encryption and IRM. (Amended by ADR-013:
+   this list used to include all encrypted doc/ppt.)
 4. **A password supplied for an unencrypted file is ignored**, for all six formats including doc
    and ppt. There is no error and no warning `FieldError`, and the result is identical to the
    no-password call. A password is something the caller *has*, not a claim that the file is
@@ -94,7 +98,8 @@ never checks them. doc/ppt bodies go through b2xtranslator, which has no decrypt
   itself is not new to our build. The new weight is OpenXml4Net, OpenXmlFormats and
   Cryptography.Xml, plus a second, parallel OOXML object model next to DocumentFormat.OpenXml.) It
   would also not give us the integrity check, which NPOI does not perform.
-- **Custom RC4/CryptoAPI decryptor for doc/ppt.** Deferred. b2xtranslator cannot read encrypted
+- **Custom RC4/CryptoAPI decryptor for doc/ppt.** Deferred here; taken up by ADR-013, which
+  decrypts with NPOI main's decryptors and rebuilds a plain compound file. Original text: b2xtranslator cannot read encrypted
   streams, so we would have to decrypt each stream to a plain CFB ourselves (FIB/table/data streams
   for doc; the persist-object directory and `CryptSession10Container` handling for ppt) and then feed
   b2xtranslator. That is a substantial, format-specific body of crypto code with no upstream to track.
@@ -124,10 +129,25 @@ never checks them. doc/ppt bodies go through b2xtranslator, which has no decrypt
 - `samples/adversarial/password-protected.docx` is a Word-written wrapper that carries a
   `WordDocument` stub. Without a password it will now detect as Unknown, not Doc, so its manifest
   expectation must be re-observed.
-- Encrypted doc/ppt must fail as `PASSWORD_PROTECTED` rather than with whatever the conversion
-  library happens to throw. Today's behavior for them is unverified, because the corpus has no
-  encrypted doc/ppt sample. The implementing task observes it and, if needed, adds an explicit
-  encrypted-flag check.
+- Encrypted doc/ppt must fail as `PASSWORD_PROTECTED` (no password) rather than with whatever the
+  conversion library happens to throw. *Corrected by ADR-013:* this was written as "unverified",
+  and running it showed the library does not fail at all. An encrypted doc returns a success
+  result with empty text and one `UnexpectedFieldFailure`. An encrypted ppt returns a partial
+  result with three `UnexpectedFieldFailure` entries and hands back its encrypted `Pictures`
+  stream as a subfile. An explicit encryption guard before parsing is therefore required
+  (ADR-013 decision 2).
 - Agile key derivation costs about 100,000 SHA-512 rounds per verification, and a detect-then-extract
   pipeline pays it twice. The cost is accepted. Encrypted samples are excluded from the latency
   baseline (`ydk:nfr:extraction/extraction-latency`), which measures unencrypted extraction.
+
+## Amendment (2026-11-10, ADR-013)
+- Encrypted doc (BinaryRC4, RC4 CryptoAPI) and encrypted ppt (RC4 CryptoAPI) move from deferred to
+  decrypted. With the correct password they extract like their unencrypted versions, and the
+  outcomes of decisions 1, 3 and 4 apply to them unchanged. Design and rules: ADR-013,
+  `ydk:req:extraction/legacy-decryption`.
+- XOR-obfuscated doc stays `PASSWORD_PROTECTED` with or without a password, deferred until
+  yoavarad/npoi#198 and a fixture exist.
+- XOR-obfuscated xls (decision 2, via HSSF) remains in scope, but it is blocked on
+  yoavarad/npoi#197. Until that re-pin, the correct password fails as `CORRUPT_FILE`.
+- Decision 5 is unchanged: detection still classifies encrypted doc/ppt from the plain directory
+  without using the password.

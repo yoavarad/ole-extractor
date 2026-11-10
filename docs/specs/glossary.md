@@ -49,3 +49,21 @@ DO NOT USE: "password" for modify/write-protection or sheet-protection passwords
 
 **Encrypted package** — an OOXML document stored encrypted inside a CFB wrapper, per the Office encryption standard. It is classified and extracted as its inner OOXML format once decrypted.
 DO NOT USE: "password-protected docx" as a format name; "encrypted CFB" alone (encrypted doc/xls/ppt are also encrypted CFB files, but they are not encrypted packages).
+
+**BinaryRC4** — the older RC4 encryption of binary Office files (MS-OFFCRYPTO, encryption header version 1.1): MD5-based key derivation, 40-bit effective key. Used by doc and xls; not allowed for ppt.
+DO NOT USE: "RC4" alone when the scheme matters (RC4 CryptoAPI also uses RC4); "Office 97 encryption".
+
+**RC4 CryptoAPI** — the CryptoAPI-based RC4 encryption of binary Office files (MS-OFFCRYPTO, header versions 2.2/3.2/4.2): SHA-1 key derivation, 40- to 128-bit keys. Used by doc and xls, and the only scheme ppt allows.
+DO NOT USE: "strong encryption", "CryptoAPI encryption" without RC4.
+
+**XOR obfuscation** — the weakest password scheme for binary Office files (MS-OFFCRYPTO 2.3.7): a password-derived 16-byte array XORed over the data. Method 1 is used by xls, Method 2 by doc. It does not exist for ppt or OOXML. XOR doc is deferred (ADR-013).
+DO NOT USE: "XOR encryption" (the spec calls it obfuscation), "weak encryption" as a scheme name.
+
+**Current User token** — the `headerToken` field of a ppt's Current User stream: `0xF3D1C4DF` marks an encrypted presentation, `0xE391C05F` a plain one. The rebuilt plain compound file rewrites it to the plain value ([ydk:req:extraction/legacy-plaintext-rebuild]). Whether a ppt is encrypted is decided by its edit-chain structure, not by the token alone.
+DO NOT USE: "encryption flag" for ppt (that is the doc FIB's `fEncrypted`).
+
+**Persist object** — one record tree in a ppt's PowerPoint Document stream that is addressed through the persist directory by a persist id. In an encrypted ppt each persist object, except the `CryptSession10Container`, is encrypted as one RC4 run keyed by its persist id.
+DO NOT USE: "slide record" or "block" for a persist object.
+
+**EncryptedSummary** — the ppt stream that holds the document property streams in encrypted form when the encryption header leaves the properties encrypted (MS-OFFCRYPTO 2.3.5.4). Word and Excel use the same layout under the name `encryption`. On rebuild it is replaced by real summary-information streams.
+DO NOT USE: "encrypted metadata stream", or "EncryptedSummary" for the doc/xls `encryption` stream.

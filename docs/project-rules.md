@@ -25,6 +25,7 @@ Repo `ExtractorOle/` has a pre-existing scaffold:
 - **Analyzer findings get fixed, not suppressed** ([ADR-009](adrs/009-analyzer-compliance-over-api-stability.md)): this includes cases where the fix breaks the public API. If it does, record the break in `CHANGELOG.md`. Enum type names do not end in `Enum` (CA1711). An `ArgumentException`'s `paramName` must be a real parameter of the method, with the bad property named in the message (CA2208).
 - **A document password never leaves the call** ([ADR-012](adrs/012-password-protected-decryption.md), `ydk:req:extraction/password-confidentiality`): never log, interpolate into an exception or `FieldError` message, copy onto a result, or store in a field/static/cache the value of a request `Password` (nor its length, hash, derived keys or decrypted bytes). Logging *whether* a password was supplied is fine. Tests on password paths use a distinctive sentinel password and assert it appears nowhere in logs, exception text or serialized results.
 - **A supplied password never makes an unencrypted file fail** (ADR-012): it is ignored for all six formats. No error, no warning `FieldError`.
+- **Encrypted doc/ppt are detected before any parse and rebuilt, never parsed encrypted** ([ADR-013](adrs/013-legacy-doc-ppt-decryption.md), `ydk:req:extraction/legacy-decryption`). Validate every encryption-header field yourself before NPOI sees it, and map violations to `CORRUPT_FILE`. NPOI ignores `headerSize` and `keySize`, so a corrupt header would otherwise look like a wrong password. Never call NPOI `CryptoAPIDecryptor.GetDataStream(DirectoryNode)`: its descriptor count is unbounded and it hard-codes `EncryptedSummary`. Rebuild the plain compound file into a **fresh** `NPOIFSFileSystem`; never use OpenMcdf or an in-place NPOI edit, because b2xtranslator rejects both outputs.
 
 ## Known Gotchas
 
@@ -68,6 +69,7 @@ Repo `ExtractorOle/` has a pre-existing scaffold:
 | Legacy .doc/.ppt body (converted to OOXML in-process) | `b2xtranslator` (org fork, submodule) | [ADR-004](adrs/004-legacy-doc-ppt-parsing.md) |
 | Authoring legacy samples (SampleGenerator only) | Hand-written [MS-DOC]/[MS-PPT] on NPOI POIFS; `HSSFWorkbook` for .xls | [ADR-005](adrs/005-legacy-doc-ppt-authoring.md) |
 | Agile OOXML decryption | Ported from NPOI `ooxml` (Apache-2.0), decrypt side only | [ADR-012](adrs/012-password-protected-decryption.md) |
+| Legacy doc/ppt decryption + plain rebuild | NPOI `main` decryptors (`EncryptionInfo`, `BinaryRC4Decryptor`, `CryptoAPIDecryptor`) + `NPOIFSFileSystem` writer; ppt Pictures walker ported from Apache POI (Apache-2.0) | [ADR-013](adrs/013-legacy-doc-ppt-decryption.md) |
 | CFB introspection / mime-sniffing | `OpenMcdf` ≥3.1.3 | [ADR-001](adrs/001-extraction-library-stack.md) |
 | Time profiling | `BenchmarkDotNet` | [ADR-002](adrs/002-profiling-and-stress-testing.md) |
 | Stress testing | Hand-rolled harness | [ADR-002](adrs/002-profiling-and-stress-testing.md) |

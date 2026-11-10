@@ -56,14 +56,27 @@ Every failure after the container opens is isolated to the leaf it affects and r
 
 A caller holding a document's open password supplies it on [ydk:entity:extraction/ExtractionRequest]; the field is optional and defaults to "no password". The rules are in [ydk:req:extraction/password-decryption] and the reasoning in ADR-012.
 
-- **Decrypted formats.** Encrypted docx, xlsx and pptx (including the macro variants) using Agile or Standard encryption (the two package encryptions Office writes), and encrypted xls, are decrypted in memory with the password and then extracted exactly like their unencrypted versions. Every leaf matches the unencrypted twin; the only difference is the file size, which stays the size of the bytes the caller supplied.
+- **Decrypted formats.** Encrypted docx, xlsx and pptx (including the macro variants) using Agile or Standard encryption (the two package encryptions Office writes), encrypted xls, encrypted doc (RC4 or RC4 CryptoAPI) and encrypted ppt (RC4 CryptoAPI) are decrypted in memory with the password and then extracted exactly like their unencrypted versions. Every leaf matches the unencrypted twin; the only difference is the file size, which stays the size of the bytes the caller supplied.
 - **No password** for one of those files fails the call with [ydk:error:extraction/password-protected], as before.
 - **Wrong password** fails the call with [ydk:error:extraction/invalid-password]. The password is checked before any document content is decrypted, so a wrong password is never reported as a corrupt file and never produces a partial result.
-- **Encrypted doc and ppt** still fail with [ydk:error:extraction/password-protected], with or without a password. Decrypting them is deferred. The same applies to any Office package encryption other than Agile or Standard, such as Extensible encryption or rights-management protection.
+- **Encryptions the library does not decrypt** fail with [ydk:error:extraction/password-protected], with or without a password. These are XOR-obfuscated doc (deferred), doc schemes other than RC4 and RC4 CryptoAPI, and Office package encryption other than Agile or Standard, such as Extensible encryption or rights-management protection.
+- **XOR-obfuscated xls** is decrypted by the same mechanism as the other xls schemes once an upstream fix is pulled in (yoavarad/npoi#197). Until then the correct password fails as [ydk:error:extraction/corrupt-file].
 - **Unencrypted file with a password.** The password is ignored for all six formats, doc and ppt included: the call proceeds normally and returns exactly the no-password result, with no error and no field error.
 - **xls with only Excel's built-in default key** has no open password. It extracts with or without a supplied password, and a supplied password is ignored.
 
 Ordering and guards. [ydk:error:extraction/file-too-large] is judged on the encrypted bytes as supplied. The encrypted package's declared decrypted size is checked against [ydk:nfr:extraction/nesting-depth-guard] before any buffer is allocated, and a package that declares more than it holds is [ydk:error:extraction/truncated-container]. A key-derivation cost above the format's own maximum is [ydk:error:extraction/corrupt-file]: it is refused before any work is spent on it. A package whose password is correct but whose integrity check fails, meaning the encrypted bytes were altered, is also [ydk:error:extraction/corrupt-file], never [ydk:error:extraction/invalid-password]. After decryption, the package goes through every guard, error rule and per-field rule that the unencrypted package would. Once decryption has succeeded, a failure is an ordinary failure of that format.
+
+Legacy doc and ppt ([ydk:req:extraction/legacy-decryption], ADR-013). An encrypted doc or ppt is recognised before any parse, from the doc's file information block or from the ppt's current-user record and edit chain. With no password the call fails right there, so an encrypted doc/ppt never comes back as an empty or partial result. With a password, the following happens in order:
+
+1. Every size and offset in the encryption header is checked ([ydk:req:extraction/legacy-encryption-header-bounds]). A bad value is [ydk:error:extraction/corrupt-file], never [ydk:error:extraction/invalid-password].
+2. The password is verified.
+3. The encrypted streams are decrypted.
+4. A plain copy of the file is rebuilt in memory ([ydk:req:extraction/legacy-plaintext-rebuild]) and extracted by the unchanged doc/ppt path.
+
+The ppt's picture store is decrypted too, so the pictures subfile is the readable one. Known limits of this increment are listed with their exact behaviour in [ydk:req:extraction/legacy-decryption]:
+
+- The encrypted document properties of a CryptoAPI doc are not read. This is reported as a field error at `Metadata`.
+- OLE objects that a CryptoAPI doc moves into its Data stream are not returned.
 
 Scope. The password applies only to the container the caller supplied. An embedded subfile that is itself encrypted is returned as one opaque item, as before, and is never decrypted or reported as an error. Decrypted bytes live only for the duration of the call.
 

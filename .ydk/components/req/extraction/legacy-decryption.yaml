@@ -1,0 +1,177 @@
+$schema: ydk:schema:req
+id: ydk:req:extraction/legacy-decryption
+description: >
+  A caller holding the open password of an encrypted legacy doc (RC4 or RC4
+  CryptoAPI) or ppt (RC4 CryptoAPI) can supply it, and the file is then
+  decrypted in memory into a plain compound file and extracted exactly like
+  its unencrypted version. Encrypted doc/ppt are detected before any parse,
+  so they never come back as an empty or partial result.
+type: business-rule
+priority: high
+rule: >
+  Detection (Extract only). After the compound-file preflight and before any
+  open strategy or b2xtranslator call, the library decides whether a doc or
+  ppt is encrypted. DetectMimeType does not change: encrypted doc/ppt
+  classify as Doc/Ppt from their plain directory, and the password is
+  neither used nor verified there.
+
+  How a doc is detected. Read only the first 68 bytes of the WordDocument
+  stream. If the stream is shorter than 68 bytes or wIdent is not 0xA5EC,
+  this path does not apply and the existing pipeline reports the file as
+  it does today. Otherwise read the FIB base flags word at offset 0x0A.
+  fEncrypted (0x0100) = 0 means plain. fEncrypted = 1 with fObfuscated
+  (0x8000) = 1 means XOR obfuscation. fEncrypted = 1 with fObfuscated = 0
+  means an RC4 scheme: lKey (offset 0x0E) is the size of the encryption
+  header at the start of the table stream ("1Table" if fWhichTblStm 0x0200
+  is set, else "0Table"). Header version 1.1 is BinaryRC4; versions 2.2,
+  3.2 and 4.2 are RC4 CryptoAPI; anything else is a scheme this library
+  does not decrypt.
+
+  How a ppt is detected. Read the Current User stream: headerToken at
+  offset 12, offsetToCurrentEdit at offset 16. Walk the UserEditAtom chain
+  in the PowerPoint Document stream, newest first, merging the persist
+  directories with the newest entry winning. Take
+  encryptSessionPersistIdRef from the newest UserEditAtom only (it is
+  present when that atom's recLen is 0x20). The file is encrypted when that
+  id resolves to a CryptSession10Container record (recVer/recInstance
+  0x000F, recType 0x2F14). The structure decides, not the token:
+    - token 0xE391C05F and no ref, or a ref that is not in the persist
+      map: not encrypted, today's path unchanged;
+    - token 0xE391C05F and a ref that resolves to 0x2F14: encrypted;
+    - token 0xF3D1C4DF and a ref that resolves to 0x2F14: encrypted;
+    - token 0xF3D1C4DF and the structure absent, unresolvable, of another
+      record type or unreadable: PASSWORD_PROTECTED with no password,
+      CORRUPT_FILE with one;
+    - any other token: not touched here.
+  When the token is 0xE391C05F and a structural read fails, the answer is
+  "not encrypted", so unencrypted files see no change in behaviour.
+
+  Outcomes on Extract(), in this order:
+    1. Encrypted doc/ppt and no password (null or empty):
+       [ydk:error:extraction/password-protected], raised before any
+       table-stream read or key derivation. This applies to every scheme,
+       XOR included.
+    2. A scheme this library does not decrypt:
+       [ydk:error:extraction/password-protected], even with a password.
+       For doc this means XOR (fObfuscated = 1), a header version other
+       than 1.1 or {2,3,4}.2 (for example 4.4 Agile), the fExternal (0x10)
+       or fAES (0x20) flag, AlgID other than 0x6801 (RC4), or AlgIDHash
+       other than 0x8004 (SHA-1) or 0. For ppt only RC4 CryptoAPI is legal,
+       so any other value is malformed, see step 3.
+    3. Header and structure fields are validated per
+       [ydk:req:extraction/legacy-encryption-header-bounds]. A violation is
+       [ydk:error:extraction/corrupt-file] in its container-level role, and
+       is never reported as invalid-password.
+    4. The password is verified with the scheme's verifier before any
+       document content is decrypted. A mismatch is
+       [ydk:error:extraction/invalid-password]. A password longer than 255
+       UTF-16 code units is truncated to 255 (POI/NPOI behaviour).
+    5. The streams are decrypted and a plain compound file is rebuilt per
+       [ydk:req:extraction/legacy-plaintext-rebuild]. From then on the call
+       runs the unchanged doc/ppt pipeline on the rebuilt bytes: every
+       guard, every open strategy, every per-field rule. The result is equal,
+       leaf for leaf, to extracting the unencrypted equivalent, except
+       FileMetadata.FileSizeBytes, which stays the size of the supplied
+       (encrypted) input.
+  A password supplied for an unencrypted doc/ppt is ignored, as it is for
+  every format ([ydk:req:extraction/password-decryption]).
+
+  Decryption rules for doc (MS-DOC 2.2.6.2, 2.2.6.3). Decrypt WordDocument
+  except its first 68 bytes, the table stream except its first lKey bytes,
+  and the whole Data stream. Use 512-byte blocks: block number = stream
+  offset / 512, with the RC4 key reset for each block. The keystream
+  position counts from stream offset 0, so the clear prefix still consumes
+  keystream. All other streams and storages are not encrypted and are
+  copied unchanged. A 40-bit CryptoAPI key is padded with 11 zero bytes to
+  16 bytes, as POI/NPOI do.
+
+  Decryption rules for ppt (MS-PPT 2.3.7). Decrypt every persist object in
+  the merged persist map except the CryptSession10Container. Use one RC4
+  run per object, keyed with block = persist id, covering the 8-byte
+  record header and then recLen bytes read from the decrypted header; there
+  is no 512-byte re-keying. The Current User stream, every UserEditAtom,
+  every PersistDirectoryAtom and the CryptSession10Container record are
+  never encrypted and are left as they are. Pictures and EncryptedSummary
+  are covered in [ydk:req:extraction/legacy-plaintext-rebuild].
+
+  Cancellation and confidentiality. Cancellation is checked between
+  streams. The password, derived keys and decrypted arrays follow
+  [ydk:req:extraction/password-confidentiality]: key arrays are zeroed
+  after use, and none of them appears in an exception, a log entry or a
+  FieldError.
+
+  Deferred and blocked.
+    - XOR-obfuscated doc (MS-OFFCRYPTO 2.3.7.4 to 2.3.7.6, Method 2) is
+      DEFERRED and stays PASSWORD_PROTECTED with or without a password.
+      It depends on yoavarad/npoi#198 (Method 2 primitives) and a
+      Word-authored XOR fixture.
+    - XOR-obfuscated xls (Method 1) is in scope under
+      [ydk:req:extraction/password-decryption] but BLOCKED on
+      yoavarad/npoi#197. At npoi 72ff7c7 the correct password fails with
+      RecordFormatException, which is mapped to CORRUPT_FILE. Its
+      acceptance test is gated on the re-pin.
+    - ppt has no XOR scheme.
+
+  Known gaps, each with its chosen behaviour. These have no fixture
+  unless stated, and each is a test-gap or risk statement, not a
+  guarantee:
+    - G1, 40-bit CryptoAPI doc. Supported: the key is padded as above. Not
+      run against a real file, because no 40-bit doc fixture exists. The
+      ppt fixtures do prove the 40-bit derivation for ppt.
+    - G2, CryptoAPI doc with encrypted document properties: the flag
+      fDocProps (0x08) is clear, \x05SummaryInformation is absent and an
+      "encryption" stream is present. In v1 the properties are not
+      decrypted. The general-metadata leaves stay at their no-value
+      state, and one FieldError with code CORRUPT_FILE is recorded at
+      path "Metadata", so the gap is never silent. Body text and subfiles
+      are unaffected. The follow-up depends on yoavarad/npoi#199 (stream
+      name "encryption", bounded descriptor count) or on reusing the ppt
+      encrypted-summary parser, plus a fixture.
+    - G3, CryptoAPI doc with OLE objects. MS-DOC 2.2.6.3 forbids an
+      ObjectPool storage here and moves each object into the Data stream
+      behind an FOBJH header. The library only walks ObjectPool, so the
+      decrypted file returns 0 EmbeddedFiles for those objects, with no
+      FieldError, because the relocation cannot be seen without a
+      Data-stream walker. This is a documented limitation and a follow-up
+      task. Body-text conversion is expected to survive (b2xtranslator
+      skips missing OLE storages), but that is unverified. A BinaryRC4 doc
+      keeps a normal, unencrypted ObjectPool and is not affected.
+    - G4, ppt whose token and structure disagree. Handled by the
+      detection table above, which is a design choice. No real-world
+      sample disagrees, and all five fixtures agree.
+    - G5, storage descriptors inside EncryptedSummary (flags bit 0 = 0).
+      Skipped without error; only stream descriptors are rebuilt.
+  Pictures and macros. HasMacros is decided from the plain directory, so
+  it is the same for an encrypted file and its rebuild.
+failure_behavior: >
+  [ydk:error:extraction/password-protected] when no password is supplied, or
+  the doc scheme is not decryptable (XOR, unsupported version, flag or
+  algorithm); [ydk:error:extraction/invalid-password] when the verifier
+  rejects a supplied password; [ydk:error:extraction/corrupt-file]
+  (container-level) for malformed encryption headers and structures per
+  [ydk:req:extraction/legacy-encryption-header-bounds]; after the rebuild,
+  the ordinary errors and FieldErrors of the doc/ppt pipeline.
+related_components:
+  - ydk:req:extraction/password-decryption
+  - ydk:req:extraction/legacy-encryption-header-bounds
+  - ydk:req:extraction/legacy-plaintext-rebuild
+  - ydk:req:extraction/password-confidentiality
+  - ydk:req:extraction/per-field-error-isolation
+  - ydk:contract:extraction/extract
+  - ydk:contract:extraction/detect-mime-type
+  - ydk:entity:extraction/ExtractionRequest
+  - ydk:error:extraction/password-protected
+  - ydk:error:extraction/invalid-password
+  - ydk:error:extraction/corrupt-file
+acceptance_criteria:
+  - "Test (doc, correct password): password_tika_binaryrc4.doc / 'tika' -> text 'This is an encrypted Word 2007 File.', creator 'Antoni', 0 FieldErrors, 0 EmbeddedFiles; password_password_cryptoapi.doc / 'password' -> text 'This is a test', creator 'kiwiwings', 0 FieldErrors; rc4cryptoapi_password.doc / 'Password1234_' -> result equal leaf for leaf to its upstream plaintext twin rc4cryptoapi_password_plain.doc (text 'lorem ipsum'), FileSizeBytes excepted."
+  - "Test (ppt, correct password): Password_Protected-hello.ppt and Password_Protected-56-hello.ppt / 'hello' -> the 147-character text recorded in the manifest, Title 'This is a protected document', SlideCount 1, NotesSlideCount 1, 0 FieldErrors; Password_Protected-np-hello.ppt / 'hello' -> 177-character text; cryptoapi-proc2356.ppt / 'crypto' -> Title 'RC4 CryptoAPI Encryption', Creator 'Dominic Salemno', decrypted Pictures subfile (SHA-256 recorded in the manifest, not the ciphertext's); ppt_with_png_encrypted.ppt / 'password' -> Pictures subfile whose second picture is byte-identical to the PNG in ppt_with_png.ppt."
+  - "Test: every encrypted doc/ppt fixture with no password throws PASSWORD_PROTECTED and with a wrong password throws INVALID_PASSWORD; neither returns a result, and neither returns ciphertext as a subfile. PasswordProtected.doc (password unknown) is used for these two cases only."
+  - "Test: the guard runs before parsing. With no password, no b2xtranslator conversion and no open strategy is invoked (spy), so the empty-text result with an UnexpectedFieldFailure (doc) and the three-FieldError partial result with a ciphertext Pictures subfile (ppt) that the library returns today never occur."
+  - "Test: a doc whose FIB has fEncrypted and fObfuscated set (crafted by mutating a copy of a fixture) throws PASSWORD_PROTECTED with no password and with any password."
+  - "Test: crafted doc headers with version 4.4 or 9.9, the fAES or fExternal flag, or AlgID other than 0x6801 throw PASSWORD_PROTECTED with a password supplied."
+  - "Test: DetectMimeType returns Doc/Ppt for every encrypted doc/ppt fixture with no password, a wrong password and the correct password alike."
+  - "Test: a password supplied for every unencrypted doc/ppt corpus sample (including ppt_with_png.ppt and rc4cryptoapi_password_plain.doc) gives exactly the no-password result."
+  - "Test: stream input of Password_Protected-hello.ppt and password_tika_binaryrc4.doc gives the same result as byte input."
+  - "Test: the gaps G2 to G5 each have a documented-limitation test, or a recorded test-gap entry in the manifest when no fixture can be built. G2's FieldError (path 'Metadata', CORRUPT_FILE) is asserted on a CryptoAPI doc whose properties are encrypted, once such a fixture exists."
+  - "Gated (not required to pass until the dependency lands): XOR xls 'xor-encryption-abc.xls' / 'abc' extracts to A1..A3 = 1, 2, 3 after the yoavarad/npoi#197 re-pin; cryptoapi-proc2356.ppt and ppt_with_png_encrypted.ppt text parity after the separate b2xtranslator fixes (FillMapping fillShadeType, 16-byte ClientAnchor, TextMasterStyleMapping.writepPr)."

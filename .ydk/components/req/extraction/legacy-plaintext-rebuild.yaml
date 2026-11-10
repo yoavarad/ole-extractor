@@ -1,0 +1,101 @@
+$schema: ydk:schema:req
+id: ydk:req:extraction/legacy-plaintext-rebuild
+description: >
+  A decrypted legacy doc/ppt is rebuilt as an in-memory plain compound file
+  that the unchanged doc/ppt pipeline (NPOI, b2xtranslator) reads exactly
+  like the unencrypted equivalent, and the rebuilt bytes replace the input
+  for the rest of the call.
+type: constraint
+priority: high
+rule: >
+  Writer. The rebuild is written to a new NPOI NPOIFSFileSystem, built from
+  three parts:
+    - the source root CLSID, copied;
+    - every entry that was not decrypted, copied with
+      EntryUtils.CopyNodeRecursively, which keeps child CLSIDs and the
+      stream bytes;
+    - every decrypted stream, written as a new document entry.
+  The result is serialized with WriteFileSystem. Two writers are forbidden:
+    - editing streams in place in the opened source file system, because it
+      leaves the mini-stream FAT chain longer than the shrunken mini stream
+      and b2xtranslator rejects that with ChainSizeMismatchException;
+    - OpenMcdf, because it writes the root start sector as 0xFFFFFFFF when
+      there is no mini stream, which b2xtranslator rejects, and because its
+      CopyTo drops CLSIDs and reorders entries.
+  Entry order, timestamps and state bits may differ from the source. None
+  of them is read by the pipeline.
+
+  doc contents:
+    - WordDocument, the table stream and Data (when present) are replaced
+      by their decrypted bytes, at the same lengths.
+    - In the decrypted WordDocument, the FIB flags word has fEncrypted
+      (0x0100) and fObfuscated (0x8000) cleared, and lKey (offset 0x0E) is
+      set to 0.
+    - The table stream's clear encryption header is left in place. No FIB
+      structure overlaps it, because the lowest fc with a non-zero lcb
+      equals lKey.
+    - Every other stream and storage (summary streams, ObjectPool, Macros,
+      CompObj) is copied unchanged.
+
+  ppt contents:
+    - PowerPoint Document is replaced by a copy in which every persist
+      object except the CryptSession10Container is decrypted in place.
+      Offsets do not move. The UserEditAtom (recLen 0x20), its persist
+      entry and the CryptSession10Container record stay as they are.
+    - Current User is replaced by a copy whose headerToken is rewritten
+      from 0xF3D1C4DF to 0xE391C05F. Nothing else in it changes.
+    - Pictures is replaced by its decrypted bytes, so the opaque Pictures
+      subfile equals the unencrypted equivalent and never carries
+      ciphertext. Each OfficeArtBStoreContainerFileBlock field is decrypted
+      with a fresh block-0 cipher: the record header; for FBSE (0xF007)
+      the fixed fields, the name and the embedded blip header; then rgbUid
+      (twice for recInstance 0x217, 0x3D5, 0x46B, 0x543, 0x6E1, 0x6E3,
+      0x6E5, 0x7A9); then the 34-byte metafile header for 0xF01A to 0xF01C,
+      or else the 1-byte tag; then the rest of the record as one run. This
+      walker is ported from Apache POI HSLFSlideShowEncrypted.decryptPicture
+      (Apache-2.0, with its header kept and a THIRD-PARTY-NOTICES entry).
+    - When EncryptedSummary is present, it is removed and each stream
+      descriptor is written as a root stream under its stored name (the
+      \x05 prefix is part of the name), decrypted with its own block
+      number. The result replaces the empty \x05DocumentSummaryInformation
+      placeholder. When EncryptedSummary is absent (fDocProps set), the
+      plain property streams are copied unchanged. The decision follows
+      the stream's presence, not the flag.
+  Input substitution. The rebuilt bytes replace the call's input for the
+  open and for every later read of the input bytes, including the
+  text-conversion fallback, so the encrypted bytes are never parsed as
+  content. FileMetadata.FileSizeBytes and telemetry sizes stay those of the
+  supplied input. Stream input (ADR-008) of an encrypted doc/ppt is
+  buffered whole; an unencrypted file keeps its existing input path.
+
+  Lifetime. The decrypted arrays, the source file-system view and the
+  rebuilt bytes live only for the call. They are released as soon as they
+  are no longer needed: the decrypted arrays and the source view before
+  the rebuilt bytes are handed on. They are never exposed except as the
+  extracted content ([ydk:req:extraction/password-confidentiality]). Peak
+  memory is about 3 to 6 times the input, which is still bounded by
+  [ydk:error:extraction/file-too-large] on the input.
+
+  b2xtranslator is not modified for decryption. A typed encrypted-document
+  exception in b2xtranslator (yoavarad/b2xtranslator#156) is optional
+  defence in depth; it is not a dependency of this requirement.
+failure_behavior: >
+  A rebuild that cannot be written is [ydk:error:extraction/corrupt-file]
+  (container-level). Once rebuilt, failures are those of the unchanged
+  doc/ppt pipeline on the plain bytes, including per-field
+  [ydk:error:extraction/corrupt-file] FieldErrors.
+related_components:
+  - ydk:req:extraction/legacy-decryption
+  - ydk:req:extraction/legacy-encryption-header-bounds
+  - ydk:req:extraction/password-confidentiality
+  - ydk:contract:extraction/extract
+  - ydk:entity:extraction/SubfileItem
+  - ydk:error:extraction/corrupt-file
+  - ydk:error:extraction/file-too-large
+acceptance_criteria:
+  - "Test: the rebuilt cryptoapi-proc2356.ppt (no mini stream) and Password_Protected-hello.ppt (mini stream shrinks) both open with b2xtranslator's StructuredStorageReader without exception, and the rebuilt root CLSID equals the source's."
+  - "Test: the rebuild helper round-trips a plain doc with Macros, ObjectPool and CLSIDs (samples/synthetic/macro-embed/sample.doc) with an identical storage tree and CLSIDs, the same EmbeddedFiles order and the same HasMacros."
+  - "Test: decrypted doc streams from the clear prefix onward match the SHA-256 recorded from msoffcrypto-tool's output for each doc fixture (hashes in the test, oracle files not shipped), and the rebuilt FIB has fEncrypted = 0, fObfuscated = 0 and lKey = 0."
+  - "Test: the rebuilt Password_Protected-hello.ppt has headerToken 0xE391C05F, real 0x05-prefixed SummaryInformation and DocumentSummaryInformation streams whose SHA-1 equals NPOI's GetDataStream output on the unmodified fixture, and no EncryptedSummary entry."
+  - "Test: the Pictures subfile of a decrypted ppt is never the ciphertext. For cryptoapi-proc2356.ppt its SHA-256 equals the value recorded in the manifest, and for ppt_with_png_encrypted.ppt its second picture equals the PNG in ppt_with_png.ppt."
+  - "Test: after a successful decryption the text fallback reads the rebuilt bytes (spy), and FileMetadata.FileSizeBytes equals the encrypted input length."

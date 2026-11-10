@@ -1,0 +1,123 @@
+$schema: ydk:schema:req
+id: ydk:req:extraction/legacy-encryption-header-bounds
+description: >
+  Every size, offset and count that is read from a legacy doc/ppt encryption
+  header or encryption structure is checked by the library, before it drives
+  any allocation, loop or NPOI call. A malformed value is reported as
+  CORRUPT_FILE, never as a wrong password, an out-of-memory condition or a
+  raw library exception.
+type: constraint
+priority: critical
+rule: >
+  General. These checks run once a doc/ppt is known to be encrypted and a
+  password was supplied, before password verification
+  ([ydk:req:extraction/legacy-decryption] step 3). Any violation is
+  [ydk:error:extraction/corrupt-file] in its container-level role. The
+  compound file itself is intact here; a stream-internal field is wrong,
+  so it is never [ydk:error:extraction/truncated-container]. NPOI ignores
+  headerSize, reads the CSP name until a NUL and does not validate keySize.
+  A corrupt header passed straight to it would therefore show up as a
+  failed verification, that is as an apparent wrong password. The library
+  validates the fields first, so a corrupt header is never reported as
+  [ydk:error:extraction/invalid-password]. Error messages name the field
+  and never contain the password, derived keys or decrypted bytes.
+
+  No field read from an encryption structure ever sets the size of an
+  allocation larger than the stream that contains it. Every decrypted
+  stream has exactly the length of its encrypted source, except
+  EncryptedSummary, which becomes smaller streams. Any declared size above
+  the stream that holds it is CORRUPT_FILE. Every rebuilt stream is also
+  subject to the [ydk:nfr:extraction/nesting-depth-guard] per-entry cap:
+  a breach is [ydk:error:extraction/oversized-nested-content], checked
+  before the buffer is allocated.
+
+  doc (MS-DOC 2.2.6, MS-OFFCRYPTO 2.3.5.1, 2.3.6.1):
+    - The table stream named by fWhichTblStm is missing: CORRUPT_FILE.
+    - lKey < 8, lKey > the table stream length, or lKey > 4096:
+      CORRUPT_FILE. This is checked before lKey bytes are read. Real
+      values are 52 for BinaryRC4 and 198 for 128-bit CryptoAPI; the
+      CryptoAPI maximum is about 600.
+    - BinaryRC4 (version 1.1) with lKey < 52: CORRUPT_FILE.
+    - CryptoAPI:
+        - headerSize < 32, or 12 + headerSize + 60 > lKey: CORRUPT_FILE.
+        - The fCryptoAPI flag (0x04) is clear: CORRUPT_FILE.
+        - keySize 0 is read as 40. Any other value outside 40..128, or
+          not a multiple of 8: CORRUPT_FILE.
+        - saltSize other than 16, or verifierHashSize other than 20:
+          CORRUPT_FILE.
+        - The CSP name is parsed only within headerSize and is never read
+          across that boundary.
+  ppt (MS-PPT 2.1.1, 2.3.3 to 2.3.7; MS-OFFCRYPTO 2.3.5):
+    - Current User missing, shorter than 20 bytes, or recType other than
+      0x0FF6: CORRUPT_FILE.
+    - offsetToCurrentEdit, offsetLastEdit or offsetPersistDirectory, plus
+      8 plus the record length, beyond the PowerPoint Document length:
+      CORRUPT_FILE.
+    - UserEditAtom recType other than 0x0FF5, or recLen other than 0x1C
+      or 0x20: CORRUPT_FILE.
+    - An edit-chain offset seen twice (a cycle through offsetLastEdit), or
+      a chain longer than 10,000 atoms: CORRUPT_FILE.
+    - PersistDirectoryAtom recType other than 0x1772, or an entry whose
+      4 + 4 * cPersist bytes run past the atom's end: CORRUPT_FILE.
+      cPersist is at most 4095 and the persist id is at most 0xFFFFF by
+      their encoding.
+    - A persist offset + 8 beyond the stream, a decrypted recLen running
+      past the stream's end, or two persist ids sharing one offset:
+      CORRUPT_FILE.
+    - CryptSession10Container payload past the stream's end:
+      CORRUPT_FILE.
+    - Encryption header:
+        - version major outside 2..4, or minor other than 2: CORRUPT_FILE.
+        - AlgID other than 0x6801, or AlgIDHash other than 0x8004 or 0:
+          CORRUPT_FILE.
+        - keySize: same rule as for doc, CORRUPT_FILE.
+        - headerSize does not fit the payload: CORRUPT_FILE.
+        - saltSize other than 16, or verifierHashSize other than 20:
+          CORRUPT_FILE.
+      ppt allows only RC4 CryptoAPI, so all of these are malformed rather
+      than unsupported.
+    - EncryptedSummary. The 8-byte header and the descriptor array are
+      themselves RC4-encrypted with a fresh block-0 cipher.
+        - Stream shorter than 8 bytes; arrayOffset < 8; arraySize < 4; or
+          arrayOffset + arraySize > the stream length: CORRUPT_FILE.
+        - Descriptor count > (arraySize - 4) / 18, where 18 is the minimum
+          descriptor size, 16 fixed bytes plus a 2-byte name terminator, as
+          POI's STREAM_DESCRIPTOR_MIN_SIZE: CORRUPT_FILE. The count is
+          checked before any per-descriptor allocation.
+        - A descriptor or its name past the array's end: CORRUPT_FILE.
+        - StreamOffset < 8, or StreamOffset + StreamSize > arrayOffset:
+          CORRUPT_FILE.
+      NPOI GetDataStream(DirectoryNode) is never used for this stream.
+    - Pictures stream:
+        - A record header or recLen past the stream's end, or an FBSE
+          field or name past its record's end, is not fatal. The Pictures
+          subfile is omitted and one FieldError with code CORRUPT_FILE is
+          recorded at "EmbeddedFiles[Pictures]". Text, metadata and the
+          other subfiles are kept, per
+          [ydk:req:extraction/per-field-error-isolation].
+        - An unknown record type (outside 0xF007 and 0xF018..0xF117) stops
+          decryption, and the rest of the stream is left as stored (POI
+          behaviour). This is not an error.
+  Work bounds. The doc decryption loop runs ceil(length / 512) blocks of
+  the stream lengths that already exist. The ppt loops are bounded by the
+  persist map and the stream length. No attacker-controlled loop count
+  exists, and no key derivation in these schemes has a spin count.
+failure_behavior: >
+  [ydk:error:extraction/corrupt-file] (container-level) for every header or
+  structure violation listed; [ydk:error:extraction/oversized-nested-content]
+  for a rebuilt stream above the per-entry cap; a CORRUPT_FILE FieldError at
+  EmbeddedFiles[Pictures] for a malformed ppt Pictures stream.
+related_components:
+  - ydk:req:extraction/legacy-decryption
+  - ydk:req:extraction/legacy-plaintext-rebuild
+  - ydk:req:extraction/per-field-error-isolation
+  - ydk:nfr:extraction/nesting-depth-guard
+  - ydk:error:extraction/corrupt-file
+  - ydk:error:extraction/invalid-password
+  - ydk:error:extraction/oversized-nested-content
+acceptance_criteria:
+  - "Test (crafted doc mutations of a fixture copy, password supplied): lKey 0, 20, 0xFFFFFFFF and table length + 1; CryptoAPI headerSize 0 and 0xFFFFFFFF; keySize 41, 256 and 0x7FFFFFFF; saltSize 15; verifierHashSize 16; table stream removed -> each throws CORRUPT_FILE and never INVALID_PASSWORD. An allocation spy shows no buffer sized from lKey before the bound check."
+  - "Test (crafted ppt mutations, password supplied): offsetToCurrentEdit past the stream end; UserEditAtom recLen 0x1D; an offsetLastEdit cycle; a PersistDirectoryAtom cPersist past the atom; two ids sharing one offset; encryptSessionPersistIdRef pointing at a non-0x2F14 record while the token is 0xF3D1C4DF -> each throws CORRUPT_FILE."
+  - "Test: EncryptedSummary with descriptor count 0x7FFFFFFF and 0xFFFFFFFF throws CORRUPT_FILE (not OutOfMemoryException or OverflowException), and so does a descriptor whose StreamOffset + StreamSize exceeds arrayOffset."
+  - "Test: a ppt fixture whose Pictures stream is truncated inside a record extracts with text and metadata intact, no Pictures subfile, and a CORRUPT_FILE FieldError at EmbeddedFiles[Pictures]."
+  - "Test: no CORRUPT_FILE message raised on these paths contains the sentinel password."

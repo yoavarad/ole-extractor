@@ -36,7 +36,9 @@ methods:
       that does not verify throws invalid-password. An unsupported scheme
       returns Unknown with or without a password. Encrypted doc/xls/ppt keep
       unencrypted directory entries and are classified from them as before;
-      the password is not used or verified for them. A password supplied
+      the password is not used or verified for them, and detection never
+      decrypts them (doc/ppt decryption happens only in Extract, per
+      [ydk:req:extraction/legacy-decryption]). A password supplied
       for unencrypted content is ignored.
     errors:
       - ydk:error:extraction/file-too-large

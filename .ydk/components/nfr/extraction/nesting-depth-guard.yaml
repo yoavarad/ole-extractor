@@ -17,6 +17,10 @@ measurement: >
   decrypted buffer is allocated, and the decrypted package's own declared
   entry sizes are then checked like any unencrypted package's (see
   ydk:req:extraction/password-decryption).
+  For an encrypted doc/ppt no encryption-header field sets an allocation
+  larger than its containing stream, and every stream of the rebuilt plain
+  compound file is checked against the per-entry cap before its buffer is
+  allocated (see ydk:req:extraction/legacy-encryption-header-bounds).
 test_method: "Unit tests with synthetic crafted inputs: a small file whose ZIP header declares a single entry with uncompressed size > 1GB is rejected without attempting decompression (verified via allocation spy, not just exception type). Same for a CFB file whose declared FAT chain implies > 2GB total. Both must raise ydk:error:extraction/oversized-nested-content, not OutOfMemoryException or a hang."
 monitoring: "Not applicable in v1 — library, not a hosted service."
 applies_to:

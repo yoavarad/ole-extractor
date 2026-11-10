@@ -23,7 +23,7 @@ An encrypted docx, xlsx or pptx is not a ZIP. It is a CFB file that wraps an enc
 - **With the correct password**, supplied on [ydk:entity:extraction/MimeDetectionRequest], the package is decrypted in memory. The decrypted bytes go through the same OOXML structural check as any unencrypted file, so the result is the inner format, or Unknown if the package matches none.
 - **With a wrong password**, detection throws [ydk:error:extraction/invalid-password] rather than returning Unknown, so the caller's mistake is not hidden.
 - **An encryption the library cannot decrypt** returns Unknown, with or without a password.
-- **Encrypted doc, xls and ppt** keep their directory unencrypted, so they are detected from it exactly as before. The password is neither used nor checked for them; a wrong password surfaces only at extraction.
+- **Encrypted doc, xls and ppt** keep their directory unencrypted, so they are detected from it exactly as before. The password is neither used nor checked for them, and detection never decrypts them. A wrong password surfaces only at extraction, which is also where doc and ppt are decrypted ([ydk:req:extraction/legacy-decryption]).
 - **An unencrypted file with a password** is detected exactly as without one. The password is ignored, with no error.
 
 The password is a decryption key, not a classification hint: content-only detection ([ydk:req:extraction/content-only-mime-detection]) is unchanged. It is never logged or echoed, per [ydk:req:extraction/password-confidentiality].
