@@ -4,6 +4,9 @@
 Accepted. 2026-11-08. Stage 01 (Major Feature) spec work on branch `spec/per-field-error-isolation`;
 no implementation task cut yet.
 
+Amended 2026-11-09 (#288): the flat text of a workbook or presentation keeps its readable
+sheets' or slides' text when only some fail; see "Amendment" at the end.
+
 ## Context
 Extraction was all-or-nothing. Each format's open path wrapped population in one broad catch, so a
 single unparseable source record — one mangled property-store entry, one bad body-text record —
@@ -113,3 +116,13 @@ above as its causes.
   enumeration of the container's items faults part-way, the fault gets one bare `EmbeddedFiles`
   entry and the items past it are simply absent. That blind spot is accepted: the alternative is
   reporting items whose existence is not known, which would be a fabrication.
+
+## Amendment (2026-11-09, #288)
+The flat text of a workbook (xls, xlsx) or a presentation (ppt, pptx) is read sheet by sheet or slide by
+slide, and is the one exception to "a failed leaf is left at its no-value state". When some sheets or
+slides fail, the flat text keeps the text of the readable ones and carries one `ExtractedText` field
+error; for that leaf an entry means "incomplete", not "no value". Discarding every healthy sheet's
+text because one sheet was damaged would contradict this ADR's own premise (damage is local, so
+isolation should be). A failure not confined to one sheet or slide still leaves the empty string. The
+migration row for text extraction reads accordingly: empty string (or the readable sheets' or slides'
+text) plus a `FieldErrors` entry at `ExtractedText`.

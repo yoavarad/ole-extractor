@@ -129,6 +129,36 @@ namespace ExtractorOLE.Tests.Helpers
         }
 
         [Fact]
+        public void TryPopulate_WrappedOutOfMemory_PropagatesAndRecordsNothing()
+        {
+            var result = new DocumentExtractionResult();
+
+            Assert.ThrowsAny<InvalidOperationException>(() =>
+                FieldIsolation.TryPopulate(result, "ExtractedText", () =>
+                    throw new InvalidOperationException("x", new InsufficientMemoryException())));
+            Assert.Empty(result.FieldErrors);
+        }
+
+        [Fact]
+        public void TryPopulate_AggregateWithCancellation_PropagatesAndRecordsNothing()
+        {
+            var result = new DocumentExtractionResult();
+
+            Assert.ThrowsAny<AggregateException>(() =>
+                FieldIsolation.TryPopulate(result, "ExtractedText", () =>
+                    throw new AggregateException(new InvalidOperationException(), new OperationCanceledException())));
+            Assert.Empty(result.FieldErrors);
+        }
+
+        [Fact]
+        public void IsIsolatable_PlainWrappedChain_IsTrue()
+        {
+            var wrapped = new InvalidOperationException("outer", new InvalidDataException("inner"));
+
+            Assert.True(FieldIsolation.IsIsolatable(wrapped));
+        }
+
+        [Fact]
         public void TryPopulate_SendsExceptionToTelemetry()
         {
             var result = new DocumentExtractionResult();

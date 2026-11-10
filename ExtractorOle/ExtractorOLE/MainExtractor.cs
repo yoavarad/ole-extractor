@@ -7,6 +7,7 @@ using ExtractorOLE.Helpers;
 using ExtractorOLE.Helpers.FileTypeStrategy;
 using ExtractorOLE.Registry;
 using System;
+using System.Runtime.ExceptionServices;
 
 namespace ExtractorOLE
 {
@@ -118,9 +119,16 @@ namespace ExtractorOLE
                     // Byte fallback for stream input re-buffers the file (only when the extractor
                     // cannot read ParsedDocument). An open OOXML package seeks before every read, so
                     // rewinding the shared stream here is safe.
-                    // A throwing extractor leaves the empty default and records one FieldError.
-                    FieldIsolation.TryPopulate(result, nameof(DocumentExtractionResult.ExtractedText),
-                        () => result.ExtractedText = ExtractText(extractor, result, () => input.Bytes));
+                    // A throwing extractor leaves the empty default and records one FieldError. A failure
+                    // confined to one part (one worksheet) keeps the text of the other parts and still
+                    // records one FieldError at ExtractedText (#288).
+                    FieldIsolation.TryPopulate(result, nameof(DocumentExtractionResult.ExtractedText), () =>
+                    {
+                        ExceptionDispatchInfo? partFailure = null;
+                        result.ExtractedText = ExtractText(extractor, result, () => input.Bytes,
+                            ex => partFailure ??= ExceptionDispatchInfo.Capture(ex));
+                        partFailure?.Throw();
+                    });
                 }
                 cancellationToken.ThrowIfCancellationRequested();
             }
@@ -217,12 +225,13 @@ namespace ExtractorOLE
 
         // Reuses what the open strategy already parsed (#168, #167) when the extractor can take
         // it; otherwise extracts from the raw bytes, read only on that fallback.
-        private static string ExtractText(ITextExtractor extractor, DocumentExtractionResult result, Func<byte[]> fileBytes)
+        private static string ExtractText(ITextExtractor extractor, DocumentExtractionResult result, Func<byte[]> fileBytes,
+            Action<Exception> onPartFailure)
         {
             object? parsed = result.ParsedDocument;
 
             string? text = parsed != null && extractor is IParsedDocumentTextExtractor parsedExtractor
-                ? parsedExtractor.ExtractText(parsed)
+                ? parsedExtractor.ExtractText(parsed, onPartFailure)
                 : null;
             return text ?? extractor.ExtractText(fileBytes()) ?? string.Empty;
         }

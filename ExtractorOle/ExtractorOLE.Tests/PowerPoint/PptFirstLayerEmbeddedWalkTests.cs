@@ -143,5 +143,46 @@ namespace ExtractorOLE.Tests.PowerPoint
             Assert.Equal("Pictures", item.FileName);
             Assert.Equal(media, item.BinaryData);
         }
+
+        [Fact]
+        public void Open_UnreadablePicturesStream_ReportsPicturesAndKeepsOtherStorages()
+        {
+            byte[] validPayload = Encoding.UTF8.GetBytes("VALID EMBEDDED OBJECT CONTENT");
+
+            var raw = new NPOIFSFileSystem(new MemoryStream(BuildBaseFixtureBytes()));
+            var validStorage = raw.Root.CreateDirectory("ValidObject");
+            validStorage.CreateDocument("CONTENTS", new MemoryStream(validPayload));
+
+            // Above the mini-stream cutoff so the stream lives in the main FAT; a self-pointing
+            // first block makes NPOI's chain loop detector throw when the stream is read.
+            byte[] media = new byte[5000];
+            new Random(7).NextBytes(media);
+            var pictures = raw.Root.CreateDocument("Pictures", new MemoryStream(media));
+            int startBlock = ((DocumentNode)pictures).Property.StartBlock;
+            raw.SetNextBlock(startBlock, startBlock);
+
+            using var outStream = new MemoryStream();
+            raw.WriteFileSystem(outStream);
+            raw.Close();
+
+            var originalOut = Console.Out;
+            Console.SetOut(new StringWriter());
+            DocumentExtractionResult? result;
+            try
+            {
+                result = new PptOpenStrategy(new ExtractionHelper()).Open(outStream.ToArray());
+            }
+            finally
+            {
+                Console.SetOut(originalOut);
+            }
+
+            Assert.NotNull(result);
+            var item = Assert.Single(result!.EmbeddedFiles);
+            Assert.Equal("ValidObject", item.FileName);
+            Assert.DoesNotContain(result.EmbeddedFiles, f => f.FileName == "Pictures");
+            var error = Assert.Single(result.FieldErrors, e => e.FieldPath == "EmbeddedFiles[Pictures]");
+            Assert.Equal(FieldErrorCode.UnexpectedFieldFailure, error.Code);
+        }
     }
 }

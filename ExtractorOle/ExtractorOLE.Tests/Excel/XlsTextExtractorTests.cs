@@ -1,7 +1,10 @@
+using ExtractorOLE.Abstractions;
 using ExtractorOLE.Handlers;
 using NPOI.HSSF.UserModel;
+using NPOI.SS.UserModel;
 using SampleGenerator.Fixtures;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Xunit;
@@ -36,6 +39,107 @@ namespace ExtractorOLE.Tests.Excel
             using var ms = new MemoryStream();
             workbook.Write(ms);
             return ms.ToArray();
+        }
+
+        private static HSSFSheet SheetWith(string text)
+        {
+            var sheet = (HSSFSheet)new HSSFWorkbook().CreateSheet("S");
+            sheet.CreateRow(0).CreateCell(0).SetCellValue(text);
+            return sheet;
+        }
+
+        public class ThrowingSheetProxy : System.Reflection.DispatchProxy
+        {
+            public Exception Failure { get; set; } = null!;
+
+            protected override object? Invoke(System.Reflection.MethodInfo? targetMethod, object?[]? args) => throw Failure;
+        }
+
+        private static ISheet ThrowingSheet(Exception failure)
+        {
+            var proxy = System.Reflection.DispatchProxy.Create<ISheet, ThrowingSheetProxy>();
+            ((ThrowingSheetProxy)(object)proxy).Failure = failure;
+            return proxy;
+        }
+
+        private static List<Func<ISheet>> Fetchers(IEnumerable<ISheet> sheets) =>
+            sheets.Select(sheet => (Func<ISheet>)(() => sheet)).ToList();
+
+        [Fact]
+        public void Walk_SheetFetchThrows_KeepsOtherSheetsAndReportsOnce()
+        {
+            var failures = new List<Exception>();
+            var alpha = SheetWith("alpha");
+            var gamma = SheetWith("gamma");
+            var fetchers = new List<Func<ISheet>>
+            {
+                () => alpha,
+                () => throw new InvalidOperationException(),
+                () => gamma,
+            };
+
+            var text = XlsTextExtractor.Walk(fetchers, failures.Add);
+
+            Assert.Contains("alpha", text, StringComparison.Ordinal);
+            Assert.Contains("gamma", text, StringComparison.Ordinal);
+            Assert.IsType<InvalidOperationException>(Assert.Single(failures));
+        }
+
+        [Fact]
+        public void Walk_BadSheet_WithCallback_KeepsHealthySheetsAndReportsOnce()
+        {
+            var failures = new List<Exception>();
+            var sheets = new[] { SheetWith("alpha"), ThrowingSheet(new InvalidOperationException()), SheetWith("gamma") };
+
+            var text = XlsTextExtractor.Walk(Fetchers(sheets), failures.Add);
+
+            Assert.Contains("alpha", text, StringComparison.Ordinal);
+            Assert.Contains("gamma", text, StringComparison.Ordinal);
+            Assert.IsType<InvalidOperationException>(Assert.Single(failures));
+        }
+
+        [Fact]
+        public void Walk_BadSheet_WithoutCallback_Throws()
+        {
+            var sheets = new[] { SheetWith("alpha"), ThrowingSheet(new InvalidOperationException()), SheetWith("gamma") };
+
+            Assert.Throws<InvalidOperationException>(() => XlsTextExtractor.Walk(Fetchers(sheets), onSheetFailure: null));
+        }
+
+        [Fact]
+        public void Walk_OutOfMemorySheet_PropagatesEvenWithCallback()
+        {
+            var failures = new List<Exception>();
+            // An OutOfMemoryException (CA2201 reserves the base type).
+            var sheets = new[] { SheetWith("alpha"), ThrowingSheet(new InsufficientMemoryException()) };
+
+            Assert.ThrowsAny<OutOfMemoryException>(() => XlsTextExtractor.Walk(Fetchers(sheets), failures.Add));
+            Assert.Empty(failures);
+        }
+
+        [Fact]
+        public void Walk_CancelledInsideSheet_PropagatesEvenWithCallback()
+        {
+            var failures = new List<Exception>();
+            var sheets = new[] { SheetWith("alpha"), ThrowingSheet(new OperationCanceledException()) };
+
+            Assert.Throws<OperationCanceledException>(() => XlsTextExtractor.Walk(Fetchers(sheets), failures.Add));
+            Assert.Empty(failures);
+        }
+
+        [Fact]
+        public void ParsedWorkbook_WithCallback_ReturnsAllSheetsAndNoFailures()
+        {
+            var workbook = new HSSFWorkbook();
+            workbook.CreateSheet("A").CreateRow(0).CreateCell(0).SetCellValue("alpha");
+            workbook.CreateSheet("B").CreateRow(0).CreateCell(0).SetCellValue("gamma");
+            var failures = new List<Exception>();
+
+            var text = ((IParsedDocumentTextExtractor)new XlsTextExtractor()).ExtractText(workbook, failures.Add);
+
+            Assert.Contains("alpha", text, StringComparison.Ordinal);
+            Assert.Contains("gamma", text, StringComparison.Ordinal);
+            Assert.Empty(failures);
         }
 
         [Fact]
