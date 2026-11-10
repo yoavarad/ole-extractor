@@ -32,9 +32,16 @@ methods:
       ExtractionRequest.Password before the open when its scheme is
       supported, per [ydk:req:extraction/password-decryption]; from then on
       the call behaves exactly as for the unencrypted file. No password ->
-      password-protected; wrong password -> invalid-password; encrypted doc
-      or ppt -> password-protected regardless of the password; a password
-      supplied for an unencrypted file is ignored.
+      password-protected; wrong password -> invalid-password; a scheme the
+      library does not decrypt (XOR-obfuscated doc among others) ->
+      password-protected regardless of the password; a password supplied
+      for an unencrypted file is ignored. Encrypted doc (RC4, RC4
+      CryptoAPI) and ppt (RC4 CryptoAPI) are detected before any parse,
+      decrypted and rebuilt as a plain compound file that replaces the
+      input for the rest of the call, per
+      [ydk:req:extraction/legacy-decryption] and
+      [ydk:req:extraction/legacy-plaintext-rebuild]; a malformed
+      encryption header is corrupt-file, never invalid-password.
     errors:
       - ydk:error:extraction/file-too-large
       - ydk:error:extraction/password-protected

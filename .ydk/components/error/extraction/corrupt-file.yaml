@@ -34,6 +34,8 @@ triggers:
   - "Container-level (thrown): a ZIP central directory is present but the package cannot be opened, or the main document part fails to open or is not well-formed XML"
   - "Container-level (thrown): a CFB directory chain is present but truncated/inconsistent partway through, so the storage tree cannot be walked"
   - "Container-level (thrown): an Agile-encrypted package whose password verified fails its data-integrity HMAC check, or whose EncryptionInfo declares a spin count above 10,000,000 (see ydk:req:extraction/password-decryption)"
+  - "Container-level (thrown): an encrypted doc/ppt, with a password supplied, whose encryption header or encryption structure violates a bound in ydk:req:extraction/legacy-encryption-header-bounds (for example lKey out of range, an invalid keySize or headerSize, an edit-chain cycle, or an EncryptedSummary descriptor count above its array), checked before password verification so it is never reported as invalid-password; also a ppt whose Current User token says encrypted while its encryption structure is absent or unreadable, when a password was supplied"
+  - "Field-level (FieldError, not thrown): a decrypted ppt whose Pictures stream is malformed: the Pictures subfile is omitted and reported at EmbeddedFiles[Pictures]; and a CryptoAPI doc whose document properties are encrypted (gap G2 in ydk:req:extraction/legacy-decryption): reported at Metadata"
   - "Field-level (FieldError, not thrown): the container opened, but one general- or format-metadata property's source record in the property store is unparseable — that one property is left null/default and reported at its field path"
   - "Field-level (FieldError, not thrown): the container opened, but the body-text records cannot be flattened — ExtractedText is the empty string and the failure is reported at path ExtractedText"
   - "Field-level (FieldError, not thrown): the container opened, but one embedded item's own bytes are unreadable — that item is omitted from the subfile list and reported at EmbeddedFiles[<its package path>]"
@@ -41,3 +43,4 @@ related:
   - ydk:contract:extraction/extract
   - ydk:entity:extraction/FieldError
   - ydk:req:extraction/per-field-error-isolation
+  - ydk:req:extraction/legacy-encryption-header-bounds
