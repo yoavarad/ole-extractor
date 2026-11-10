@@ -32,6 +32,10 @@ namespace ExtractorOLE.DTOs
         // matching IParsedDocumentTextExtractor to reuse instead of re-parsing the input bytes.
         // Internal so it is not part of the public result; MainExtractor clears it after use.
         internal object? ParsedDocument { get; set; }
+
+        // Set when the open strategy could not parse the body; MainExtractor rethrows it as the
+        // ExtractedText field error instead of re-parsing the input (#289).
+        internal System.Runtime.ExceptionServices.ExceptionDispatchInfo? TextExtractionFailure { get; set; }
     }
 
     public class FileMetadata

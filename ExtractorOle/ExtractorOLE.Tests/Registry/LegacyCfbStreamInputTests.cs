@@ -149,6 +149,23 @@ namespace ExtractorOLE.Tests.Registry
         }
 
         [Fact]
+        public void Extract_UnconvertiblePpt_ConvertsOnceAndFlagsExtractedText()
+        {
+            var workbook = new NPOI.HSSF.UserModel.HSSFWorkbook();
+            workbook.CreateInformationProperties();
+            using var ms = new MemoryStream();
+            workbook.Write(ms);
+            var bytes = ms.ToArray(); // valid CFB, no PPT body records
+            var extractor = BuildExtractor();
+
+            var before = PptToPptxConverter.ConvertCallCount;
+            var result = extractor.Extract(new ExtractionRequest { FileBytes = bytes, FileName = "x.ppt", DetectedMimeType = PptMime });
+
+            Assert.Equal(1, PptToPptxConverter.ConvertCallCount - before);
+            Assert.Contains(result.FieldErrors, e => e.FieldPath == nameof(DocumentExtractionResult.ExtractedText));
+        }
+
+        [Fact]
         public void Extract_PptStream_ConvertsOnce()
         {
             var bytes = Generate(PptMime, "ppt once");

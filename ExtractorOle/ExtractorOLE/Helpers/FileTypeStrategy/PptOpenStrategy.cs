@@ -7,6 +7,7 @@ using NPOI.POIFS.FileSystem;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.ExceptionServices;
 using System.Linq;
 
 namespace ExtractorOLE.Helpers.FileTypeStrategy
@@ -130,11 +131,21 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
             {
                 var body = new Lazy<PresentationPart?>(() =>
                 {
-                    byte[] pptxBytes = convertToPptx();
-                    result.ParsedDocument = pptxBytes; // reused by PptTextExtractor (#168)
-                    pptxStream = new MemoryStream(pptxBytes);
-                    pres = PresentationDocument.Open(pptxStream, false);
-                    return pres.PresentationPart;
+                    try
+                    {
+                        byte[] pptxBytes = convertToPptx();
+                        pptxStream = new MemoryStream(pptxBytes);
+                        pres = PresentationDocument.Open(pptxStream, false);
+                        var part = pres.PresentationPart;
+                        result.ParsedDocument = pptxBytes; // only validated output; reused by PptTextExtractor (#168)
+                        return part;
+                    }
+                    catch (Exception ex) when (FieldIsolation.IsIsolatable(ex))
+                    {
+                        // Text extraction must not convert the same input again (#289).
+                        result.TextExtractionFailure = ExceptionDispatchInfo.Capture(ex);
+                        throw;
+                    }
                 });
 
                 FieldIsolation.TryPopulate(result, PowerPointOpenStrategy.LeafPath(nameof(PowerPointFormatMetadata.SlideCount)),
