@@ -20,7 +20,25 @@ methods:
       lenient and only inspects directory/header structure, never fully
       parses the document. Throws only per
       [ydk:error:extraction/oversized-nested-content] (zip/CFB bomb defense
-      during structural sniffing).
+      during structural sniffing), [ydk:error:extraction/file-too-large],
+      and [ydk:error:extraction/invalid-password].
+
+      Encrypted CFB content (rules in
+      [ydk:req:extraction/password-decryption]): a CFB root holding
+      EncryptionInfo and EncryptedPackage is an encrypted OOXML package,
+      whatever other root entries it carries (Word writes a WordDocument
+      stub alongside them). Without MimeDetectionRequest.Password it
+      returns the Unknown result — the inner format cannot be known without
+      decrypting. With a password that verifies (Agile or Standard
+      encryption) the package is decrypted in memory and the decrypted bytes
+      go through the OOXML structural check, so the result is the inner
+      Docx/Xlsx/Pptx (or Unknown if the package matches none). A password
+      that does not verify throws invalid-password. An unsupported scheme
+      returns Unknown with or without a password. Encrypted doc/xls/ppt keep
+      unencrypted directory entries and are classified from them as before;
+      the password is not used or verified for them. A password supplied
+      for unencrypted content is ignored.
     errors:
       - ydk:error:extraction/file-too-large
       - ydk:error:extraction/oversized-nested-content
+      - ydk:error:extraction/invalid-password

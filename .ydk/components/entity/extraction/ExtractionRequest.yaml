@@ -19,6 +19,24 @@ fields:
       The exact mime type string previously produced by
       [ydk:contract:extraction/detect-mime-type]. Extraction trusts this value
       rather than re-detecting; callers are expected to run detection first.
+  Password:
+    type: string
+    required: false
+    description: >
+      Optional document-open password, applied to the supplied container
+      only (never to its embedded subfiles, which are returned opaque as
+      before). Null or empty means "no password". With it, encrypted
+      docx/xlsx/pptx (Agile or Standard encryption) and encrypted xls are
+      decrypted in memory and extracted exactly like their unencrypted
+      versions; a wrong password raises
+      [ydk:error:extraction/invalid-password]; encrypted doc and ppt still
+      raise [ydk:error:extraction/password-protected]. When the file is not
+      encrypted (any of the six formats) the password is ignored: no error,
+      no FieldError, and the result is identical to the no-password result.
+      Rules in [ydk:req:extraction/password-decryption]. Secret: never
+      logged, echoed, or retained, per
+      [ydk:req:extraction/password-confidentiality]. In batch extraction
+      each request carries its own password.
 relationships: []
 indexes: []
 crud: []

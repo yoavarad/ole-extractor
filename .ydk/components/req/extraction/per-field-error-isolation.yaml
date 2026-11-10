@@ -44,6 +44,7 @@ rule: >
   accepted blind spot.
   The fatal set is exactly: [ydk:error:extraction/file-too-large],
   [ydk:error:extraction/password-protected],
+  [ydk:error:extraction/invalid-password],
   [ydk:error:extraction/unsupported-format],
   [ydk:error:extraction/truncated-container],
   [ydk:error:extraction/corrupt-file] in its container-level role,
