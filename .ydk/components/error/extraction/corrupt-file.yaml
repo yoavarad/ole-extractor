@@ -33,6 +33,7 @@ triggers:
   - "Container-level (thrown): Extract() is called on bytes that pass mime detection's lightweight structural sniff but the container itself cannot be opened by the format library (NPOI or DocumentFormat.OpenXml)"
   - "Container-level (thrown): a ZIP central directory is present but the package cannot be opened, or the main document part fails to open or is not well-formed XML"
   - "Container-level (thrown): a CFB directory chain is present but truncated/inconsistent partway through, so the storage tree cannot be walked"
+  - "Container-level (thrown): an Agile-encrypted package whose password verified fails its data-integrity HMAC check, or whose EncryptionInfo declares a spin count above 10,000,000 (see ydk:req:extraction/password-decryption)"
   - "Field-level (FieldError, not thrown): the container opened, but one general- or format-metadata property's source record in the property store is unparseable — that one property is left null/default and reported at its field path"
   - "Field-level (FieldError, not thrown): the container opened, but the body-text records cannot be flattened — ExtractedText is the empty string and the failure is reported at path ExtractedText"
   - "Field-level (FieldError, not thrown): the container opened, but one embedded item's own bytes are unreadable — that item is omitted from the subfile list and reported at EmbeddedFiles[<its package path>]"
