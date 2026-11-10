@@ -43,3 +43,9 @@ DO NOT USE: "field name", "property path".
 
 **Field error** — one record of a leaf property that could not be populated while the call as a whole succeeded: a field path, a code and a message ([ydk:entity:extraction/FieldError]).
 DO NOT USE: "partial error", "warning".
+
+**Open password** — the password a caller supplies to decrypt an encrypted document, carried optionally on [ydk:entity:extraction/MimeDetectionRequest] and [ydk:entity:extraction/ExtractionRequest] ([ydk:req:extraction/password-decryption]). It is the only kind of password this library uses.
+DO NOT USE: "password" for modify/write-protection or sheet-protection passwords (those are not open passwords and are out of scope); "key" (the key is derived from the password, it is not the password).
+
+**Encrypted package** — an OOXML document stored encrypted inside a CFB wrapper, per the Office encryption standard. It is classified and extracted as its inner OOXML format once decrypted.
+DO NOT USE: "password-protected docx" as a format name; "encrypted CFB" alone (encrypted doc/xls/ppt are also encrypted CFB files, but they are not encrypted packages).
