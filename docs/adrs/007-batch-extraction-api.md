@@ -46,6 +46,8 @@ Task<IReadOnlyList<BatchExtractionResult>> ExtractManyAsync(
   MaxDOP inputs in memory. Concurrent 100 MB inputs are therefore capped by the MaxDOP the
   caller chooses. We add no separate byte-budget cap (YAGNI). Results are kept until the
   batch completes. Results hold extracted text and embedded files, not the input bytes.
+  (Superseded for large batches by ADR-011, which adds `ExtractManyStreamingAsync` with a
+  2 x MaxDOP + 1 result bound.)
 
 ## Alternatives Considered
 - **Synchronous `ExtractMany` with `Parallel.ForEach`**: blocks the caller's thread for the whole

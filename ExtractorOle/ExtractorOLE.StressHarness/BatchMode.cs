@@ -9,6 +9,8 @@ namespace ExtractorOLE.StressHarness
     /// `batch` mode (ADR-007): runs <see cref="MainExtractor.ExtractManyAsync"/> over the samples
     /// (repeated <c>repeat</c> times) at MaxDOP=1 and MaxDOP=ProcessorCount, reports throughput,
     /// and checks every item against a serial <see cref="MainExtractor.Extract(ExtractionRequest)"/>.
+    /// Then reports the peak managed heap of <see cref="MainExtractor.ExtractManyAsync"/> against
+    /// <see cref="MainExtractor.ExtractManyStreamingAsync"/> at MaxDOP=ProcessorCount (ADR-011).
     /// Usage: batch [repeat] [samplesDir]
     /// </summary>
     internal static class BatchMode
@@ -70,6 +72,32 @@ namespace ExtractorOLE.StressHarness
                     $"per-item errors: {failed} | mismatches vs serial: {itemMismatches}");
             }
 
+            // Peak managed heap (ADR-011): the list API keeps every result until the batch returns; the
+            // streaming API keeps at most 2 x MaxDOP + 1. The streaming consumer drops each result after
+            // comparing it; the list run holds the whole batch. Peaks are sampled, so they are approximate.
+            int peakDop = Environment.ProcessorCount;
+            using (var sampler = new HeapSampler())
+            {
+                IReadOnlyList<BatchExtractionResult>? batch = await extractor.ExtractManyAsync(requests, peakDop);
+                long retained = GC.GetTotalMemory(forceFullCollection: true);
+                GC.KeepAlive(batch);
+                batch = null; // so the streaming run's baseline does not include these results
+                Console.WriteLine($"Peak heap ExtractManyAsync          MaxDOP={peakDop} | baseline {Mb(sampler.Baseline)} MB | peak {Mb(sampler.Peak)} MB | retained at return {Mb(retained)} MB");
+            }
+
+            using (var sampler = new HeapSampler())
+            {
+                long streamMismatches = 0;
+                int streamed = 0;
+                await foreach (var item in extractor.ExtractManyStreamingAsync(requests, peakDop))
+                {
+                    streamed++;
+                    if (Outcome(item) != serial[item.Index]) streamMismatches++;
+                }
+                mismatches += streamMismatches + (streamed == requests.Count ? 0 : 1);
+                Console.WriteLine($"Peak heap ExtractManyStreamingAsync MaxDOP={peakDop} | baseline {Mb(sampler.Baseline)} MB | peak {Mb(sampler.Peak)} MB | items {streamed} | mismatches vs serial: {streamMismatches}");
+            }
+
             Console.WriteLine(mismatches == 0 ? "[PASS] batch output identical to serial Extract()" : "[FAIL] batch output differs from serial Extract()");
             Environment.ExitCode = ExitCodeFor(expectedFailures, failingSamples, mismatches);
         }
@@ -116,6 +144,35 @@ namespace ExtractorOLE.StressHarness
             {
                 return $"err|{ex.GetType().FullName}";
             }
+        }
+
+        private static string Mb(long bytes) => (bytes / (1024.0 * 1024.0)).ToString("F1", System.Globalization.CultureInfo.InvariantCulture);
+
+        // Samples GC.GetTotalMemory every 10 ms from a full-GC baseline until disposed; Peak is the highest sample.
+        private sealed class HeapSampler : IDisposable
+        {
+            private readonly Timer _timer;
+            private long _peak;
+
+            public HeapSampler()
+            {
+                Baseline = GC.GetTotalMemory(forceFullCollection: true);
+                _peak = Baseline;
+                _timer = new Timer(_ => Sample(), null, 0, 10);
+            }
+
+            public long Baseline { get; }
+
+            public long Peak { get { Sample(); return Interlocked.Read(ref _peak); } }
+
+            private void Sample()
+            {
+                long now = GC.GetTotalMemory(forceFullCollection: false);
+                long seen;
+                while (now > (seen = Interlocked.Read(ref _peak)) && Interlocked.CompareExchange(ref _peak, now, seen) != seen) { }
+            }
+
+            public void Dispose() => _timer.Dispose();
         }
 
         private static string Outcome(BatchExtractionResult item) =>

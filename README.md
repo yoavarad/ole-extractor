@@ -128,8 +128,11 @@ cross-call mismatches against the single-threaded baseline. Samples that are del
 For many files, `MainExtractor.ExtractManyAsync(requests, maxDegreeOfParallelism, cancellationToken)`
 runs `Extract()` with bounded parallelism (default `Environment.ProcessorCount`). It returns one result per request in
 input order. A failing item reports its error on that item and does not fail the batch
-([ADR-007](docs/adrs/007-batch-extraction-api.md)). `StressHarness -- batch [repeat] [samplesDir]` measures its
-throughput.
+([ADR-007](docs/adrs/007-batch-extraction-api.md)). It keeps every result until the batch returns, so its
+memory grows with batch size. For large batches, `MainExtractor.ExtractManyStreamingAsync` (same parameters) yields
+results as they finish, in completion order with each item's input `Index`, and keeps at most 2 x MaxDOP + 1 results
+alive ([ADR-011](docs/adrs/011-streaming-batch-extraction.md)). `StressHarness -- batch [repeat] [samplesDir]`
+measures throughput and the peak heap of both methods.
 ## Documentation
 
 - [`docs/specs/overview.md`](docs/specs/overview.md) — problem statement, success criteria, public API, scope
@@ -145,6 +148,7 @@ throughput.
   - [ADR-005](docs/adrs/005-legacy-doc-ppt-authoring.md) — authoring legacy `.doc`/`.ppt`/`.xls` test samples in SampleGenerator
   - [ADR-007](docs/adrs/007-batch-extraction-api.md) — batch extraction API with bounded parallelism
   - [ADR-009](docs/adrs/009-analyzer-compliance-over-api-stability.md) — fix analyzer findings instead of suppressing them (breaking enum renames, ParamName contract)
+  - [ADR-011](docs/adrs/011-streaming-batch-extraction.md) — streaming batch extraction to bound batch memory
 - [`CHANGELOG.md`](CHANGELOG.md) — breaking changes and migration notes
 - [`docs/project-rules.md`](docs/project-rules.md) — conventions, brownfield constraints, and known gotchas
 - [`docs/research/`](docs/research/) — research spikes backing the ADRs above
