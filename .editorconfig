@@ -36,6 +36,8 @@ dotnet_diagnostic.CA2007.severity = none
 # Library project (no app host or test framework): require ConfigureAwait(false).
 [ExtractorOle/ExtractorOLE/**.cs]
 dotnet_diagnostic.CA2007.severity = warning
+# General catches (CA1031): library must use exception filters or a justified local suppression.
+dotnet_diagnostic.CA1031.severity = warning
 
 # Test project: Method_Scenario_Expected names use underscores by convention (xUnit).
 [ExtractorOle/ExtractorOLE.Tests/**.cs]
