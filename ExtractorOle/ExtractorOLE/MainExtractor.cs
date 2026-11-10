@@ -124,6 +124,7 @@ namespace ExtractorOLE
                     // records one FieldError at ExtractedText (#288).
                     FieldIsolation.TryPopulate(result, nameof(DocumentExtractionResult.ExtractedText), () =>
                     {
+                        result.TextExtractionFailure?.Throw();
                         ExceptionDispatchInfo? partFailure = null;
                         result.ExtractedText = ExtractText(extractor, result, () => input.Bytes,
                             ex => partFailure ??= ExceptionDispatchInfo.Capture(ex));
