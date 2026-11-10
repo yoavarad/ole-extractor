@@ -7,7 +7,9 @@ using ExtractorOLE.Helpers;
 using ExtractorOLE.Helpers.FileTypeStrategy;
 using ExtractorOLE.Registry;
 using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
+using System.Threading.Channels;
 
 namespace ExtractorOLE
 {
@@ -147,7 +149,9 @@ namespace ExtractorOLE
         /// input order. An item's exception is captured in its <see cref="BatchExtractionResult.Error"/>
         /// and does not fail the batch (except <see cref="OutOfMemoryException"/>, which fails it). Cancellation stops new items from starting,
         /// is observed by in-flight items through <see cref="Extract(ExtractionRequest, CancellationToken)"/>, and throws
-        /// <see cref="OperationCanceledException"/>.
+        /// <see cref="OperationCanceledException"/>. Every result (including embedded file bytes) is kept until
+        /// the batch returns, so memory grows with batch size; use <see cref="ExtractManyStreamingAsync"/> for
+        /// large batches (ADR-011).
         /// </summary>
         public async Task<IReadOnlyList<BatchExtractionResult>> ExtractManyAsync(
             IEnumerable<ExtractionRequest> requests,
@@ -162,23 +166,106 @@ namespace ExtractorOLE
             var options = new ParallelOptions { MaxDegreeOfParallelism = dop, CancellationToken = cancellationToken };
             await Parallel.ForEachAsync(requests.Select((request, index) => (request, index)), options, (item, itemToken) =>
             {
-                BatchExtractionResult itemResult;
-                try
-                {
-                    itemResult = new BatchExtractionResult { Index = item.index, FileName = item.request?.FileName, Result = Extract(item.request!, itemToken) };
-                }
-                // The batch's own cancellation propagates and fails the batch; it is not an item error.
-                catch (Exception ex) when (ex is not OutOfMemoryException
-                                           && !(ex is OperationCanceledException && itemToken.IsCancellationRequested))
-                {
-                    itemResult = new BatchExtractionResult { Index = item.index, FileName = item.request?.FileName, Error = ex };
-                }
+                var itemResult = ExtractItem(item.request, item.index, itemToken);
                 lock (results) results.Add(itemResult);
                 return ValueTask.CompletedTask;
             }).ConfigureAwait(false);
 
             results.Sort((a, b) => a.Index.CompareTo(b.Index));
             return results;
+        }
+
+        /// <summary>
+        /// Streaming form of <see cref="ExtractManyAsync"/> for batches too large to hold every result at
+        /// once (ADR-011). Yields one <see cref="BatchExtractionResult"/> per request in completion order,
+        /// not input order; use <see cref="BatchExtractionResult.Index"/> to re-key. Item errors, the
+        /// <see cref="OutOfMemoryException"/> handling, and cancellation behave as in
+        /// <see cref="ExtractManyAsync"/>; a batch failure or cancellation is thrown from the enumeration.
+        /// Memory is bounded by back-pressure: each of the <paramref name="maxDegreeOfParallelism"/> workers holds at
+        /// most one result (being extracted, or finished and waiting to be queued) and at most
+        /// <paramref name="maxDegreeOfParallelism"/> results are queued, so no more than 2 x MaxDOP + 1 results
+        /// (counting the one the consumer is handling, plus any the caller keeps) are alive at once, whatever the
+        /// batch size. A slow consumer pauses extraction rather than letting results pile up. Disposing the
+        /// enumerator early stops new items from starting and waits for in-flight items to end; a caller that
+        /// abandons it without disposing leaves the workers blocked. A null <paramref name="requests"/> or a
+        /// non-positive <paramref name="maxDegreeOfParallelism"/> throws when this method is called.
+        /// </summary>
+        public IAsyncEnumerable<BatchExtractionResult> ExtractManyStreamingAsync(
+            IEnumerable<ExtractionRequest> requests,
+            int? maxDegreeOfParallelism = null,
+            CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(requests);
+            var dop = maxDegreeOfParallelism ?? Environment.ProcessorCount;
+            if (dop <= 0) throw new ArgumentOutOfRangeException(nameof(maxDegreeOfParallelism), dop, "Must be positive.");
+            return StreamItemsAsync(requests, dop, cancellationToken);
+        }
+
+        private async IAsyncEnumerable<BatchExtractionResult> StreamItemsAsync(
+            IEnumerable<ExtractionRequest> requests, int dop, [EnumeratorCancellation] CancellationToken cancellationToken)
+        {
+            // Linked so that disposing the enumerator early can stop the producer.
+            using var stop = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            var channel = Channel.CreateBounded<BatchExtractionResult>(
+                new BoundedChannelOptions(dop) { SingleReader = true, FullMode = BoundedChannelFullMode.Wait });
+            var producer = ProduceAsync(requests, dop, channel.Writer, stop.Token);
+            try
+            {
+                // Cancellation stops the read at once instead of draining results already buffered.
+                await foreach (var item in channel.Reader.ReadAllAsync(cancellationToken).ConfigureAwait(false))
+                {
+                    // ReadAllAsync drains already-available items without re-checking the token.
+                    cancellationToken.ThrowIfCancellationRequested();
+                    yield return item;
+                }
+            }
+            finally
+            {
+                // Always observe the producer. On early dispose stop it first. A batch failure
+                // (OutOfMemoryException, enumerator exception) is rethrown; its own cancellation is not.
+                if (!producer.IsCompleted) await stop.CancelAsync().ConfigureAwait(false);
+                try
+                {
+                    await producer.ConfigureAwait(false);
+                }
+                catch (OperationCanceledException) when (stop.IsCancellationRequested)
+                {
+                    // Expected: the caller cancelled or the consumer stopped early.
+                }
+            }
+
+            cancellationToken.ThrowIfCancellationRequested();
+        }
+
+        private async Task ProduceAsync(IEnumerable<ExtractionRequest> requests, int dop,
+            ChannelWriter<BatchExtractionResult> writer, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var options = new ParallelOptions { MaxDegreeOfParallelism = dop, CancellationToken = cancellationToken };
+                await Parallel.ForEachAsync(requests.Select((request, index) => (request, index)), options,
+                    (item, itemToken) => writer.WriteAsync(ExtractItem(item.request, item.index, itemToken), itemToken))
+                    .ConfigureAwait(false);
+            }
+            finally
+            {
+                writer.Complete();
+            }
+        }
+
+        // One batch item: an item's exception becomes its Error. The batch's own cancellation and
+        // OutOfMemoryException propagate and fail the batch; they are not item errors.
+        private BatchExtractionResult ExtractItem(ExtractionRequest? request, int index, CancellationToken itemToken)
+        {
+            try
+            {
+                return new BatchExtractionResult { Index = index, FileName = request?.FileName, Result = Extract(request!, itemToken) };
+            }
+            catch (Exception ex) when (ex is not OutOfMemoryException
+                                       && !(ex is OperationCanceledException && itemToken.IsCancellationRequested))
+            {
+                return new BatchExtractionResult { Index = index, FileName = request?.FileName, Error = ex };
+            }
         }
 
         // Boundary validation: runs before any detection/extraction logic.
