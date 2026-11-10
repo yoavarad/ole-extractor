@@ -41,7 +41,8 @@ If an individual subfile cannot be read (its own bytes are corrupt while the sur
 Extraction fails the whole call for the fixed set below and for nothing else. The set is enumerated rather than characterised: argument validation runs before a byte is read, unsupported-format is decided from the supplied detected-format value alone, and the remainder are failures of the container open itself.
 
 - [ydk:error:extraction/file-too-large] — rejected before parsing
-- [ydk:error:extraction/password-protected] — encrypted content detected before a full parse is attempted
+- [ydk:error:extraction/password-protected] — encrypted content detected before a full parse is attempted, with no password supplied or with an encryption the library does not decrypt (see Encrypted Files)
+- [ydk:error:extraction/invalid-password] — a supplied password does not unlock a decryptable file
 - [ydk:error:extraction/unsupported-format] — the supplied detected-format value isn't one of the six supported formats
 - [ydk:error:extraction/truncated-container] — declared container size exceeds actual byte length, or the input is zero-length
 - [ydk:error:extraction/corrupt-file] — in its container-level role only: the container's own structure is unparseable, so no document is ever opened
@@ -50,6 +51,23 @@ Extraction fails the whole call for the fixed set below and for nothing else. Th
 A null request object, or a null value on a required request field, is rejected immediately via standard argument validation before any of the above logic runs — this is boundary validation, not a domain error, and has no dedicated error manifest. An exception no component declared, raised while the container is still being opened, is fatal too and propagates unwrapped; no [ydk:entity:extraction/FieldError] is possible for it because there is no result object yet.
 
 Every failure after the container opens is isolated to the leaf it affects and reported through the per-field channel below instead of being thrown. Two of the errors above therefore carry two roles each, split by one question — had the container finished opening? For [ydk:error:extraction/corrupt-file], unparseable container structure is fatal and an unparseable source record behind one leaf is not. For [ydk:error:extraction/oversized-nested-content], a guard breach in the container's own declared structure during the open is fatal, while a breach on one subfile after a successful open costs the caller that subfile only. The [ydk:nfr:extraction/nesting-depth-guard] caps are unchanged in both roles. The error stays wholly fatal on [ydk:contract:extraction/detect-mime-type], which has no per-field channel.
+
+## Encrypted Files
+
+A caller holding a document's open password supplies it on [ydk:entity:extraction/ExtractionRequest]; the field is optional and defaults to "no password". The rules are in [ydk:req:extraction/password-decryption] and the reasoning in ADR-012.
+
+- **Decrypted formats.** Encrypted docx, xlsx and pptx (including the macro variants) using Agile or Standard encryption (the two package encryptions Office writes), and encrypted xls, are decrypted in memory with the password and then extracted exactly like their unencrypted versions. Every leaf matches the unencrypted twin; the only difference is the file size, which stays the size of the bytes the caller supplied.
+- **No password** for one of those files fails the call with [ydk:error:extraction/password-protected], as before.
+- **Wrong password** fails the call with [ydk:error:extraction/invalid-password]. The password is checked before any document content is decrypted, so a wrong password is never reported as a corrupt file and never produces a partial result.
+- **Encrypted doc and ppt** still fail with [ydk:error:extraction/password-protected], with or without a password. Decrypting them is deferred. The same applies to any Office package encryption other than Agile or Standard, such as Extensible encryption or rights-management protection.
+- **Unencrypted file with a password.** The password is ignored for all six formats, doc and ppt included: the call proceeds normally and returns exactly the no-password result, with no error and no field error.
+- **xls with only Excel's built-in default key** has no open password. It extracts with or without a supplied password, and a supplied password is ignored.
+
+Ordering and guards. [ydk:error:extraction/file-too-large] is judged on the encrypted bytes as supplied. The encrypted package's declared decrypted size is checked against [ydk:nfr:extraction/nesting-depth-guard] before any buffer is allocated, and a package that declares more than it holds is [ydk:error:extraction/truncated-container]. A key-derivation cost above the format's own maximum is [ydk:error:extraction/corrupt-file]: it is refused before any work is spent on it. A package whose password is correct but whose integrity check fails, meaning the encrypted bytes were altered, is also [ydk:error:extraction/corrupt-file], never [ydk:error:extraction/invalid-password]. After decryption, the package goes through every guard, error rule and per-field rule that the unencrypted package would. Once decryption has succeeded, a failure is an ordinary failure of that format.
+
+Scope. The password applies only to the container the caller supplied. An embedded subfile that is itself encrypted is returned as one opaque item, as before, and is never decrypted or reported as an error. Decrypted bytes live only for the duration of the call.
+
+Confidentiality. Under [ydk:req:extraction/password-confidentiality], the password never appears in a log entry, an exception, a field error or a result, and nothing keeps it after the call returns. Batch extraction keeps its signatures; each request carries its own password, and concurrent items never see another item's password.
 
 ## Per-Field Error Isolation
 

@@ -16,6 +16,22 @@ fields:
       Original filename, passed through for logging/traceability only. MUST
       NOT influence the detected type — detection is content-only per
       [ydk:req:extraction/content-only-mime-detection].
+  Password:
+    type: string
+    required: false
+    description: >
+      Optional document-open password. Used only when the content is an
+      encrypted OOXML package (a CFB wrapper holding EncryptionInfo and
+      EncryptedPackage) that must be decrypted in memory to be classified;
+      see [ydk:req:extraction/password-decryption]. Null or empty means "no
+      password". When the file is not encrypted, or its format is classified
+      from unencrypted structure (encrypted doc/xls/ppt), the password is
+      ignored: no error, no warning, and the result is identical to the
+      no-password result. A wrong password for a decryptable OOXML package
+      raises [ydk:error:extraction/invalid-password]. Secret: never logged,
+      echoed, or retained, per [ydk:req:extraction/password-confidentiality].
+      Does not affect content-only detection — it is a decryption key, not a
+      classification hint.
 relationships: []
 indexes: []
 crud: []

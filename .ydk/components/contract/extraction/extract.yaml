@@ -27,9 +27,18 @@ methods:
       per [ydk:req:extraction/per-field-error-isolation] — the call returns a
       result whose unreadable leaves are at their no-value state and whose
       [ydk:entity:extraction/FieldError] entries say which ones those are.
+
+      An encrypted container is decrypted in memory with
+      ExtractionRequest.Password before the open when its scheme is
+      supported, per [ydk:req:extraction/password-decryption]; from then on
+      the call behaves exactly as for the unencrypted file. No password ->
+      password-protected; wrong password -> invalid-password; encrypted doc
+      or ppt -> password-protected regardless of the password; a password
+      supplied for an unencrypted file is ignored.
     errors:
       - ydk:error:extraction/file-too-large
       - ydk:error:extraction/password-protected
+      - ydk:error:extraction/invalid-password
       - ydk:error:extraction/unsupported-format
       - ydk:error:extraction/truncated-container
       - ydk:error:extraction/corrupt-file
@@ -61,6 +70,10 @@ methods:
       failure mode the spec did not anticipate. UNEXPECTED_FIELD_FAILURE has
       no error manifest and is never thrown out of the call, so the
       three-value vocabulary is only partly shared with the thrown errors.
+      invalid-password is fatal only (no field-level role): the password
+      is verified before the container opens, and the password applies to
+      the container alone, so an encrypted embedded subfile is returned
+      opaque and never produces it.
       A null request object or a null required request field is rejected by
       argument validation before any of this runs; an undeclared exception
       raised while the container is still being opened is fatal too and
