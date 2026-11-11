@@ -23,7 +23,7 @@ namespace ExtractorOLE.Tests
         [Fact]
         public void OldAdversarialPath_NoLongerExists()
         {
-            var sample = Assert.Single(EncryptedSamples.Enumerate(), s => s.Path.EndsWith("password-protected.docx"));
+            var sample = Assert.Single(EncryptedSamples.Enumerate(), s => s.Path.EndsWith("password-protected.docx", StringComparison.Ordinal));
             var legacy = Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(sample.FullPath))!, "adversarial", "password-protected.docx");
             Assert.False(File.Exists(legacy));
         }
