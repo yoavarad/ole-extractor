@@ -1,0 +1,245 @@
+// Research prototype copied from tmpesearch-doc\proto\DocDecryptProto\DocCrypto.cs; not compiled by any project.
+// Throwaway research prototype. BCL-only implementation of MS-DOC 2.2.6.2 (Office binary RC4)
+// and 2.2.6.3 (RC4 CryptoAPI) detection, password verification and stream decryption.
+using System.Buffers.Binary;
+using System.Security.Cryptography;
+using System.Text;
+
+namespace DocDecryptProto;
+
+public enum Scheme { None, Xor, BinaryRc4, CryptoApi }
+
+public sealed class DetectException : Exception
+{
+    public string SuggestedCode { get; }
+    public DetectException(string suggestedCode, string message) : base(message) => SuggestedCode = suggestedCode;
+}
+
+public sealed class EncInfo
+{
+    public Scheme Scheme;
+    public ushort FibFlags;
+    public uint LKey;
+    public string TableName = "";
+    public ushort VMajor, VMinor;
+    public uint HeaderFlags, HeaderSize, AlgId, AlgIdHash, KeyBits, ProviderType, VerifierHashSize, SaltSize;
+    public string Csp = "";
+    public byte[] Salt = [], EncVerifier = [], EncVerifierHash = [];
+    public byte[] HeaderBytes = [];
+
+    public override string ToString() => Scheme switch
+    {
+        Scheme.None => $"None fibFlags={FibFlags:X4}",
+        Scheme.Xor => $"Xor fibFlags={FibFlags:X4} lKey(verifier)={LKey:X8}",
+        Scheme.BinaryRc4 => $"BinaryRc4 fibFlags={FibFlags:X4} table={TableName} lKey={LKey} version={VMajor}.{VMinor}",
+        _ => $"CryptoApi fibFlags={FibFlags:X4} table={TableName} lKey={LKey} version={VMajor}.{VMinor} headerFlags={HeaderFlags:X8} headerSize={HeaderSize} algId={AlgId:X8} algIdHash={AlgIdHash:X8} keyBits={KeyBits} provType={ProviderType} csp='{Csp}' saltSize={SaltSize} verifierHashSize={VerifierHashSize} docPropsEncrypted={(HeaderFlags & 0x08) == 0}",
+    };
+}
+
+public sealed class Rc4
+{
+    private readonly byte[] _s = new byte[256];
+    private int _i, _j;
+
+    public Rc4(ReadOnlySpan<byte> key)
+    {
+        for (int k = 0; k < 256; k++) _s[k] = (byte)k;
+        int j = 0;
+        for (int k = 0; k < 256; k++)
+        {
+            j = (j + _s[k] + key[k % key.Length]) & 0xFF;
+            (_s[k], _s[j]) = (_s[j], _s[k]);
+        }
+    }
+
+    public void Process(ReadOnlySpan<byte> src, Span<byte> dst)
+    {
+        for (int n = 0; n < src.Length; n++)
+        {
+            _i = (_i + 1) & 0xFF;
+            _j = (_j + _s[_i]) & 0xFF;
+            (_s[_i], _s[_j]) = (_s[_j], _s[_i]);
+            dst[n] = (byte)(src[n] ^ _s[(_s[_i] + _s[_j]) & 0xFF]);
+        }
+    }
+}
+
+public static class DocCrypto
+{
+    public const int FibClearPrefix = 68;   // MS-DOC 2.2.6.2 / 2.2.6.3: first 68 bytes of WordDocument stay clear
+    public const int BlockSize = 512;
+    public const int MaxHeaderBytes = 4096; // sanity cap on lKey for the RC4 schemes (real values: 52, ~198)
+
+    // wordDocument: full or at least first 68 bytes of the WordDocument stream.
+    // table: delegate returning the named table stream bytes or null when absent.
+    public static EncInfo Detect(byte[]? wordDocument, Func<string, byte[]?> table)
+    {
+        if (wordDocument == null) throw new DetectException("CORRUPT_FILE", "no WordDocument stream");
+        if (wordDocument.Length < FibClearPrefix) throw new DetectException("CORRUPT_FILE", $"WordDocument stream {wordDocument.Length} bytes < 68");
+        var info = new EncInfo
+        {
+            FibFlags = BinaryPrimitives.ReadUInt16LittleEndian(wordDocument.AsSpan(0x0A)),
+            LKey = BinaryPrimitives.ReadUInt32LittleEndian(wordDocument.AsSpan(0x0E)),
+        };
+        ushort wIdent = BinaryPrimitives.ReadUInt16LittleEndian(wordDocument);
+        if (wIdent != 0xA5EC) throw new DetectException("CORRUPT_FILE", $"wIdent {wIdent:X4} != A5EC");
+        bool fEncrypted = (info.FibFlags & 0x0100) != 0, fObfuscated = (info.FibFlags & 0x8000) != 0;
+        info.TableName = (info.FibFlags & 0x0200) != 0 ? "1Table" : "0Table";
+        if (!fEncrypted) { info.Scheme = Scheme.None; return info; }
+        if (fObfuscated) { info.Scheme = Scheme.Xor; return info; }
+
+        byte[]? t = table(info.TableName) ?? throw new DetectException("CORRUPT_FILE", $"table stream {info.TableName} missing");
+        if (info.LKey < 8 || info.LKey > MaxHeaderBytes || info.LKey > t.Length)
+            throw new DetectException("CORRUPT_FILE", $"lKey {info.LKey} out of range (table stream {t.Length} bytes)");
+        var h = t.AsSpan(0, (int)info.LKey);
+        info.HeaderBytes = h.ToArray();
+        info.VMajor = BinaryPrimitives.ReadUInt16LittleEndian(h);
+        info.VMinor = BinaryPrimitives.ReadUInt16LittleEndian(h[2..]);
+        if (info.VMajor == 1 && info.VMinor == 1)
+        {
+            if (h.Length < 52) throw new DetectException("CORRUPT_FILE", $"BinaryRC4 header needs 52 bytes, lKey {info.LKey}");
+            info.Scheme = Scheme.BinaryRc4;
+            info.Salt = h.Slice(4, 16).ToArray();
+            info.EncVerifier = h.Slice(20, 16).ToArray();
+            info.EncVerifierHash = h.Slice(36, 16).ToArray();
+            info.KeyBits = 40; info.SaltSize = 16; info.VerifierHashSize = 16;
+            return info;
+        }
+        if (info.VMajor is >= 2 and <= 4 && info.VMinor == 2)
+        {
+            if (h.Length < 12) throw new DetectException("CORRUPT_FILE", "CryptoAPI header truncated");
+            info.HeaderFlags = BinaryPrimitives.ReadUInt32LittleEndian(h[4..]);
+            info.HeaderSize = BinaryPrimitives.ReadUInt32LittleEndian(h[8..]);
+            // EncryptionHeader fixed part = 32 bytes; verifier for RC4/SHA-1 = 4+16+16+4+20 = 60
+            if (info.HeaderSize < 32 || 12L + info.HeaderSize + 60 > h.Length)
+                throw new DetectException("CORRUPT_FILE", $"CryptoAPI headerSize {info.HeaderSize} does not fit lKey {info.LKey}");
+            var eh = h.Slice(12, (int)info.HeaderSize);
+            uint ehFlags = BinaryPrimitives.ReadUInt32LittleEndian(eh);
+            info.AlgId = BinaryPrimitives.ReadUInt32LittleEndian(eh[8..]);
+            info.AlgIdHash = BinaryPrimitives.ReadUInt32LittleEndian(eh[12..]);
+            info.KeyBits = BinaryPrimitives.ReadUInt32LittleEndian(eh[16..]);
+            info.ProviderType = BinaryPrimitives.ReadUInt32LittleEndian(eh[20..]);
+            info.Csp = Encoding.Unicode.GetString(eh[32..]).TrimEnd('\0');
+            if ((info.HeaderFlags & 0x04) == 0 || (info.HeaderFlags & 0x10) != 0 || (info.HeaderFlags & 0x20) != 0)
+                throw new DetectException("PASSWORD_PROTECTED", $"unsupported EncryptionHeaderFlags {info.HeaderFlags:X8} (need fCryptoAPI, no fExternal, no fAES)");
+            if (info.AlgId != 0x6801) throw new DetectException("PASSWORD_PROTECTED", $"unsupported AlgID {info.AlgId:X8} (RC4 = 6801)");
+            if (info.AlgIdHash != 0x8004 && info.AlgIdHash != 0) throw new DetectException("PASSWORD_PROTECTED", $"unsupported AlgIDHash {info.AlgIdHash:X8} (SHA-1 = 8004)");
+            if (info.KeyBits == 0) info.KeyBits = 40; // MS-OFFCRYPTO 2.3.5.1
+            if (info.KeyBits < 40 || info.KeyBits > 128 || info.KeyBits % 8 != 0)
+                throw new DetectException("CORRUPT_FILE", $"RC4 CryptoAPI keySize {info.KeyBits} invalid");
+            var v = h[(12 + (int)info.HeaderSize)..];
+            info.SaltSize = BinaryPrimitives.ReadUInt32LittleEndian(v);
+            if (info.SaltSize != 16) throw new DetectException("CORRUPT_FILE", $"saltSize {info.SaltSize} != 16");
+            info.Salt = v.Slice(4, 16).ToArray();
+            info.EncVerifier = v.Slice(20, 16).ToArray();
+            info.VerifierHashSize = BinaryPrimitives.ReadUInt32LittleEndian(v[36..]);
+            if (info.VerifierHashSize != 20) throw new DetectException("CORRUPT_FILE", $"verifierHashSize {info.VerifierHashSize} != 20");
+            info.EncVerifierHash = v.Slice(40, 20).ToArray();
+            info.Scheme = Scheme.CryptoApi;
+            return info;
+        }
+        throw new DetectException("PASSWORD_PROTECTED", $"unknown EncryptionVersionInfo {info.VMajor}.{info.VMinor}");
+    }
+
+    private static byte[] PasswordBytes(string password)
+    {
+        if (password.Length > 255) password = password[..255];
+        return Encoding.Unicode.GetBytes(password);
+    }
+
+    // Password-dependent base secret (computed once per document).
+    public static byte[] DeriveBase(EncInfo info, string password)
+    {
+        byte[] pw = PasswordBytes(password);
+        if (info.Scheme == Scheme.BinaryRc4)
+        {
+            // MS-OFFCRYPTO 2.3.6.2
+            byte[] h0 = MD5.HashData(pw);
+            byte[] buf = new byte[16 * 21];
+            for (int i = 0; i < 16; i++)
+            {
+                h0.AsSpan(0, 5).CopyTo(buf.AsSpan(i * 21));
+                info.Salt.CopyTo(buf.AsSpan(i * 21 + 5));
+            }
+            return MD5.HashData(buf).AsSpan(0, 5).ToArray();
+        }
+        if (info.Scheme == Scheme.CryptoApi)
+        {
+            // MS-OFFCRYPTO 2.3.5.2
+            byte[] buf = new byte[info.Salt.Length + pw.Length];
+            info.Salt.CopyTo(buf, 0);
+            pw.CopyTo(buf, info.Salt.Length);
+            return SHA1.HashData(buf);
+        }
+        throw new InvalidOperationException("no key derivation for " + info.Scheme);
+    }
+
+    public static byte[] BlockKey(EncInfo info, byte[] baseSecret, uint block)
+    {
+        byte[] buf = new byte[baseSecret.Length + 4];
+        baseSecret.CopyTo(buf, 0);
+        BinaryPrimitives.WriteUInt32LittleEndian(buf.AsSpan(baseSecret.Length), block);
+        if (info.Scheme == Scheme.BinaryRc4) return MD5.HashData(buf); // full 16 bytes
+        byte[] h = SHA1.HashData(buf);
+        int keyBytes = (int)info.KeyBits / 8;
+        if (info.KeyBits == 40)
+        {
+            byte[] k = new byte[16]; // 5 key bytes + 11 zero bytes (MS-OFFCRYPTO 2.3.5.2)
+            h.AsSpan(0, 5).CopyTo(k);
+            return k;
+        }
+        return h.AsSpan(0, keyBytes).ToArray();
+    }
+
+    public static bool Verify(EncInfo info, byte[] baseSecret)
+    {
+        var rc4 = new Rc4(BlockKey(info, baseSecret, 0));
+        byte[] verifier = new byte[16];
+        rc4.Process(info.EncVerifier, verifier);
+        byte[] hash = new byte[info.EncVerifierHash.Length];
+        rc4.Process(info.EncVerifierHash, hash); // same keystream continues
+        byte[] expected = info.Scheme == Scheme.BinaryRc4 ? MD5.HashData(verifier) : SHA1.HashData(verifier);
+        return CryptographicOperations.FixedTimeEquals(expected, hash.AsSpan(0, expected.Length));
+    }
+
+    // Length-preserving. Bytes below clearPrefix are copied unchanged but still consume keystream.
+    public static byte[] DecryptStream(EncInfo info, byte[] baseSecret, byte[] data, int clearPrefix)
+    {
+        byte[] result = new byte[data.Length];
+        byte[] tmp = new byte[BlockSize];
+        for (int pos = 0; pos < data.Length; pos += BlockSize)
+        {
+            int n = Math.Min(BlockSize, data.Length - pos);
+            var rc4 = new Rc4(BlockKey(info, baseSecret, (uint)(pos / BlockSize)));
+            rc4.Process(data.AsSpan(pos, n), tmp.AsSpan(0, n));
+            for (int i = 0; i < n; i++)
+                result[pos + i] = pos + i < clearPrefix ? data[pos + i] : tmp[i];
+        }
+        return result;
+    }
+
+    // Clears fEncrypted (0x0100) and fObfuscated (0x8000) and zeroes lKey in a decrypted WordDocument stream.
+    public static void ClearFibMarkers(byte[] wordDocument)
+    {
+        ushort flags = BinaryPrimitives.ReadUInt16LittleEndian(wordDocument.AsSpan(0x0A));
+        BinaryPrimitives.WriteUInt16LittleEndian(wordDocument.AsSpan(0x0A), (ushort)(flags & ~0x8100));
+        BinaryPrimitives.WriteUInt32LittleEndian(wordDocument.AsSpan(0x0E), 0);
+    }
+
+    // Lowest fc among FibRgFcLcb pairs with lcb > 0 (decrypted WordDocument). Returns (minFc, pairIndex, pairCount).
+    public static (uint minFc, int index, int count) MinTableFc(byte[] wordDocument)
+    {
+        int p = 32;
+        int csw = BinaryPrimitives.ReadUInt16LittleEndian(wordDocument.AsSpan(p)); p += 2 + csw * 2;
+        int cslw = BinaryPrimitives.ReadUInt16LittleEndian(wordDocument.AsSpan(p)); p += 2 + cslw * 4;
+        int cb = BinaryPrimitives.ReadUInt16LittleEndian(wordDocument.AsSpan(p)); p += 2;
+        uint min = uint.MaxValue; int idx = -1;
+        for (int i = 0; i < cb && p + 8 <= wordDocument.Length; i++, p += 8)
+        {
+            uint fc = BinaryPrimitives.ReadUInt32LittleEndian(wordDocument.AsSpan(p));
+            uint lcb = BinaryPrimitives.ReadUInt32LittleEndian(wordDocument.AsSpan(p + 4));
+            if (lcb > 0 && fc < min) { min = fc; idx = i; }
+        }
+        return (min, idx, cb);
+    }
+}

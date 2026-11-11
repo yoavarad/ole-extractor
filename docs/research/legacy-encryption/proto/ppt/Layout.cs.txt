@@ -1,0 +1,164 @@
+// Research prototype copied from tmpesearch-ppt\proto\PptDec\Layout.cs; not compiled by any project.
+using System.Buffers.Binary;
+using NPOI.POIFS.FileSystem;
+
+namespace PptDec;
+
+public sealed record UserEdit(uint Offset, uint RecLen, uint OffsetLastEdit, uint OffsetPersistDirectory,
+    uint DocPersistIdRef, uint PersistIdSeed, uint? EncryptSessionPersistIdRef);
+
+public sealed record PersistDir(uint Offset, uint RecLen, List<(uint StartId, uint Count, int EntryOffset)> Entries);
+
+public sealed class PptFormatException(string message) : Exception(message);
+
+/// Structure of a .ppt as far as encryption needs it: Current User, UserEditAtom chain, persist directory,
+/// CryptSession10Container payload. Pure byte parsing; NPOI is used only to read the CFB streams.
+public sealed class PptLayout
+{
+    public byte[] CurrentUser = [];
+    public byte[] Doc = [];
+    public byte[]? Pictures;
+    public byte[]? EncryptedSummary;
+    public List<string> RootEntries = [];
+    public uint HeaderToken;
+    public uint OffsetToCurrentEdit;
+    public List<UserEdit> Edits = [];
+    public List<PersistDir> Dirs = [];
+    /// persist id -> offset, newest edit wins
+    public SortedDictionary<uint, uint> Persist = [];
+    public uint? EncId;
+    public uint? EncOffset;
+    public byte[]? CryptPayload;
+    public string? Note;
+
+    public static uint U32(byte[] b, long o)
+    {
+        if (o < 0 || o + 4 > b.Length) throw new PptFormatException($"read u32 at {o} beyond {b.Length}");
+        return BinaryPrimitives.ReadUInt32LittleEndian(b.AsSpan((int)o, 4));
+    }
+
+    public static ushort U16(byte[] b, long o)
+    {
+        if (o < 0 || o + 2 > b.Length) throw new PptFormatException($"read u16 at {o} beyond {b.Length}");
+        return BinaryPrimitives.ReadUInt16LittleEndian(b.AsSpan((int)o, 2));
+    }
+
+    public static void PutU32(byte[] b, long o, uint v) => BinaryPrimitives.WriteUInt32LittleEndian(b.AsSpan((int)o, 4), v);
+    public static void PutU16(byte[] b, long o, ushort v) => BinaryPrimitives.WriteUInt16LittleEndian(b.AsSpan((int)o, 2), v);
+
+    public static byte[] ReadStream(DirectoryNode dir, string name)
+    {
+        var entry = (DocumentNode)dir.GetEntry(name);
+        using var dis = dir.CreateDocumentInputStream(entry);
+        var buf = new byte[entry.Size];
+        dis.ReadFully(buf);
+        return buf;
+    }
+
+    public static PptLayout Read(byte[] file)
+    {
+        var l = new PptLayout();
+        using (var fs = new NPOIFSFileSystem(new MemoryStream(file, false)))
+        {
+            var it = fs.Root.Entries;
+            while (it.MoveNext())
+            {
+                var e = (Entry)it.Current;
+                l.RootEntries.Add((e.IsDirectoryEntry ? "[S] " : "[s] ") + Printable(e.Name) +
+                                  (e is DocumentEntry d ? $" ({d.Size})" : $" clsid={((DirectoryEntry)e).StorageClsid}"));
+            }
+            l.RootEntries.Add("rootclsid=" + fs.Root.StorageClsid);
+            l.CurrentUser = ReadStream(fs.Root, "Current User");
+            l.Doc = ReadStream(fs.Root, "PowerPoint Document");
+            if (fs.Root.HasEntry("Pictures")) l.Pictures = ReadStream(fs.Root, "Pictures");
+            if (fs.Root.HasEntry("EncryptedSummary")) l.EncryptedSummary = ReadStream(fs.Root, "EncryptedSummary");
+        }
+        l.Parse();
+        return l;
+    }
+
+    public static string Printable(string s) => string.Concat(s.Select(c => c < 0x20 ? $"\\x{(int)c:X2}" : c.ToString()));
+
+    public void Parse()
+    {
+        // CurrentUserAtom: rh(8) size(4) headerToken(4) offsetToCurrentEdit(4) ...
+        if (U16(CurrentUser, 2) != 0x0FF6) throw new PptFormatException("Current User: recType != 0x0FF6");
+        HeaderToken = U32(CurrentUser, 12);
+        OffsetToCurrentEdit = U32(CurrentUser, 16);
+
+        var seen = new HashSet<uint>();
+        uint off = OffsetToCurrentEdit;
+        while (true)
+        {
+            if (!seen.Add(off)) throw new PptFormatException("UserEditAtom chain cycle");
+            if (seen.Count > 10000) throw new PptFormatException("UserEditAtom chain too long");
+            if (U16(Doc, off + 2) != 0x0FF5) throw new PptFormatException($"no UserEditAtom at {off}");
+            uint recLen = U32(Doc, off + 4);
+            if (recLen != 0x1C && recLen != 0x20) throw new PptFormatException($"UserEditAtom recLen {recLen}");
+            var ue = new UserEdit(off, recLen, U32(Doc, off + 16), U32(Doc, off + 20), U32(Doc, off + 24), U32(Doc, off + 28),
+                recLen == 0x20 ? U32(Doc, off + 36) : null);
+            Edits.Add(ue);
+            var dir = ReadPersistDir(ue.OffsetPersistDirectory);
+            Dirs.Add(dir);
+            foreach (var (startId, count, entryOffset) in dir.Entries)
+                for (uint i = 0; i < count; i++)
+                    Persist.TryAdd(startId + i, U32(Doc, entryOffset + 4 + 4 * i)); // newest (first seen) wins
+            if (ue.OffsetLastEdit == 0) break;
+            off = ue.OffsetLastEdit;
+        }
+
+        EncId = Edits[0].EncryptSessionPersistIdRef;
+        if (EncId is uint id)
+        {
+            if (!Persist.TryGetValue(id, out var eo))
+            {
+                Note = "encryptSessionPersistIdRef has no persist directory entry";
+                EncId = null;
+                return;
+            }
+            EncOffset = eo;
+            ushort verInst = U16(Doc, eo), type = U16(Doc, eo + 2);
+            uint len = U32(Doc, eo + 4);
+            if (type != 0x2F14) throw new PptFormatException($"persist object {id} at {eo} is type 0x{type:X4}, not CryptSession10Container");
+            if (verInst != 0x000F) Note = $"CryptSession10Container verInst 0x{verInst:X4}";
+            if ((long)eo + 8 + len > Doc.Length) throw new PptFormatException("CryptSession10Container runs past stream end");
+            CryptPayload = Doc.AsSpan((int)eo + 8, (int)len).ToArray();
+        }
+    }
+
+    PersistDir ReadPersistDir(uint off)
+    {
+        if (U16(Doc, off + 2) != 0x1772) throw new PptFormatException($"no PersistDirectoryAtom at {off}");
+        uint recLen = U32(Doc, off + 4);
+        long end = (long)off + 8 + recLen;
+        if (end > Doc.Length) throw new PptFormatException("PersistDirectoryAtom runs past stream end");
+        var entries = new List<(uint, uint, int)>();
+        long p = off + 8;
+        while (p < end)
+        {
+            uint v = U32(Doc, p);
+            uint startId = v & 0xFFFFF, count = v >> 20;
+            if (p + 4 + 4L * count > end) throw new PptFormatException("PersistDirectoryEntry runs past atom end");
+            entries.Add((startId, count, (int)p));
+            p += 4 + 4L * count;
+        }
+        return new PersistDir(off, recLen, entries);
+    }
+
+    public void Dump(TextWriter w)
+    {
+        w.WriteLine("root entries: " + string.Join(" | ", RootEntries));
+        w.WriteLine($"CurrentUser len={CurrentUser.Length} headerToken=0x{HeaderToken:X8} offsetToCurrentEdit={OffsetToCurrentEdit}");
+        w.WriteLine($"Doc len={Doc.Length} Pictures={(Pictures?.Length.ToString() ?? "none")} EncryptedSummary={(EncryptedSummary?.Length.ToString() ?? "none")}");
+        foreach (var e in Edits) w.WriteLine("  " + e);
+        foreach (var d in Dirs)
+            w.WriteLine($"  PersistDir@{d.Offset} recLen={d.RecLen} entries=[{string.Join(", ", d.Entries.Select(x => $"start={x.StartId} count={x.Count}"))}]");
+        foreach (var (id, o) in Persist)
+        {
+            string hdr = o + 8 <= Doc.Length ? $"verInst=0x{U16(Doc, o):X4} type=0x{U16(Doc, o + 2):X4} len={U32(Doc, o + 4)}" : "OUT OF RANGE";
+            w.WriteLine($"  persist {id} @ {o}: {hdr}{(id == EncId ? "  <-- CryptSession10Container" : "")}");
+        }
+        w.WriteLine($"encId={EncId?.ToString() ?? "none"} encOffset={EncOffset?.ToString() ?? "none"} note={Note}");
+        if (CryptPayload != null) w.WriteLine("  crypt payload: " + Convert.ToHexString(CryptPayload));
+    }
+}

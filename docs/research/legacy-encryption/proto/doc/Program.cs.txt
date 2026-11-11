@@ -1,0 +1,257 @@
+// Research prototype copied from tmpesearch-doc\proto\DocDecryptProto\Program.cs; not compiled by any project.
+// Throwaway research prototype (not production code).
+// usage:
+//   DocDecryptProto baseline <doc>...                      what the unmodified library returns today
+//   DocDecryptProto run <doc> <password> [oracle.doc]      detect, verify, decrypt, rebuild, extract
+//   DocDecryptProto malformed <doc>                        header mutation matrix (own detector + NPOI ctor)
+//   DocDecryptProto xor                                    XOR array / verifier numeric checks
+using System.Diagnostics;
+using System.Security.Cryptography;
+using System.Text;
+using DocDecryptProto;
+using ExtractorOLE;
+using ExtractorOLE.DTOs;
+using ExtractorOLE.Exceptions;
+using ExtractorOLE.Helpers;
+using Microsoft.Extensions.DependencyInjection;
+
+var services = new ServiceCollection();
+ServiceRegistration.Register(services);
+using var provider = services.BuildServiceProvider();
+var extractor = provider.GetRequiredService<MainExtractor>();
+var helper = provider.GetRequiredService<IExtractionHelper>();
+string docMime = helper.MimeFor(OfficeMimeType.WordLegacy);
+
+if (args.Length == 0) { Console.WriteLine("see usage in Program.cs"); return 2; }
+switch (args[0])
+{
+    case "baseline":
+        foreach (string p in args.Skip(1)) Baseline(p);
+        return 0;
+    case "run":
+        return Run(args[1], args[2], args.Length > 3 ? args[3] : null);
+    case "malformed":
+        Malformed.Run(args[1], args[2]);
+        return 0;
+    case "b2x":
+        foreach (string p in args.Skip(1)) B2xProbe.Run(p);
+        return 0;
+    case "rebuildcheck":
+        foreach (string p in args.Skip(1)) RebuildCheck.Run(p, Summ);
+        return 0;
+    case "xor":
+        XorCheck.Run();
+        return 0;
+    default:
+        Console.WriteLine("unknown command");
+        return 2;
+}
+
+void Baseline(string path)
+{
+    byte[] bytes = File.ReadAllBytes(path);
+    Console.WriteLine($"== baseline {Path.GetFileName(path)} ({bytes.Length} B)");
+    try
+    {
+        var det = helper.DetectMimeType(new MimeDetectionRequest { FileBytes = bytes, FileName = Path.GetFileName(path) });
+        Console.WriteLine($"  DetectMimeType: format={det.DetectedFormat} mime={det.MimeType} supported={det.IsSupported}");
+    }
+    catch (Exception ex) { Console.WriteLine("  DetectMimeType threw " + DescribeException(ex)); }
+    Extract("  Extract(today, unmodified library)", bytes, Path.GetFileName(path));
+}
+
+DocumentExtractionResult? Extract(string label, byte[] bytes, string fileName)
+{
+    try
+    {
+        var r = extractor.Extract(new ExtractionRequest { FileBytes = bytes, FileName = fileName, DetectedMimeType = docMime });
+        string text = r.ExtractedText ?? "";
+        string head = text.Length > 200 ? text[..200] : text;
+        head = head.Replace("\r", "\\r").Replace("\n", "\\n").Replace("\t", "\\t");
+        var m = r.Metadata;
+        var fm = r.FormatMetadata as WordFormatMetadata;
+        Console.WriteLine($"{label}: OK textLength={text.Length} textSha={Sha(Encoding.UTF8.GetBytes(text))}");
+        Console.WriteLine($"    first200=\"{head}\"");
+        Console.WriteLine($"    metadata: title={Q(m.Title)} creator={Q(m.Creator)} lastModifiedBy={Q(m.LastModifiedBy)} created={m.Created:o} modified={m.Modified:o} app={Q(m.ApplicationName)} revision={m.RevisionNumber}");
+        Console.WriteLine($"    format: pages={fm?.PageCount} words={fm?.WordCount} chars={fm?.CharacterCount} paragraphs={fm?.ParagraphCount} lines={fm?.LineCount} company={Q(fm?.Company)} template={Q(fm?.Template)} hasMacros={fm?.HasMacros}");
+        Console.WriteLine($"    embeddedFiles={r.EmbeddedFiles.Count} {string.Join(", ", r.EmbeddedFiles.Select(e => $"{e.PackagePath}|{e.FileName}|{e.SizeInBytes}"))}");
+        Console.WriteLine($"    fieldErrors={r.FieldErrors.Count} {string.Join(" ; ", r.FieldErrors.Select(e => $"{e.FieldPath}:{e.Code}:{e.Message}"))}");
+        return r;
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"{label}: THREW {DescribeException(ex)}");
+        return null;
+    }
+}
+
+int Run(string path, string password, string? oraclePath)
+{
+    byte[] original = File.ReadAllBytes(path);
+    string name = Path.GetFileName(path);
+    Console.WriteLine($"== run {name} ({original.Length} B, sha256 {Sha(original)}) password='{password}'");
+
+    // 0. today's behaviour
+    Extract("[0] Extract(today, unmodified library, encrypted input)", original, name);
+
+    // 1. tree + detection
+    List<Node> tree = Cfb.Snapshot(original);
+    Console.WriteLine("[1] compound file tree (OpenMcdf):");
+    foreach (Node n in tree) Console.WriteLine(Cfb.Describe(n));
+    byte[]? Stream(string s) => tree.FirstOrDefault(n => !n.IsStorage && n.Path == s)?.Data;
+    EncInfo info;
+    try { info = DocCrypto.Detect(Stream("WordDocument"), Stream); }
+    catch (DetectException ex) { Console.WriteLine($"[1] detect failed: {ex.SuggestedCode}: {ex.Message}"); return 1; }
+    Console.WriteLine("[1] detect: " + info);
+    if (info.Scheme == Scheme.None) { Console.WriteLine("    not encrypted, nothing to do"); return 0; }
+    if (info.Scheme == Scheme.Xor) { Console.WriteLine("    XOR: not handled by this command"); return 1; }
+
+    // 2. own verification
+    byte[] baseSecret = DocCrypto.DeriveBase(info, password);
+    bool ok = DocCrypto.Verify(info, baseSecret);
+    bool wrongOk = DocCrypto.Verify(info, DocCrypto.DeriveBase(info, password + "x"));
+    bool emptyOk = DocCrypto.Verify(info, DocCrypto.DeriveBase(info, ""));
+    Console.WriteLine($"[2] own verify: correct={ok} wrong('{password}x')={wrongOk} empty={emptyOk}");
+
+    // 3. NPOI verification
+    NPOI.POIFS.Crypt.EncryptionInfo? npoiInfo = null;
+    try
+    {
+        npoiInfo = NpoiPath.OpenInfo(info.HeaderBytes);
+        Console.WriteLine($"[3] NPOI EncryptionInfo: mode={npoiInfo.EncryptionMode?.GetType().Name} v={npoiInfo.VersionMajor}.{npoiInfo.VersionMinor} flags={npoiInfo.EncryptionFlags:X} decryptor={npoiInfo.Decryptor.GetType().Name} keySize={npoiInfo.Header.KeySize} docPropsEncrypted={npoiInfo.IsDocPropsEncrypted()}");
+        bool nWrong = NpoiPath.OpenInfo(info.HeaderBytes).Decryptor.VerifyPassword(password + "x");
+        bool nOk = npoiInfo.Decryptor.VerifyPassword(password);
+        Console.WriteLine($"[3] NPOI verify: correct={nOk} wrong={nWrong}");
+    }
+    catch (Exception ex) { Console.WriteLine("[3] NPOI path threw " + DescribeException(ex)); npoiInfo = null; }
+    if (!ok) { Console.WriteLine("    password rejected: would be INVALID_PASSWORD"); return 1; }
+
+    // 4. decrypt the three streams (own + NPOI) and compare
+    var targets = new List<(string name, int prefix)> { ("WordDocument", DocCrypto.FibClearPrefix), (info.TableName, (int)info.LKey) };
+    if (Stream("Data") != null) targets.Add(("Data", 0));
+    var decrypted = new Dictionary<string, byte[]>();
+    foreach (var (sn, prefix) in targets)
+    {
+        byte[] enc = Stream(sn)!;
+        byte[] own = DocCrypto.DecryptStream(info, baseSecret, enc, prefix);
+        decrypted[sn] = own;
+        string npoiCmp = "n/a";
+        if (npoiInfo != null)
+        {
+            try
+            {
+                var (nd, produced) = NpoiPath.Decrypt(npoiInfo, enc, prefix);
+                int firstDiff = FirstDiff(own, nd);
+                npoiCmp = produced == enc.Length && firstDiff < 0 ? "IDENTICAL" : $"DIFFERENT produced={produced}/{enc.Length} firstDiffAt={firstDiff}";
+            }
+            catch (Exception ex) { npoiCmp = "THREW " + DescribeException(ex); }
+        }
+        Console.WriteLine($"[4] {sn}: len={enc.Length} clearPrefix={prefix} blocks={(enc.Length + 511) / 512} ownSha={Sha(own)} npoi={npoiCmp}");
+    }
+
+    // 5. oracle comparison (msoffcrypto-tool output)
+    if (oraclePath != null)
+    {
+        List<Node> oracle = Cfb.Snapshot(File.ReadAllBytes(oraclePath));
+        foreach (var (sn, prefix) in targets)
+        {
+            byte[] o = oracle.First(n => n.Path == sn).Data!;
+            bool same = o.Length == decrypted[sn].Length && o.AsSpan(prefix).SequenceEqual(decrypted[sn].AsSpan(prefix));
+            Console.WriteLine($"[5] oracle {sn} from offset {prefix}: {(same ? "IDENTICAL" : "DIFFERENT")}");
+        }
+        foreach (Node n in tree.Where(n => !n.IsStorage && !decrypted.ContainsKey(n.Path)))
+        {
+            Node? o = oracle.FirstOrDefault(x => x.Path == n.Path);
+            Console.WriteLine($"[5] oracle untouched stream '{Cfb.Printable(n.Path)}': {(o != null && o.Data.AsSpan().SequenceEqual(n.Data) ? "IDENTICAL to encrypted file" : "DIFFERENT")}");
+        }
+    }
+
+    // 6. FIB markers
+    byte[] wdKeepFlags = (byte[])decrypted["WordDocument"].Clone();
+    DocCrypto.ClearFibMarkers(decrypted["WordDocument"]);
+    var (minFc, minIdx, pairs) = DocCrypto.MinTableFc(decrypted["WordDocument"]);
+    Console.WriteLine($"[6] FIB after clear: flags={BitConverter.ToUInt16(decrypted["WordDocument"], 0x0A):X4} lKey={BitConverter.ToUInt32(decrypted["WordDocument"], 0x0E)}; FibRgFcLcb pairs={pairs} lowest fc with lcb>0 = {minFc} (pair {minIdx}) vs header size {info.LKey}: {(minFc >= info.LKey ? "no structure overlaps the header bytes" : "OVERLAP")}");
+
+    // 7. rebuild options
+    var expected = tree.Select(n => decrypted.TryGetValue(n.Path, out var d) && !n.IsStorage ? n with { Data = d } : n).ToList();
+    var options = new (string label, Func<byte[], IReadOnlyDictionary<string, byte[]>, byte[]> build)[]
+    {
+        ("A OpenMcdf in-place overwrite", Cfb.RebuildInPlaceOpenMcdf),
+        ("B OpenMcdf new root + CopyTo", Cfb.RebuildCopyToOpenMcdf),
+        ("C NPOI new filesystem + copy", NpoiPath.RebuildCopy),
+        ("C2 NPOI CreateOrUpdateDocument", NpoiPath.RebuildUpdate),
+        ("D b2xtranslator StructuredStorageWriter", Cfb.RebuildB2x),
+    };
+    string? referenceTextSha = null;
+    byte[]? rebuiltA = null;
+    foreach (var (label, build) in options)
+    {
+        Console.WriteLine($"[7] rebuild {label}");
+        try
+        {
+            build(original, decrypted); // warm-up (JIT) so the measured run is steady state
+            long a0 = GC.GetAllocatedBytesForCurrentThread();
+            var sw = Stopwatch.StartNew();
+            byte[] rebuilt = build(original, decrypted);
+            sw.Stop();
+            long alloc = GC.GetAllocatedBytesForCurrentThread() - a0;
+            rebuiltA ??= rebuilt;
+            List<string> diffs = Cfb.Diff(expected, Cfb.Snapshot(rebuilt));
+            Console.WriteLine($"    size={rebuilt.Length} (input {original.Length}) allocated={alloc} B ({(double)alloc / original.Length:F1}x input) time={sw.Elapsed.TotalMilliseconds:F2} ms tree={(diffs.Count == 0 ? "IDENTICAL (paths, kinds, CLSIDs, contents)" : string.Join(" | ", diffs))}");
+            var r = Extract("    Extract(rebuilt)", rebuilt, name);
+            if (r != null)
+            {
+                string sha = Sha(Encoding.UTF8.GetBytes(r.ExtractedText ?? ""));
+                referenceTextSha ??= sha;
+                if (sha != referenceTextSha) Console.WriteLine("    TEXT DIFFERS from option A");
+            }
+        }
+        catch (Exception ex) { Console.WriteLine("    THREW " + DescribeException(ex)); }
+    }
+
+    // 8. Q3 variants on option A
+    var keep = new Dictionary<string, byte[]>(decrypted) { ["WordDocument"] = wdKeepFlags };
+    Extract("[8a] Extract(decrypted, FIB markers NOT cleared)", Cfb.RebuildInPlaceOpenMcdf(original, keep), name);
+    var zeroed = new Dictionary<string, byte[]>(decrypted);
+    byte[] t = (byte[])decrypted[info.TableName].Clone();
+    Array.Clear(t, 0, (int)info.LKey);
+    zeroed[info.TableName] = t;
+    Extract("[8b] Extract(decrypted, header bytes in table stream zeroed)", Cfb.RebuildInPlaceOpenMcdf(original, zeroed), name);
+    if (oraclePath != null) Extract("[8c] Extract(oracle output as-is)", File.ReadAllBytes(oraclePath), name);
+    return 0;
+}
+
+string Summ(byte[] b, string n)
+{
+    try
+    {
+        var r = extractor.Extract(new ExtractionRequest { FileBytes = b, FileName = n, DetectedMimeType = docMime });
+        var fm = r.FormatMetadata as WordFormatMetadata;
+        return $"text={r.ExtractedText.Length}/{Sha(Encoding.UTF8.GetBytes(r.ExtractedText))} creator={Q(r.Metadata.Creator)} embedded={r.EmbeddedFiles.Count}[{string.Join(",", r.EmbeddedFiles.Select(e => e.PackagePath + ":" + e.SizeInBytes))}] hasMacros={fm?.HasMacros} fieldErrors={r.FieldErrors.Count}";
+    }
+    catch (Exception ex) { return "THREW " + DescribeException(ex); }
+}
+
+static int FirstDiff(byte[] a, byte[] b)
+{
+    int n = Math.Min(a.Length, b.Length);
+    for (int i = 0; i < n; i++) if (a[i] != b[i]) return i;
+    return a.Length == b.Length ? -1 : n;
+}
+
+static string Sha(byte[] data) => Convert.ToHexString(SHA256.HashData(data))[..16];
+static string Q(string? s) => s == null ? "null" : "'" + s + "'";
+
+static string DescribeException(Exception ex)
+{
+    var sb = new StringBuilder();
+    for (Exception? e = ex; e != null; e = e.InnerException)
+    {
+        if (sb.Length > 0) sb.Append(" <- ");
+        sb.Append(e.GetType().FullName);
+        if (e is ExtractorOleException x) sb.Append($" Code={x.Code} Status={x.StatusCode}");
+        sb.Append($" \"{e.Message}\"");
+    }
+    return sb.ToString();
+}
+

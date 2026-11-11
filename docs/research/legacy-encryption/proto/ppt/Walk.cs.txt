@@ -1,0 +1,68 @@
+// Research prototype copied from tmpesearch-ppt\proto\PptDec\Walk.cs; not compiled by any project.
+using System.Text;
+
+namespace PptDec;
+
+// Structural check of a (plain or decrypted) PowerPoint Document stream: walks every persist object
+// recursively, verifies that child record lengths add up exactly, and collects evidence
+// (text atoms, client anchor sizes, fill properties) used to tell decryption errors from b2xtranslator defects.
+public static class Walker
+{
+    public static int Run(byte[] file)
+    {
+        var l = PptLayout.Read(file);
+        int records = 0, bad = 0;
+        var anchorSizes = new SortedDictionary<uint, int>();
+        var text = new StringBuilder();
+        int optWithShadeColors = 0, optShadeColorsNoType = 0;
+        var types = new SortedDictionary<uint, int>();
+
+        void Rec(long off, long end, int depth, uint persistId)
+        {
+            while (off < end)
+            {
+                if (off + 8 > end) { bad++; Console.WriteLine($"  BAD persist {persistId}: dangling {end - off} bytes at {off}"); return; }
+                ushort verInst = PptLayout.U16(l.Doc, off);
+                ushort type = PptLayout.U16(l.Doc, off + 2);
+                uint len = PptLayout.U32(l.Doc, off + 4);
+                long body = off + 8;
+                if (body + len > end) { bad++; Console.WriteLine($"  BAD persist {persistId}: record 0x{type:X4} at {off} len {len} overruns parent end {end}"); return; }
+                records++;
+                types[type] = types.GetValueOrDefault(type) + 1;
+                bool container = (verInst & 0xF) == 0xF;
+                if (type == 0xF010) anchorSizes[len] = anchorSizes.GetValueOrDefault(len) + 1;
+                if (type == 0x0FA0) text.Append(Encoding.Unicode.GetString(l.Doc, (int)body, (int)len)).Append('|');
+                if (type == 0x0FA8) text.Append(Encoding.Latin1.GetString(l.Doc, (int)body, (int)len)).Append('|');
+                if (type == 0xF00B)
+                {
+                    int n = verInst >> 4;
+                    bool colors = false, shadeType = false;
+                    for (int i = 0; i < n && body + i * 6 + 6 <= body + len; i++)
+                    {
+                        int pid = PptLayout.U16(l.Doc, body + i * 6) & 0x3FFF;
+                        if (pid == 407) colors = true;      // fillShadeColors
+                        if (pid == 412) shadeType = true;   // fillShadeType
+                    }
+                    if (colors) { optWithShadeColors++; if (!shadeType) optShadeColorsNoType++; }
+                }
+                if (container) Rec(body, body + len, depth + 1, persistId);
+                off = body + len;
+            }
+        }
+
+        foreach (var (id, offset) in l.Persist)
+        {
+            if (l.EncId == id) continue;
+            if (offset + 8 > l.Doc.Length) { bad++; Console.WriteLine($"  BAD persist {id}: offset {offset} beyond stream"); continue; }
+            uint len = PptLayout.U32(l.Doc, offset + 4);
+            if (offset + 8 + len > l.Doc.Length) { bad++; Console.WriteLine($"  BAD persist {id}: len {len} beyond stream"); continue; }
+            Rec(offset, offset + 8 + len, 0, id);
+        }
+        Console.WriteLine($"WALK: persistObjects={l.Persist.Count} records={records} structuralErrors={bad}");
+        Console.WriteLine($"WALK: clientAnchor(0xF010) sizes: {string.Join(", ", anchorSizes.Select(kv => $"{kv.Key} bytes x{kv.Value}"))}");
+        Console.WriteLine($"WALK: OPT(0xF00B) with fillShadeColors={optWithShadeColors}, of which without fillShadeType={optShadeColorsNoType}");
+        string t = text.ToString().Replace('\r', '/').Replace('\v', '/');
+        Console.WriteLine($"WALK: textAtoms chars={t.Length}: {(t.Length > 600 ? t[..600] : t)}");
+        return bad == 0 ? 0 : 1;
+    }
+}
