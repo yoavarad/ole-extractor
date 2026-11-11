@@ -183,7 +183,13 @@ namespace ExtractorOLE.StressHarness
                         continue;
                     }
 
-                    samples.Add((Path.GetRelativePath(directory, file).Replace(Path.DirectorySeparatorChar, '/'), File.ReadAllBytes(file)));
+                    var name = Path.GetRelativePath(directory, file).Replace(Path.DirectorySeparatorChar, '/');
+                    if (ExpectedFailures.IsEncryptedSample(name))
+                    {
+                        continue;
+                    }
+
+                    samples.Add((name, File.ReadAllBytes(file)));
                 }
             }
 

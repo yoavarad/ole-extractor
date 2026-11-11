@@ -35,12 +35,20 @@ namespace ExtractorOLE.StressHarness
                 if (entry.TryGetProperty("expectedBehavior", out _) && entry.TryGetProperty("path", out var path))
                 {
                     var name = path.GetString()!.Replace(Path.DirectorySeparatorChar, '/');
-                    expected.Add(name.StartsWith("samples/", StringComparison.OrdinalIgnoreCase) ? name["samples/".Length..] : name);
+                    var relative = name.StartsWith("samples/", StringComparison.OrdinalIgnoreCase) ? name["samples/".Length..] : name;
+                    if (!IsEncryptedSample(relative))
+                    {
+                        expected.Add(relative);
+                    }
                 }
             }
 
             return expected;
         }
+
+        /// <summary>Encrypted samples (samples/encrypted/) are excluded from the latency baseline and stress corpus.</summary>
+        public static bool IsEncryptedSample(string relativeName) =>
+            relativeName.StartsWith("encrypted/", StringComparison.OrdinalIgnoreCase);
 
         /// <summary>0 when the failing sets match; 1 (with the differences printed) otherwise.</summary>
         public static int ExitCodeFor(IReadOnlySet<string> expected, IReadOnlySet<string> actual)

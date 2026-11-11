@@ -23,6 +23,26 @@ namespace ExtractorOLE.Tests.StressHarness
         public void ExitCodeFor_Mismatch_ReturnsOne() => Assert.Equal(1, Program.ExitCodeFor(Set(), Set(), 0, 1));
 
         [Fact]
+        public void LoadNamedSamples_SkipsEncryptedFolder()
+        {
+            var dir = Directory.CreateTempSubdirectory();
+            try
+            {
+                Directory.CreateDirectory(Path.Combine(dir.FullName, "encrypted"));
+                File.WriteAllBytes(Path.Combine(dir.FullName, "encrypted", "e.docx"), new byte[] { 1 });
+                File.WriteAllBytes(Path.Combine(dir.FullName, "ok.docx"), new byte[] { 2 });
+
+                var samples = Program.LoadNamedSamples(dir.FullName, out _);
+
+                Assert.Equal("ok.docx", Assert.Single(samples).Name);
+            }
+            finally
+            {
+                dir.Delete(true);
+            }
+        }
+
+        [Fact]
         public void LoadNamedSamples_NamesAreRelativeSlashPaths()
         {
             var dir = Directory.CreateTempSubdirectory();
