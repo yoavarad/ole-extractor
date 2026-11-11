@@ -36,8 +36,8 @@ namespace ExtractorOLE.DTOs
 
         /// <summary>
         /// Optional document-open password for the supplied container (never its embedded
-        /// subfiles). Null or empty means no password. It is a secret: it is never logged,
-        /// echoed in an error, or retained after the call.
+        /// subfiles). Null or empty means no password. It is a secret: the library never logs it,
+        /// echoes it in an error, or keeps a copy of it after the call.
         /// </summary>
         public string? Password { get; init; }
     }
