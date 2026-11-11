@@ -18,7 +18,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  YDK_VERSION: "1.8.0"
+  YDK_VERSION: "1.10.0"
 
 jobs:
   sync:
