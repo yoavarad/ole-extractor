@@ -1,0 +1,429 @@
+// Research prototype copied from tmpesearch-ppt\proto\PptDec\Program.cs; not compiled by any project.
+using System.Diagnostics;
+using System.Security.Cryptography;
+using b2xtranslator.PptFileFormat;
+using b2xtranslator.StructuredStorage.Reader;
+using ExtractorOLE;
+using ExtractorOLE.DTOs;
+using Microsoft.Extensions.DependencyInjection;
+using NPOI.POIFS.FileSystem;
+using OpenMcdf;
+
+namespace PptDec;
+
+public static class Program
+{
+    const string PptMime = "application/vnd.ms-powerpoint";
+
+    public static int Main(string[] args)
+    {
+        if (args.Length < 2) { Console.WriteLine("usage: dump|today|info|dec|npoisummary <file> [password] [--variant token|compact] [--writer npoi|npoicopy|openmcdf] [--factory own|npoi] [--save path] [--nolib]"); return 2; }
+        string cmd = args[0], path = args[1];
+        string? pw = args.Length > 2 && !args[2].StartsWith("--") ? args[2] : null;
+        Patch = args.Contains("--patch");
+        string Opt(string name, string def) { int i = Array.IndexOf(args, "--" + name); return i >= 0 && i + 1 < args.Length ? args[i + 1] : def; }
+        byte[] file = File.ReadAllBytes(path);
+        Console.WriteLine($"=== {cmd} {Path.GetFileName(path)} ({file.Length} bytes) ===");
+        try
+        {
+            switch (cmd)
+            {
+                case "dump": PptLayout.Read(file).Dump(Console.Out); return 0;
+                case "walk": return Walker.Run(file);
+                case "today": RunLibrary(file, "unmodified library, raw file"); ProbeB2x(file); return 0;
+                case "info": return Info(file, pw ?? "");
+                case "npoisummary": return NpoiSummary(file, pw ?? "");
+                case "fuzzsum": return FuzzSum(file, pw ?? "", uint.Parse(Opt("count", "2147483647")));
+                case "dec": return Dec(file, pw ?? "", Opt("variant", "compact"), Opt("writer", "npoi"), Opt("factory", "own"), Opt("save", ""), args.Contains("--nolib"));
+                default: return 2;
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"TOP-LEVEL {e.GetType().FullName}: {e.Message}");
+            Console.WriteLine(string.Join("\n", (e.StackTrace ?? "").Split('\n').Take(8)));
+            return 1;
+        }
+    }
+
+    static int Info(byte[] file, string pw)
+    {
+        var l = PptLayout.Read(file);
+        if (l.CryptPayload == null) { Console.WriteLine("not encrypted: " + l.Note); return 0; }
+        var info = Rc4CryptoApiInfo.Parse(l.CryptPayload);
+        Console.WriteLine("own parse: " + info);
+        var own = new OwnCipherFactory(info, pw);
+        Console.WriteLine($"own verify('{pw}') = {own.Verify()}");
+        try
+        {
+            var bad = new NpoiCipherFactory(l.CryptPayload, useByteArrayInput: true);
+            Console.WriteLine("NPOI EncryptionInfo(LittleEndianByteArrayInputStream) OK, mode=" + bad.Info.EncryptionMode);
+        }
+        catch (Exception e) { Console.WriteLine($"NPOI EncryptionInfo(LittleEndianByteArrayInputStream) FAILED: {e.GetType().Name}: {e.Message}"); }
+        var npoi = new NpoiCipherFactory(l.CryptPayload);
+        var h = npoi.Info.Header;
+        Console.WriteLine($"NPOI parse: v{npoi.Info.VersionMajor}.{npoi.Info.VersionMinor} flags=0x{npoi.Info.EncryptionFlags:X} mode={npoi.Info.EncryptionMode} keySize={h.KeySize} cipher={h.CipherAlgorithm?.jceId} hash={h.HashAlgorithm?.jceId} csp='{h.CspName}' docPropsEncrypted={npoi.Info.IsDocPropsEncrypted} decryptor={npoi.Info.Decryptor.GetType().Name}");
+        Console.WriteLine($"NPOI VerifyPassword('{pw}') = {npoi.Verify(pw)}");
+        try
+        {
+            var c = npoi.Decryptor.InitCipherForBlock(null, 1);
+            Console.WriteLine("NPOI InitCipherForBlock(null, 1) -> " + c.GetType().Name);
+        }
+        catch (Exception e) { Console.WriteLine($"NPOI InitCipherForBlock(null, 1) FAILED: {e.GetType().Name}: {e.Message}"); }
+        return 0;
+    }
+
+    static int FuzzSum(byte[] file, string pw, uint count)
+    {
+        var l = PptLayout.Read(file);
+        var own = new OwnCipherFactory(Rc4CryptoApiInfo.Parse(l.CryptPayload!), pw);
+        byte[] es = (byte[])l.EncryptedSummary!.Clone();
+        byte[] head = es[..8]; own.ForBlock(0).Process(head, 0, 8);
+        uint arrOff = PptLayout.U32(head, 0), arrSize = PptLayout.U32(head, 4);
+        byte[] d = es.AsSpan((int)arrOff, (int)arrSize).ToArray();
+        own.ForBlock(0).Process(d, 0, d.Length);
+        PptLayout.PutU32(d, 0, count);
+        own.ForBlock(0).Process(d, 0, d.Length); // RC4 is symmetric: re-encrypt
+        d.CopyTo(es, (int)arrOff);
+        byte[] mutated = RebuildNpoiCopy(file, new() { ["EncryptedSummary"] = es });
+        File.WriteAllBytes(Path.Combine(Path.GetTempPath(), "fuzzsum.ppt"), mutated);
+        Console.WriteLine($"mutated EncryptedSummary count -> {count}");
+        try { PptDecryptor.DecryptSummary(es, own, []); Console.WriteLine("own: accepted"); }
+        catch (Exception e) { Console.WriteLine($"own: {e.GetType().Name}: {e.Message}"); }
+        return NpoiSummary(mutated, pw);
+    }
+
+    static int NpoiSummary(byte[] file, string pw)
+    {
+        var l = PptLayout.Read(file);
+        var npoi = new NpoiCipherFactory(l.CryptPayload!);
+        Console.WriteLine("verify=" + npoi.Verify(pw));
+        using var fs = new NPOIFSFileSystem(new MemoryStream(file, false));
+        try
+        {
+            var input = npoi.Decryptor.GetDataStream(fs.Root);
+            var ms = new MemoryStream();
+            var buf = new byte[8192];
+            int n;
+            while ((n = input.Read(buf, 0, buf.Length)) > 0) ms.Write(buf, 0, n);
+            Console.WriteLine($"NPOI GetDataStream(DirectoryNode) returned {ms.Length} bytes (serialized CFB)");
+            using var inner = new NPOIFSFileSystem(new MemoryStream(ms.ToArray()));
+            var it = inner.Root.Entries;
+            while (it.MoveNext())
+            {
+                var e = (Entry)it.Current;
+                byte[] data = PptLayout.ReadStream(inner.Root, e.Name);
+                Console.WriteLine($"  '{PptLayout.Printable(e.Name)}' {data.Length} bytes sha1={Convert.ToHexString(SHA1.HashData(data))[..16]}");
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"NPOI GetDataStream(DirectoryNode) FAILED: {e.GetType().FullName}: {e.Message}");
+            Console.WriteLine(string.Join("\n", (e.StackTrace ?? "").Split('\n').Take(6)));
+        }
+        return 0;
+    }
+
+    static int Dec(byte[] file, string pw, string variant, string writer, string factory, string save, bool noLib)
+    {
+        long alloc0 = GC.GetTotalAllocatedBytes(true);
+        var sw = Stopwatch.StartNew();
+        var l = PptLayout.Read(file);
+        if (l.CryptPayload == null) { Console.WriteLine("DETECT: not encrypted (" + l.Note + ")"); return 0; }
+        var info = Rc4CryptoApiInfo.Parse(l.CryptPayload);
+        Console.WriteLine($"DETECT: encrypted. token=0x{l.HeaderToken:X8} encId={l.EncId} {info}");
+        var own = new OwnCipherFactory(info, pw);
+        var npoi = new NpoiCipherFactory(l.CryptPayload);
+        bool vOwn = own.Verify(), vNpoi = npoi.Verify(pw);
+        Console.WriteLine($"VERIFY: own={vOwn} npoi={vNpoi}");
+        if (!vOwn || !vNpoi) { Console.WriteLine("RESULT: INVALID_PASSWORD (no content decrypted)"); return 3; }
+
+        var log = new List<string>();
+        var logN = new List<string>();
+        byte[] docOwn = PptDecryptor.DecryptDocument(l, own, log);
+        byte[] docNpoi = PptDecryptor.DecryptDocument(l, npoi, logN);
+        Console.WriteLine($"DOC: own == npoi: {docOwn.AsSpan().SequenceEqual(docNpoi)}");
+        byte[]? picOwn = null;
+        if (l.Pictures != null)
+        {
+            picOwn = PptDecryptor.DecryptPictures(l.Pictures, own, log);
+            byte[] picNpoi = PptDecryptor.DecryptPictures(l.Pictures, npoi, logN);
+            Console.WriteLine($"PICTURES: own == npoi: {picOwn.AsSpan().SequenceEqual(picNpoi)}");
+        }
+        List<(string Name, byte[] Data, int Block, int Flags)>? summary = null;
+        if (l.EncryptedSummary != null)
+        {
+            summary = PptDecryptor.DecryptSummary(l.EncryptedSummary, own, log);
+            var sumN = PptDecryptor.DecryptSummary(l.EncryptedSummary, npoi, logN);
+            Console.WriteLine($"SUMMARY: own == npoi: {summary.Select(x => Convert.ToHexString(x.Data)).SequenceEqual(sumN.Select(x => Convert.ToHexString(x.Data)))}");
+        }
+        foreach (var s in log) Console.WriteLine("  " + s);
+
+        byte[] doc = factory == "npoi" ? docNpoi : docOwn;
+        byte[] cu = (byte[])l.CurrentUser.Clone();
+        PptLayout.PutU32(cu, 12, 0xE391C05F);
+        if (variant == "compact") doc = Compact(l, doc, cu);
+        else if (variant == "neutral") Neutralize(l, doc);
+        else if (variant != "token") throw new ArgumentException(variant);
+
+        var replace = new Dictionary<string, byte[]?> { ["Current User"] = cu, ["PowerPoint Document"] = doc };
+        if (picOwn != null) replace["Pictures"] = picOwn;
+        if (summary != null)
+        {
+            replace["EncryptedSummary"] = null;
+            foreach (var s in summary) replace[s.Name] = s.Data;
+        }
+        byte[] plain = writer switch
+        {
+            "npoi" => RebuildNpoiInPlace(file, replace),
+            "npoicopy" => RebuildNpoiCopy(file, replace),
+            "openmcdf" => RebuildOpenMcdf(file, replace),
+            _ => throw new ArgumentException(writer),
+        };
+        sw.Stop();
+        long alloc1 = GC.GetTotalAllocatedBytes(true);
+        Console.WriteLine($"REBUILD: variant={variant} writer={writer} out={plain.Length} bytes, elapsed={sw.ElapsedMilliseconds} ms, allocated={(alloc1 - alloc0) / 1024} KiB ({(double)(alloc1 - alloc0) / file.Length:F1}x input)");
+        if (save.Length > 0) { File.WriteAllBytes(save, plain); Console.WriteLine("saved " + save); }
+        var l2 = PptLayout.Read(plain);
+        Console.WriteLine("REBUILT root: " + string.Join(" | ", l2.RootEntries));
+        Console.WriteLine($"REBUILT token=0x{l2.HeaderToken:X8} edits={l2.Edits.Count} ue.recLen={l2.Edits[0].RecLen} persist={l2.Persist.Count} encId={l2.EncId?.ToString() ?? "none"}");
+        ProbeB2x(plain);
+        if (!noLib) RunLibrary(plain, "library on decrypted rebuild");
+        return 0;
+    }
+
+    /// POI-style: drop the CryptSession10Container, rewrite one PersistDirectoryAtom and a 28-byte UserEditAtom.
+    static byte[] Compact(PptLayout l, byte[] doc, byte[] cu)
+    {
+        var ms = new MemoryStream();
+        var newOff = new SortedDictionary<uint, uint>();
+        foreach (var (id, off) in l.Persist.OrderBy(kv => kv.Value))
+        {
+            if (id == l.EncId) continue;
+            uint len = PptLayout.U32(doc, off + 4);
+            newOff[id] = (uint)ms.Position;
+            ms.Write(doc, (int)off, (int)(8 + len));
+        }
+        // persist directory: runs of consecutive ids
+        var body = new MemoryStream();
+        var bw = new BinaryWriter(body);
+        var ids = newOff.Keys.ToList();
+        for (int i = 0; i < ids.Count;)
+        {
+            int j = i;
+            while (j + 1 < ids.Count && ids[j + 1] == ids[j] + 1 && j + 1 - i < 0xFFF) j++;
+            bw.Write((uint)(ids[i] | ((uint)(j - i + 1) << 20)));
+            for (int k = i; k <= j; k++) bw.Write(newOff[ids[k]]);
+            i = j + 1;
+        }
+        uint dirOff = (uint)ms.Position;
+        var w = new BinaryWriter(ms);
+        w.Write((ushort)0); w.Write((ushort)0x1772); w.Write((uint)body.Length); w.Write(body.ToArray());
+        uint ueOff = (uint)ms.Position;
+        var ue = l.Edits[0];
+        byte[] atom = doc.AsSpan((int)ue.Offset, 8 + 28).ToArray();
+        PptLayout.PutU32(atom, 4, 0x1C);
+        PptLayout.PutU32(atom, 16, 0);       // offsetLastEdit
+        PptLayout.PutU32(atom, 20, dirOff);  // offsetPersistDirectory
+        w.Write(atom);
+        PptLayout.PutU32(cu, 16, ueOff);
+        return ms.ToArray();
+    }
+
+    /// In-place alternative: sizes and offsets untouched; the CryptSession10Container record keeps its place but
+    /// its header is turned into an atom (recVer 0) so a parser that walks all persist ids does not descend into it.
+    static void Neutralize(PptLayout l, byte[] doc) => PptLayout.PutU16(doc, l.EncOffset!.Value, 0x0000);
+
+    static byte[] RebuildNpoiInPlace(byte[] file, Dictionary<string, byte[]?> replace)
+    {
+        using var fs = new NPOIFSFileSystem(new MemoryStream((byte[])file.Clone()));
+        foreach (var (name, data) in replace)
+        {
+            if (data == null) { if (fs.Root.HasEntry(name)) fs.Root.GetEntry(name).Delete(); }
+            else fs.CreateOrUpdateDocument(new MemoryStream(data), name);
+        }
+        var ms = new MemoryStream();
+        fs.WriteFileSystem(ms);
+        return ms.ToArray();
+    }
+
+    static byte[] RebuildNpoiCopy(byte[] file, Dictionary<string, byte[]?> replace)
+    {
+        using var src = new NPOIFSFileSystem(new MemoryStream(file, false));
+        using var dst = new NPOIFSFileSystem();
+        dst.Root.StorageClsid = src.Root.StorageClsid;
+        var it = src.Root.Entries;
+        while (it.MoveNext())
+        {
+            var e = (Entry)it.Current;
+            if (replace.ContainsKey(e.Name)) continue;
+            EntryUtils.CopyNodeRecursively(e, dst.Root);
+        }
+        foreach (var (name, data) in replace)
+            if (data != null) dst.CreateDocument(new MemoryStream(data), name);
+        var ms = new MemoryStream();
+        dst.WriteFileSystem(ms);
+        return ms.ToArray();
+    }
+
+    static byte[] RebuildOpenMcdf(byte[] file, Dictionary<string, byte[]?> replace)
+    {
+        using var src = RootStorage.Open(new MemoryStream(file, false));
+        var ms = new MemoryStream();
+        using (var dst = RootStorage.Create(ms, OpenMcdf.Version.V3, StorageModeFlags.LeaveOpen))
+        {
+            dst.CLSID = src.CLSID;
+            CopyStorage(src, dst, replace);
+            foreach (var (name, data) in replace)
+                if (data != null) { using var s = dst.CreateStream(name); s.Write(data, 0, data.Length); }
+            dst.Flush();
+        }
+        return ms.ToArray();
+    }
+
+    static void CopyStorage(Storage src, Storage dst, Dictionary<string, byte[]?>? skip)
+    {
+        foreach (var e in src.EnumerateEntries())
+        {
+            if (skip != null && skip.ContainsKey(e.Name)) continue;
+            if (e.Type == EntryType.Storage)
+            {
+                var s = src.OpenStorage(e.Name);
+                var d = dst.CreateStorage(e.Name);
+                d.CLSID = s.CLSID;
+                CopyStorage(s, d, null);
+            }
+            else
+            {
+                using var s = src.OpenStream(e.Name);
+                using var d = dst.CreateStream(e.Name);
+                s.CopyTo(d);
+            }
+        }
+    }
+
+    sealed class InMemPptx : b2xtranslator.OpenXmlLib.PresentationML.PresentationDocument
+    {
+        readonly Stream _o;
+        public InMemPptx(Stream o, b2xtranslator.OpenXmlLib.OpenXmlPackage.DocumentType t) : base(string.Empty, t) { _o = o; }
+        public override void Close() { var w = new b2xtranslator.OpenXmlLib.OpenXmlWriter(); w.Open(_o); WritePackage(w); w.Close(); }
+    }
+
+    public static bool Patch;
+
+    /// Experiment only: emulate two b2xtranslator fixes on the parsed model (16-byte ClientAnchor, missing fillShadeType).
+    static string PatchModel(PowerpointDocument ppt)
+    {
+        int anchors = 0, shade = 0;
+        void Visit(b2xtranslator.OfficeDrawing.Record r)
+        {
+            if (r is b2xtranslator.OfficeDrawing.ClientAnchor a && a.Bytes.Length == 16)
+            {
+                var nb = new byte[8];
+                for (int i = 0; i < 4; i++) BitConverter.TryWriteBytes(nb.AsSpan(2 * i), (short)BitConverter.ToInt32(a.Bytes, 4 * i));
+                a.Bytes = nb; anchors++;
+            }
+            if (r is b2xtranslator.OfficeDrawing.ShapeOptions so
+                && so.OptionsByID.ContainsKey(b2xtranslator.OfficeDrawing.ShapeOptions.PropertyId.fillShadeColors)
+                && !so.OptionsByID.ContainsKey(b2xtranslator.OfficeDrawing.ShapeOptions.PropertyId.fillShadeType))
+            {
+                so.OptionsByID[b2xtranslator.OfficeDrawing.ShapeOptions.PropertyId.fillShadeType] =
+                    new b2xtranslator.OfficeDrawing.ShapeOptions.OptionEntry { pid = b2xtranslator.OfficeDrawing.ShapeOptions.PropertyId.fillShadeType, op = 0 };
+                shade++;
+            }
+            if (r is b2xtranslator.OfficeDrawing.RegularContainer c) foreach (var ch in c.Children) Visit(ch);
+        }
+        var seen = new HashSet<object>(ReferenceEqualityComparer.Instance);
+        void VisitObj(object? o)
+        {
+            if (o == null || !seen.Add(o)) return;
+            if (o is b2xtranslator.OfficeDrawing.Record rr) { Visit(rr); return; }
+            if (o is System.Collections.IDictionary d) { foreach (var v in d.Values) VisitObj(v); return; }
+            if (o is System.Collections.IEnumerable e and not string) foreach (var v in e) VisitObj(v);
+        }
+        foreach (var f in typeof(PowerpointDocument).GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance))
+            VisitObj(f.GetValue(ppt));
+        return $"anchors16->8={anchors} fillShadeTypeAdded={shade}";
+    }
+
+    static void ProbeB2x(byte[] bytes)
+    {
+        try
+        {
+            using var reader = new StructuredStorageReader(new MemoryStream(bytes, false));
+            var ppt = new PowerpointDocument(reader);
+            int n = 0;
+            var types = new SortedDictionary<string, int>();
+            foreach (var rec in ppt) { n++; string t = rec.GetType().Name; types[t] = types.GetValueOrDefault(t) + 1; }
+            Console.WriteLine($"B2X direct: OK, persist records enumerated={n} [{string.Join(", ", types.Select(kv => kv.Key + "x" + kv.Value))}]");
+        }
+        catch (Exception e)
+        {
+            var inner = e.InnerException;
+            Console.WriteLine($"B2X direct: {e.GetType().FullName}: {e.Message}" + (inner != null ? $" <- {inner.GetType().FullName}: {inner.Message}" : ""));
+            Console.WriteLine("   " + string.Join("\n   ", ((inner ?? e).StackTrace ?? "").Split('\n').Take(4).Select(s => s.Trim())));
+            return;
+        }
+        // Same steps as the library's internal PptToPptxConverter.Convert.
+        try
+        {
+            using var reader = new StructuredStorageReader(new MemoryStream(bytes, false));
+            var ppt = new PowerpointDocument(reader);
+            string patched = Patch ? PatchModel(ppt) : "";
+            var outType = b2xtranslator.PresentationMLMapping.Converter.DetectOutputType(ppt);
+            var output = new MemoryStream();
+            var pptx = new InMemPptx(output, outType);
+            b2xtranslator.PresentationMLMapping.Converter.Convert(ppt, pptx);
+            byte[] px = output.ToArray();
+            int slides = 0; var sb = new System.Text.StringBuilder();
+            using (var pd = DocumentFormat.OpenXml.Packaging.PresentationDocument.Open(new MemoryStream(px), false))
+            {
+                foreach (var sp in pd.PresentationPart!.SlideParts)
+                {
+                    slides++;
+                    foreach (var t in sp.Slide.Descendants<DocumentFormat.OpenXml.Drawing.Text>()) sb.Append(t.Text).Append('|');
+                }
+            }
+            string tx = sb.ToString();
+            string clean = new string((tx.Length > 200 ? tx[..200] : tx).Select(ch => ch < 0x20 ? '|' : ch).ToArray());
+            Console.WriteLine($"B2X convert{(Patch ? " [PATCHED MODEL: " + patched + "]" : "")}: OK, pptx bytes={px.Length} slides={slides} slideTextChars={tx.Length} first200=\"{clean}\"");
+        }
+        catch (Exception e)
+        {
+            var inner = e.InnerException;
+            Console.WriteLine($"B2X convert: {e.GetType().FullName}: {e.Message}" + (inner != null ? $" <- {inner.GetType().FullName}: {inner.Message}" : ""));
+            Console.WriteLine("   " + string.Join("\n   ", ((inner ?? e).StackTrace ?? "").Split('\n').Take(10).Select(s => s.Trim())));
+        }
+    }
+
+    static void RunLibrary(byte[] bytes, string label)
+    {
+        var services = new ServiceCollection();
+        ServiceRegistration.Register(services);
+        using var sp = services.BuildServiceProvider();
+        var extractor = sp.GetRequiredService<MainExtractor>();
+        Console.WriteLine($"LIB [{label}]:");
+        try
+        {
+            var r = extractor.Extract(new ExtractionRequest { FileBytes = bytes, FileName = "fixture.ppt", DetectedMimeType = PptMime });
+            string text = r.ExtractedText ?? "";
+            string first = new string(text.Take(200).Select(c => c is '\r' or '\n' ? '|' : c).ToArray());
+            Console.WriteLine($"  text length={text.Length}");
+            Console.WriteLine($"  first200=\"{first}\"");
+            var m = r.Metadata;
+            Console.WriteLine($"  metadata: Title='{m.Title}' Creator='{m.Creator}' LastModifiedBy='{m.LastModifiedBy}' Created={m.Created:o} Modified={m.Modified:o} App='{m.ApplicationName}' Rev={m.RevisionNumber} Subject='{m.Subject}' Keywords='{m.Keywords}'");
+            if (r.FormatMetadata is PowerPointFormatMetadata f) Console.WriteLine($"  format: SlideCount={f.SlideCount} NotesSlideCount={f.NotesSlideCount} HasMacros={f.HasMacros}");
+            Console.WriteLine($"  subfiles={r.EmbeddedFiles.Count}");
+            foreach (var s in r.EmbeddedFiles)
+                Console.WriteLine($"    '{PptLayout.Printable(s.FileName)}' path='{PptLayout.Printable(s.PackagePath)}' size={s.SizeInBytes} sha256={Convert.ToHexString(SHA256.HashData(s.BinaryData))[..16]}");
+            Console.WriteLine($"  fieldErrors={r.FieldErrors.Count}");
+            foreach (var fe in r.FieldErrors) Console.WriteLine($"    {fe.FieldPath} {fe.Code}: {fe.Message}");
+        }
+        catch (Exception e)
+        {
+            string? code = e.GetType().GetProperty("Code")?.GetValue(e) as string;
+            Console.WriteLine($"  THROWN {e.GetType().FullName} code={code ?? "(none)"} message=\"{e.Message}\"");
+            if (e.InnerException != null) Console.WriteLine($"    inner {e.InnerException.GetType().FullName}: {e.InnerException.Message}");
+        }
+    }
+}

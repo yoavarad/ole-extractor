@@ -1,0 +1,57 @@
+// Research prototype copied from tmpesearch-doc\proto\DocDecryptProto\RebuildCheck.cs; not compiled by any project.
+// Throwaway: Q6 - rebuild a PLAIN .doc with each writer, replacing WordDocument + table (+Data) with same-length
+// byte-flipped-then-restored copies (i.e. identical content written through the writer), and check the tree.
+using System.Buffers.Binary;
+using System.Diagnostics;
+namespace DocDecryptProto;
+public static class RebuildCheck
+{
+    public static void Run(string path, Func<byte[], string, string> extractSummary)
+    {
+        byte[] original = File.ReadAllBytes(path);
+        List<Node> tree;
+        try { tree = Cfb.Snapshot(original); }
+        catch (Exception e)
+        {
+            Console.WriteLine($"== rebuildcheck {Path.GetFileName(path)}: OpenMcdf snapshot THREW {e.GetType().FullName}: {e.Message}; falling back to NPOI snapshot");
+            tree = NpoiPath.Snapshot(original);
+        }
+        byte[] wd = tree.First(n => n.Path == "WordDocument").Data!;
+        string tname = (BinaryPrimitives.ReadUInt16LittleEndian(wd.AsSpan(0x0A)) & 0x0200) != 0 ? "1Table" : "0Table";
+        var replaced = new Dictionary<string, byte[]>();
+        foreach (string s in new[] { "WordDocument", tname, "Data" })
+        {
+            var n = tree.FirstOrDefault(x => x.Path == s && !x.IsStorage);
+            if (n != null) replaced[s] = (byte[])n.Data!.Clone();
+        }
+        Console.WriteLine($"== rebuildcheck {Path.GetFileName(path)} ({original.Length} B) nodes={tree.Count} storages={tree.Count(n => n.IsStorage)} nonZeroClsids={tree.Count(n => n.Clsid != Guid.Empty)} replacing={string.Join(",", replaced.Keys)}");
+        string reference = extractSummary(original, Path.GetFileName(path));
+        Console.WriteLine($"  original : {reference}");
+        var options = new (string, Func<byte[], IReadOnlyDictionary<string, byte[]>, byte[]>)[]
+        {
+            ("A OpenMcdf in-place", Cfb.RebuildInPlaceOpenMcdf),
+            ("B OpenMcdf CopyTo", Cfb.RebuildCopyToOpenMcdf),
+            ("C NPOI copy", NpoiPath.RebuildCopy),
+            ("C2 NPOI CreateOrUpdate", NpoiPath.RebuildUpdate),
+            ("D b2x writer", Cfb.RebuildB2x),
+        };
+        foreach (var (label, build) in options)
+        {
+            try
+            {
+                build(original, replaced);
+                long a0 = GC.GetAllocatedBytesForCurrentThread();
+                var sw = Stopwatch.StartNew();
+                byte[] rebuilt = build(original, replaced);
+                sw.Stop();
+                long alloc = GC.GetAllocatedBytesForCurrentThread() - a0;
+                List<string> diffs;
+                try { diffs = Cfb.Diff(tree, Cfb.Snapshot(rebuilt)); }
+                catch (Exception e) { diffs = Cfb.Diff(tree, NpoiPath.Snapshot(rebuilt)); diffs.Insert(0, $"(OpenMcdf cannot read output: {e.GetType().Name}; compared via NPOI)"); }
+                string ex = extractSummary(rebuilt, Path.GetFileName(path));
+                Console.WriteLine($"  {label}: size={rebuilt.Length} alloc={alloc} ({(double)alloc / original.Length:F1}x) {sw.Elapsed.TotalMilliseconds:F1}ms tree={(diffs.Count == 0 ? "IDENTICAL" : string.Join(" | ", diffs.Take(4)) + (diffs.Count > 4 ? $" (+{diffs.Count - 4})" : ""))} extract={(ex == reference ? "SAME" : ex)}");
+            }
+            catch (Exception e) { Console.WriteLine($"  {label}: THREW {e.GetType().Name}: {e.Message}"); }
+        }
+    }
+}

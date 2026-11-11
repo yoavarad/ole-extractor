@@ -1,0 +1,115 @@
+// Research prototype copied from tmpesearch-doc\proto\DocDecryptProto\NpoiPath.cs; not compiled by any project.
+// Throwaway research prototype. Same job done through NPOI main (NPOI.Core.dll as built by the repo).
+using NPOI.POIFS.Crypt;
+using NPOI.POIFS.FileSystem;
+using NPOI.Util;
+
+namespace DocDecryptProto;
+
+public static class NpoiPath
+{
+    // headerBytes = first lKey bytes of the table stream (EncryptionVersionInfo first).
+    public static EncryptionInfo OpenInfo(byte[] headerBytes) =>
+        new EncryptionInfo(new LittleEndianInputStream(new ByteArrayInputStream(headerBytes)), null);
+
+    // VerifyPassword must have succeeded on info.Decryptor before this call.
+    public static (byte[] data, int produced) Decrypt(EncryptionInfo info, byte[] data, int clearPrefix)
+    {
+        Decryptor dec = info.Decryptor;
+        dec.SetChunkSize(512);
+        var s = (ChunkedCipherInputStream)dec.GetDataStream(new ByteArrayInputStream(data), data.Length, 0);
+        byte[] result = new byte[data.Length];
+        int prefix = Math.Min(clearPrefix, data.Length);
+        s.ReadPlain(result, 0, prefix);
+        int off = prefix;
+        while (off < data.Length)
+        {
+            int n = s.Read(result, off, data.Length - off);
+            if (n <= 0) break;
+            off += n;
+        }
+        return (result, off);
+    }
+
+    // --- Option C: new NPOIFSFileSystem, recursive copy with substitution, WriteFileSystem. ---
+    public static byte[] RebuildCopy(byte[] original, IReadOnlyDictionary<string, byte[]> replaced)
+    {
+        var src = new NPOIFSFileSystem(new MemoryStream(original, writable: false));
+        var dst = new NPOIFSFileSystem();
+        try
+        {
+            dst.Root.StorageClsid = src.Root.StorageClsid;
+            Copy(src.Root, dst.Root, "", replaced);
+            var outMs = new MemoryStream();
+            dst.WriteFileSystem(outMs);
+            return outMs.ToArray();
+        }
+        finally { src.Close(); dst.Close(); }
+    }
+
+    private static void Copy(DirectoryNode from, DirectoryNode to, string prefix, IReadOnlyDictionary<string, byte[]> replaced)
+    {
+        foreach (Entry e in from)
+        {
+            string path = prefix + e.Name;
+            if (e is DirectoryNode d)
+            {
+                var nd = (DirectoryNode)to.CreateDirectory(d.Name);
+                nd.StorageClsid = d.StorageClsid;
+                Copy(d, nd, path + "/", replaced);
+            }
+            else if (replaced.TryGetValue(path, out byte[]? data))
+            {
+                to.CreateDocument(e.Name, new MemoryStream(data, writable: false));
+            }
+            else
+            {
+                using DocumentInputStream dis = from.CreateDocumentInputStream(e);
+                to.CreateDocument(e.Name, dis);
+            }
+        }
+    }
+
+    // --- Option C2: open with NPOI, CreateOrUpdateDocument for the changed root streams, WriteFileSystem. ---
+    public static byte[] RebuildUpdate(byte[] original, IReadOnlyDictionary<string, byte[]> replaced)
+    {
+        var fs = new NPOIFSFileSystem(new MemoryStream(original, writable: false));
+        try
+        {
+            foreach (var (name, data) in replaced)
+                fs.CreateOrUpdateDocument(new MemoryStream(data, writable: false), name);
+            var outMs = new MemoryStream();
+            fs.WriteFileSystem(outMs);
+            return outMs.ToArray();
+        }
+        finally { fs.Close(); }
+    }
+
+    public static List<Node> Snapshot(byte[] file)
+    {
+        var fs = new NPOIFSFileSystem(new MemoryStream(file, writable: false));
+        try
+        {
+            var list = new List<Node> { new Node("", true, 0, ToGuid(fs.Root.StorageClsid), null) };
+            Walk(fs.Root, "", list);
+            return list;
+        }
+        finally { fs.Close(); }
+    }
+    static Guid ToGuid(NPOI.HPSF.ClassID? c) => c == null ? Guid.Empty : new Guid(c.Bytes);
+    static void Walk(DirectoryNode d, string prefix, List<Node> list)
+    {
+        foreach (Entry e in d)
+        {
+            string path = prefix + e.Name;
+            if (e is DirectoryNode dn) { list.Add(new Node(path, true, 0, ToGuid(dn.StorageClsid), null)); Walk(dn, path + "/", list); }
+            else
+            {
+                using DocumentInputStream dis = d.CreateDocumentInputStream(e);
+                byte[] data = new byte[((DocumentEntry)e).Size];
+                dis.ReadFully(data);
+                list.Add(new Node(path, false, data.Length, Guid.Empty, data));
+            }
+        }
+    }
+}

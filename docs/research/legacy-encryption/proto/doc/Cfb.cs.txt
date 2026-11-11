@@ -1,0 +1,134 @@
+// Research prototype copied from tmpesearch-doc\proto\DocDecryptProto\Cfb.cs; not compiled by any project.
+// Throwaway research prototype. Compound-file snapshot (OpenMcdf) and the rebuild options under comparison.
+using System.Security.Cryptography;
+using OpenMcdf;
+
+namespace DocDecryptProto;
+
+public sealed record Node(string Path, bool IsStorage, long Length, Guid Clsid, byte[]? Data)
+{
+    public string Hash => Data == null ? "-" : Convert.ToHexString(SHA256.HashData(Data))[..12];
+}
+
+public static class Cfb
+{
+    // Path "" = root storage. Children use '/' separators.
+    public static List<Node> Snapshot(byte[] file)
+    {
+        var list = new List<Node>();
+        using var root = RootStorage.Open(new MemoryStream(file, writable: false), StorageModeFlags.LeaveOpen);
+        list.Add(new Node("", true, 0, root.EntryInfo.CLSID, null));
+        Walk(root, "", list);
+        return list;
+    }
+
+    private static void Walk(Storage storage, string prefix, List<Node> list)
+    {
+        foreach (EntryInfo e in storage.EnumerateEntries())
+        {
+            string path = prefix + e.Name;
+            if (e.Type == EntryType.Storage)
+            {
+                list.Add(new Node(path, true, 0, e.CLSID, null));
+                Walk(storage.OpenStorage(e.Name), path + "/", list);
+            }
+            else
+            {
+                using CfbStream s = storage.OpenStream(e.Name);
+                byte[] data = new byte[s.Length];
+                s.ReadExactly(data);
+                list.Add(new Node(path, false, e.Length, e.CLSID, data));
+            }
+        }
+    }
+
+    public static string Describe(Node n) => n.IsStorage
+        ? $"  [storage] '{Printable(n.Path)}' clsid={n.Clsid}"
+        : $"  [stream ] '{Printable(n.Path)}' len={n.Length} sha={n.Hash}";
+
+    public static string Printable(string s) => string.Concat(s.Select(c => c < 0x20 ? $"\\x{(int)c:X2}" : c.ToString()));
+
+    // Compares two snapshots: same paths, kinds, lengths, CLSIDs, and content. Returns list of differences.
+    public static List<string> Diff(List<Node> expected, List<Node> actual)
+    {
+        var diffs = new List<string>();
+        var a = actual.ToDictionary(n => n.Path);
+        foreach (Node e in expected)
+        {
+            if (!a.Remove(e.Path, out Node? x)) { diffs.Add($"missing '{Printable(e.Path)}'"); continue; }
+            if (x.IsStorage != e.IsStorage) diffs.Add($"kind differs '{Printable(e.Path)}'");
+            if (x.Clsid != e.Clsid) diffs.Add($"clsid differs '{Printable(e.Path)}' expected {e.Clsid} got {x.Clsid}");
+            if (!e.IsStorage && (x.Data == null || !x.Data.AsSpan().SequenceEqual(e.Data)))
+                diffs.Add($"content differs '{Printable(e.Path)}' expected len {e.Length} sha {e.Hash} got len {x.Length} sha {x.Hash}");
+        }
+        foreach (string extra in a.Keys) diffs.Add($"extra '{Printable(extra)}'");
+        return diffs;
+    }
+
+    // --- Option A: copy input once, overwrite the changed streams in place (lengths never change). ---
+    public static byte[] RebuildInPlaceOpenMcdf(byte[] original, IReadOnlyDictionary<string, byte[]> replaced)
+    {
+        byte[] copy = (byte[])original.Clone();
+        using (var ms = new MemoryStream(copy, writable: true))
+        using (var root = RootStorage.Open(ms, StorageModeFlags.LeaveOpen))
+        {
+            foreach (var (name, data) in replaced)
+            {
+                using CfbStream s = root.OpenStream(name);
+                if (s.Length != data.Length) throw new InvalidOperationException("length changed for " + name);
+                s.Position = 0;
+                s.Write(data, 0, data.Length);
+            }
+            root.Flush();
+        }
+        return copy;
+    }
+
+    // --- Option B: new OpenMcdf root, Storage.CopyTo, then overwrite. ---
+    public static byte[] RebuildCopyToOpenMcdf(byte[] original, IReadOnlyDictionary<string, byte[]> replaced)
+    {
+        using var src = RootStorage.Open(new MemoryStream(original, writable: false), StorageModeFlags.LeaveOpen);
+        var outMs = new MemoryStream();
+        using (var dst = RootStorage.Create(outMs, OpenMcdf.Version.V3, StorageModeFlags.LeaveOpen))
+        {
+            src.CopyTo(dst);
+            foreach (var (name, data) in replaced)
+            {
+                using CfbStream s = dst.OpenStream(name);
+                s.Position = 0;
+                s.Write(data, 0, data.Length);
+            }
+            dst.Flush(true);
+        }
+        return outMs.ToArray();
+    }
+
+    // --- Option D: b2xtranslator StructuredStorageWriter fed from an OpenMcdf snapshot. ---
+    public static byte[] RebuildB2x(byte[] original, IReadOnlyDictionary<string, byte[]> replaced)
+    {
+        List<Node> nodes = Snapshot(original);
+        var writer = new b2xtranslator.StructuredStorage.Writer.StructuredStorageWriter();
+        var storages = new Dictionary<string, b2xtranslator.StructuredStorage.Writer.StorageDirectoryEntry> { [""] = writer.RootDirectoryEntry };
+        writer.RootDirectoryEntry.setClsId(nodes[0].Clsid);
+        foreach (Node n in nodes.Skip(1))
+        {
+            int cut = n.Path.LastIndexOf('/');
+            string parent = cut < 0 ? "" : n.Path[..cut];
+            string name = n.Path[(cut + 1)..];
+            if (n.IsStorage)
+            {
+                var st = storages[parent].AddStorageDirectoryEntry(name);
+                st.setClsId(n.Clsid);
+                storages[n.Path] = st;
+            }
+            else
+            {
+                byte[] data = replaced.TryGetValue(n.Path, out var r) ? r : n.Data!;
+                storages[parent].AddStreamDirectoryEntry(name, new MemoryStream(data, writable: false));
+            }
+        }
+        var outMs = new MemoryStream();
+        writer.write(outMs);
+        return outMs.ToArray();
+    }
+}

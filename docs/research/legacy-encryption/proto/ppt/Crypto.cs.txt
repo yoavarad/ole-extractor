@@ -1,0 +1,259 @@
+// Research prototype copied from tmpesearch-ppt\proto\PptDec\Crypto.cs; not compiled by any project.
+using System.Security.Cryptography;
+using System.Text;
+using NPOI.POIFS.Crypt;
+using NPOI.POIFS.Crypt.CryptoAPI;
+using NPOI.Util;
+
+namespace PptDec;
+
+public interface IStreamCipher { void Process(byte[] buf, int off, int len); }
+public interface ICipherFactory { IStreamCipher ForBlock(uint block); }
+
+/// MS-OFFCRYPTO 2.3.5.1 RC4 CryptoAPI Encryption Header, parsed by hand (no NPOI).
+public sealed class Rc4CryptoApiInfo
+{
+    public ushort VMajor, VMinor;
+    public uint Flags, HeaderSize, HFlags, SizeExtra, AlgId, AlgIdHash, KeySize, ProviderType, SaltSize, VerifierHashSize;
+    public string CspName = "";
+    public byte[] Salt = [], EncVerifier = [], EncVerifierHash = [];
+    public bool FCryptoApi => (Flags & 0x04) != 0;
+    public bool FDocProps => (Flags & 0x08) != 0;
+    public int KeyBits => KeySize == 0 ? 40 : (int)KeySize;
+
+    public static Rc4CryptoApiInfo Parse(byte[] p)
+    {
+        var i = new Rc4CryptoApiInfo
+        {
+            VMajor = PptLayout.U16(p, 0), VMinor = PptLayout.U16(p, 2), Flags = PptLayout.U32(p, 4), HeaderSize = PptLayout.U32(p, 8),
+        };
+        if (i.VMajor < 2 || i.VMajor > 4 || i.VMinor != 2) throw new PptFormatException($"EncryptionInfo version {i.VMajor}.{i.VMinor} is not RC4 CryptoAPI");
+        if (i.HeaderSize < 32 || 12L + i.HeaderSize + 60 > p.Length) throw new PptFormatException($"EncryptionHeaderSize {i.HeaderSize} does not fit payload {p.Length}");
+        long h = 12;
+        i.HFlags = PptLayout.U32(p, h); i.SizeExtra = PptLayout.U32(p, h + 4); i.AlgId = PptLayout.U32(p, h + 8);
+        i.AlgIdHash = PptLayout.U32(p, h + 12); i.KeySize = PptLayout.U32(p, h + 16); i.ProviderType = PptLayout.U32(p, h + 20);
+        i.CspName = Encoding.Unicode.GetString(p, (int)h + 32, (int)i.HeaderSize - 32).TrimEnd('\0');
+        long v = h + i.HeaderSize;
+        i.SaltSize = PptLayout.U32(p, v);
+        if (i.SaltSize != 16) throw new PptFormatException($"SaltSize {i.SaltSize}");
+        i.Salt = p.AsSpan((int)v + 4, 16).ToArray();
+        i.EncVerifier = p.AsSpan((int)v + 20, 16).ToArray();
+        i.VerifierHashSize = PptLayout.U32(p, v + 36);
+        if (i.VerifierHashSize != 20) throw new PptFormatException($"VerifierHashSize {i.VerifierHashSize}");
+        i.EncVerifierHash = p.AsSpan((int)v + 40, 20).ToArray();
+        if (i.AlgId != 0x6801) throw new PptFormatException($"AlgID 0x{i.AlgId:X} is not RC4");
+        if (i.AlgIdHash != 0x8004 && i.AlgIdHash != 0) throw new PptFormatException($"AlgIDHash 0x{i.AlgIdHash:X} is not SHA-1");
+        if (i.KeyBits < 40 || i.KeyBits > 128 || i.KeyBits % 8 != 0) throw new PptFormatException($"KeySize {i.KeySize}");
+        return i;
+    }
+
+    public override string ToString() =>
+        $"v{VMajor}.{VMinor} flags=0x{Flags:X} (fCryptoAPI={FCryptoApi} fDocProps={FDocProps}) headerSize={HeaderSize} hflags=0x{HFlags:X} algId=0x{AlgId:X} algIdHash=0x{AlgIdHash:X} keySize={KeySize} providerType={ProviderType} csp='{CspName}'";
+}
+
+sealed class Rc4 : IStreamCipher
+{
+    readonly byte[] _s = new byte[256];
+    int _i, _j;
+
+    public Rc4(ReadOnlySpan<byte> key)
+    {
+        for (int k = 0; k < 256; k++) _s[k] = (byte)k;
+        for (int k = 0, j = 0; k < 256; k++)
+        {
+            j = (j + _s[k] + key[k % key.Length]) & 0xFF;
+            (_s[k], _s[j]) = (_s[j], _s[k]);
+        }
+    }
+
+    public void Process(byte[] buf, int off, int len)
+    {
+        for (int k = off; k < off + len; k++)
+        {
+            _i = (_i + 1) & 0xFF;
+            _j = (_j + _s[_i]) & 0xFF;
+            (_s[_i], _s[_j]) = (_s[_j], _s[_i]);
+            buf[k] ^= _s[(_s[_i] + _s[_j]) & 0xFF];
+        }
+    }
+}
+
+/// Hand-written MS-OFFCRYPTO 2.3.5.2 key derivation + 2.3.5.6 verification. ~40 lines, BCL SHA1 only.
+public sealed class OwnCipherFactory : ICipherFactory
+{
+    readonly Rc4CryptoApiInfo _info;
+    readonly byte[] _h0;
+
+    public OwnCipherFactory(Rc4CryptoApiInfo info, string password)
+    {
+        _info = info;
+        byte[] pw = Encoding.Unicode.GetBytes(password);
+        _h0 = SHA1.HashData([.. info.Salt, .. pw]);
+    }
+
+    public IStreamCipher ForBlock(uint block)
+    {
+        Span<byte> input = stackalloc byte[24];
+        _h0.CopyTo(input);
+        BitConverter.TryWriteBytes(input[20..], block);
+        byte[] hfinal = SHA1.HashData(input);
+        int keyBytes = _info.KeyBits / 8;
+        byte[] key = _info.KeyBits == 40 ? new byte[16] : new byte[keyBytes];
+        Array.Copy(hfinal, key, keyBytes);
+        return new Rc4(key);
+    }
+
+    public bool Verify()
+    {
+        var c = ForBlock(0);
+        byte[] v = (byte[])_info.EncVerifier.Clone();
+        byte[] h = (byte[])_info.EncVerifierHash.Clone();
+        c.Process(v, 0, v.Length);
+        c.Process(h, 0, h.Length);
+        return CryptographicOperations.FixedTimeEquals(SHA1.HashData(v), h);
+    }
+}
+
+/// Same operations through NPOI's public CryptoAPI classes.
+public sealed class NpoiCipherFactory : ICipherFactory
+{
+    public readonly EncryptionInfo Info;
+    public readonly CryptoAPIDecryptor Decryptor;
+
+    public NpoiCipherFactory(byte[] payload, bool useByteArrayInput = false)
+    {
+        ILittleEndianInput input = useByteArrayInput
+            ? new LittleEndianByteArrayInputStream(payload)
+            : new LittleEndianInputStream(new ByteArrayInputStream(payload));
+        Info = new EncryptionInfo(input, EncryptionMode.CryptoAPI);
+        Decryptor = (CryptoAPIDecryptor)Info.Decryptor;
+    }
+
+    public bool Verify(string password) => Decryptor.VerifyPassword(password);
+
+    sealed class Wrap(Cipher c) : IStreamCipher
+    {
+        public void Process(byte[] buf, int off, int len)
+        {
+            if (len > 0) c.Update(buf, off, len, buf, off);
+        }
+    }
+
+    public IStreamCipher ForBlock(uint block) => new Wrap(Decryptor.InitCipherForBlock(null, (int)block));
+}
+
+public static class PptDecryptor
+{
+    /// MS-PPT 2.3.7: every persist object except the CryptSession10Container is encrypted as one RC4 run
+    /// (8-byte header + recLen bytes) keyed with block = persist object id.
+    public static byte[] DecryptDocument(PptLayout l, ICipherFactory f, List<string> log)
+    {
+        byte[] doc = (byte[])l.Doc.Clone();
+        var done = new HashSet<uint>();
+        long covered = 0;
+        foreach (var (id, off) in l.Persist)
+        {
+            if (id == l.EncId) continue;
+            if ((long)off + 8 > doc.Length) throw new PptFormatException($"persist {id} offset {off} beyond stream");
+            if (!done.Add(off)) throw new PptFormatException($"persist offset {off} referenced twice");
+            var c = f.ForBlock(id);
+            c.Process(doc, (int)off, 8);
+            uint len = PptLayout.U32(doc, off + 4);
+            if ((long)off + 8 + len > doc.Length) throw new PptFormatException($"persist {id} at {off}: decrypted recLen {len} beyond stream {doc.Length}");
+            c.Process(doc, (int)off + 8, (int)len);
+            covered += 8 + len;
+            log.Add($"persist {id} @ {off}: type=0x{PptLayout.U16(doc, off + 2):X4} verInst=0x{PptLayout.U16(doc, off):X4} len={len}");
+        }
+        log.Add($"decrypted bytes={covered} of doc {doc.Length}");
+        return doc;
+    }
+
+    static readonly int[] FbseParts = [1, 1, 16, 2, 4, 4, 4, 1, 1, 1, 1];
+    static readonly HashSet<int> TwoUid = [0x217, 0x3D5, 0x46B, 0x543, 0x6E1, 0x6E3, 0x6E5, 0x7A9];
+
+    /// MS-PPT 2.3.7 Pictures rule, ported from POI HSLFSlideShowEncrypted.decryptPicture: every field gets a fresh block-0 cipher.
+    public static byte[] DecryptPictures(byte[] src, ICipherFactory f, List<string> log)
+    {
+        byte[] pic = (byte[])src.Clone();
+        void Dec(int off, int len)
+        {
+            if (len < 0 || (long)off + len > pic.Length) throw new PptFormatException($"picture field {off}+{len} beyond Pictures stream {pic.Length}");
+            f.ForBlock(0).Process(pic, off, len);
+        }
+
+        int pos = 0;
+        while (pos <= pic.Length - 8)
+        {
+            int start = pos, offset = pos;
+            Dec(offset, 8);
+            int recInst = PptLayout.U16(pic, offset) >> 4;
+            int recType = PptLayout.U16(pic, offset + 2);
+            long rlen = PptLayout.U32(pic, offset + 4);
+            if (!(recType == 0xF007 || (recType >= 0xF018 && recType <= 0xF117)))
+            {
+                log.Add($"pictures: stop at {start}, type 0x{recType:X4} (remaining {pic.Length - start} bytes left as is)");
+                break;
+            }
+            offset += 8;
+            long endOffset = offset + rlen;
+            if (endOffset > pic.Length) throw new PptFormatException($"picture at {start}: recLen {rlen} beyond Pictures stream {pic.Length}");
+            if (recType == 0xF007)
+            {
+                int o = offset;
+                foreach (int part in FbseParts) { Dec(o, part); o += part; }
+                offset += 36;
+                int cbName = pic[offset - 3];
+                if (cbName > 0) { Dec(offset, cbName); offset += cbName; }
+                if (offset == endOffset) { pos = (int)endOffset; continue; }
+                Dec(offset, 8);
+                recInst = PptLayout.U16(pic, offset) >> 4;
+                recType = PptLayout.U16(pic, offset + 2);
+                offset += 8;
+            }
+            int uids = TwoUid.Contains(recInst) ? 2 : 1;
+            for (int i = 0; i < uids; i++) { Dec(offset, 16); offset += 16; }
+            int next = recType is 0xF01A or 0xF01B or 0xF01C ? 34 : 1;
+            Dec(offset, next);
+            offset += next;
+            Dec(offset, (int)(endOffset - offset));
+            log.Add($"picture @ {start}: type=0x{recType:X4} inst=0x{recInst:X3} len={rlen} dataOffset={offset} dataLen={endOffset - offset} sha1(rec body after 8+uid+tag)={Convert.ToBase64String(SHA1.HashData(pic.AsSpan(offset, (int)(endOffset - offset))))}");
+            pos = (int)endOffset;
+        }
+        return pic;
+    }
+
+    /// MS-OFFCRYPTO 2.3.5.4 Encrypted Summary Stream -> name -> plaintext stream.
+    public static List<(string Name, byte[] Data, int Block, int Flags)> DecryptSummary(byte[] es, ICipherFactory f, List<string> log)
+    {
+        // MS-OFFCRYPTO 2.3.5.4 step 8: the two leading fields are themselves encrypted with a fresh block-0 cipher.
+        byte[] head = es.AsSpan(0, Math.Min(8, es.Length)).ToArray();
+        if (head.Length < 8) throw new PptFormatException("EncryptedSummary shorter than 8 bytes");
+        f.ForBlock(0).Process(head, 0, 8);
+        uint arrOff = PptLayout.U32(head, 0), arrSize = PptLayout.U32(head, 4);
+        if (arrOff < 8 || (long)arrOff + arrSize > es.Length || arrSize < 4) throw new PptFormatException($"EncryptedSummary descriptor array {arrOff}+{arrSize} beyond {es.Length}");
+        byte[] d = es.AsSpan((int)arrOff, (int)arrSize).ToArray();
+        f.ForBlock(0).Process(d, 0, d.Length);
+        uint count = PptLayout.U32(d, 0);
+        log.Add($"EncryptedSummary len={es.Length} arrOff={arrOff} arrSize={arrSize} count={count}");
+        if (count > (arrSize - 4) / 14) throw new PptFormatException($"EncryptedSummary descriptor count {count} cannot fit {arrSize}");
+        var result = new List<(string, byte[], int, int)>();
+        long p = 4;
+        for (uint i = 0; i < count; i++)
+        {
+            uint so = PptLayout.U32(d, p), ss = PptLayout.U32(d, p + 4);
+            int block = PptLayout.U16(d, p + 8);
+            if (p + 12 > d.Length) throw new PptFormatException("descriptor truncated");
+            int nameSize = d[p + 10], flags = d[p + 11];
+            long nameBytes = 2L * nameSize;
+            if (p + 16 + nameBytes + 2 > d.Length) throw new PptFormatException("descriptor name truncated");
+            string name = Encoding.Unicode.GetString(d, (int)p + 16, (int)nameBytes);
+            p += 16 + nameBytes + 2;
+            if ((long)so + ss > arrOff || so < 8) throw new PptFormatException($"stream '{name}' {so}+{ss} outside data area");
+            byte[] data = es.AsSpan((int)so, (int)ss).ToArray();
+            f.ForBlock((uint)block).Process(data, 0, data.Length);
+            log.Add($"  summary stream '{PptLayout.Printable(name)}' offset={so} size={ss} block={block} flags=0x{flags:X2}");
+            result.Add((name, data, block, flags));
+        }
+        return result;
+    }
+}

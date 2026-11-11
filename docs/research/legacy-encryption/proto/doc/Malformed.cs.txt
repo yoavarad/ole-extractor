@@ -1,0 +1,91 @@
+// Research prototype copied from tmpesearch-doc\proto\DocDecryptProto\Malformed.cs; not compiled by any project.
+// Throwaway: header mutation matrix. For each mutation of an encrypted .doc: own detector, NPOI EncryptionInfo ctor + VerifyPassword.
+using System.Buffers.Binary;
+using NPOI.POIFS.Crypt;
+using NPOI.Util;
+using OpenMcdf;
+namespace DocDecryptProto;
+
+public static partial class Malformed
+{
+    public static void Run(string path, string password)
+    {
+        byte[] original = File.ReadAllBytes(path);
+        List<Node> tree = Cfb.Snapshot(original);
+        byte[] wd0 = tree.First(n => n.Path == "WordDocument").Data!;
+        string tname = (BinaryPrimitives.ReadUInt16LittleEndian(wd0.AsSpan(0x0A)) & 0x0200) != 0 ? "1Table" : "0Table";
+        byte[] t0 = tree.First(n => n.Path == tname).Data!;
+        uint lKey0 = BinaryPrimitives.ReadUInt32LittleEndian(wd0.AsSpan(0x0E));
+        bool capi = BinaryPrimitives.ReadUInt16LittleEndian(t0) != 1;
+        Console.WriteLine($"== malformed {Path.GetFileName(path)} capi={capi} lKey={lKey0}");
+
+        // cast probe: pure ILittleEndianInput (not an InputStream)
+        try
+        {
+            var ei = new EncryptionInfo(new LittleEndianByteArrayInputStream(t0, 0, (int)lKey0), null);
+            Console.WriteLine($"  cast probe LittleEndianByteArrayInputStream: OK verify={ei.Decryptor.VerifyPassword(password)}");
+        }
+        catch (Exception ex) { Console.WriteLine($"  cast probe LittleEndianByteArrayInputStream: THREW {ex.GetType().FullName}: {ex.Message}"); }
+
+        var cases = new List<(string name, Action<byte[], byte[]> mutate)>
+        {
+            ("baseline", (w, t) => { }),
+            ("lKey=0xFFFFFFFF", (w, t) => W32(w, 0x0E, 0xFFFFFFFF)),
+            ("lKey=0", (w, t) => W32(w, 0x0E, 0)),
+            ("lKey=0x7FFFFFFF", (w, t) => W32(w, 0x0E, 0x7FFFFFFF)),
+            ("lKey=20 (truncated)", (w, t) => W32(w, 0x0E, 20)),
+            ("lKey=tableLen+1", (w, t) => W32(w, 0x0E, (uint)t.Length + 1)),
+            ("version 9.9", (w, t) => { W16(t, 0, 9); W16(t, 2, 9); }),
+            ("version 4.4 (agile)", (w, t) => { W16(t, 0, 4); W16(t, 2, 4); }),
+            ("version 3.3 (standard/xor-ish)", (w, t) => { W16(t, 0, 3); W16(t, 2, 3); }),
+            ("fObfuscated set", (w, t) => W16(w, 0x0A, (ushort)(BinaryPrimitives.ReadUInt16LittleEndian(w.AsSpan(0x0A)) | 0x8000))),
+        };
+        if (capi)
+        {
+            cases.AddRange(new (string, Action<byte[], byte[]>)[]
+            {
+                ("headerSize=0xFFFFFFFF", (w, t) => W32(t, 8, 0xFFFFFFFF)),
+                ("headerSize=0", (w, t) => W32(t, 8, 0)),
+                ("keySize=0 (->40)", (w, t) => W32(t, 12 + 16, 0)),
+                ("keySize=41", (w, t) => W32(t, 12 + 16, 41)),
+                ("keySize=256", (w, t) => W32(t, 12 + 16, 256)),
+                ("keySize=0x7FFFFFFF", (w, t) => W32(t, 12 + 16, 0x7FFFFFFF)),
+                ("algId=AES128 + fAES", (w, t) => { W32(t, 4, 0x24); W32(t, 12 + 8, 0x660E); }),
+                ("algId=0x1234", (w, t) => W32(t, 12 + 8, 0x1234)),
+                ("fExternal", (w, t) => W32(t, 4, 0x1C)),
+                ("CSP unterminated (fill to lKey with 'A')", (w, t) => { for (int i = 12 + 32; i < 12 + 126; i += 2) W16(t, i, 0x41); }),
+                ("saltSize=0xFFFFFFFF", (w, t) => W32(t, 12 + 126, 0xFFFFFFFF)),
+                ("verifierHashSize=0xFFFFFFFF", (w, t) => W32(t, 12 + 126 + 36, 0xFFFFFFFF)),
+            });
+        }
+        foreach (var (name, mutate) in cases)
+        {
+            byte[] w = (byte[])wd0.Clone(), t = (byte[])t0.Clone();
+            mutate(w, t);
+            string own, npoi;
+            try
+            {
+                var info = DocCrypto.Detect(w, n => n == tname ? t : null);
+                own = info.Scheme is Scheme.BinaryRc4 or Scheme.CryptoApi
+                    ? $"{info.Scheme} verify={DocCrypto.Verify(info, DocCrypto.DeriveBase(info, password))}"
+                    : info.Scheme.ToString();
+            }
+            catch (DetectException ex) { own = $"{ex.SuggestedCode}: {ex.Message}"; }
+            catch (Exception ex) { own = $"UNGUARDED {ex.GetType().Name}: {ex.Message}"; }
+            try
+            {
+                uint lk = BinaryPrimitives.ReadUInt32LittleEndian(w.AsSpan(0x0E));
+                int take = (int)Math.Min(lk, (uint)t.Length);
+                var ei = NpoiPath.OpenInfo(t.AsSpan(0, take).ToArray());
+                bool v = ei.Decryptor.VerifyPassword(password);
+                npoi = $"ctor OK ({take} B given) mode={ei.EncryptionMode?.VersionMajor}.{ei.EncryptionMode?.VersionMinor} keySize={ei.Header?.KeySize} csp='{Trunc(ei.Header?.CspName)}' decryptor={ei.Decryptor.GetType().Name} verify={v}";
+            }
+            catch (Exception ex) { npoi = $"THREW {ex.GetType().FullName}: {Trunc(ex.Message)}"; }
+            Console.WriteLine($"  [{name}]\n     own : {own}\n     npoi: {npoi}");
+        }
+    }
+
+    static string Trunc(string? s) => s == null ? "null" : s.Length > 90 ? s[..90] + "..." : s;
+    static void W32(byte[] b, int o, uint v) => BinaryPrimitives.WriteUInt32LittleEndian(b.AsSpan(o), v);
+    static void W16(byte[] b, int o, ushort v) => BinaryPrimitives.WriteUInt16LittleEndian(b.AsSpan(o), v);
+}
