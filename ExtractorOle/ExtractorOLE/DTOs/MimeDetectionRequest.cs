@@ -24,5 +24,12 @@ namespace ExtractorOLE.DTOs
         public string? FilePath { get; set; }
 
         public string FileName { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Optional document-open password, used only to read an encrypted container's format.
+        /// Null or empty means no password. It is a secret: it is never logged, echoed in an
+        /// error, or retained after the call.
+        /// </summary>
+        public string? Password { get; init; }
     }
 }
