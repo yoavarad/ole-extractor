@@ -2308,7 +2308,9 @@
     {
       "format": "docx",
       "status": "curated",
-      "path": "samples/adversarial/password-protected.docx",
+      "path": "samples/encrypted/password-protected.docx",
+      "password": "solrcell",
+      "unencryptedTwin": null,
       "expectedFieldErrors": [],
       "provenance": "third-party",
       "generatedBy": "Downloaded verbatim (unmodified) from the Apache Software Foundation's Apache POI project test-data corpus (Apache License 2.0) at https://github.com/apache/poi, path test-data/document/bug53475-password-is-solrcell.docx (fetched via raw.githubusercontent.com/apache/poi/trunk/test-data/document/bug53475-password-is-solrcell.docx). A genuine Word-produced, document-open-password-protected .docx: the OOXML package is wrapped in a CFB container per MS-OFFCRYPTO (file starts with the CFB magic D0 CF 11 E0, not a zip PK signature). Document-open password is 'solrcell' (per the well-known upstream POI test-file name, used by Apache POI's own encryption test suite for this exact file since POI bug 53475). File sha256: cde5752f65238b42fefeaa28c0a10ef3b75bd6232cd6427b3920113c91c5909d, 33792 bytes on disk.",

@@ -118,7 +118,7 @@ namespace ExtractorOLE.Tests.Registry
         [Fact]
         public void EncryptedOoxmlInCfbWrapper_ThrowsPasswordProtected()
         {
-            var ex = Extract<PasswordProtectedException>(Sample("password-protected.docx"), DocxMime);
+            var ex = Extract<PasswordProtectedException>(EncryptedSamples.ReadBytes("password-protected.docx"), DocxMime);
 
             Assert.Equal("PASSWORD_PROTECTED", ex.Code);
         }
@@ -126,7 +126,7 @@ namespace ExtractorOLE.Tests.Registry
         [Fact]
         public void EncryptedOoxmlInCfbWrapper_ThrowsPasswordProtected_RegardlessOfClaimedFormat()
         {
-            Extract<PasswordProtectedException>(Sample("password-protected.docx"), DocMime);
+            Extract<PasswordProtectedException>(EncryptedSamples.ReadBytes("password-protected.docx"), DocMime);
         }
 
         [Fact]
@@ -213,7 +213,7 @@ namespace ExtractorOLE.Tests.Registry
             Assert.Throws<TruncatedContainerException>(() => normal.Extract(
                 new ExtractionRequest { FileBytes = Sample("truncated-container.docx"), FileName = "f", DetectedMimeType = DocxMime }));
             Assert.Throws<PasswordProtectedException>(() => normal.Extract(
-                new ExtractionRequest { FileBytes = Sample("password-protected.docx"), FileName = "f", DetectedMimeType = DocxMime }));
+                new ExtractionRequest { FileBytes = EncryptedSamples.ReadBytes("password-protected.docx"), FileName = "f", DetectedMimeType = DocxMime }));
             Assert.Throws<CorruptFileException>(() => normal.Extract(
                 new ExtractionRequest { FileBytes = Sample("corrupt-container.docx"), FileName = "f", DetectedMimeType = DocxMime }));
         }

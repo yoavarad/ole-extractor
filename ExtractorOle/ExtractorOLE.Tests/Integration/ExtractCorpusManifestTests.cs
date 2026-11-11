@@ -132,7 +132,7 @@ namespace ExtractorOLE.Tests.Integration
                 .Select(s => s.GetProperty("path").GetString()!)
                 .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
-            foreach (var group in new[] { "adversarial", "curated", "synthetic" })
+            foreach (var group in new[] { "adversarial", "curated", "encrypted", "synthetic" })
             {
                 foreach (var file in Directory.EnumerateFiles(Path.Combine(samplesRoot, group), "*", SearchOption.AllDirectories))
                 {

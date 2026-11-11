@@ -80,6 +80,7 @@ namespace ExtractorOLE.Tests.Registry
                         return xls;
                     }
                 case "cfb-v4": return BuildCfbV4();
+                case "password-protected.docx": return EncryptedSamples.ReadBytes(name);
                 default: return Sample(name);
             }
         }
@@ -200,7 +201,7 @@ namespace ExtractorOLE.Tests.Registry
             Assert.Equal(3714, ex.ExpectedBytes);
             Assert.Equal(truncated.Length, ex.ActualBytes);
 
-            using var encrypted = new MemoryStream(Sample("password-protected.docx"));
+            using var encrypted = new MemoryStream(EncryptedSamples.ReadBytes("password-protected.docx"));
             Assert.Throws<PasswordProtectedException>(() => ParseTimeErrorGuard.Preflight(encrypted, true));
             Assert.True(encrypted.CanRead);
 
@@ -332,7 +333,7 @@ namespace ExtractorOLE.Tests.Registry
         [Fact]
         public void Extract_EncryptedStreamInput_ThrowsPasswordProtected_AndLeavesCallerStreamOpenAndUnchanged()
         {
-            var bytes = Sample("password-protected.docx");
+            var bytes = EncryptedSamples.ReadBytes("password-protected.docx");
             using var stream = new MemoryStream();
             stream.Write(bytes);
 
@@ -368,7 +369,7 @@ namespace ExtractorOLE.Tests.Registry
             var path = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N") + ".docx");
             try
             {
-                File.WriteAllBytes(path, Sample("password-protected.docx"));
+                File.WriteAllBytes(path, EncryptedSamples.ReadBytes("password-protected.docx"));
 
                 Assert.Throws<PasswordProtectedException>(() => DefaultExtractor().Extract(
                     new ExtractionRequest { FilePath = path, FileName = "f", DetectedMimeType = DocxMime }));

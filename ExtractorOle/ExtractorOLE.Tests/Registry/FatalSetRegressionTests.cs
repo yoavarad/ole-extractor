@@ -73,7 +73,7 @@ namespace ExtractorOLE.Tests.Registry
         public static TheoryData<string, Func<MainExtractor>, Func<ExtractionRequest?>, Type> FatalCases() => new()
         {
             { "file-too-large", () => Real(new MimeDetectionLimits { MaxFileSizeBytes = 10 }), () => Request(new byte[11], DocxMime), typeof(FileTooLargeException) },
-            { "password-protected", () => Real(), () => Request(Sample("password-protected.docx"), DocxMime), typeof(PasswordProtectedException) },
+            { "password-protected", () => Real(), () => Request(EncryptedSamples.ReadBytes("password-protected.docx"), DocxMime), typeof(PasswordProtectedException) },
             { "unsupported-format", () => Real(), () => Request(new byte[] { 1, 2, 3 }, "text/plain"), typeof(UnsupportedFormatException) },
             { "truncated-container", () => Real(), () => Request(Sample("truncated-container.docx"), DocxMime), typeof(TruncatedContainerException) },
             { "zero-byte", () => Real(), () => Request(Sample("zero-byte.docx"), DocxMime), typeof(TruncatedContainerException) },
