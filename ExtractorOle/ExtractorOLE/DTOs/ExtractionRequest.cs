@@ -33,5 +33,12 @@ namespace ExtractorOLE.DTOs
 
         public string FileName { get; set; } = string.Empty;
         public string DetectedMimeType { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Optional document-open password for the supplied container (never its embedded
+        /// subfiles). Null or empty means no password. It is a secret: the library never logs it,
+        /// echoes it in an error, or keeps a copy of it after the call.
+        /// </summary>
+        public string? Password { get; init; }
     }
 }
