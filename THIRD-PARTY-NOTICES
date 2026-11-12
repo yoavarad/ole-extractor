@@ -6,6 +6,30 @@ entry in samples/manifest.json also records its upstream URL, licence and
 SHA-256.
 
 
+
+--------------------------------------------------------------------------------
+NPOI (nissl-lab/npoi), derived from Apache POI (Apache Software Foundation)
+License: Apache License, Version 2.0 - http://www.apache.org/licenses/LICENSE-2.0
+Source: third_party/npoi (yoavarad/npoi fork), commit 72ff7c756fc5bb52ec86848c3724556171bc4b23
+
+Ported files (decrypt side of Agile encryption, ADR-012):
+  ExtractorOle/ExtractorOLE/Helpers/Encryption/Agile/AgileDecryptor.cs
+    from ooxml/POIFS/Crypt/Agile/AgileDecryptor.cs
+  ExtractorOle/ExtractorOLE/Helpers/Encryption/Agile/AgileEncryptionHeader.cs
+    from ooxml/POIFS/Crypt/Agile/AgileEncryptionHeader.cs
+  ExtractorOle/ExtractorOLE/Helpers/Encryption/Agile/AgileEncryptionVerifier.cs
+    from ooxml/POIFS/Crypt/Agile/AgileEncryptionVerifier.cs
+
+Licensed to the Apache Software Foundation (ASF) under one or more contributor license
+agreements. The ASF licenses this code to you under the Apache License, Version 2.0; you may
+not use these files except in compliance with the License. Unless required by applicable law or
+agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. The ported files have
+been modified: the XML descriptor is read with System.Xml, certificate decryption and the
+encryptor side are omitted, a spin-count cap is enforced, and a data-integrity HMAC check is added.
+
+
+
 Apache POI test data (Apache-2.0)
 ---------------------------------
 Source: https://github.com/apache/poi (test-data/), Copyright The Apache

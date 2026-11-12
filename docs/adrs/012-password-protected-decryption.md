@@ -39,11 +39,15 @@ never checks them. doc/ppt bodies go through b2xtranslator, which has no decrypt
    referencing NPOI `main` only.** Standard encryption uses NPOI main's `EncryptionInfo`/`Decryptor`,
    and xls uses HSSF's own `FILEPASS` handling.
    **Agile decryption is ported into this library** from NPOI's `ooxml/POIFS/Crypt/Agile`
-   (Apache-2.0). Only the decrypt side is ported: `AgileDecryptor`, `AgileEncryptionHeader`,
-   `AgileEncryptionVerifier` and `KeyPair`, which cover SHA-512 (any hash the descriptor names)
-   spin-count key derivation, password verification against the verifier hash, the intermediate
-   key, and segment-wise AES-CBC decryption of `EncryptedPackage`. `AgileEncryptor` and
-   `AgileEncryptionInfoBuilder` are not ported. The ported code:
+   (Apache-2.0). Only the decrypt side is ported: `AgileDecryptor`, `AgileEncryptionHeader` and
+   `AgileEncryptionVerifier`, which cover SHA-512 (any hash the descriptor names) spin-count key
+   derivation, password verification against the verifier hash, the intermediate key, and
+   segment-wise AES-CBC decryption of `EncryptedPackage`. `AgileEncryptor` and
+   `AgileEncryptionInfoBuilder` are not ported. The port is **password-only**: `KeyPair` and the
+   certificate key encryptor path are not ported, because `KeyPair` is used only to decrypt with a
+   certificate's private key, we have no certificate-encrypted sample to validate it against, and it
+   is more crypto code to own. A descriptor with no password key encryptor is `PASSWORD_PROTECTED`.
+   The ported code:
    - reads the EncryptionInfo XML descriptor with `System.Xml`, not `NPOI.OpenXmlFormats` binding
      classes;
    - reuses NPOI main's `CryptoFunctions`/cipher helpers where they already exist, rather than
@@ -118,9 +122,11 @@ never checks them. doc/ppt bodies go through b2xtranslator, which has no decrypt
 - **We now own a small piece of crypto code.** It covers about four classes of decrypt-side Agile
   logic plus the integrity check, and nothing tracks upstream fixes to it. The mitigations are as
   follows. Only the decrypt path is ported, and it reuses NPOI main's primitives. It is validated
-  against the Office-authored encrypted samples (Agile docx/xlsx/pptx, which must decrypt to their
-  unencrypted twins), against wrong-password cases, and against a tampered-ciphertext sample that
-  must fail the integrity check. When the NPOI submodule is re-pinned, the ported files are diffed
+  against the encrypted samples in `samples/encrypted/`, against wrong-password cases, and against a
+  tampered-ciphertext sample that must fail the integrity check. The Agile samples are synthetic:
+  they were encrypted with msoffcrypto-tool 6.0.0 from curated corpus files, not authored by Office.
+  The Standard sample is a real Word file, and its unencrypted twin was produced by decrypting it
+  with msoffcrypto-tool. When the NPOI submodule is re-pinned, the ported files are diffed
   against their `ooxml` source. The library stack table in `docs/project-rules.md` records the port.
 - No new project or package reference. The dependency set of `ExtractorOLE` is unchanged.
 - One new public request field on each of the two DTOs, which is additive and non-breaking. There
