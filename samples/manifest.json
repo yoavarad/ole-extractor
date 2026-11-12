@@ -3554,6 +3554,388 @@
       "detectable": true,
       "verifiedBy": "Observed 2026-11-12: NPOI HSSFWorkbook opens it only with its password (wrong or no password gives EncryptedDocumentException) -- asserted by ExtractorOle/ExtractorOLE.Tests/EncryptedSamplesTests.cs; MainExtractor.Extract behavior as recorded in expectedBehavior/expectations.",
       "notes": "Self-generated synthetic default-key xls; no open password, so no 'password' field. Per ADR-012 decision 4 it counts as having no open password and extracts like the twin (observed). Same content as the RC4 twin, which is its unencryptedTwin. Openability in real Excel is UNVERIFIED."
+    },
+    {
+      "format": "doc",
+      "status": "curated",
+      "path": "samples/encrypted/password_tika_binaryrc4.doc",
+      "password": "tika",
+      "expectedFieldErrors": [],
+      "provenance": "third-party",
+      "generatedBy": "Downloaded verbatim (unmodified) from https://raw.githubusercontent.com/apache/poi/trunk/test-data/document/password_tika_binaryrc4.doc (Apache-2.0). File sha256: 9231E724BB17A2E5F74815728D90B06E15684CF5FB2443A6FA24DEEBD33BE952, 22016 bytes on disk. Fetched 2026-11-12.",
+      "compositionRule": "docs/specs/dataset-curation.md encrypted set",
+      "expectedDetectedFormat": {
+        "enum": "Doc",
+        "mimeType": "application/msword"
+      },
+      "bodyTextLines": [
+        "This is an encrypted Word 2007 File."
+      ],
+      "metadata": {
+        "Author": "Antoni",
+        "ApplicationName": "Microsoft Office Word",
+        "RevisionNumber": 2
+      },
+      "expectedFormatMetadata": {
+        "wordCount": 5
+      },
+      "expectedSubfileCount": 0,
+      "expectedSubfiles": [],
+      "detectable": true,
+      "verifiedBy": "research prototype + msoffcrypto-tool 6.0.0 oracle",
+      "notes": "License: Apache-2.0 (Apache POI test data). BinaryRC4 1.1, lKey 52. No decryption yet: Extract returns an empty result for this file (observed 2026-11-12), so the decrypted expectations below are not asserted by ExtractCorpusManifestTests until decryption lands; that test skips encrypted-folder entries without expectedBehavior."
+    },
+    {
+      "format": "doc",
+      "status": "curated",
+      "path": "samples/encrypted/password_password_cryptoapi.doc",
+      "password": "password",
+      "expectedFieldErrors": [],
+      "provenance": "third-party",
+      "generatedBy": "Downloaded verbatim (unmodified) from https://raw.githubusercontent.com/apache/poi/trunk/test-data/document/password_password_cryptoapi.doc (Apache-2.0). File sha256: F2D0DC59AD7EC2356695AD5DC550057052A4017D5F1EB46E887297F5089896FB, 27136 bytes on disk. Fetched 2026-11-12.",
+      "compositionRule": "docs/specs/dataset-curation.md encrypted set",
+      "expectedDetectedFormat": {
+        "enum": "Doc",
+        "mimeType": "application/msword"
+      },
+      "bodyTextLines": [
+        "This is a test"
+      ],
+      "metadata": {
+        "Author": "kiwiwings",
+        "RevisionNumber": 1
+      },
+      "expectedFormatMetadata": {
+        "wordCount": 2
+      },
+      "expectedSubfileCount": 0,
+      "expectedSubfiles": [],
+      "detectable": true,
+      "verifiedBy": "research prototype + msoffcrypto-tool 6.0.0 oracle",
+      "notes": "License: Apache-2.0 (Apache POI test data). RC4 CryptoAPI 4.2, flags 0x0C, keySize 128, lKey 198. No decryption yet: Extract returns an empty result for this file (observed 2026-11-12), so the decrypted expectations below are not asserted by ExtractCorpusManifestTests until decryption lands; that test skips encrypted-folder entries without expectedBehavior."
+    },
+    {
+      "format": "doc",
+      "status": "curated",
+      "path": "samples/encrypted/rc4cryptoapi_password.doc",
+      "password": "Password1234_",
+      "unencryptedTwin": "samples/curated/doc/rc4cryptoapi_password_plain.doc",
+      "expectedFieldErrors": [],
+      "provenance": "third-party",
+      "generatedBy": "Downloaded verbatim (unmodified) from https://raw.githubusercontent.com/nolze/msoffcrypto-tool/master/tests/inputs/rc4cryptoapi_password.doc (MIT, Copyright (c) 2015 nolze). File sha256: 9C5217BEA80FB1A7811AD7709DD9BB35F6C639BAC7154580DD4C99D54E1FC0E0, 23040 bytes on disk. Fetched 2026-11-12.",
+      "compositionRule": "docs/specs/dataset-curation.md encrypted set",
+      "expectedDetectedFormat": {
+        "enum": "Doc",
+        "mimeType": "application/msword"
+      },
+      "detectable": true,
+      "verifiedBy": "research prototype + msoffcrypto-tool 6.0.0 oracle",
+      "notes": "License: MIT (msoffcrypto-tool test data, Copyright (c) 2015 nolze). RC4 CryptoAPI 4.2, flags 0x0C, keySize 128, lKey 198. Decrypted expectations are those of unencryptedTwin. No decryption yet: Extract returns an empty result for this file (observed 2026-11-12), so the decrypted expectations below are not asserted by ExtractCorpusManifestTests until decryption lands; that test skips encrypted-folder entries without expectedBehavior."
+    },
+    {
+      "format": "doc",
+      "status": "curated",
+      "path": "samples/encrypted/PasswordProtected.doc",
+      "expectedFieldErrors": [],
+      "provenance": "third-party",
+      "generatedBy": "Copied verbatim (unmodified) from the repo's third_party/npoi/testcases/test-data/document/PasswordProtected.doc (= POI trunk test-data/document/PasswordProtected.doc, Apache-2.0). File sha256: 863D2216A6F5BB4CEC0EA4131A05AE0822DBCE347E2940155EF638C6D64935FE, 19968 bytes on disk. Fetched 2026-11-12.",
+      "compositionRule": "docs/specs/dataset-curation.md encrypted set",
+      "expectedDetectedFormat": {
+        "enum": "Doc",
+        "mimeType": "application/msword"
+      },
+      "detectable": true,
+      "verifiedBy": null,
+      "notes": "License: Apache-2.0 (Apache POI test data). BinaryRC4 1.1, lKey 52. password unknown upstream; negative cases only (no password -> PASSWORD_PROTECTED, wrong password -> INVALID_PASSWORD).",
+      "negativeOnly": true
+    },
+    {
+      "format": "ppt",
+      "status": "curated",
+      "path": "samples/encrypted/Password_Protected-hello.ppt",
+      "password": "hello",
+      "expectedFieldErrors": [],
+      "provenance": "third-party",
+      "generatedBy": "Copied verbatim (unmodified) from the repo's third_party/npoi/testcases/test-data/slideshow/Password_Protected-hello.ppt (= POI trunk test-data/slideshow/Password_Protected-hello.ppt, Apache-2.0). File sha256: 8D0DD9F53317A720687CF5234AF0C021FAB665194B09B9BB56A3F71B495BF45A, 10752 bytes on disk. Fetched 2026-11-12.",
+      "compositionRule": "docs/specs/dataset-curation.md encrypted set",
+      "expectedDetectedFormat": {
+        "enum": "Ppt",
+        "mimeType": "application/vnd.ms-powerpoint"
+      },
+      "bodyTextLines": [
+        "This is a protected document",
+        "It only has the one slide",
+        "It does have notes",
+        "The password is \"hello\"",
+        "Just for the hell of it, we have ",
+        "some notes"
+      ],
+      "metadata": {
+        "Title": "This is a protected document",
+        "Author": "Hogwarts",
+        "LastModifiedBy": "Hogwarts",
+        "ApplicationName": "Microsoft Office PowerPoint",
+        "RevisionNumber": 2,
+        "Created": "2006-07-02T16:42:11.743Z",
+        "Modified": "2006-07-02T16:44:24.337Z"
+      },
+      "expectedFormatMetadata": {
+        "slideCount": 1,
+        "notesSlideCount": 1,
+        "hasMacros": false
+      },
+      "expectedSubfileCount": 0,
+      "expectedSubfiles": [],
+      "detectable": true,
+      "verifiedBy": "research prototype, own == NPOI decryption",
+      "notes": "License: Apache-2.0 (Apache POI test data). RC4 CryptoAPI, EncryptionInfo 2.2, flags 0x04, KeySize 40, CryptSession10Container persist id 6; document properties encrypted (EncryptedSummary). Decrypted ExtractedText length 147 (line 5 has a trailing space). Times are UTC. No decryption yet: Extract returns an empty result for this file (observed 2026-11-12), so the decrypted expectations below are not asserted by ExtractCorpusManifestTests until decryption lands; that test skips encrypted-folder entries without expectedBehavior."
+    },
+    {
+      "format": "ppt",
+      "status": "curated",
+      "path": "samples/encrypted/Password_Protected-56-hello.ppt",
+      "password": "hello",
+      "expectedFieldErrors": [],
+      "provenance": "third-party",
+      "generatedBy": "Copied verbatim (unmodified) from the repo's third_party/npoi/testcases/test-data/slideshow/Password_Protected-56-hello.ppt (= POI trunk test-data/slideshow/Password_Protected-56-hello.ppt, Apache-2.0). File sha256: B2F7F4881AF9B3AC11A941B4496478FF4B219288774A268741785F88A29B6CB1, 10752 bytes on disk. Fetched 2026-11-12.",
+      "compositionRule": "docs/specs/dataset-curation.md encrypted set",
+      "expectedDetectedFormat": {
+        "enum": "Ppt",
+        "mimeType": "application/vnd.ms-powerpoint"
+      },
+      "bodyTextLines": [
+        "This is a protected document",
+        "It only has the one slide",
+        "It does have notes",
+        "The password is \"hello\"",
+        "Just for the hell of it, we have ",
+        "some notes"
+      ],
+      "metadata": {
+        "Title": "This is a protected document",
+        "Author": "Hogwarts",
+        "LastModifiedBy": "Hogwarts",
+        "ApplicationName": "Microsoft Office PowerPoint",
+        "RevisionNumber": 3,
+        "Created": "2006-07-02T16:42:11.743Z",
+        "Modified": "2006-07-02T18:43:09.223Z"
+      },
+      "expectedFormatMetadata": {
+        "slideCount": 1,
+        "notesSlideCount": 1,
+        "hasMacros": false
+      },
+      "expectedSubfileCount": 0,
+      "expectedSubfiles": [],
+      "detectable": true,
+      "verifiedBy": "research prototype, own == NPOI decryption",
+      "notes": "License: Apache-2.0 (Apache POI test data). RC4 CryptoAPI, EncryptionInfo 2.2, flags 0x04, KeySize 56, CryptSession10Container persist id 7; document properties encrypted (EncryptedSummary). Decrypted ExtractedText length 147 (line 5 has a trailing space). Times are UTC. No decryption yet: Extract returns an empty result for this file (observed 2026-11-12), so the decrypted expectations below are not asserted by ExtractCorpusManifestTests until decryption lands; that test skips encrypted-folder entries without expectedBehavior."
+    },
+    {
+      "format": "ppt",
+      "status": "curated",
+      "path": "samples/encrypted/Password_Protected-np-hello.ppt",
+      "password": "hello",
+      "expectedFieldErrors": [],
+      "provenance": "third-party",
+      "generatedBy": "Copied verbatim (unmodified) from the repo's third_party/npoi/testcases/test-data/slideshow/Password_Protected-np-hello.ppt (= POI trunk test-data/slideshow/Password_Protected-np-hello.ppt, Apache-2.0). File sha256: C722ABEB35A155040E49DD0963A360928050ACA2419D46E3210E7FBD18F120D3, 10752 bytes on disk. Fetched 2026-11-12.",
+      "compositionRule": "docs/specs/dataset-curation.md encrypted set",
+      "expectedDetectedFormat": {
+        "enum": "Ppt",
+        "mimeType": "application/vnd.ms-powerpoint"
+      },
+      "bodyTextLines": [
+        "This is a protected document",
+        "It only has the one slide",
+        "It does have notes",
+        "Properties are not protected",
+        "The password is \"hello\"",
+        "Just for the hell of it, we have ",
+        "some notes"
+      ],
+      "metadata": {
+        "Title": "This is a protected document",
+        "Author": "Hogwarts",
+        "LastModifiedBy": "Hogwarts",
+        "ApplicationName": "Microsoft Office PowerPoint",
+        "RevisionNumber": 3,
+        "Created": "2006-07-02T16:42:11.743Z",
+        "Modified": "2006-07-02T17:27:50.997Z"
+      },
+      "expectedFormatMetadata": {
+        "slideCount": 1,
+        "notesSlideCount": 1,
+        "hasMacros": false
+      },
+      "expectedSubfileCount": 0,
+      "expectedSubfiles": [],
+      "detectable": true,
+      "verifiedBy": "research prototype, own == NPOI decryption",
+      "notes": "License: Apache-2.0 (Apache POI test data). RC4 CryptoAPI, EncryptionInfo 2.2, flags 0x0C, KeySize 40, CryptSession10Container persist id 7; document properties not encrypted (plain SummaryInformation). Decrypted ExtractedText length 177 (line 5 has a trailing space). Times are UTC. No decryption yet: Extract returns an empty result for this file (observed 2026-11-12), so the decrypted expectations below are not asserted by ExtractCorpusManifestTests until decryption lands; that test skips encrypted-folder entries without expectedBehavior."
+    },
+    {
+      "format": "ppt",
+      "status": "curated",
+      "path": "samples/encrypted/cryptoapi-proc2356.ppt",
+      "password": "crypto",
+      "expectedFieldErrors": [
+        {
+          "fieldPath": "FormatMetadata.SlideCount",
+          "code": "UnexpectedFieldFailure",
+          "notes": "b2xtranslator FillMapping.cs:265 KeyNotFoundException 'fillShadeType' (not encryption related); becomes [] after T-lg-ppt-b2x-text"
+        },
+        {
+          "fieldPath": "FormatMetadata.NotesSlideCount",
+          "code": "UnexpectedFieldFailure",
+          "notes": "b2xtranslator FillMapping.cs:265 KeyNotFoundException 'fillShadeType' (not encryption related); becomes [] after T-lg-ppt-b2x-text"
+        },
+        {
+          "fieldPath": "ExtractedText",
+          "code": "UnexpectedFieldFailure",
+          "notes": "b2xtranslator FillMapping.cs:265 KeyNotFoundException 'fillShadeType' (not encryption related); becomes [] after T-lg-ppt-b2x-text"
+        }
+      ],
+      "provenance": "third-party",
+      "generatedBy": "Downloaded verbatim (unmodified) from https://raw.githubusercontent.com/apache/poi/trunk/test-data/slideshow/cryptoapi-proc2356.ppt (Apache-2.0). File sha256: C97E74D7137915251DF14CD5937B97DE490F12FA83A46D5AE570900DEC590F4D, 1341952 bytes on disk. Fetched 2026-11-12.",
+      "compositionRule": "docs/specs/dataset-curation.md encrypted set",
+      "expectedDetectedFormat": {
+        "enum": "Ppt",
+        "mimeType": "application/vnd.ms-powerpoint"
+      },
+      "metadata": {
+        "Title": "RC4 CryptoAPI Encryption",
+        "Author": "Dominic Salemno",
+        "LastModifiedBy": "Dominic Salemno",
+        "RevisionNumber": 1,
+        "Created": "2009-05-02T17:48:13.483Z",
+        "Modified": "2009-05-02T17:56:28.669Z"
+      },
+      "expectedSubfileCount": 1,
+      "expectedSubfiles": [
+        {
+          "fileName": "Pictures",
+          "contentType": "application/octet-stream",
+          "sizeInBytes": 1026524,
+          "packagePath": "Pictures",
+          "sha256": "EB85DE0ED697EC2FE8F52C8279AD1A36FE5BE6CCD51FC43E48DAA363451508AA"
+        }
+      ],
+      "detectable": true,
+      "verifiedBy": "research prototype, own == NPOI decryption",
+      "notes": "License: Apache-2.0 (Apache POI test data). RC4 CryptoAPI, EncryptionInfo 3.2, flags 0x04, KeySize 0 (read as 40), CryptSession10Container persist id 13. Times are UTC. The Pictures sha256 was computed 2026-11-12 from msoffcrypto-tool 6.0.0 key derivation (its ppt97 decrypt does not decrypt the Pictures stream) plus per-record Pictures decryption as described in docs/research/legacy-encryption/ppt-encryption.md; the 16-hex prefix matches the research run. No decryption yet: Extract returns an empty result for this file (observed 2026-11-12), so the decrypted expectations below are not asserted by ExtractCorpusManifestTests until decryption lands; that test skips encrypted-folder entries without expectedBehavior."
+    },
+    {
+      "format": "ppt",
+      "status": "curated",
+      "path": "samples/encrypted/ppt_with_png_encrypted.ppt",
+      "password": "password",
+      "expectedFieldErrors": [
+        {
+          "fieldPath": "FormatMetadata.SlideCount",
+          "code": "UnexpectedFieldFailure",
+          "notes": "b2xtranslator ClientAnchor.cs:20-47 16-byte anchor -> NRE ShapeTreeMapping.cs:2302, then TextMasterStyleMapping.writepPr"
+        },
+        {
+          "fieldPath": "FormatMetadata.NotesSlideCount",
+          "code": "UnexpectedFieldFailure",
+          "notes": "b2xtranslator ClientAnchor.cs:20-47 16-byte anchor -> NRE ShapeTreeMapping.cs:2302, then TextMasterStyleMapping.writepPr"
+        },
+        {
+          "fieldPath": "ExtractedText",
+          "code": "UnexpectedFieldFailure",
+          "notes": "b2xtranslator ClientAnchor.cs:20-47 16-byte anchor -> NRE ShapeTreeMapping.cs:2302, then TextMasterStyleMapping.writepPr"
+        }
+      ],
+      "provenance": "third-party",
+      "generatedBy": "Downloaded verbatim (unmodified) from https://raw.githubusercontent.com/apache/poi/trunk/test-data/slideshow/ppt_with_png_encrypted.ppt (Apache-2.0). File sha256: 35DC3CBF31660872A3C1BB26F4200DFB94736A7BC95E72AC626B2D033C250EB3, 26112 bytes on disk. Fetched 2026-11-12.",
+      "compositionRule": "docs/specs/dataset-curation.md encrypted set",
+      "expectedDetectedFormat": {
+        "enum": "Ppt",
+        "mimeType": "application/vnd.ms-powerpoint"
+      },
+      "metadata": {},
+      "expectedSubfileCount": 1,
+      "expectedSubfiles": [
+        {
+          "fileName": "Pictures",
+          "contentType": "application/octet-stream",
+          "sizeInBytes": 16588,
+          "packagePath": "Pictures",
+          "sha256": "8018CAA4D05308312FAD6AED55EC6648DFD0CB7BD2DCC75B8731D9E2B50A72B4"
+        }
+      ],
+      "detectable": true,
+      "verifiedBy": "research prototype, own == NPOI decryption",
+      "notes": "License: Apache-2.0 (Apache POI test data). RC4 CryptoAPI, EncryptionInfo 4.2, flags 0x04, KeySize 40, CryptSession10Container persist id 5. Decrypted property sets hold only the codepage. ppt_with_png.ppt is a different save, not a twin. The Pictures sha256 was computed 2026-11-12 from msoffcrypto-tool 6.0.0 key derivation (its ppt97 decrypt does not decrypt the Pictures stream) plus per-record Pictures decryption as described in docs/research/legacy-encryption/ppt-encryption.md; the 16-hex prefix matches the research run. No decryption yet: Extract returns an empty result for this file (observed 2026-11-12), so the decrypted expectations below are not asserted by ExtractCorpusManifestTests until decryption lands; that test skips encrypted-folder entries without expectedBehavior."
+    },
+    {
+      "format": "doc",
+      "status": "curated",
+      "path": "samples/curated/doc/rc4cryptoapi_password_plain.doc",
+      "expectedFieldErrors": [],
+      "provenance": "third-party",
+      "generatedBy": "Downloaded verbatim (unmodified) from https://raw.githubusercontent.com/nolze/msoffcrypto-tool/master/tests/outputs/rc4cryptoapi_password_plain.doc (MIT, Copyright (c) 2015 nolze). File sha256: 65EB884BE862337C0E51E78BF57BE6CB6601040A16055A87D1E4DD3DE4C04303, 23040 bytes on disk. Fetched 2026-11-12.",
+      "compositionRule": "docs/specs/dataset-curation.md encrypted set: unencrypted twin of samples/encrypted/rc4cryptoapi_password.doc",
+      "expectedDetectedFormat": {
+        "enum": "Doc",
+        "mimeType": "application/msword"
+      },
+      "bodyTextLines": [
+        "lorem ipsum"
+      ],
+      "metadata": {
+        "Title": "",
+        "Author": "",
+        "LastModifiedBy": "",
+        "ApplicationName": "Microsoft Office Word",
+        "RevisionNumber": 1,
+        "Created": "2018-08-15T09:35:00Z",
+        "Modified": "2018-08-15T09:37:00Z"
+      },
+      "expectedSubfileCount": 0,
+      "expectedSubfiles": [],
+      "detectable": true,
+      "verifiedBy": "Observed 2026-11-12 by running MainExtractor.Extract (ExtractCorpusManifestTests)",
+      "notes": "License: MIT (msoffcrypto-tool test data, Copyright (c) 2015 nolze). Upstream plaintext of rc4cryptoapi_password.doc; expectations observed from the current extractor."
+    },
+    {
+      "format": "ppt",
+      "status": "curated",
+      "path": "samples/curated/ppt/ppt_with_png.ppt",
+      "expectedFieldErrors": [],
+      "provenance": "third-party",
+      "generatedBy": "Copied verbatim (unmodified) from the repo's third_party/npoi/testcases/test-data/slideshow/ppt_with_png.ppt (= POI trunk test-data/slideshow/ppt_with_png.ppt, Apache-2.0). File sha256: 92865C21E43AA3A69A61371FED9EA50873A66E4A5EE5A24EDE2AF58DB66AEEB3, 39424 bytes on disk. Fetched 2026-11-12.",
+      "compositionRule": "docs/specs/dataset-curation.md encrypted set: unencrypted reference for samples/encrypted/ppt_with_png_encrypted.ppt (a different save, NOT a twin)",
+      "expectedDetectedFormat": {
+        "enum": "Ppt",
+        "mimeType": "application/vnd.ms-powerpoint"
+      },
+      "bodyTextLines": [
+        "H",
+        "ere is a PNG image:"
+      ],
+      "metadata": {
+        "Title": "Slide 1",
+        "Author": "Daniel Noll",
+        "LastModifiedBy": "Daniel Noll",
+        "ApplicationName": "Microsoft PowerPoint",
+        "RevisionNumber": 3,
+        "Created": "2006-01-15T23:08:48.328Z",
+        "Modified": "2006-01-15T23:16:02.703Z",
+        "EditingDurationMinutes": 7
+      },
+      "expectedSubfileCount": 1,
+      "expectedSubfiles": [
+        {
+          "fileName": "Pictures",
+          "contentType": "application/octet-stream",
+          "sizeInBytes": 1385,
+          "packagePath": "Pictures"
+        }
+      ],
+      "detectable": true,
+      "verifiedBy": "Observed 2026-11-12 by running MainExtractor.Extract (ExtractCorpusManifestTests)",
+      "notes": "License: Apache-2.0 (Apache POI test data). KNOWN BUG PINNED TO CURRENT BEHAVIOR: this differs from the research values. Research expects FormatMetadata SlideCount 1 and clean text 'Here is a PNG image:'; the current extractor returns empty FormatMetadata (so no expectedFormatMetadata is recorded) and ExtractedText 'H\\r\\nere is a PNG image:' (hence the split bodyTextLines). Update this entry when the legacy ppt text and format-metadata bug is fixed."
     }
   ],
   "$benchmarkSamplesNote": "T-f0963fc3: the 12 fixed benchmark samples (10MB tier: target 10,000,000 bytes; ~100MB tier: target 102,400,000 bytes = 97.66 MiB, under the 104,857,600-byte MaxFileSizeBytes cap; each file lands in [0.99 x target, target]). They are gitignored (samples/benchmark/) and regenerated on demand with `dotnet run --project SampleGenerator -- --benchmark`, which rewrites the files and compares each SHA-256 with this list (exit code 1 on mismatch). They live under 'benchmarkSamples', not 'samples', because the committed-corpus tests (DetectMimeTypeCorpusManifestTests) read every 'samples' entry from disk. sha256 values depend on the deflate output of the .NET runtime that built them (net10.0 target, built on the .NET 10 runtime), so a different runtime's zlib could change the docx/xlsx/pptx hashes; ExtractorOLE.Tests.SampleGeneration.BenchmarkSampleGeneratorTests validates size, SHA-256 and Extract() text for each present file.",
