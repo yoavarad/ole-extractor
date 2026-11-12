@@ -7,7 +7,7 @@ namespace ExtractorOLE.Tests
     // never hard-coded.
     internal static class EncryptedSamples
     {
-        internal sealed record EncryptedSample(string Path, string FullPath, string Password, string? UnencryptedTwin);
+        internal sealed record EncryptedSample(string Path, string FullPath, string? Password, string? UnencryptedTwin);
 
         public static IReadOnlyList<EncryptedSample> Enumerate()
         {
@@ -25,7 +25,7 @@ namespace ExtractorOLE.Tests
                 var relative = "samples/" + System.IO.Path.GetRelativePath(samplesRoot, file).Replace(System.IO.Path.DirectorySeparatorChar, '/');
                 var entry = entries[relative];
                 var twin = entry.TryGetProperty("unencryptedTwin", out var t) && t.ValueKind == JsonValueKind.String ? t.GetString() : null;
-                result.Add(new EncryptedSample(relative, file, entry.GetProperty("password").GetString()!, twin));
+                result.Add(new EncryptedSample(relative, file, entry.TryGetProperty("password", out var pw) && pw.ValueKind == JsonValueKind.String ? pw.GetString() : null, twin));
             }
 
             return result;
