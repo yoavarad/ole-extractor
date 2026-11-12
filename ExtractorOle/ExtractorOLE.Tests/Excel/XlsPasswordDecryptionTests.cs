@@ -111,13 +111,19 @@ namespace ExtractorOLE.Tests.Excel
             using var stream = new MemoryStream(bytes);
             var fromStream = Extractor.Value.Extract(new ExtractionRequest
             {
-                InputStream = stream, FileName = "fixture.xls", DetectedMimeType = XlsMime, Password = sample.Password,
+                InputStream = stream,
+                FileName = "fixture.xls",
+                DetectedMimeType = XlsMime,
+                Password = sample.Password,
             });
 
             Assert.Equal(fromBytes.ExtractedText, fromStream.ExtractedText);
             Assert.Throws<InvalidPasswordException>(() => Extractor.Value.Extract(new ExtractionRequest
             {
-                InputStream = new MemoryStream(bytes), FileName = "fixture.xls", DetectedMimeType = XlsMime, Password = WrongPassword,
+                InputStream = new MemoryStream(bytes),
+                FileName = "fixture.xls",
+                DetectedMimeType = XlsMime,
+                Password = WrongPassword,
             }));
         }
 
@@ -203,7 +209,10 @@ namespace ExtractorOLE.Tests.Excel
             using var barrier = new Barrier(cases.Length);
             var requests = cases.Select(c => new ExtractionRequest
             {
-                InputStream = new BarrierStream(c.Bytes, barrier), FileName = "fixture.xls", DetectedMimeType = XlsMime, Password = c.Password,
+                InputStream = new BarrierStream(c.Bytes, barrier),
+                FileName = "fixture.xls",
+                DetectedMimeType = XlsMime,
+                Password = c.Password,
             }).ToList();
 
             using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(60));
