@@ -69,20 +69,24 @@ namespace ExtractorOLE.Helpers.Guardrails
         /// misconfiguration and throws <see cref="InvalidOperationException"/>.
         /// </summary>
         public static DocumentExtractionResult OpenOrThrow(IOpenStrategy? strategy, byte[] fileBytes, string detectedMimeType) =>
-            OpenOrThrow(strategy, s => s.Open(fileBytes), null, detectedMimeType);
+            OpenOrThrow(strategy, s => s.Open(fileBytes), null, detectedMimeType, hasPassword: false);
 
-        // Byte[] input keeps calling Open(byte[]); stream/path input calls Open(Stream) (#192).
+        // Byte[] input calls Open(byte[], password); stream/path input calls Open(Stream, password) (#192).
         // Stream input is read through a FaultTrackingStream so a read fault of the caller's
-        // stream is told apart from a parse failure (#287).
-        internal static DocumentExtractionResult OpenOrThrow(IOpenStrategy? strategy, ExtractionInput input, string detectedMimeType)
+        // stream is told apart from a parse failure (#287). The password is only passed through.
+        internal static DocumentExtractionResult OpenOrThrow(IOpenStrategy? strategy, ExtractionInput input, string detectedMimeType, string? password = null)
         {
-            if (input.OriginalBytes != null) return OpenOrThrow(strategy, s => s.Open(input.OriginalBytes), null, detectedMimeType);
+            var hasPassword = RequestPasswords.HasPassword(password);
+            if (input.OriginalBytes != null) return OpenOrThrow(strategy, s => s.Open(input.OriginalBytes, password), null, detectedMimeType, hasPassword);
 
             var source = new FaultTrackingStream(input.Stream!);
-            return OpenOrThrow(strategy, s => s.Open(source), source, detectedMimeType);
+            return OpenOrThrow(strategy, s => s.Open(source, password), source, detectedMimeType, hasPassword);
         }
 
-        private static DocumentExtractionResult OpenOrThrow(IOpenStrategy? strategy, Func<IOpenStrategy, DocumentExtractionResult?> open, FaultTrackingStream? source, string detectedMimeType)
+        // Only a top-level EncryptedDocumentException is a password outcome: PASSWORD_PROTECTED
+        // without a password, INVALID_PASSWORD with one. A RecordFormatException wrapping one means
+        // the scheme is not supported by this NPOI build and stays CORRUPT_FILE.
+        private static DocumentExtractionResult OpenOrThrow(IOpenStrategy? strategy, Func<IOpenStrategy, DocumentExtractionResult?> open, FaultTrackingStream? source, string detectedMimeType, bool hasPassword)
         {
             if (strategy == null)
             {
@@ -100,6 +104,10 @@ namespace ExtractorOLE.Helpers.Guardrails
                 // replaced it (System.IO.Packaging throws FileFormatException with no inner).
                 ExceptionDispatchInfo.Throw(source.Fault);
                 throw; // unreachable: ExceptionDispatchInfo.Throw never returns; kept for flow analysis
+            }
+            catch (NPOI.EncryptedDocumentException) when (hasPassword)
+            {
+                throw new InvalidPasswordException();
             }
             catch (NPOI.EncryptedDocumentException)
             {

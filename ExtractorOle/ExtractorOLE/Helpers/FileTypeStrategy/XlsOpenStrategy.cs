@@ -22,17 +22,21 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
             _helper = helper;
         }
 
-        public DocumentExtractionResult? Open(byte[] fileBytes) => OpenFrom(() => new MemoryStream(fileBytes));
+        public DocumentExtractionResult? Open(byte[] fileBytes) => Open(fileBytes, null);
 
         // Reads the caller's seekable stream directly (#194, ADR-008): NPOI reads it block by block without buffering it (#236). The caller owns and disposes it.
-        public DocumentExtractionResult? Open(Stream input) => OpenFrom(() => new NonClosingStream(input));
+        public DocumentExtractionResult? Open(Stream input) => Open(input, null);
 
-        private DocumentExtractionResult? OpenFrom(Func<Stream> openSource)
+        public DocumentExtractionResult? Open(byte[] fileBytes, string? password) => OpenFrom(() => new MemoryStream(fileBytes), password);
+
+        public DocumentExtractionResult? Open(Stream input, string? password) => OpenFrom(() => new NonClosingStream(input), password);
+
+        private DocumentExtractionResult? OpenFrom(Func<Stream> openSource, string? password)
         {
             HSSFWorkbook workbook;
             try
             {
-                workbook = XlsWorkbooks.Load(openSource());
+                workbook = LoadWorkbook(openSource, password);
             }
             catch (Exception ex) when (ex is not NPOI.HSSF.OldExcelFormatException && StrategyIsolation.IsOpenFailure(ex))
             {
@@ -55,6 +59,24 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
             result.ParsedDocument = workbook;
             result.MimeType = _helper.MimeFor(OfficeMimeType.ExcelLegacy);
             return result;
+        }
+
+        // NPOI uses a supplied password instead of Excel's default key, with no fallback, so a
+        // default-key (VelvetSweatshop) file would reject any password. To ignore a supplied password
+        // for it, a rejected password is retried once with the default key; if that also fails, the
+        // EncryptedDocumentException propagates and ParseTimeErrorGuard reports INVALID_PASSWORD.
+        private static HSSFWorkbook LoadWorkbook(Func<Stream> openSource, string? password)
+        {
+            if (!RequestPasswords.HasPassword(password)) return XlsWorkbooks.Load(openSource(), null);
+
+            try
+            {
+                return XlsWorkbooks.Load(openSource(), password);
+            }
+            catch (NPOI.EncryptedDocumentException)
+            {
+                return XlsWorkbooks.Load(openSource(), null);
+            }
         }
 
         // The container is a readable compound file but the workbook did not assemble (corrupt sheet

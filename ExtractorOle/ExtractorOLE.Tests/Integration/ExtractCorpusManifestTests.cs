@@ -81,6 +81,8 @@ namespace ExtractorOLE.Tests.Integration
                 FileBytes = File.ReadAllBytes(FindRepoRootFile(path)),
                 FileName = Path.GetFileName(path),
                 DetectedMimeType = MimeTypeFor(entry),
+                // An encrypted sample is extracted with its manifest password (null when it has none).
+                Password = entry.TryGetProperty("password", out var password) ? password.GetString() : null,
             };
 
             var expectedFieldErrors = ReadExpectedFieldErrors(entry);

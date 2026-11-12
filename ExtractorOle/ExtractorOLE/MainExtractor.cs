@@ -108,7 +108,7 @@ namespace ExtractorOLE
             cancellationToken.ThrowIfCancellationRequested();
             DocumentExtractionResult result;
             using (ExtractionTelemetry.Stage("open", mime, size))
-                result = ParseTimeErrorGuard.OpenOrThrow(_registry.GetOpenStrategy(format), input, request.DetectedMimeType);
+                result = ParseTimeErrorGuard.OpenOrThrow(_registry.GetOpenStrategy(format), input, request.DetectedMimeType, request.Password);
             try
             {
                 result.MimeType = request.DetectedMimeType;
