@@ -2310,7 +2310,7 @@
       "status": "curated",
       "path": "samples/encrypted/password-protected.docx",
       "password": "solrcell",
-      "unencryptedTwin": null,
+      "unencryptedTwin": "samples/curated/docx/password-protected-decrypted.docx",
       "expectedFieldErrors": [],
       "provenance": "third-party",
       "generatedBy": "Downloaded verbatim (unmodified) from the Apache Software Foundation's Apache POI project test-data corpus (Apache License 2.0) at https://github.com/apache/poi, path test-data/document/bug53475-password-is-solrcell.docx (fetched via raw.githubusercontent.com/apache/poi/trunk/test-data/document/bug53475-password-is-solrcell.docx). A genuine Word-produced, document-open-password-protected .docx: the OOXML package is wrapped in a CFB container per MS-OFFCRYPTO (file starts with the CFB magic D0 CF 11 E0, not a zip PK signature). Document-open password is 'solrcell' (per the well-known upstream POI test-file name, used by Apache POI's own encryption test suite for this exact file since POI bug 53475). File sha256: cde5752f65238b42fefeaa28c0a10ef3b75bd6232cd6427b3920113c91c5909d, 33792 bytes on disk.",
@@ -2330,6 +2330,173 @@
       "detectable": false,
       "verifiedBy": null,
       "notes": "License: Apache License 2.0 (Apache Software Foundation, apache/poi repository, default branch 'trunk'). Redistribution permitted with attribution; this manifest entry's generatedBy field constitutes that attribution per docs/specs/dataset-curation.md 'Provenance & Licensing'. T-71ab3bc0 note: expectedDetectedFormat empirically verified via a standalone harness that copies CfbMimeDetector/OoxmlMimeDetector production logic byte-for-byte and runs it against this exact file. OoxmlMimeDetector returns Unknown (not a zip). A direct OpenMcdf root-entry enumeration of this real file shows it contains 'ObjectPool', 'DataSpaces', 'WordDocument', 'EncryptionInfo', and 'EncryptedPackage' at the root -- i.e. this genuine MS-OFFCRYPTO file also carries a legacy 'WordDocument' compatibility stream alongside the encryption streams. CfbMimeDetector checks for 'WordDocument' before Excel/PowerPoint entry names and finds it, so it structurally reports Doc/application-msword (IsSupported=true), NOT Docx -- despite the top-level format/targetFormats being docx. This is today's actual pre-failure detection result, ahead of password-protected rejection being implemented; it is not an assumption."
+    },
+    {
+      "format": "xlsx",
+      "status": "generated",
+      "path": "samples/encrypted/agile-nonascii-password.xlsx",
+      "password": "pässwörd-Ωmega",
+      "unencryptedTwin": "samples/curated/xlsx/project-status-report.xlsx",
+      "expectedFieldErrors": [],
+      "provenance": "synthetic",
+      "generatedBy": "samples/curated/xlsx/project-status-report.xlsx encrypted with msoffcrypto-tool 6.0.0 (Python 3.12, OfficeFile(...).encrypt(password, out), ECMA-376 Agile: AES-256-CBC, SHA-512, spin 100000); file sha256 bb29cf867b733466bc4ee0794fecae4bd053f0193634b35867ab38988fc8cd28. Scripted (no Office authoring available), so tagged synthetic. Non-ASCII (Latin-1 and Greek) password, UTF-16LE per MS-OFFCRYPTO.",
+      "compositionRule": "docs/specs/dataset-curation.md 'The encrypted set' bullet; folder samples/encrypted/ is the encryption flag.",
+      "targetFormats": [
+        "xlsx"
+      ],
+      "targetFormatsNote": "MS-OFFCRYPTO wraps the encrypted package in a CFB container with only EncryptionInfo/EncryptedPackage/DataSpaces streams (no WordDocument/Workbook/PowerPoint Document stream), so the CFB detector cannot name the inner format and reports Unknown; extraction is attempted as the target format.",
+      "expectedDetectedFormat": {
+        "enum": "Unknown",
+        "mimeType": "application/octet-stream"
+      },
+      "expectedBehavior": {
+        "outcome": "rejected as password-protected today (Extract does not yet decrypt)",
+        "errorId": "ydk:error:extraction/password-protected",
+        "currentBehaviorNote": "Observed by running MainExtractor.Extract with the target-format mime type and no password. Decrypted expectations are those of unencryptedTwin once decryption lands."
+      },
+      "detectable": false,
+      "verifiedBy": "Raw check 2026-11-12: msoffcrypto-tool 6.0.0 OfficeFile.load_key(password) + decrypt(verify_integrity=True) succeeds and yields a zip (PK) package.",
+      "notes": "License: derived from a self-generated corpus sample; no third-party content."
+    },
+    {
+      "format": "pptx",
+      "status": "generated",
+      "path": "samples/encrypted/agile-password.pptx",
+      "password": "pptx-agile-1",
+      "unencryptedTwin": "samples/curated/pptx/product-launch-deck.pptx",
+      "expectedFieldErrors": [],
+      "provenance": "synthetic",
+      "generatedBy": "samples/curated/pptx/product-launch-deck.pptx encrypted with msoffcrypto-tool 6.0.0 (Python 3.12, OfficeFile(...).encrypt(password, out), ECMA-376 Agile: AES-256-CBC, SHA-512, spin 100000); file sha256 f0b01758c414136af05b958cf20c030d9083910b6e90d835d8a0c4acfce0fa52. Scripted (no Office authoring available), so tagged synthetic. ",
+      "compositionRule": "docs/specs/dataset-curation.md 'The encrypted set' bullet; folder samples/encrypted/ is the encryption flag.",
+      "targetFormats": [
+        "pptx"
+      ],
+      "targetFormatsNote": "MS-OFFCRYPTO wraps the encrypted package in a CFB container with only EncryptionInfo/EncryptedPackage/DataSpaces streams (no WordDocument/Workbook/PowerPoint Document stream), so the CFB detector cannot name the inner format and reports Unknown; extraction is attempted as the target format.",
+      "expectedDetectedFormat": {
+        "enum": "Unknown",
+        "mimeType": "application/octet-stream"
+      },
+      "expectedBehavior": {
+        "outcome": "rejected as password-protected today (Extract does not yet decrypt)",
+        "errorId": "ydk:error:extraction/password-protected",
+        "currentBehaviorNote": "Observed by running MainExtractor.Extract with the target-format mime type and no password. Decrypted expectations are those of unencryptedTwin once decryption lands."
+      },
+      "detectable": false,
+      "verifiedBy": "Raw check 2026-11-12: msoffcrypto-tool 6.0.0 OfficeFile.load_key(password) + decrypt(verify_integrity=True) succeeds and yields a zip (PK) package.",
+      "notes": "License: derived from a self-generated corpus sample; no third-party content."
+    },
+    {
+      "format": "xlsx",
+      "status": "generated",
+      "path": "samples/encrypted/agile-tampered-package.xlsx",
+      "password": "tamper-agile-1",
+      "unencryptedTwin": "samples/curated/xlsx/project-status-report.xlsx",
+      "expectedFieldErrors": [],
+      "provenance": "synthetic",
+      "generatedBy": "samples/curated/xlsx/project-status-report.xlsx encrypted with msoffcrypto-tool 6.0.0 (Python 3.12, OfficeFile(...).encrypt(password, out), ECMA-376 Agile: AES-256-CBC, SHA-512, spin 100000); file sha256 ffdb7cba90c7c2692ba0ea26fd419c7287a92137c87b92f6ed1e15506a269dfd. Scripted (no Office authoring available), so tagged synthetic. One byte of the EncryptedPackage stream (offset 8 + len/2, XOR 0xFF) was altered after encryption; the password is still correct, so key verification passes and the data-integrity HMAC check must fail.",
+      "compositionRule": "docs/specs/dataset-curation.md 'The encrypted set' bullet; folder samples/encrypted/ is the encryption flag.",
+      "targetFormats": [
+        "xlsx"
+      ],
+      "targetFormatsNote": "MS-OFFCRYPTO wraps the encrypted package in a CFB container with only EncryptionInfo/EncryptedPackage/DataSpaces streams (no WordDocument/Workbook/PowerPoint Document stream), so the CFB detector cannot name the inner format and reports Unknown; extraction is attempted as the target format.",
+      "expectedDetectedFormat": {
+        "enum": "Unknown",
+        "mimeType": "application/octet-stream"
+      },
+      "expectedBehavior": {
+        "outcome": "rejected as password-protected today (Extract does not yet decrypt)",
+        "errorId": "ydk:error:extraction/password-protected",
+        "currentBehaviorNote": "Observed by running MainExtractor.Extract with the target-format mime type and no password. Decrypted expectations are those of unencryptedTwin once decryption lands."
+      },
+      "detectable": false,
+      "verifiedBy": "Raw check 2026-11-12: msoffcrypto-tool 6.0.0 load_key(password) succeeds, decrypt(verify_integrity=True) raises InvalidKeyError 'Payload integrity verification failed'.",
+      "notes": "Negative integrity sample: expected outcome once decryption lands is the integrity-check failure, not a decrypted result. License: derived from a self-generated corpus sample; no third-party content."
+    },
+    {
+      "format": "docx",
+      "status": "generated",
+      "path": "samples/encrypted/embeds-encrypted-package.docx",
+      "expectedFieldErrors": [],
+      "provenance": "synthetic",
+      "generatedBy": "samples/curated/docx/invoice-acme-corp.docx with samples/encrypted/agile-password.pptx (sha256 f0b01758c414136af05b958cf20c030d9083910b6e90d835d8a0c4acfce0fa52) added verbatim as word/embeddings/oleObject1.bin (oleObject relationship rIdEnc1 and Default bin content type added) by a Python 3.12 zipfile script. The embedding document is itself unencrypted. File sha256 8e44dd70e7429bbb78551948553e0d4b5817c8688baad2a45a6595b1dc223104.",
+      "compositionRule": "docs/specs/dataset-curation.md 'The encrypted set' bullet: an encrypted package embedded as a subfile in an unencrypted document (must come back opaque). No password and no unencryptedTwin.",
+      "expectedDetectedFormat": {
+        "enum": "Docx",
+        "mimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      },
+      "bodyTextLines": [
+        "INVOICE",
+        "Acme Corp",
+        "1400 Industrial Parkway, Springfield, IL 62704",
+        "Invoice Number: INV-2026-0347",
+        "Invoice Date: March 19, 2026",
+        "Due Date: April 18, 2026",
+        "Bill To: Northgate Manufacturing LLC, 220 Commerce Drive, Columbus, OH 43215",
+        "Industrial Sensor Array Model X200 - Qty 12 - Unit Price $845.00 - Amount $10,140.00",
+        "On-site Calibration Service - Qty 1 - Unit Price $1,250.00 - Amount $1,250.00",
+        "Extended Warranty (3-year) - Qty 1 - Unit Price $960.00 - Amount $960.00",
+        "Subtotal: $12,350.00",
+        "Tax (7.25%): $895.38",
+        "Total Due: $13,245.38",
+        "Payment Terms: Net 30. Please remit payment to Acme Corp, Accounts Receivable."
+      ],
+      "metadata": {
+        "Author": "Dana Cole",
+        "LastModifiedBy": "Marcus Webb",
+        "Created": "2026-02-03T00:00:00.0000000Z",
+        "Modified": "2026-03-19T00:00:00.0000000Z",
+        "RevisionNumber": "14"
+      },
+      "expectedSubfileCount": 2,
+      "expectedSubfiles": [
+        {
+          "fileName": "embedded_object_1.png",
+          "contentType": "image/png",
+          "sizeInBytes": 68,
+          "packagePath": "/media/image.png"
+        },
+        {
+          "fileName": "embedded_object_2.bin",
+          "contentType": "application/vnd.openxmlformats-officedocument.oleObject",
+          "sizeInBytes": 11776,
+          "packagePath": "/word/embeddings/oleObject1.bin",
+          "sha256": "f0b01758c414136af05b958cf20c030d9083910b6e90d835d8a0c4acfce0fa52"
+        }
+      ],
+      "detectable": true,
+      "verifiedBy": "Observed 2026-11-12 by running MainExtractor.Extract (production DI) on this file: text and metadata equal invoice-acme-corp.docx; the encrypted package comes back as one opaque 11776-byte subfile (not decrypted, no field error).",
+      "notes": "Encrypted subfile is opaque by design: the password applies to the container only."
+    },
+    {
+      "format": "docx",
+      "status": "generated",
+      "path": "samples/curated/docx/password-protected-decrypted.docx",
+      "expectedFieldErrors": [],
+      "provenance": "third-party",
+      "generatedBy": "samples/encrypted/password-protected.docx decrypted once with msoffcrypto-tool 6.0.0 (OfficeFile.load_key(password='solrcell'); decrypt) -- the unencrypted twin of that sample. Originates from Apache POI test-data bug53475-password-is-solrcell.docx (Apache License 2.0). File sha256 2ff6f70927616e8e39d81ffddc17ad5980827a0e8f26034d394ea3326287e123.",
+      "compositionRule": "docs/specs/dataset-curation.md 'The encrypted set': unencrypted twin kept in its usual folder.",
+      "expectedDetectedFormat": {
+        "enum": "Docx",
+        "mimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      },
+      "bodyTextLines": [
+        "This is password protected Word document."
+      ],
+      "metadata": {
+        "Title": "",
+        "Author": "関口 宏司",
+        "LastModifiedBy": "関口 宏司",
+        "Created": "2011-05-14T02:29:00.0000000Z",
+        "Modified": "2011-05-14T02:29:00.0000000Z",
+        "RevisionNumber": "2",
+        "EditingDurationMinutes": "1",
+        "ApplicationName": "Microsoft Macintosh Word"
+      },
+      "expectedSubfileCount": 0,
+      "expectedSubfiles": [],
+      "detectable": true,
+      "verifiedBy": "Observed 2026-11-12 by running MainExtractor.Extract (production DI) on this file.",
+      "notes": "License: Apache License 2.0 (Apache Software Foundation, apache/poi). Note: the encrypted source's EncryptionInfo is version 4.2 (ECMA-376 Standard, AES-128), not Agile."
     },
     {
       "format": "docx",
