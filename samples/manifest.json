@@ -3453,11 +3453,6 @@
         "enum": "Xls",
         "mimeType": "application/vnd.ms-excel"
       },
-      "expectedBehavior": {
-        "outcome": "no decryption yet: Extract throws password-protected for this encrypted xls with or without the password; once password decryption lands the correct password must yield the unencryptedTwin's expectations",
-        "errorId": "ydk:error:extraction/password-protected",
-        "trigger": "FILEPASS record in the Workbook stream"
-      },
       "bodyTextLines": [
         "Encrypted workbook text line one",
         "Encrypted workbook text line two",
@@ -3474,7 +3469,7 @@
       "expectedSubfileCount": 0,
       "expectedSubfiles": [],
       "detectable": true,
-      "verifiedBy": "Observed 2026-11-12: NPOI HSSFWorkbook opens it only with its password (wrong or no password gives EncryptedDocumentException) -- asserted by ExtractorOle/ExtractorOLE.Tests/EncryptedSamplesTests.cs; MainExtractor.Extract behavior as recorded in expectedBehavior/expectations.",
+      "verifiedBy": "Observed 2026-11-12: NPOI HSSFWorkbook opens it only with its password (wrong or no password gives EncryptedDocumentException) -- asserted by ExtractorOle/ExtractorOLE.Tests/EncryptedSamplesTests.cs. MainExtractor.Extract with the manifest password (task #380) yields the unencryptedTwin's text, metadata and format metadata; no password throws PASSWORD_PROTECTED and a wrong one INVALID_PASSWORD -- asserted by ExtractorOle/ExtractorOLE.Tests/Excel/XlsPasswordDecryptionTests.cs.",
       "notes": "Self-generated synthetic RC4 xls; Office-authored sample was not available. Openability in real Excel is UNVERIFIED; only NPOI reads it back."
     },
     {
@@ -3495,29 +3490,17 @@
         "enum": "Xls",
         "mimeType": "application/vnd.ms-excel"
       },
-      "expectedBehavior": {
-        "outcome": "no decryption yet: Extract throws password-protected for this encrypted xls with or without the password; once password decryption lands the correct password must yield the unencryptedTwin's expectations",
-        "errorId": "ydk:error:extraction/password-protected",
-        "trigger": "FILEPASS record in the Workbook stream"
-      },
       "bodyTextLines": [
         "Encrypted workbook text line one",
         "Encrypted workbook text line two",
         "Encrypted workbook text line three"
       ],
-      "metadata": {
-        "Title": "Encrypted Legacy Xls Sample",
-        "Author": "Sample Author",
-        "LastModifiedBy": "Sample Editor",
-        "Subject": "Encrypted xls corpus",
-        "Comments": "Generated for the encrypted corpus",
-        "Keywords": "encrypted;xls"
-      },
+      "metadata": {},
       "expectedSubfileCount": 0,
       "expectedSubfiles": [],
       "detectable": true,
-      "verifiedBy": "Observed 2026-11-12: NPOI HSSFWorkbook opens it only with its password (wrong or no password gives EncryptedDocumentException) -- asserted by ExtractorOle/ExtractorOLE.Tests/EncryptedSamplesTests.cs; MainExtractor.Extract behavior as recorded in expectedBehavior/expectations.",
-      "notes": "Self-generated synthetic CryptoAPI xls. NPOI cannot read its own encrypted summary back (stream name 'encryption' vs hard-coded 'EncryptedSummary'; SummaryInformation is null after open), so decrypted metadata parity with the twin is gated on that NPOI fix (npoi-xor.md section 5). Openability in real Excel is UNVERIFIED."
+      "verifiedBy": "Observed 2026-11-12: NPOI HSSFWorkbook opens it only with its password (wrong or no password gives EncryptedDocumentException) -- asserted by ExtractorOle/ExtractorOLE.Tests/EncryptedSamplesTests.cs. MainExtractor.Extract with the manifest password (task #380) yields the unencryptedTwin's text and format metadata but no general metadata (the properties are encrypted and not read yet: task T-xls-encprops); no password throws PASSWORD_PROTECTED and a wrong one INVALID_PASSWORD -- asserted by ExtractorOle/ExtractorOLE.Tests/Excel/XlsPasswordDecryptionTests.cs.",
+      "notes": "metadata is empty until T-xls-encprops reads the encrypted properties; the twin's metadata is the target then. Self-generated synthetic CryptoAPI xls. NPOI cannot read its own encrypted summary back (stream name 'encryption' vs hard-coded 'EncryptedSummary'; SummaryInformation is null after open), so decrypted metadata parity with the twin is gated on that NPOI fix (npoi-xor.md section 5). Openability in real Excel is UNVERIFIED."
     },
     {
       "format": "xls",
