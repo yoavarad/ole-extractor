@@ -3205,6 +3205,188 @@
       "detectable": true,
       "verifiedBy": null,
       "notes": "Extraction succeeds; an UnexpectedFieldFailure FieldError is recorded at the bare EmbeddedFiles path. Recorded as observed."
+    },
+    {
+      "format": "xls",
+      "status": "generated",
+      "path": "samples/synthetic/encrypted-twins/rc4-password-twin.xls",
+      "expectedFieldErrors": [],
+      "provenance": "self-generated",
+      "generatedBy": "Self-generated with NPOI (third_party/npoi submodule head 72ff7c7, HSSFWorkbook) by a throwaway console harness kept outside the repo (not a SampleGenerator generator). Workbook: one sheet 'Sheet1' with three text rows (A1:A3) and a populated SummaryInformation (Title, Author, Subject, Keywords, Comments, LastAuthor). Unencrypted twin of samples/encrypted/rc4-password.xls (same builder, written without a password).",
+      "compositionRule": "docs/specs/dataset-curation.md 'The encrypted set' bullet -- unencrypted twin whose expectations the encrypted sample must match after decryption.",
+      "expectedDetectedFormat": {
+        "enum": "Xls",
+        "mimeType": "application/vnd.ms-excel"
+      },
+      "bodyTextLines": [
+        "Encrypted workbook text line one",
+        "Encrypted workbook text line two",
+        "Encrypted workbook text line three"
+      ],
+      "metadata": {
+        "Title": "Encrypted Legacy Xls Sample",
+        "Author": "Sample Author",
+        "LastModifiedBy": "Sample Editor",
+        "Subject": "Encrypted xls corpus",
+        "Comments": "Generated for the encrypted corpus",
+        "Keywords": "encrypted;xls"
+      },
+      "expectedSubfileCount": 0,
+      "expectedSubfiles": [],
+      "detectable": true,
+      "verifiedBy": "Observed 2026-11-12 by running MainExtractor.Extract (production DI registration) on this file: exact text, metadata, zero subfiles, no FieldErrors recorded here; plus ExtractorOle/ExtractorOLE.Tests/EncryptedSamplesTests.cs (raw HSSF open).",
+      "notes": "Twin: same content as the encrypted RC4 sample. Openability in real Office is UNVERIFIED."
+    },
+    {
+      "format": "xls",
+      "status": "generated",
+      "path": "samples/synthetic/encrypted-twins/cryptoapi-encrypted-properties-twin.xls",
+      "expectedFieldErrors": [],
+      "provenance": "self-generated",
+      "generatedBy": "Self-generated with NPOI (third_party/npoi submodule head 72ff7c7, HSSFWorkbook) by a throwaway console harness kept outside the repo (not a SampleGenerator generator). Workbook: one sheet 'Sheet1' with three text rows (A1:A3) and a populated SummaryInformation (Title, Author, Subject, Keywords, Comments, LastAuthor). Unencrypted twin of samples/encrypted/cryptoapi-encrypted-properties.xls (same builder, written without a password).",
+      "compositionRule": "docs/specs/dataset-curation.md 'The encrypted set' bullet -- unencrypted twin whose expectations the encrypted sample must match after decryption.",
+      "expectedDetectedFormat": {
+        "enum": "Xls",
+        "mimeType": "application/vnd.ms-excel"
+      },
+      "bodyTextLines": [
+        "Encrypted workbook text line one",
+        "Encrypted workbook text line two",
+        "Encrypted workbook text line three"
+      ],
+      "metadata": {
+        "Title": "Encrypted Legacy Xls Sample",
+        "Author": "Sample Author",
+        "LastModifiedBy": "Sample Editor",
+        "Subject": "Encrypted xls corpus",
+        "Comments": "Generated for the encrypted corpus",
+        "Keywords": "encrypted;xls"
+      },
+      "expectedSubfileCount": 0,
+      "expectedSubfiles": [],
+      "detectable": true,
+      "verifiedBy": "Observed 2026-11-12 by running MainExtractor.Extract (production DI registration) on this file: exact text, metadata, zero subfiles, no FieldErrors recorded here; plus ExtractorOle/ExtractorOLE.Tests/EncryptedSamplesTests.cs (raw HSSF open).",
+      "notes": "Twin: same content as the CryptoAPI sample. Openability in real Office is UNVERIFIED."
+    },
+    {
+      "format": "xls",
+      "status": "generated",
+      "path": "samples/encrypted/rc4-password.xls",
+      "password": "Rc4Passw0rd",
+      "unencryptedTwin": "samples/synthetic/encrypted-twins/rc4-password-twin.xls",
+      "expectedFieldErrors": [],
+      "provenance": "self-generated",
+      "generatedBy": "Self-generated with NPOI (third_party/npoi submodule head 72ff7c7, HSSFWorkbook) by a throwaway console harness kept outside the repo (not a SampleGenerator generator). Workbook: one sheet 'Sheet1' with three text rows (A1:A3) and a populated SummaryInformation (Title, Author, Subject, Keywords, Comments, LastAuthor). BIFF8 FILEPASS written as BinaryRC4 (RC4, 1024-byte rekeying) with password 'Rc4Passw0rd'. NPOI's own writer cannot emit BinaryRC4 xls unmodified (BinaryRC4Encryptor lacks a SetChunkSize override, so HSSFWorkbook.Write throws), so the harness inserts FilePassRecord(EncryptionMode.BinaryRC4) and swaps the EncryptionInfo's encryptor for a subclass overriding SetChunkSize (chunk size fixed at 1024 by reflection); the submodule is not modified. Summary streams stay plain (SummaryInformation, DocumentSummaryInformation).",
+      "tag": "synthetic",
+      "compositionRule": "docs/specs/dataset-curation.md 'The encrypted set' bullet -- RC4 xls (BinaryRC4)",
+      "targetFormats": [
+        "xls"
+      ],
+      "expectedDetectedFormat": {
+        "enum": "Xls",
+        "mimeType": "application/vnd.ms-excel"
+      },
+      "expectedBehavior": {
+        "outcome": "no decryption yet: Extract throws password-protected for this encrypted xls with or without the password; once password decryption lands the correct password must yield the unencryptedTwin's expectations",
+        "errorId": "ydk:error:extraction/password-protected",
+        "trigger": "FILEPASS record in the Workbook stream"
+      },
+      "bodyTextLines": [
+        "Encrypted workbook text line one",
+        "Encrypted workbook text line two",
+        "Encrypted workbook text line three"
+      ],
+      "metadata": {
+        "Title": "Encrypted Legacy Xls Sample",
+        "Author": "Sample Author",
+        "LastModifiedBy": "Sample Editor",
+        "Subject": "Encrypted xls corpus",
+        "Comments": "Generated for the encrypted corpus",
+        "Keywords": "encrypted;xls"
+      },
+      "expectedSubfileCount": 0,
+      "expectedSubfiles": [],
+      "detectable": true,
+      "verifiedBy": "Observed 2026-11-12: NPOI HSSFWorkbook opens it only with its password (wrong or no password gives EncryptedDocumentException) -- asserted by ExtractorOle/ExtractorOLE.Tests/EncryptedSamplesTests.cs; MainExtractor.Extract behavior as recorded in expectedBehavior/expectations.",
+      "notes": "Self-generated synthetic RC4 xls; Office-authored sample was not available. Openability in real Excel is UNVERIFIED; only NPOI reads it back."
+    },
+    {
+      "format": "xls",
+      "status": "generated",
+      "path": "samples/encrypted/cryptoapi-encrypted-properties.xls",
+      "password": "CryptoPassw0rd",
+      "unencryptedTwin": "samples/synthetic/encrypted-twins/cryptoapi-encrypted-properties-twin.xls",
+      "expectedFieldErrors": [],
+      "provenance": "self-generated",
+      "generatedBy": "Self-generated with NPOI (third_party/npoi submodule head 72ff7c7, HSSFWorkbook) by a throwaway console harness kept outside the repo (not a SampleGenerator generator). Workbook: one sheet 'Sheet1' with three text rows (A1:A3) and a populated SummaryInformation (Title, Author, Subject, Keywords, Comments, LastAuthor). NPOI HSSFWorkbook.Write with Biff8EncryptionKey.CurrentUserPassword = 'CryptoPassw0rd' (CryptoAPI FILEPASS). Document properties are encrypted: the CFB holds streams 'encryption' (encrypted summary) and 'Workbook' only, no plain SummaryInformation (see docs/research/legacy-encryption/npoi-xor.md section 5).",
+      "tag": "synthetic",
+      "compositionRule": "docs/specs/dataset-curation.md 'The encrypted set' bullet -- CryptoAPI xls with encrypted document properties",
+      "targetFormats": [
+        "xls"
+      ],
+      "expectedDetectedFormat": {
+        "enum": "Xls",
+        "mimeType": "application/vnd.ms-excel"
+      },
+      "expectedBehavior": {
+        "outcome": "no decryption yet: Extract throws password-protected for this encrypted xls with or without the password; once password decryption lands the correct password must yield the unencryptedTwin's expectations",
+        "errorId": "ydk:error:extraction/password-protected",
+        "trigger": "FILEPASS record in the Workbook stream"
+      },
+      "bodyTextLines": [
+        "Encrypted workbook text line one",
+        "Encrypted workbook text line two",
+        "Encrypted workbook text line three"
+      ],
+      "metadata": {
+        "Title": "Encrypted Legacy Xls Sample",
+        "Author": "Sample Author",
+        "LastModifiedBy": "Sample Editor",
+        "Subject": "Encrypted xls corpus",
+        "Comments": "Generated for the encrypted corpus",
+        "Keywords": "encrypted;xls"
+      },
+      "expectedSubfileCount": 0,
+      "expectedSubfiles": [],
+      "detectable": true,
+      "verifiedBy": "Observed 2026-11-12: NPOI HSSFWorkbook opens it only with its password (wrong or no password gives EncryptedDocumentException) -- asserted by ExtractorOle/ExtractorOLE.Tests/EncryptedSamplesTests.cs; MainExtractor.Extract behavior as recorded in expectedBehavior/expectations.",
+      "notes": "Self-generated synthetic CryptoAPI xls. NPOI cannot read its own encrypted summary back (stream name 'encryption' vs hard-coded 'EncryptedSummary'; SummaryInformation is null after open), so decrypted metadata parity with the twin is gated on that NPOI fix (npoi-xor.md section 5). Openability in real Excel is UNVERIFIED."
+    },
+    {
+      "format": "xls",
+      "status": "generated",
+      "path": "samples/encrypted/default-key.xls",
+      "unencryptedTwin": "samples/synthetic/encrypted-twins/rc4-password-twin.xls",
+      "expectedFieldErrors": [],
+      "provenance": "self-generated",
+      "generatedBy": "Self-generated with NPOI (third_party/npoi submodule head 72ff7c7, HSSFWorkbook) by a throwaway console harness kept outside the repo (not a SampleGenerator generator). Workbook: one sheet 'Sheet1' with three text rows (A1:A3) and a populated SummaryInformation (Title, Author, Subject, Keywords, Comments, LastAuthor). BIFF8 FILEPASS written as BinaryRC4 exactly like rc4-password.xls but with Excel's default key password 'VelvetSweatshop', so it opens with no password.",
+      "tag": "synthetic",
+      "compositionRule": "docs/specs/dataset-curation.md 'The encrypted set' bullet -- xls encrypted only with Excel's default key (VelvetSweatshop)",
+      "targetFormats": [
+        "xls"
+      ],
+      "expectedDetectedFormat": {
+        "enum": "Xls",
+        "mimeType": "application/vnd.ms-excel"
+      },
+      "bodyTextLines": [
+        "Encrypted workbook text line one",
+        "Encrypted workbook text line two",
+        "Encrypted workbook text line three"
+      ],
+      "metadata": {
+        "Title": "Encrypted Legacy Xls Sample",
+        "Author": "Sample Author",
+        "LastModifiedBy": "Sample Editor",
+        "Subject": "Encrypted xls corpus",
+        "Comments": "Generated for the encrypted corpus",
+        "Keywords": "encrypted;xls"
+      },
+      "expectedSubfileCount": 0,
+      "expectedSubfiles": [],
+      "detectable": true,
+      "verifiedBy": "Observed 2026-11-12: NPOI HSSFWorkbook opens it only with its password (wrong or no password gives EncryptedDocumentException) -- asserted by ExtractorOle/ExtractorOLE.Tests/EncryptedSamplesTests.cs; MainExtractor.Extract behavior as recorded in expectedBehavior/expectations.",
+      "notes": "Self-generated synthetic default-key xls; no open password, so no 'password' field. Per ADR-012 decision 4 it counts as having no open password and extracts like the twin (observed). Same content as the RC4 twin, which is its unencryptedTwin. Openability in real Excel is UNVERIFIED."
     }
   ],
   "$benchmarkSamplesNote": "T-f0963fc3: the 12 fixed benchmark samples (10MB tier: target 10,000,000 bytes; ~100MB tier: target 102,400,000 bytes = 97.66 MiB, under the 104,857,600-byte MaxFileSizeBytes cap; each file lands in [0.99 x target, target]). They are gitignored (samples/benchmark/) and regenerated on demand with `dotnet run --project SampleGenerator -- --benchmark`, which rewrites the files and compares each SHA-256 with this list (exit code 1 on mismatch). They live under 'benchmarkSamples', not 'samples', because the committed-corpus tests (DetectMimeTypeCorpusManifestTests) read every 'samples' entry from disk. sha256 values depend on the deflate output of the .NET runtime that built them (net10.0 target, built on the .NET 10 runtime), so a different runtime's zlib could change the docx/xlsx/pptx hashes; ExtractorOLE.Tests.SampleGeneration.BenchmarkSampleGeneratorTests validates size, SHA-256 and Extract() text for each present file.",
