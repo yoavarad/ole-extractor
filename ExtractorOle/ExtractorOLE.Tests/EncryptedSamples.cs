@@ -25,7 +25,8 @@ namespace ExtractorOLE.Tests
                 var relative = "samples/" + System.IO.Path.GetRelativePath(samplesRoot, file).Replace(System.IO.Path.DirectorySeparatorChar, '/');
                 var entry = entries[relative];
                 var twin = entry.TryGetProperty("unencryptedTwin", out var t) && t.ValueKind == JsonValueKind.String ? t.GetString() : null;
-                result.Add(new EncryptedSample(relative, file, entry.TryGetProperty("password", out var pw) && pw.ValueKind == JsonValueKind.String ? pw.GetString() : null, twin));
+                var password = entry.TryGetProperty("password", out var p) && p.ValueKind == JsonValueKind.String ? p.GetString() : null;
+                result.Add(new EncryptedSample(relative, file, password, twin));
             }
 
             return result;
