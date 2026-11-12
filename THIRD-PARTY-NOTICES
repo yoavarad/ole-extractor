@@ -1,0 +1,55 @@
+THIRD-PARTY NOTICES
+
+This repository redistributes unmodified third-party test files in its sample
+corpus (samples/). One section per upstream follows. Each file's manifest
+entry in samples/manifest.json also records its upstream URL, licence and
+SHA-256.
+
+
+Apache POI test data (Apache-2.0)
+---------------------------------
+Source: https://github.com/apache/poi (test-data/), Copyright The Apache
+Software Foundation. Licensed under the Apache License, Version 2.0
+(https://www.apache.org/licenses/LICENSE-2.0). The files are redistributed
+unmodified.
+
+  samples/encrypted/password_tika_binaryrc4.doc
+  samples/encrypted/password_password_cryptoapi.doc
+  samples/encrypted/PasswordProtected.doc
+  samples/encrypted/Password_Protected-hello.ppt
+  samples/encrypted/Password_Protected-56-hello.ppt
+  samples/encrypted/Password_Protected-np-hello.ppt
+  samples/encrypted/cryptoapi-proc2356.ppt
+  samples/encrypted/ppt_with_png_encrypted.ppt
+  samples/curated/ppt/ppt_with_png.ppt
+
+
+msoffcrypto-tool test data (MIT, Copyright (c) 2015 nolze)
+----------------------------------------------------------
+Source: https://github.com/nolze/msoffcrypto-tool (tests/). The files are
+redistributed unmodified.
+
+  samples/encrypted/rc4cryptoapi_password.doc
+  samples/curated/doc/rc4cryptoapi_password_plain.doc
+
+The MIT License (MIT)
+
+Copyright (c) 2015 nolze
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
