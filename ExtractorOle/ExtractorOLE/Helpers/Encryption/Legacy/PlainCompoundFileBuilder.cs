@@ -37,7 +37,7 @@ namespace ExtractorOLE.Helpers.Encryption.Legacy
 
             try
             {
-                var destination = new NPOIFSFileSystem();
+                using var destination = new NPOIFSFileSystem();
                 destination.Root.StorageClsid = sourceRoot.StorageClsid;
 
                 var entries = sourceRoot.Entries;
@@ -63,7 +63,6 @@ namespace ExtractorOLE.Helpers.Encryption.Legacy
 
                 using var output = new MemoryStream();
                 destination.WriteFileSystem(output);
-                destination.Close();
                 return output.ToArray();
             }
             catch (Exception ex) when (ParseFailure.IsParseFailure(ex))

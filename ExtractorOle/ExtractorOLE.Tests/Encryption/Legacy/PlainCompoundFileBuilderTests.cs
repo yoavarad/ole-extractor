@@ -82,6 +82,13 @@ namespace ExtractorOLE.Tests.Encryption.Legacy
             return JsonSerializer.Serialize(new { r.ExtractedText, r.Metadata, r.FormatMetadata, r.EmbeddedFiles, r.FieldErrors });
         }
 
+        private static void AssertUnchangedEntriesEqual(byte[] source, byte[] rebuilt, params string[] changed)
+        {
+            var expected = Tree(source).Where(kv => !changed.Any(c => kv.Key.StartsWith(c, StringComparison.Ordinal)));
+            var actual = Tree(rebuilt).Where(kv => !changed.Any(c => kv.Key.StartsWith(c, StringComparison.Ordinal)));
+            Assert.Equal(expected, actual);
+        }
+
         [Theory]
         [MemberData(nameof(RoundTripFiles))]
         public void Build_EmptyChanges_KeepsTreeClsidsAndStreams(string path)
@@ -104,11 +111,15 @@ namespace ExtractorOLE.Tests.Encryption.Legacy
                 own = StreamBytes(fs.Root, "Current User");
             }
 
-            var rebuilt = Rebuild(source, new Dictionary<string, byte[]?> { ["Current User"] = own }, PptMime);
+            var replacement = own.Concat(new byte[] { 7 }).ToArray();
+
+            var rebuilt = Rebuild(source, new Dictionary<string, byte[]?> { ["Current User"] = replacement }, PptMime);
 
             using var reader = new b2xtranslator.StructuredStorage.Reader.StructuredStorageReader(new MemoryStream(rebuilt));
             using var copy = new NPOIFSFileSystem(new MemoryStream(rebuilt));
             Assert.Equal(PowerPointClsid, copy.Root.StorageClsid.ToString());
+            Assert.Equal(replacement, StreamBytes(copy.Root, "Current User"));
+            AssertUnchangedEntriesEqual(source, rebuilt, "/Current User");
         }
 
         [Fact]
@@ -127,8 +138,20 @@ namespace ExtractorOLE.Tests.Encryption.Legacy
             using var reader = new b2xtranslator.StructuredStorage.Reader.StructuredStorageReader(new MemoryStream(rebuilt));
             var tree = Tree(rebuilt);
             Assert.DoesNotContain("/EncryptedSummary", tree.Keys);
+            AssertUnchangedEntriesEqual(source, rebuilt, "/EncryptedSummary", "/SummaryInformation", "/DocumentSummaryInformation");
             Assert.EndsWith(":72", tree["/\u0005SummaryInformation"], StringComparison.Ordinal);
             Assert.EndsWith(":144", tree["/\u0005DocumentSummaryInformation"], StringComparison.Ordinal);
+        }
+
+        [Fact]
+        public void Build_ReplacementExactlyAtCap_Succeeds()
+        {
+            var source = Read("samples/synthetic/macro-embed/sample.doc");
+            var changes = new Dictionary<string, byte[]?> { ["x"] = new byte[10] };
+
+            var rebuilt = Rebuild(source, changes, cap: 10);
+
+            Assert.EndsWith(":10", Tree(rebuilt)["/x"], StringComparison.Ordinal);
         }
 
         [Fact]
