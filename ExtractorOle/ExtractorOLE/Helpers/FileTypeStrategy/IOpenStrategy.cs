@@ -21,5 +21,16 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
         /// (OOXML in #192, legacy CFB in #194).
         /// </summary>
         DocumentExtractionResult? Open(Stream input) => Open(ExtractionInput.ReadAll(input));
+
+        /// <summary>
+        /// <see cref="Open(byte[])"/> with the caller's document password (null or empty: none).
+        /// The default ignores the password; a strategy whose format library decrypts the
+        /// container overrides it. The password must not be stored past the call
+        /// ([ydk:req:extraction/password-confidentiality]).
+        /// </summary>
+        DocumentExtractionResult? Open(byte[] fileBytes, string? password) => Open(fileBytes);
+
+        /// <summary><see cref="Open(Stream)"/> with the caller's document password; see <see cref="Open(byte[], string)"/>.</summary>
+        DocumentExtractionResult? Open(Stream input, string? password) => Open(input);
     }
 }

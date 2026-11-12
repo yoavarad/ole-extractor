@@ -60,12 +60,13 @@ namespace ExtractorOLE.Tests
 
         private static readonly string[] ExpectedPasswordless =
         {
+            "samples/encrypted/PasswordProtected.doc",
             "samples/encrypted/default-key.xls",
             "samples/encrypted/embeds-encrypted-package.docx",
         };
 
         [Fact]
-        public void Enumerate_OnlyEmbeddingDocumentAndDefaultKeyXlsHaveNoPassword()
+        public void Enumerate_OnlyEmbeddingDocumentDefaultKeyXlsAndNegativeOnlyDocHaveNoPassword()
         {
             var passwordless = EncryptedSamples.Enumerate().Where(s => s.Password is null).Select(s => s.Path);
 

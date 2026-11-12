@@ -35,7 +35,7 @@ namespace ExtractorOLE.Tests
         public static byte[] ReadBytes(string fileName) =>
             File.ReadAllBytes(Enumerate().Single(s => string.Equals(System.IO.Path.GetFileName(s.Path), fileName, StringComparison.OrdinalIgnoreCase)).FullPath);
 
-        private static string FindRepoRootFile(string relativePath)
+        internal static string FindRepoRootFile(string relativePath)
         {
             var dir = new DirectoryInfo(AppContext.BaseDirectory);
             while (dir != null)
