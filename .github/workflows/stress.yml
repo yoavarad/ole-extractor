@@ -45,14 +45,22 @@ jobs:
           dotnet run -c Release --project ExtractorOle/ExtractorOLE.StressHarness -- \
             "${{ inputs.concurrency }}" "${{ inputs.iterations }}" samples | tee stress-report.txt
 
+      - name: Run mixed-password xls batch mode
+        shell: bash
+        run: |
+          set -o pipefail
+          dotnet run -c Release --project ExtractorOle/ExtractorOLE.StressHarness -- password 50 samples | tee stress-password-report.txt
+
       - name: Add report to job summary
         if: always()
         shell: bash
         run: |
-          { echo '```text'; cat stress-report.txt 2>/dev/null; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+          { echo '```text'; cat stress-report.txt stress-password-report.txt 2>/dev/null; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: stress-report-${{ inputs.os }}
-          path: stress-report.txt
+          path: |
+            stress-report.txt
+            stress-password-report.txt
