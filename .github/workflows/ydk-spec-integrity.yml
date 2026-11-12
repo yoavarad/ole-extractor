@@ -16,7 +16,7 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
-  YDK_VERSION: "1.10.0"
+  YDK_VERSION: "1.11.1"
 
 jobs:
   components:
