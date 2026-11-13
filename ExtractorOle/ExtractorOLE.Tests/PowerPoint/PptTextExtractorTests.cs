@@ -21,7 +21,7 @@ namespace ExtractorOLE.Tests.PowerPoint
     /// a same-length multilingual string, so the expected ExtractedText is known exactly. The source
     /// file's original texts are:
     ///   "Hello, World!!!" (15), "I am just a poor boy" (20), "This is Times New Roman" (23), "Plain Text " (11)
-    /// (lengths in UTF-16 code units). Extraction emits one line per text run in slide order.
+    /// (lengths in UTF-16 code units). Extraction emits one line per text paragraph in slide order.
     /// </summary>
     public class PptTextExtractorTests
     {
@@ -191,6 +191,40 @@ namespace ExtractorOLE.Tests.PowerPoint
             Assert.Equal(1, PptToPptxConverter.ConvertCallCount);
             Assert.Equal(1, Assert.IsType<PowerPointFormatMetadata>(result.FormatMetadata).SlideCount);
             Assert.Equal(Lines(OriginalText1, OriginalText2, OriginalText3, OriginalText4.TrimEnd()), result.ExtractedText);
+        }
+
+        [Fact]
+        public void MainExtractor_PptWithPng_JoinsTheParagraphsTwoTextRunsIntoOneLine()
+        {
+            // #439 / #431: the deck's only text box is one paragraph stored as two character runs
+            // ("H" + "ere is a PNG image:"); each run used to be emitted as its own line.
+            var services = new ServiceCollection();
+            ServiceRegistration.Register(services);
+            var extractor = services.BuildServiceProvider().GetRequiredService<MainExtractor>();
+            var request = new ExtractionRequest
+            {
+                FileBytes = File.ReadAllBytes(FindRepoRootFile(Path.Combine("samples", "curated", "ppt", "ppt_with_png.ppt"))),
+                FileName = "ppt_with_png.ppt",
+                DetectedMimeType = "application/vnd.ms-powerpoint",
+            };
+
+            var result = extractor.Extract(request);
+
+            Assert.Equal("Here is a PNG image:", result.ExtractedText);
+            Assert.Equal(1, Assert.IsType<PowerPointFormatMetadata>(result.FormatMetadata).SlideCount);
+            Assert.NotNull(result.FieldErrors);
+            Assert.Empty(result.FieldErrors);
+        }
+
+        private static string FindRepoRootFile(string relativePath)
+        {
+            for (var dir = new DirectoryInfo(AppContext.BaseDirectory); dir != null; dir = dir.Parent)
+            {
+                var candidate = Path.Combine(dir.FullName, relativePath);
+                if (File.Exists(candidate)) return candidate;
+            }
+
+            throw new FileNotFoundException($"Could not locate '{relativePath}' above {AppContext.BaseDirectory}");
         }
 
         [Fact]
