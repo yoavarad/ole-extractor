@@ -2017,14 +2017,8 @@
         "enum": "Unknown",
         "mimeType": "application/octet-stream"
       },
-      "expectedBehavior": {
-        "outcome": "should be rejected before parse once password-protected detection is implemented",
-        "errorId": "ydk:error:extraction/password-protected",
-        "trigger": "Genuine EncryptionInfo and EncryptedPackage streams are present in the CFB container -- confirmed by a raw UTF-16LE byte scan of the file for both stream names (both FOUND), not just inferred from the filename.",
-        "currentBehaviorNote": "Password-protected detection/rejection (.ydk/components/error/extraction/password-protected.yaml) is not yet implemented in ExtractorOLE's production code as of T-83b4a029 -- no reference to EncryptionInfo/EncryptedPackage/password exists in ExtractorOle source outside specs. This sample is recorded now per T-83b4a029's scope (produce + record the genuine sample); actual rejection behavior is asserted by Epic 9's integration tests once that detection lands (test_strategy for T-83b4a029: infra/tooling task, no test required here)."
-      },
       "detectable": false,
-      "verifiedBy": null,
+      "verifiedBy": "Observed 2026-11-13 (task #379): MainExtractor.Extract with the docx mime type and the manifest password equals the unencryptedTwin leaf for leaf (text, metadata, subfiles, no field errors); no password throws PASSWORD_PROTECTED and a wrong one INVALID_PASSWORD -- asserted by ExtractorOle/ExtractorOLE.Tests/Encryption/OoxmlPasswordExtractionTests.cs. The former expectedBehavior (PASSWORD_PROTECTED with the password) was removed when decryption was wired into Extract.",
       "notes": "License: Apache License 2.0 (Apache Software Foundation, apache/poi repository, default branch 'trunk'). Redistribution permitted with attribution; this manifest entry's generatedBy field constitutes that attribution per docs/specs/dataset-curation.md 'Provenance & Licensing'. T-71ab3bc0 note: expectedDetectedFormat empirically verified via a standalone harness that copies CfbMimeDetector/OoxmlMimeDetector production logic byte-for-byte and runs it against this exact file. OoxmlMimeDetector returns Unknown (not a zip). A direct OpenMcdf root-entry enumeration of this real file shows it contains 'ObjectPool', 'DataSpaces', 'WordDocument', 'EncryptionInfo', and 'EncryptedPackage' at the root -- i.e. this genuine MS-OFFCRYPTO file also carries a legacy 'WordDocument' compatibility stream alongside the encryption streams. CfbMimeDetector checks for 'WordDocument' before Excel/PowerPoint entry names and finds it, so it structurally reports Doc/application-msword (IsSupported=true), NOT Docx -- despite the top-level format/targetFormats being docx. This is today's actual pre-failure detection result, ahead of password-protected rejection being implemented; it is not an assumption. Updated for T-382: CfbMimeDetector now gives EncryptionInfo+EncryptedPackage precedence over the WordDocument stub, so detection without a password is Unknown (recorded above) and with the password is Docx."
     },
     {
@@ -2045,13 +2039,8 @@
         "enum": "Unknown",
         "mimeType": "application/octet-stream"
       },
-      "expectedBehavior": {
-        "outcome": "rejected as password-protected today (Extract does not yet decrypt)",
-        "errorId": "ydk:error:extraction/password-protected",
-        "currentBehaviorNote": "Observed by running MainExtractor.Extract with the target-format mime type and no password. Decrypted expectations are those of unencryptedTwin once decryption lands."
-      },
       "detectable": false,
-      "verifiedBy": "Raw check 2026-11-12: msoffcrypto-tool 6.0.0 OfficeFile.load_key(password) + decrypt(verify_integrity=True) succeeds and yields a zip (PK) package.",
+      "verifiedBy": "Raw check 2026-11-12: msoffcrypto-tool 6.0.0 OfficeFile.load_key(password) + decrypt(verify_integrity=True) succeeds and yields a zip (PK) package. Observed 2026-11-13 (task #379): MainExtractor.Extract with the target-format mime type and the manifest password equals the unencryptedTwin leaf for leaf (text, metadata, format metadata, subfiles, no field errors); no password throws PASSWORD_PROTECTED and a wrong one INVALID_PASSWORD -- asserted by ExtractorOle/ExtractorOLE.Tests/Encryption/OoxmlPasswordExtractionTests.cs. The former expectedBehavior (PASSWORD_PROTECTED with the password) was removed when decryption was wired into Extract.",
       "notes": "License: derived from a self-generated corpus sample; no third-party content."
     },
     {
@@ -2072,13 +2061,8 @@
         "enum": "Unknown",
         "mimeType": "application/octet-stream"
       },
-      "expectedBehavior": {
-        "outcome": "rejected as password-protected today (Extract does not yet decrypt)",
-        "errorId": "ydk:error:extraction/password-protected",
-        "currentBehaviorNote": "Observed by running MainExtractor.Extract with the target-format mime type and no password. Decrypted expectations are those of unencryptedTwin once decryption lands."
-      },
       "detectable": false,
-      "verifiedBy": "Raw check 2026-11-12: msoffcrypto-tool 6.0.0 OfficeFile.load_key(password) + decrypt(verify_integrity=True) succeeds and yields a zip (PK) package.",
+      "verifiedBy": "Raw check 2026-11-12: msoffcrypto-tool 6.0.0 OfficeFile.load_key(password) + decrypt(verify_integrity=True) succeeds and yields a zip (PK) package. Observed 2026-11-13 (task #379): MainExtractor.Extract with the target-format mime type and the manifest password equals the unencryptedTwin leaf for leaf (text, metadata, format metadata, subfiles, no field errors); no password throws PASSWORD_PROTECTED and a wrong one INVALID_PASSWORD -- asserted by ExtractorOle/ExtractorOLE.Tests/Encryption/OoxmlPasswordExtractionTests.cs. The former expectedBehavior (PASSWORD_PROTECTED with the password) was removed when decryption was wired into Extract.",
       "notes": "License: derived from a self-generated corpus sample; no third-party content."
     },
     {
@@ -2100,13 +2084,14 @@
         "mimeType": "application/octet-stream"
       },
       "expectedBehavior": {
-        "outcome": "rejected as password-protected today (Extract does not yet decrypt)",
-        "errorId": "ydk:error:extraction/password-protected",
-        "currentBehaviorNote": "Observed by running MainExtractor.Extract with the target-format mime type and no password. Decrypted expectations are those of unencryptedTwin once decryption lands."
+        "outcome": "with the correct password the key verifies but the data-integrity HMAC check fails, so Extract rejects the package as corrupt (never INVALID_PASSWORD, never a partial result)",
+        "errorId": "ydk:error:extraction/corrupt-file",
+        "code": "CORRUPT_FILE",
+        "currentBehaviorNote": "Observed 2026-11-13 (task #379) by running MainExtractor.Extract with the target-format mime type and the manifest password. Was PASSWORD_PROTECTED before decryption was wired into Extract."
       },
       "detectable": false,
-      "verifiedBy": "Raw check 2026-11-12: msoffcrypto-tool 6.0.0 load_key(password) succeeds, decrypt(verify_integrity=True) raises InvalidKeyError 'Payload integrity verification failed'.",
-      "notes": "Negative integrity sample: expected outcome once decryption lands is the integrity-check failure, not a decrypted result. License: derived from a self-generated corpus sample; no third-party content."
+      "verifiedBy": "Raw check 2026-11-12: msoffcrypto-tool 6.0.0 load_key(password) succeeds, decrypt(verify_integrity=True) raises InvalidKeyError 'Payload integrity verification failed'. Extract outcome asserted by the corpus theory (ExtractCorpusManifestTests) and ExtractorOle/ExtractorOLE.Tests/Encryption/OoxmlPasswordExtractionTests.cs.",
+      "notes": "Negative integrity sample: with the correct password Extract fails the integrity check (CORRUPT_FILE), never a decrypted result. License: derived from a self-generated corpus sample; no third-party content."
     },
     {
       "format": "docx",

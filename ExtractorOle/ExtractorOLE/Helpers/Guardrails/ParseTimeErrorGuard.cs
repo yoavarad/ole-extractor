@@ -1,6 +1,7 @@
 using ExtractorOLE.Helpers.Input;
 using ExtractorOLE.DTOs;
 using ExtractorOLE.Exceptions;
+using ExtractorOLE.Helpers.Encryption;
 using ExtractorOLE.Helpers.FileTypeStrategy;
 using OpenMcdf;
 using System;
@@ -39,6 +40,69 @@ namespace ExtractorOLE.Helpers.Guardrails
         // file. The stream is left open; its position afterwards is unspecified.
         internal static void Preflight(Stream stream, bool isOoxmlFormat)
         {
+            if (CheckNotTruncated(stream, isOoxmlFormat))
+            {
+                CheckCfbNotEncrypted(stream);
+            }
+        }
+
+        /// <summary>
+        /// <see cref="Preflight(Stream, bool)"/> for a request that carries a password
+        /// ([ydk:req:extraction/password-decryption]): an encrypted OOXML package (a CFB holding both
+        /// EncryptionInfo and EncryptedPackage) is decrypted instead of rejected, and the decrypted
+        /// package is returned in a new stream owned by the caller. Returns null for any other input,
+        /// which has passed the same checks as Preflight. Without a password this is Preflight.
+        /// A CFB whose streams cannot be read during decryption is corrupt-file; a read fault of the
+        /// caller's stream is rethrown as-is.
+        /// </summary>
+        internal static Stream? PreflightOrDecrypt(Stream stream, bool isOoxmlFormat, string? password, long maxEntryBytes, string detectedMimeType)
+        {
+            if (!RequestPasswords.HasPassword(password))
+            {
+                Preflight(stream, isOoxmlFormat);
+                return null;
+            }
+
+            if (!CheckNotTruncated(stream, isOoxmlFormat)) return null;
+
+            // FaultTrackingStream is read-only and non-closing, so OpenMcdf cannot flush to or close
+            // the caller's stream.
+            var source = new FaultTrackingStream(stream);
+            var decrypting = false;
+            try
+            {
+                source.Position = 0;
+                using var root = RootStorage.Open(source, StorageModeFlags.LeaveOpen);
+                var names = root.EnumerateEntries().Select(e => e.Name).ToHashSet(StringComparer.Ordinal);
+                var hasInfo = names.Contains(EncryptedPackageDecryptor.EncryptionInfoStreamName);
+                var hasPackage = names.Contains(EncryptedPackageDecryptor.EncryptedPackageStreamName);
+                if (hasInfo && hasPackage)
+                {
+                    decrypting = true;
+                    return EncryptedPackageDecryptor.Decrypt(root, password, maxEntryBytes);
+                }
+
+                // Only one of the two streams: an encrypted package we cannot decrypt, as Preflight.
+                if (hasInfo || hasPackage) throw new PasswordProtectedException();
+                return null;
+            }
+            catch (Exception) when (source.Fault != null)
+            {
+                ExceptionDispatchInfo.Throw(source.Fault);
+                throw; // unreachable: ExceptionDispatchInfo.Throw never returns; kept for flow analysis
+            }
+            catch (Exception ex) when (ParseFailure.IsParseFailure(ex, source))
+            {
+                // Unreadable before an encrypted package was found: defer to the format library, as
+                // Preflight does. Unreadable while decrypting: the encrypted package is corrupt.
+                if (!decrypting) return null;
+                throw new CorruptFileException(detectedMimeType, $"the encrypted package could not be read ({ex.GetType().Name})", ex);
+            }
+        }
+
+        // Zero-length and truncated containers. Returns true when the input is a CFB container.
+        private static bool CheckNotTruncated(Stream stream, bool isOoxmlFormat)
+        {
             var length = stream.Length;
             if (length == 0)
             {
@@ -52,12 +116,13 @@ namespace ExtractorOLE.Helpers.Guardrails
             if (signature.StartsWith(ZipLocalHeaderSignature))
             {
                 CheckZipNotTruncated(stream, length);
+                return false;
             }
-            else if (signature.StartsWith(CfbSignature))
-            {
-                CheckCfbNotTruncated(stream, length);
-                CheckCfbNotEncrypted(stream);
-            }
+
+            if (!signature.StartsWith(CfbSignature)) return false;
+
+            CheckCfbNotTruncated(stream, length);
+            return true;
         }
 
         /// <summary>
