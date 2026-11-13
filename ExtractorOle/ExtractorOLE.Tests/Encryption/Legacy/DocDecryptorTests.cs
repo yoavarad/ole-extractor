@@ -1,6 +1,7 @@
 using System.Buffers.Binary;
 using System.Security.Cryptography;
 using ExtractorOLE.Exceptions;
+using ExtractorOLE.Helpers;
 using ExtractorOLE.Helpers.Encryption.Legacy;
 using NPOI.POIFS.FileSystem;
 using Xunit;
@@ -214,6 +215,18 @@ public class DocDecryptorTests
         var allocated = GC.GetAllocatedBytesForCurrentThread() - before;
 
         Assert.True(allocated < 1024 * 1024, $"allocated {allocated} bytes");
+    }
+
+    [Fact]
+    public void Decrypt_CancelledToken_ThrowsAfterVerificationBeforeStreams()
+    {
+        using var cts = new CancellationTokenSource();
+        cts.Cancel();
+        using (ExtractionCancellation.Enter(cts.Token))
+        {
+            Assert.Throws<OperationCanceledException>(() => DecryptFixture(LegacyFixtures.TikaBinaryRc4Doc, "tika"));
+            Assert.Throws<InvalidPasswordException>(() => DecryptFixture(LegacyFixtures.TikaBinaryRc4Doc, "wrong"));
+        }
     }
 
     [Fact]

@@ -129,6 +129,11 @@ internal static class DocDecryptor
                 offset += n;
             }
         }
+        catch (EndOfStreamException)
+        {
+            CryptographicOperations.ZeroMemory(plain);
+            throw Truncated(name);
+        }
         catch
         {
             CryptographicOperations.ZeroMemory(plain);
