@@ -2318,8 +2318,8 @@
       "targetFormats": ["docx"],
       "targetFormatsNote": "Genuinely CFB-wrapped MS-OFFCRYPTO encrypted OOXML; the outer container is CFB even though the target/original format is docx, since MS-OFFCRYPTO always wraps an encrypted OOXML package in a CFB container regardless of the inner format.",
       "expectedDetectedFormat": {
-        "enum": "Doc",
-        "mimeType": "application/msword"
+        "enum": "Unknown",
+        "mimeType": "application/octet-stream"
       },
       "expectedBehavior": {
         "outcome": "should be rejected before parse once password-protected detection is implemented",
@@ -2329,7 +2329,7 @@
       },
       "detectable": false,
       "verifiedBy": null,
-      "notes": "License: Apache License 2.0 (Apache Software Foundation, apache/poi repository, default branch 'trunk'). Redistribution permitted with attribution; this manifest entry's generatedBy field constitutes that attribution per docs/specs/dataset-curation.md 'Provenance & Licensing'. T-71ab3bc0 note: expectedDetectedFormat empirically verified via a standalone harness that copies CfbMimeDetector/OoxmlMimeDetector production logic byte-for-byte and runs it against this exact file. OoxmlMimeDetector returns Unknown (not a zip). A direct OpenMcdf root-entry enumeration of this real file shows it contains 'ObjectPool', 'DataSpaces', 'WordDocument', 'EncryptionInfo', and 'EncryptedPackage' at the root -- i.e. this genuine MS-OFFCRYPTO file also carries a legacy 'WordDocument' compatibility stream alongside the encryption streams. CfbMimeDetector checks for 'WordDocument' before Excel/PowerPoint entry names and finds it, so it structurally reports Doc/application-msword (IsSupported=true), NOT Docx -- despite the top-level format/targetFormats being docx. This is today's actual pre-failure detection result, ahead of password-protected rejection being implemented; it is not an assumption."
+      "notes": "License: Apache License 2.0 (Apache Software Foundation, apache/poi repository, default branch 'trunk'). Redistribution permitted with attribution; this manifest entry's generatedBy field constitutes that attribution per docs/specs/dataset-curation.md 'Provenance & Licensing'. T-71ab3bc0 note: expectedDetectedFormat empirically verified via a standalone harness that copies CfbMimeDetector/OoxmlMimeDetector production logic byte-for-byte and runs it against this exact file. OoxmlMimeDetector returns Unknown (not a zip). A direct OpenMcdf root-entry enumeration of this real file shows it contains 'ObjectPool', 'DataSpaces', 'WordDocument', 'EncryptionInfo', and 'EncryptedPackage' at the root -- i.e. this genuine MS-OFFCRYPTO file also carries a legacy 'WordDocument' compatibility stream alongside the encryption streams. CfbMimeDetector checks for 'WordDocument' before Excel/PowerPoint entry names and finds it, so it structurally reports Doc/application-msword (IsSupported=true), NOT Docx -- despite the top-level format/targetFormats being docx. This is today's actual pre-failure detection result, ahead of password-protected rejection being implemented; it is not an assumption. Updated for T-382: CfbMimeDetector now gives EncryptionInfo+EncryptedPackage precedence over the WordDocument stub, so detection without a password is Unknown (recorded above) and with the password is Docx."
     },
     {
       "format": "xlsx",
