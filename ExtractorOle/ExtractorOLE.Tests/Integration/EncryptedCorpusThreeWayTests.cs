@@ -17,9 +17,6 @@ namespace ExtractorOLE.Tests.Integration
         private static readonly string[] OoxmlFormats = { "docx", "xlsx", "pptx" };
         private static readonly string[] XlsFormats = { "xls" };
 
-        // Cryptographic-API xls: encrypted document properties are not read yet, so Metadata stays empty.
-        private const string CryptoApiXls = "samples/encrypted/cryptoapi-encrypted-properties.xls";
-
         public static IEnumerable<object[]> OoxmlDecryptable() => DecryptablePaths(OoxmlFormats);
 
         public static IEnumerable<object[]> OoxmlTampered() => RejectedWithCorrectPasswordPaths(OoxmlFormats);
@@ -88,7 +85,7 @@ namespace ExtractorOLE.Tests.Integration
                 return;
             }
 
-            AssertExtractCorrectPasswordEqualsTwin(entry, unreadableMetadata: entry.Path == CryptoApiXls);
+            AssertExtractCorrectPasswordEqualsTwin(entry);
         }
 
         [Theory]
