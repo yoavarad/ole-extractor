@@ -65,9 +65,10 @@ namespace ExtractorOLE.Tests.Integration
         public static IEnumerable<object[]> ManifestSamplePaths() =>
             LoadManifestSamples().Where(s => !IsPendingDecryption(s)).Select(s => new object[] { s.GetProperty("path").GetString()! });
 
-        // Encrypted-folder entries with a password (or negative-only) but no expectedBehavior cannot be
-        // asserted until decryption lands (Extract returns an empty result for them today); the tasks that
-        // implement decryption assert them. Entries with expectedBehavior (rejection) stay in the theory.
+        // Encrypted-folder entries with a password (or negative-only) but no expectedBehavior are asserted
+        // by the suites of the tasks that implement their decryption (against the unencrypted twin, e.g.
+        // XlsPasswordDecryptionTests, OoxmlPasswordExtractionTests), not here. Entries with
+        // expectedBehavior (rejection) stay in the theory.
         private static bool IsPendingDecryption(JsonElement entry) =>
             entry.GetProperty("path").GetString()!.StartsWith("samples/encrypted/", StringComparison.Ordinal)
             && !entry.TryGetProperty("expectedBehavior", out _)

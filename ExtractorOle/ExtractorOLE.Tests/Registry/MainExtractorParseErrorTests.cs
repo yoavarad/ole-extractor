@@ -187,7 +187,7 @@ namespace ExtractorOLE.Tests.Registry
             Extract<CorruptFileException>(bytes, XlsMime);
         }
 
-        // ---- ordering across the Extract pipeline: null checks -> guardrail -> Preflight/open ----
+        // ---- ordering across the Extract pipeline: null checks -> guardrail -> Preflight/decryption/open ----
 
         [Fact]
         public void Extract_ChecksNullThenGuardrailThenParseErrors_InThatOrder()
@@ -208,6 +208,17 @@ namespace ExtractorOLE.Tests.Registry
             var oversizedTruncated = new byte[] { 0x50, 0x4B, 0x03, 0x04 }.Concat(new byte[200]).ToArray();
             Assert.Throws<FileTooLargeException>(() => small.Extract(
                 new ExtractionRequest { FileBytes = oversizedTruncated, FileName = "f", DetectedMimeType = DocxMime }));
+
+            // An encrypted package over the size limit: file-too-large on the encrypted bytes wins over
+            // decryption, even with the correct password (null -> size -> encryption, #379).
+            var standard = Encryption.AgileTestSamples.Sample("password-protected.docx");
+            Assert.Throws<FileTooLargeException>(() => small.Extract(new ExtractionRequest
+            {
+                FileBytes = File.ReadAllBytes(standard.FullPath),
+                FileName = "f",
+                DetectedMimeType = DocxMime,
+                Password = standard.Password,
+            }));
 
             // Within the limit the same bytes reach Preflight; the specific parse errors still fire.
             Assert.Throws<TruncatedContainerException>(() => normal.Extract(

@@ -61,6 +61,13 @@ namespace ExtractorOLE.Helpers.Input
             return new ExtractionInput(request.FileBytes, null, ownsStream: false);
         }
 
+        /// <summary>
+        /// Wraps a decrypted package ([ydk:req:extraction/password-decryption]) so it is opened and
+        /// extracted exactly like caller-supplied stream input. Takes ownership of the stream.
+        /// </summary>
+        public static ExtractionInput FromDecrypted(Stream decrypted) =>
+            new(null, decrypted ?? throw new ArgumentNullException(nameof(decrypted)), ownsStream: true);
+
         public long Length => _bytes?.LongLength ?? _stream!.Length;
 
         /// <summary>The caller's byte[] when the request carried one; null for stream/path input.</summary>

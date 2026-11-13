@@ -64,7 +64,10 @@ namespace ExtractorOLE
         /// supported formats throws <see cref="Exceptions.UnsupportedFormatException"/>;
         /// then a parse-time preflight and open raise the specific
         /// password-protected / truncated-container / corrupt-file errors instead of
-        /// returning an empty result.
+        /// returning an empty result. With <see cref="ExtractionRequest.Password"/>, an encrypted
+        /// OOXML package is decrypted at preflight (wrong password: invalid-password) and the
+        /// decrypted package is extracted like an unencrypted one; file-too-large and the telemetry
+        /// size stay those of the encrypted bytes supplied.
         /// </summary>
         public DocumentExtractionResult Extract(ExtractionRequest request) => Extract(request, CancellationToken.None);
 
@@ -99,16 +102,16 @@ namespace ExtractorOLE
                          ?? throw new Exceptions.UnsupportedFormatException(request.DetectedMimeType);
 
             cancellationToken.ThrowIfCancellationRequested();
-            using (ExtractionTelemetry.Stage("preflight", mime, size))
-            {
-                // Stream/path input is checked in place, reading only headers/tail (#193).
-                if (input.OriginalBytes != null) ParseTimeErrorGuard.Preflight(input.OriginalBytes, IsOoxml(format));
-                else ParseTimeErrorGuard.Preflight(input.Stream!, IsOoxml(format));
-            }
+            // A decrypted package replaces the input for open and the text fallback; the telemetry
+            // size stays that of the bytes the caller supplied.
+            using var decrypted = PreflightOrDecrypt(input, format, request, mime, size);
+            var source = decrypted ?? input;
             cancellationToken.ThrowIfCancellationRequested();
             DocumentExtractionResult result;
             using (ExtractionTelemetry.Stage("open", mime, size))
-                result = ParseTimeErrorGuard.OpenOrThrow(_registry.GetOpenStrategy(format), input, request.DetectedMimeType, request.Password);
+                // The password applies only to the supplied container, never to the decrypted package.
+                result = ParseTimeErrorGuard.OpenOrThrow(_registry.GetOpenStrategy(format), source, request.DetectedMimeType,
+                    decrypted == null ? request.Password : null);
             try
             {
                 result.MimeType = request.DetectedMimeType;
@@ -128,7 +131,7 @@ namespace ExtractorOLE
                     {
                         result.TextExtractionFailure?.Throw();
                         ExceptionDispatchInfo? partFailure = null;
-                        result.ExtractedText = ExtractText(extractor, result, () => input.Bytes,
+                        result.ExtractedText = ExtractText(extractor, result, () => source.Bytes,
                             ex => partFailure ??= ExceptionDispatchInfo.Capture(ex));
                         partFailure?.Throw();
                     });
@@ -277,6 +280,33 @@ namespace ExtractorOLE
             if (request.FileBytes == null) throw new ArgumentNullException(nameof(request), "ExtractionRequest.FileBytes must not be null.");
             if (request.FileName == null) throw new ArgumentNullException(nameof(request), "ExtractionRequest.FileName must not be null.");
             if (request.DetectedMimeType == null) throw new ArgumentNullException(nameof(request), "ExtractionRequest.DetectedMimeType must not be null.");
+        }
+
+        // Parse-time preflight (#193: stream/path input is checked in place, reading only headers/tail).
+        // With a password, an encrypted OOXML package is decrypted here ([ydk:req:extraction/password-decryption])
+        // and the decrypted package then passes the same nested-content guardrails and preflight as an
+        // unencrypted one. Returns the decrypted input (owned by the caller), or null to use the original.
+        private ExtractionInput? PreflightOrDecrypt(ExtractionInput input, OfficeMimeType format, ExtractionRequest request, string mime, long size)
+        {
+            using var stage = ExtractionTelemetry.Stage("preflight", mime, size);
+            var isOoxml = IsOoxml(format);
+            using var bytesView = input.OriginalBytes != null ? new MemoryStream(input.OriginalBytes, writable: false) : null;
+            var package = ParseTimeErrorGuard.PreflightOrDecrypt(
+                bytesView ?? input.Stream!, isOoxml, request.Password, _guardrails.MaxDeclaredEntryBytes, request.DetectedMimeType);
+            if (package == null) return null;
+
+            var decrypted = ExtractionInput.FromDecrypted(package);
+            try
+            {
+                _guardrails.EnforceNestedContent(decrypted);
+                ParseTimeErrorGuard.Preflight(decrypted.Stream!, isOoxml);
+                return decrypted;
+            }
+            catch
+            {
+                decrypted.Dispose();
+                throw;
+            }
         }
 
         private static bool IsOoxml(OfficeMimeType format) =>

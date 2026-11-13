@@ -325,7 +325,7 @@ public class EncryptedPackageDecryptorTests
     }
 
     // [S-pw-ooxml#1] Standard package built in-test with NPOI main's Standard encryptor.
-    private static byte[] EncryptStandard(byte[] payload, string password)
+    internal static byte[] EncryptStandard(byte[] payload, string password)
     {
         var info = new EncryptionInfo(EncryptionMode.Standard);
         var encryptor = info.Encryptor;

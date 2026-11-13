@@ -55,6 +55,15 @@ namespace ExtractorOLE.Helpers.Guardrails
                 ? new MemoryStream(input.OriginalBytes, writable: false)
                 : input.Stream!);
 
+        /// <summary>The per-entry cap, also applied to a decrypted package's declared size.</summary>
+        internal long MaxDeclaredEntryBytes => _limits.MaxDeclaredEntryBytes;
+
+        // A decrypted package ([ydk:req:extraction/password-decryption]) goes through the same
+        // declared-size and inflation caps as an unencrypted one. File-too-large is not re-judged:
+        // it applies to the encrypted bytes as supplied, already checked by Enforce.
+        internal void EnforceNestedContent(ExtractionInput decrypted) =>
+            EnforceNestedContent(decrypted.Length, decrypted.Stream!);
+
         // openStream is only called once the length check passes; a byte[] is wrapped without copying.
         private void Enforce(long length, Func<Stream> openStream)
         {
@@ -64,8 +73,11 @@ namespace ExtractorOLE.Helpers.Guardrails
                 throw new FileTooLargeException(length, _limits.MaxFileSizeBytes);
             }
 
-            var stream = openStream();
+            EnforceNestedContent(length, openStream());
+        }
 
+        private void EnforceNestedContent(long length, Stream stream)
+        {
             string? metric = null;
             long limit = 0;
 
