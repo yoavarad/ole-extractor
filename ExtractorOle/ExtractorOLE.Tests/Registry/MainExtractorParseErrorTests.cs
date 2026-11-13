@@ -214,7 +214,10 @@ namespace ExtractorOLE.Tests.Registry
             var standard = Encryption.AgileTestSamples.Sample("password-protected.docx");
             Assert.Throws<FileTooLargeException>(() => small.Extract(new ExtractionRequest
             {
-                FileBytes = File.ReadAllBytes(standard.FullPath), FileName = "f", DetectedMimeType = DocxMime, Password = standard.Password,
+                FileBytes = File.ReadAllBytes(standard.FullPath),
+                FileName = "f",
+                DetectedMimeType = DocxMime,
+                Password = standard.Password,
             }));
 
             // Within the limit the same bytes reach Preflight; the specific parse errors still fire.
