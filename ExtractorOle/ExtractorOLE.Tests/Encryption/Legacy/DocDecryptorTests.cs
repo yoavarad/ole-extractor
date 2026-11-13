@@ -247,6 +247,33 @@ public class DocDecryptorTests
         Assert.Throws<CorruptFileException>(() => DocDecryptor.Decrypt(truncatedFs.Root, fib, header, "tika", NoCap));
     }
 
+    // The twin is msoffcrypto-tool's decrypted output (manifest unencryptedTwin). WordDocument is
+    // byte-identical, FIB included: msoffcrypto-tool clears the same markers. The table stream differs
+    // only in its first lKey bytes: msoffcrypto-tool runs the keystream over the encryption header too,
+    // while #403 step 4 keeps those clear bytes as they are (no FIB fc points below lKey).
+    [Fact]
+    public void Decrypt_Rc4CryptoApi_MatchesUnencryptedTwinStreams()
+    {
+        var cfb = LegacyFixtures.Bytes(LegacyFixtures.Rc4CryptoApiDoc);
+        byte[] encryptedTable;
+        using (var fs = new NPOIFSFileSystem(new MemoryStream(cfb)))
+        {
+            encryptedTable = ReadAll(fs.Root, "1Table");
+        }
+
+        var streams = DecryptBytes(cfb, LegacyFixtures.Password(LegacyFixtures.Rc4CryptoApiDoc)!);
+        using var twin = new NPOIFSFileSystem(new MemoryStream(
+            File.ReadAllBytes(EncryptedSamples.FindRepoRootFile(LegacyFixtures.PlainTwinDocPath))));
+        const int LKey = 198;
+
+        Assert.Equal(ReadAll(twin.Root, "WordDocument"), streams.WordDocument);
+        var twinTable = ReadAll(twin.Root, streams.TableStreamName);
+        Assert.Equal(twinTable.Length, streams.Table.Length);
+        Assert.Equal(twinTable.AsSpan(LKey).ToArray(), streams.Table.AsSpan(LKey).ToArray());
+        Assert.Equal(encryptedTable.AsSpan(0, LKey).ToArray(), streams.Table.AsSpan(0, LKey).ToArray());
+        Assert.Equal(twin.Root.HasEntry("Data"), streams.Data is not null);
+    }
+
     private static byte[] ReadAll(DirectoryNode root, string name)
     {
         var entry = (DocumentEntry)root.GetEntry(name);
