@@ -35,6 +35,37 @@ namespace ExtractorOLE.Tests.PowerPoint
         }
 
         [Fact]
+        public void ParagraphSplitIntoRuns_IsOneLine_AndLineBreakStartsANewLine()
+        {
+            // #439: run boundaries are formatting only, so a paragraph's runs join into one line;
+            // an explicit a:br inside the paragraph still separates lines.
+            var generated = new PptxSampleGenerator().Generate(new SampleSpec { BodyText = "placeholder" });
+            using var ms = new MemoryStream();
+            ms.Write(generated.Content, 0, generated.Content.Length);
+            using (var doc = PresentationDocument.Open(ms, true))
+            {
+                var slide = doc.PresentationPart!.SlideParts.Single().Slide!;
+                var paragraph = slide.Descendants<A.Paragraph>().Single(p => p.InnerText == "placeholder");
+                paragraph.RemoveAllChildren<A.Run>();
+                paragraph.Append(
+                    new A.Run(new A.Text("H")),
+                    new A.Run(new A.Text("ere is")),
+                    new A.Run(new A.Text(" ")),
+                    new A.Run(new A.Text("text on slide ")),
+                    new A.Field(new A.Text("7")) { Id = "{00000000-0000-0000-0000-000000000001}", Type = "slidenum" },
+                    new A.Break(),
+                    new A.Run(new A.Text("next line")));
+                // A whitespace-only paragraph adds no line.
+                paragraph.InsertAfterSelf(new A.Paragraph(new A.Run(new A.Text("  \t"))));
+                slide.Save();
+            }
+
+            var result = new PptxTextExtractor().ExtractText(ms.ToArray());
+
+            Assert.Equal("Here is text on slide 7" + Environment.NewLine + "next line", result);
+        }
+
+        [Fact]
         public void MultilingualFixture_RoundTripsExactly()
         {
             var expected = MultilingualFixtures.ComposeMixedBody();

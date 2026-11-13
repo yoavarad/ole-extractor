@@ -1,6 +1,7 @@
 using ExtractorOLE.Configuration;
 using ExtractorOLE.DTOs;
 using ExtractorOLE.Exceptions;
+using ExtractorOLE.Helpers.Encryption;
 using ExtractorOLE.Helpers.Guardrails;
 using ExtractorOLE.Helpers.Input;
 using OpenMcdf;
@@ -88,6 +89,14 @@ namespace ExtractorOLE.Helpers.MimeDetection
                     .Select(entry => entry.Name)
                     .ToHashSet(StringComparer.Ordinal);
 
+                // An encrypted OOXML package wins over any legacy compatibility stub beside it
+                // ([ydk:req:extraction/password-decryption]).
+                if (entryNames.Contains(EncryptedPackageDecryptor.EncryptionInfoStreamName)
+                    && entryNames.Contains(EncryptedPackageDecryptor.EncryptedPackageStreamName))
+                {
+                    return DetectEncryptedPackage(root, request);
+                }
+
                 if (entryNames.Contains(WordDocumentEntryName))
                 {
                     return BuildResult(DetectedFormat.Doc, "application/msword");
@@ -109,6 +118,33 @@ namespace ExtractorOLE.Helpers.MimeDetection
             {
                 // Not a CFB file, or a corrupt/unsupported one -- Unknown.
                 return UnknownResult();
+            }
+        }
+
+        // No password: Unknown. With one: decrypt in memory and run the OOXML check on the result.
+        // Only PasswordProtectedException (a scheme we cannot decrypt) is mapped to Unknown here; a
+        // wrong password, a corrupt package and the size guards propagate.
+        private MimeDetectionResult DetectEncryptedPackage(Storage root, MimeDetectionRequest request)
+        {
+            if (!RequestPasswords.HasPassword(request.Password))
+            {
+                return UnknownResult();
+            }
+
+            Stream decrypted;
+            try
+            {
+                decrypted = EncryptedPackageDecryptor.Decrypt(root, request.Password, _limits.MaxDeclaredEntryBytes);
+            }
+            catch (PasswordProtectedException)
+            {
+                return UnknownResult();
+            }
+
+            using (decrypted)
+            {
+                return new OoxmlMimeDetector(_limits, _logRejection)
+                    .Detect(new MimeDetectionRequest { InputStream = decrypted, FileName = request.FileName });
             }
         }
 
