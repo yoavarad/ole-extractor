@@ -146,10 +146,8 @@ namespace ExtractorOLE.Tests.Integration
 
         // ---- Extract, correct password ----
 
-        // Equal to the twin's extraction leaf for leaf. 'unreadableMetadata' is the single recorded
-        // exception: a scheme whose encrypted document properties are not read yet, so Metadata is
-        // asserted empty instead of equal to the twin's.
-        public static void AssertExtractCorrectPasswordEqualsTwin(EncryptedCorpusEntry entry, bool unreadableMetadata = false)
+        // Equal to the twin's extraction leaf for leaf.
+        public static void AssertExtractCorrectPasswordEqualsTwin(EncryptedCorpusEntry entry)
         {
             Assert.NotNull(entry.TwinFullPath);
             var decrypted = Extract(ExtractRequest(entry, entry.Password));
@@ -158,11 +156,6 @@ namespace ExtractorOLE.Tests.Integration
             Assert.Equal(entry.InnerMimeType, decrypted.MimeType);
             Assert.Empty(decrypted.FieldErrors);
             Assert.Empty(twin.FieldErrors);
-            if (unreadableMetadata)
-            {
-                Assert.Equal(JsonSerializer.Serialize(new FileMetadata()), JsonSerializer.Serialize(decrypted.Metadata));
-                twin.Metadata = decrypted.Metadata; // the twin's metadata is intentionally not compared
-            }
 
             Assert.Equal(Leaves(twin), Leaves(decrypted));
         }
