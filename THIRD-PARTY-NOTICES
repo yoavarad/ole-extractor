@@ -2,7 +2,7 @@ THIRD-PARTY NOTICES
 
 This repository redistributes unmodified third-party test files in its sample
 corpus (samples/), and also contains source code ported, with modifications,
-from NPOI (Apache-2.0). One section per upstream follows. Each file's manifest
+from NPOI and Apache POI (Apache-2.0). One section per upstream follows. Each file's manifest
 entry in samples/manifest.json also records its upstream URL, licence and
 SHA-256.
 
