@@ -153,7 +153,8 @@ never checks them. doc/ppt bodies go through b2xtranslator, which has no decrypt
   `ydk:req:extraction/legacy-decryption`.
 - XOR-obfuscated doc stays `PASSWORD_PROTECTED` with or without a password, deferred until
   yoavarad/npoi#198 and a fixture exist.
-- XOR-obfuscated xls (decision 2, via HSSF) remains in scope, but it is blocked on
-  yoavarad/npoi#197. Until that re-pin, the correct password fails as `CORRUPT_FILE`.
+- XOR-obfuscated xls (decision 2, via HSSF) works since the yoavarad/npoi#197 re-pin (npoi
+  `41873b800`). A `RecordFormatException` wrapping an `EncryptedDocumentException` still maps to
+  `CORRUPT_FILE`, never `INVALID_PASSWORD`.
 - Decision 5 is unchanged: detection still classifies encrypted doc/ppt from the plain directory
   without using the password.

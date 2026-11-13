@@ -48,7 +48,7 @@ Not yet available, and listed as test gaps in [ydk:req:extraction/legacy-decrypt
 - a CryptoAPI doc with encrypted document properties;
 - a CryptoAPI doc with OLE objects;
 - an XOR-obfuscated doc (deferred);
-- an XOR-obfuscated xls. `xor-encryption-abc.xls`, password `abc`, Apache POI test-data, Apache-2.0, is a candidate, gated on yoavarad/npoi#197.
+- an XOR-obfuscated xls. `xor-encryption-abc.xls`, password `abc`, Apache POI test-data, Apache-2.0, is in the set (the xls opens since the yoavarad/npoi#197 re-pin).
 
 **Known test gaps are recorded in the manifest.** Each known gap G1 to G5 of [ydk:req:extraction/legacy-decryption] has one entry in the top-level `$encryptedTestGaps` list of `samples/manifest.json`. Each entry is an object with these fields:
 

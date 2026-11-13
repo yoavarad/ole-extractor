@@ -47,8 +47,8 @@ Defects found in NPOI's helpers, all avoidable by validating first:
   (Word and Excel use `encryption`, yoavarad/npoi#199). It also uses an unvalidated descriptor
   count as an array size: a crafted count gives `OutOfMemoryException`, which escapes per-field
   isolation.
-- NPOI's XOR support is broken: for xls Method 1 (yoavarad/npoi#197, which has a proven fix) and
-  missing for Word Method 2 (yoavarad/npoi#198).
+- NPOI's XOR support was broken for xls Method 1 (fixed by yoavarad/npoi#197, pinned at npoi
+  `41873b800`) and is missing for Word Method 2 (yoavarad/npoi#198).
 
 **How the plain compound file is written decides whether b2xtranslator can read it.** Rebuild
 matrix from the prototypes:
@@ -120,10 +120,9 @@ matrix from the prototypes:
    b2xtranslator (yoavarad/b2xtranslator#156) is optional defence in depth, for the case where the
    guard is bypassed.
 7. **XOR obfuscation.**
-   - **xls (Method 1)** stays in scope under ADR-012 but is **blocked on yoavarad/npoi#197**. At
-     npoi `72ff7c7`, the correct password fails with `RecordFormatException`, which the library
-     reports as `CORRUPT_FILE`. The xls XOR acceptance test is gated on the re-pin that brings
-     that fix.
+   - **xls (Method 1)** stays in scope under ADR-012 and works since the yoavarad/npoi#197
+     re-pin (npoi `41873b800`). Before it, at npoi `72ff7c7`, the correct password failed with
+     `RecordFormatException`, reported as `CORRUPT_FILE`.
    - **doc (Method 2)** is **not in scope for this increment**. An encrypted doc with
      `fObfuscated = 1` fails as `PASSWORD_PROTECTED` with or without a password. It is deferred
      until yoavarad/npoi#198 lands and a Word-authored XOR fixture exists.
