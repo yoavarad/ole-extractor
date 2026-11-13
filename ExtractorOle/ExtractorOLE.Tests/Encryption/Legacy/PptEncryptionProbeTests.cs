@@ -86,11 +86,11 @@ public class PptEncryptionProbeTests
             case "cycle":
                 return SetDocumentU32(hello, edit + 16, edit);
             case "badRef":
-            {
-                var layout = Probe(hello).Layout!;
-                var other = layout.PersistOffsets.Keys.First(k => k != layout.CryptSessionPersistId);
-                return SetDocumentU32(hello, edit + 36, other);
-            }
+                {
+                    var layout = Probe(hello).Layout!;
+                    var other = layout.PersistOffsets.Keys.First(k => k != layout.CryptSessionPersistId);
+                    return SetDocumentU32(hello, edit + 36, other);
+                }
 
             case "refAbsent":
                 return SetDocumentU32(hello, edit + 36, 0xFFFFF);
