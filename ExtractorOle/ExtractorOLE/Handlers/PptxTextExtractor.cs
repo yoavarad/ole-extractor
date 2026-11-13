@@ -82,23 +82,46 @@ namespace ExtractorOLE.Handlers
                 .Select(relationshipId => slidePartsById[relationshipId!]);
         }
 
-        // Appends one line per Drawing.Text run found in document order (slide body first,
+        // Appends one line per text paragraph found in document order (slide body first,
         // then that slide's speaker notes, if any) - the flat-text shape docs/specs/
-        // extraction.md calls for ("slide + notes text"). The OpenXml SDK's already-decoded
-        // string is appended verbatim with no Unicode normalization, so multilingual text
+        // extraction.md calls for ("slide + notes text"). A paragraph's runs (and fields) are
+        // joined, since run boundaries mark formatting changes only (#439); an explicit line
+        // break (a:br) inside the paragraph starts a new line. The OpenXml SDK's already-decoded
+        // strings are appended verbatim with no Unicode normalization, so multilingual text
         // and emoji (including ZWJ/skin-tone sequences) round-trip exactly per
         // [ydk:req:extraction/unicode-fidelity].
         private static void AppendTextLines(StringBuilder sb, OpenXmlElement? root)
         {
             if (root == null) return;
 
-            foreach (var text in root.Descendants<Text>())
+            var line = new StringBuilder();
+            foreach (var paragraph in root.Descendants<Paragraph>())
             {
-                if (!string.IsNullOrWhiteSpace(text.Text))
+                foreach (var element in paragraph.Descendants())
                 {
-                    sb.AppendLine(text.Text);
+                    if (element is Text text)
+                    {
+                        line.Append(text.Text);
+                    }
+                    else if (element is Break)
+                    {
+                        AppendLineIfNotBlank(sb, line);
+                    }
                 }
+
+                AppendLineIfNotBlank(sb, line);
             }
+        }
+
+        private static void AppendLineIfNotBlank(StringBuilder sb, StringBuilder line)
+        {
+            var text = line.ToString();
+            if (!string.IsNullOrWhiteSpace(text))
+            {
+                sb.AppendLine(text);
+            }
+
+            line.Clear();
         }
     }
 }

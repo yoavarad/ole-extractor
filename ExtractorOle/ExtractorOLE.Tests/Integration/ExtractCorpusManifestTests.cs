@@ -296,6 +296,11 @@ namespace ExtractorOLE.Tests.Integration
                 _ => throw new Xunit.Sdk.XunitException($"Unexpected FormatMetadata type {actual?.GetType().Name ?? "null"}"),
             };
             Assert.Equal(expected.GetProperty("hasMacros").GetBoolean(), hasMacros);
+
+            if (expected.TryGetProperty("slideCount", out var slideCount))
+            {
+                Assert.Equal(slideCount.GetInt32(), Assert.IsType<PowerPointFormatMetadata>(actual).SlideCount);
+            }
         }
 
         private static string CollapseWhitespace(string text) => Regex.Replace(text, @"\s+", " ");
