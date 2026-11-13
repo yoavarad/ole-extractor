@@ -293,7 +293,12 @@ namespace ExtractorOLE
             using var bytesView = input.OriginalBytes != null ? new MemoryStream(input.OriginalBytes, writable: false) : null;
             var package = ParseTimeErrorGuard.PreflightOrDecrypt(
                 bytesView ?? input.Stream!, isOoxml, request.Password, _guardrails.MaxDeclaredEntryBytes, request.DetectedMimeType);
-            if (package == null) return null;
+            if (package == null)
+            {
+                var legacy = LegacyEncryptionGuard.Inspect(input, format, RequestPasswords.HasPassword(request.Password), request.DetectedMimeType);
+                if (legacy != null) throw new Exceptions.PasswordProtectedException(); // interim until T-lg-doc-wire / T-lg-ppt-wire
+                return null;
+            }
 
             var decrypted = ExtractionInput.FromDecrypted(package);
             try
