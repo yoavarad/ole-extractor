@@ -47,7 +47,7 @@ internal static class PptDecryptor
         var document = (byte[])layout.PowerPointDocument.Clone();
         try
         {
-            DecryptPersistObjects(document, objects, decryptor, detectedMimeType);
+            DecryptPersistObjects(document, objects, layout.CryptSessionPersistId, decryptor, detectedMimeType);
         }
         catch
         {
@@ -65,7 +65,7 @@ internal static class PptDecryptor
     }
 
     // [ydk:error:extraction/corrupt-file] Every persist object header must lie inside the stream and no
-    // two ids may share an offset; returns the objects to decrypt, ordered by offset.
+    // two ids may share an offset; returns every persist object, ordered by offset.
     private static List<KeyValuePair<uint, uint>> ValidatePersistMap(PptEncryptionLayout layout, string detectedMimeType)
     {
         var length = layout.PowerPointDocument.Length;
@@ -83,14 +83,14 @@ internal static class PptDecryptor
             }
         }
 
-        return layout.PersistOffsets
-            .Where(entry => entry.Key != layout.CryptSessionPersistId)
-            .OrderBy(entry => entry.Value)
-            .ToList();
+        return layout.PersistOffsets.OrderBy(entry => entry.Value).ToList();
     }
 
+    // [ydk:error:extraction/corrupt-file] A decrypted recLen may not run past the next persist object
+    // (which would decrypt its bytes twice) or past the end of the stream.
     private static void DecryptPersistObjects(
-        byte[] document, List<KeyValuePair<uint, uint>> objects, CryptoAPIDecryptor decryptor, string detectedMimeType)
+        byte[] document, List<KeyValuePair<uint, uint>> objects, uint cryptSessionPersistId,
+        CryptoAPIDecryptor decryptor, string detectedMimeType)
     {
         Cipher? cipher = null;
         for (var i = 0; i < objects.Count; i++)
@@ -101,14 +101,20 @@ internal static class PptDecryptor
             }
 
             var (id, offset) = objects[i];
+            if (id == cryptSessionPersistId)
+            {
+                continue;
+            }
+
             var start = (int)offset;
+            var limit = i + 1 < objects.Count ? objects[i + 1].Value : (long)document.Length;
             cipher = decryptor.InitCipherForBlock(cipher, (int)id);
             cipher.Update(document, start, RecordHeaderSize, document, start);
 
             var recLen = BinaryPrimitives.ReadUInt32LittleEndian(document.AsSpan(start + 4));
-            if (start + (long)RecordHeaderSize + recLen > document.Length)
+            if (start + (long)RecordHeaderSize + recLen > limit)
             {
-                throw new CorruptFileException(detectedMimeType, $"encrypted presentation: persist object {id} runs past the PowerPoint Document stream");
+                throw new CorruptFileException(detectedMimeType, $"encrypted presentation: persist object {id} runs past the next persist object or the PowerPoint Document stream");
             }
 
             cipher.Update(document, start + RecordHeaderSize, (int)recLen, document, start + RecordHeaderSize);

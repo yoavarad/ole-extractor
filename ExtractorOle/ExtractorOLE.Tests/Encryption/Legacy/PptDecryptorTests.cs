@@ -221,6 +221,62 @@ public class PptDecryptorTests
         AssertCorrupt(() => Decrypt(layout with { PowerPointDocument = patched }, header, "hello"));
     }
 
+    // A persist id pointing into object 1's body: object 1 would overrun it, so its bytes would be
+    // decrypted twice with two keys.
+    [Fact]
+    public void DecryptCore_ObjectOverrunningTheNextPersistObject_IsCorruptFile()
+    {
+        var (layout, header) = Load(LegacyFixtures.HelloPpt);
+        var broken = layout with { PersistOffsets = WithEntry(layout, 0xFFFF, layout.PersistOffsets[1] + 16) };
+
+        AssertCorrupt(() => Decrypt(broken, header, "hello"));
+    }
+
+    [Fact]
+    public void DecryptCore_TruncatedCurrentUser_IsCorruptFile()
+    {
+        var (layout, header) = Load(LegacyFixtures.HelloPpt);
+
+        AssertCorrupt(() => Decrypt(layout with { CurrentUser = layout.CurrentUser[..15] }, header, "hello"));
+    }
+
+    [Fact]
+    public void DecryptCore_BinaryRc4Header_IsCorruptFile()
+    {
+        var (layout, _) = Load(LegacyFixtures.HelloPpt);
+        byte[] payload = [0x01, 0x00, 0x01, 0x00, .. new byte[48]];
+        var binaryRc4 = LegacyEncryptionHeaderReader.Parse(payload, LegacyContainer.Doc, PptMime);
+
+        AssertCorrupt(() => Decrypt(layout, binaryRc4, "hello"));
+    }
+
+    [Fact]
+    public void DecryptCore_PlainToken_LeavesCurrentUserUnchanged()
+    {
+        var (layout, header) = Load(LegacyFixtures.HelloPpt);
+        var plainToken = (byte[])layout.CurrentUser.Clone();
+        BinaryPrimitives.WriteUInt32LittleEndian(plainToken.AsSpan(12), PptEncryptionProbe.TokenPlain);
+
+        var currentUser = Decrypt(layout with { CurrentUser = plainToken }, header, "hello").CurrentUser;
+
+        Assert.Equal(plainToken, currentUser);
+    }
+
+    [Fact]
+    public void DecryptCore_Success_LeavesInputArraysUntouched()
+    {
+        var (layout, header) = Load(LegacyFixtures.CryptoApiProc2356Ppt);
+        var document = (byte[])layout.PowerPointDocument.Clone();
+        var currentUser = (byte[])layout.CurrentUser.Clone();
+
+        var result = Decrypt(layout, header, "crypto");
+
+        Assert.Equal(document, layout.PowerPointDocument);
+        Assert.Equal(currentUser, layout.CurrentUser);
+        Assert.NotSame(layout.PowerPointDocument, result.PowerPointDocument);
+        Assert.NotSame(layout.CurrentUser, result.CurrentUser);
+    }
+
     [Fact]
     public void DecryptCore_CancelledToken_ThrowsAfterVerification()
     {
@@ -240,6 +296,7 @@ public class PptDecryptorTests
         var result = DecryptFixture(LegacyFixtures.HelloPpt);
 
         Assert.NotNull(result.Decryptor.GetSecretKey());
+        Assert.True(LegacyEncryptionHeaderReader.VerifyPassword(result.Decryptor, "hello"));
     }
 
     private static Dictionary<uint, uint> WithEntry(PptEncryptionLayout layout, uint id, uint offset) =>
