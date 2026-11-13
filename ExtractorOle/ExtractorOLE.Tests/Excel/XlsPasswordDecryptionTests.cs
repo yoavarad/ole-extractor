@@ -2,11 +2,13 @@ using System.Text.Json;
 using ExtractorOLE.DTOs;
 using ExtractorOLE.Exceptions;
 using ExtractorOLE.Helpers;
+using ExtractorOLE.Helpers.Encryption.Legacy;
 using ExtractorOLE.Helpers.FileTypeStrategy;
 using ExtractorOLE.Helpers.Guardrails;
 using ExtractorOLE.Helpers.Input;
 using Microsoft.Extensions.DependencyInjection;
 using NPOI.HSSF.Record.Crypto;
+using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using Xunit;
 
@@ -65,10 +67,9 @@ namespace ExtractorOLE.Tests.Excel
         }
 
         [Fact]
-        public void Extract_CryptoApiWithPassword_EqualsTwinExceptEncryptedProperties()
+        public void Extract_CryptoApiWithPassword_EqualsTwin()
         {
-            // Encrypted document properties are not read here (T-xls-encprops), so general
-            // metadata stays empty; everything else equals the twin.
+            // The summary property sets live in the encrypted "encryption" stream (#416).
             var sample = Sample(CryptoApiXls);
 
             var decrypted = Extractor.Value.Extract(Request(File.ReadAllBytes(sample.FullPath), sample.Password));
@@ -76,9 +77,103 @@ namespace ExtractorOLE.Tests.Excel
 
             Assert.Equal(twin.ExtractedText, decrypted.ExtractedText);
             Assert.Equal(Json(twin.FormatMetadata), Json(decrypted.FormatMetadata));
-            Assert.Equal(Json(new FileMetadata()), Json(decrypted.Metadata));
+            Assert.Equal("Encrypted Legacy Xls Sample", decrypted.Metadata.Title);
+            Assert.Equal(Json(twin.Metadata), Json(decrypted.Metadata));
             Assert.Empty(decrypted.EmbeddedFiles);
             Assert.Empty(decrypted.FieldErrors);
+        }
+
+        private static byte[] RoundTripCryptoApiXls(string password, string author)
+        {
+            using var workbook = new HSSFWorkbook();
+            workbook.CreateSheet("Data").CreateRow(0).CreateCell(0).SetCellValue("round trip text");
+            workbook.CreateInformationProperties();
+            workbook.SummaryInformation.Author = author;
+            Biff8EncryptionKey.CurrentUserPassword = password;
+            try
+            {
+                using var output = new MemoryStream();
+                workbook.Write(output);
+                return output.ToArray();
+            }
+            finally
+            {
+                Biff8EncryptionKey.CurrentUserPassword = null;
+            }
+        }
+
+        [Fact]
+        public void Extract_NpoiRoundTripCryptoApiWithPassword_ReadsEncryptedSummary()
+        {
+            var bytes = RoundTripCryptoApiXls("pass", "Round Trip Author");
+            using (var fs = new NPOI.POIFS.FileSystem.POIFSFileSystem(new MemoryStream(bytes)))
+            {
+                Assert.True(fs.Root.HasEntry("encryption"));
+                Assert.False(fs.Root.HasEntry("SummaryInformation"));
+            }
+
+            var result = Extractor.Value.Extract(Request(bytes, "pass"));
+
+            Assert.Equal("Round Trip Author", result.Metadata.Creator);
+            Assert.Contains("round trip text", result.ExtractedText);
+            Assert.Empty(result.FieldErrors);
+        }
+
+        [Fact]
+        public void Extract_CorruptEncryptionStream_KeepsSheetTextAndReportsOneMetadataError()
+        {
+            var sample = Sample(CryptoApiXls);
+            var bytes = CorruptEncryptionStreamDescriptorCount(File.ReadAllBytes(sample.FullPath), sample.Password!);
+
+            var result = Extractor.Value.Extract(Request(bytes, sample.Password));
+
+            Assert.Contains("Encrypted workbook text line one", result.ExtractedText);
+            var error = Assert.Single(result.FieldErrors);
+            Assert.Equal("Metadata", error.FieldPath);
+            Assert.Equal(FieldErrorCode.CorruptFile, error.Code);
+            Assert.Null(result.Metadata.Title);
+        }
+
+        // Rewrites the encrypted streamDescriptorCount to 0x7FFFFFFF. RC4 is a keystream XOR, so encrypting
+        // the new plaintext with the cipher for block 0 at the array offset yields the matching ciphertext.
+        private static byte[] CorruptEncryptionStreamDescriptorCount(byte[] fileBytes, string password)
+        {
+            using var fs = new NPOI.POIFS.FileSystem.POIFSFileSystem(new MemoryStream(fileBytes));
+            var header = XlsEncryptedProperties.ReadFilePassHeader(fs.Root, XlsMime)!;
+            var decryptor = (NPOI.POIFS.Crypt.CryptoAPI.CryptoAPIDecryptor)LegacyEncryptionHeaderReader.CreateDecryptor(header);
+            Assert.True(LegacyEncryptionHeaderReader.VerifyPassword(decryptor, password));
+
+            var entry = (NPOI.POIFS.FileSystem.DocumentEntry)fs.Root.GetEntry("encryption");
+            var stream = new byte[entry.Size];
+            using (var input = fs.Root.CreateDocumentInputStream(entry))
+            {
+                input.ReadFully(stream);
+            }
+
+            var header8 = stream[..8];
+            decryptor.InitCipherForBlock(null, 0).Update(header8, 0, 8, header8);
+            var arrayOffset = (int)BitConverter.ToUInt32(header8, 0);
+            var count = new byte[] { 0xFF, 0xFF, 0xFF, 0x7F };
+            decryptor.InitCipherForBlock(null, 0).Update(count, 0, 4, count);
+            count.CopyTo(stream, arrayOffset);
+
+            fs.Root.GetEntry("encryption").Delete();
+            fs.Root.CreateDocument("encryption", new MemoryStream(stream));
+            using var output = new MemoryStream();
+            fs.WriteFileSystem(output);
+            return output.ToArray();
+        }
+
+        [Fact]
+        public void Extract_PlainAndRc4Xls_MetadataUnchangedByEncryptedPropertiesPath()
+        {
+            var rc4 = Sample(Rc4Xls);
+            var plain = Extractor.Value.Extract(Request(TwinBytes(rc4), null));
+            var rc4Result = Extractor.Value.Extract(Request(File.ReadAllBytes(rc4.FullPath), rc4.Password));
+
+            Assert.Empty(plain.FieldErrors);
+            Assert.Empty(rc4Result.FieldErrors);
+            Assert.Equal(Json(plain.Metadata), Json(rc4Result.Metadata));
         }
 
         [Theory]
