@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
+using System.Linq;
 using System.Text.Json.Serialization;
 using Xunit;
 
@@ -100,6 +101,29 @@ namespace ExtractorOLE.Tests.Integration
 
             Assert.Equal(expectedFormat, result.DetectedFormat);
             Assert.Equal(expectedMimeType, result.MimeType);
+        }
+
+        // [S-pw-detect#2] With the manifest password the encrypted OOXML packages detect as their inner format.
+        [Theory]
+        [InlineData("agile-password.pptx", DetectedFormat.Pptx)]
+        [InlineData("agile-nonascii-password.xlsx", DetectedFormat.Xlsx)]
+        [InlineData("password-protected.docx", DetectedFormat.Docx)]
+        public void DetectMimeType_EncryptedOoxmlWithManifestPassword_ReturnsInnerFormat(string fileName, DetectedFormat expected)
+        {
+            var sample = EncryptedSamples.Enumerate().Single(s => System.IO.Path.GetFileName(s.Path) == fileName);
+            var request = new MimeDetectionRequest { FileBytes = File.ReadAllBytes(sample.FullPath), FileName = fileName, Password = sample.Password };
+
+            Assert.Equal(expected, new ExtractionHelper().DetectMimeType(request).DetectedFormat);
+        }
+
+        // [S-pw-detect#3]
+        [Fact]
+        public void DetectMimeType_EncryptedOoxmlWithWrongPassword_ThrowsInvalidPassword()
+        {
+            var sample = EncryptedSamples.Enumerate().Single(s => System.IO.Path.GetFileName(s.Path) == "agile-password.pptx");
+            var request = new MimeDetectionRequest { FileBytes = File.ReadAllBytes(sample.FullPath), Password = "wrong" };
+
+            Assert.Throws<InvalidPasswordException>(() => new ExtractionHelper().DetectMimeType(request));
         }
 
         [Fact]

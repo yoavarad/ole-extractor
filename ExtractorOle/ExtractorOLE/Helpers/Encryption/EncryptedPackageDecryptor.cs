@@ -143,20 +143,35 @@ internal static class EncryptedPackageDecryptor
 
         // NPOI's StandardEncryptionHeader casts its input to InputStream for Mark/Reset, so the bytes
         // must be wrapped this way (a LittleEndianByteArrayInputStream throws InvalidCastException).
-        var encryptionInfo = new EncryptionInfo(
-            new LittleEndianInputStream(new ByteArrayInputStream(info)), EncryptionMode.Standard);
-        var cipherAlgorithm = encryptionInfo.Header.CipherAlgorithm;
-        var blockSize = cipherAlgorithm.blockSize;
-        var declaredSize = ReadDeclaredSize(package, maxEntryBytes, blockSize);
-
-        var decryptor = encryptionInfo.Decryptor;
-        if (!decryptor.VerifyPassword(password))
+        // NPOI rejects some damaged headers (e.g. an unsupported provider type) with its own
+        // EncryptedDocumentException, which is a corrupt file here, never an untyped escape.
+        // The same rejection can come from the header, the password check, the key or the cipher
+        // lookup, so all of NPOI's setup runs inside one guard.
+        EncryptionInfo encryptionInfo;
+        Cipher cipher;
+        long declaredSize;
+        int blockSize;
+        try
         {
-            throw new InvalidPasswordException();
-        }
+            encryptionInfo = new EncryptionInfo(
+                new LittleEndianInputStream(new ByteArrayInputStream(info)), EncryptionMode.Standard);
+            var cipherAlgorithm = encryptionInfo.Header.CipherAlgorithm;
+            blockSize = cipherAlgorithm.blockSize;
+            declaredSize = ReadDeclaredSize(package, maxEntryBytes, blockSize);
 
-        var cipher = CryptoFunctions.GetCipher(
-            decryptor.GetSecretKey(), cipherAlgorithm, ChainingMode.ecb, null, Cipher.DECRYPT_MODE);
+            var decryptor = encryptionInfo.Decryptor;
+            if (!decryptor.VerifyPassword(password))
+            {
+                throw new InvalidPasswordException();
+            }
+
+            cipher = CryptoFunctions.GetCipher(
+                decryptor.GetSecretKey(), cipherAlgorithm, ChainingMode.ecb, null, Cipher.DECRYPT_MODE);
+        }
+        catch (NPOI.EncryptedDocumentException)
+        {
+            throw Corrupt("Standard EncryptionInfo is rejected by the decryptor");
+        }
 
         return Fill(allocateOutput(declaredSize), output =>
         {
