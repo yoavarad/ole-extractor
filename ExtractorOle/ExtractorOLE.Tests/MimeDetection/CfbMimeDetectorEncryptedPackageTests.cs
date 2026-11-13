@@ -94,6 +94,79 @@ public class CfbMimeDetectorEncryptedPackageTests
         Assert.Equal(DetectedFormat.Unknown, result.DetectedFormat);
     }
 
+    // A damaged encrypted package is a typed library error (corrupt, truncated, invalid password),
+    // never Unknown and never an untyped exception escaping from NPOI or the crypto stack.
+    [Theory]
+    [InlineData(StandardDocx)]
+    [InlineData(AgilePptx)]
+    public void Detect_DamagedEncryptionInfo_ThrowsTypedErrorOrDetects(string sampleName)
+    {
+        var (info, package) = ReadRawStreams(sampleName);
+        var password = PasswordOf(sampleName);
+
+        for (var offset = 8; offset < info.Length; offset++)
+        {
+            foreach (var value in new byte[] { 0x00, 0xFF })
+            {
+                var mutated = (byte[])info.Clone();
+                mutated[offset] = value;
+                AssertTypedOutcome(BuildCfb(mutated, package), password, $"info[{offset}]={value}");
+            }
+        }
+    }
+
+    // ProviderType (info offset 32) is validated by NPOI, not by our own header checks.
+    [Fact]
+    public void Detect_StandardEncryptionInfoRejectedByNpoi_ThrowsCorruptFile()
+    {
+        var (info, package) = ReadRawStreams(StandardDocx);
+        info[32] = 0;
+
+        Assert.Throws<CorruptFileException>(() =>
+            new CfbMimeDetector().Detect(new MimeDetectionRequest { FileBytes = BuildCfb(info, package), Password = PasswordOf(StandardDocx) }));
+    }
+
+    [Theory]
+    [InlineData(StandardDocx)]
+    [InlineData(AgilePptx)]
+    public void Detect_TruncatedEncryptedPackage_ThrowsTruncatedContainer(string sampleName)
+    {
+        var (info, package) = ReadRawStreams(sampleName);
+
+        var cfb = BuildCfb(info, package[..(package.Length / 2)]);
+
+        Assert.Throws<TruncatedContainerException>(() =>
+            new CfbMimeDetector().Detect(new MimeDetectionRequest { FileBytes = cfb, Password = PasswordOf(sampleName) }));
+    }
+
+    private static void AssertTypedOutcome(byte[] cfb, string password, string label)
+    {
+        try
+        {
+            var result = new CfbMimeDetector().Detect(new MimeDetectionRequest { FileBytes = cfb, Password = password });
+            Assert.True(result.DetectedFormat is DetectedFormat.Docx or DetectedFormat.Pptx, label);
+        }
+        catch (ExtractorOleException)
+        {
+            // Typed library error: acceptable.
+        }
+    }
+
+    private static (byte[] Info, byte[] Package) ReadRawStreams(string sampleName)
+    {
+        using var root = RootStorage.Open(new MemoryStream(File.ReadAllBytes(Sample(sampleName).FullPath)));
+        return (ReadStream(root, EncryptedPackageDecryptor.EncryptionInfoStreamName),
+            ReadStream(root, EncryptedPackageDecryptor.EncryptedPackageStreamName));
+    }
+
+    private static byte[] ReadStream(RootStorage root, string name)
+    {
+        using var stream = root.OpenStream(name);
+        using var buffer = new MemoryStream();
+        stream.CopyTo(buffer);
+        return buffer.ToArray();
+    }
+
     private static byte[] BuildCfb(byte[] info, byte[] package, bool withWordStub = false)
     {
         using var stream = new MemoryStream();
