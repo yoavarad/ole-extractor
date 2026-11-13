@@ -70,7 +70,9 @@ public class OoxmlPasswordExtractionTests
         var decrypted = Extractor.Value.Extract(request);
         var twin = Extractor.Value.Extract(new ExtractionRequest
         {
-            FileBytes = TwinBytes(sample), FileName = sampleName, DetectedMimeType = request.DetectedMimeType,
+            FileBytes = TwinBytes(sample),
+            FileName = sampleName,
+            DetectedMimeType = request.DetectedMimeType,
         });
 
         Assert.Equal(Leaves(twin), Leaves(decrypted));
@@ -85,7 +87,10 @@ public class OoxmlPasswordExtractionTests
 
         var fromStream = Extractor.Value.Extract(new ExtractionRequest
         {
-            InputStream = stream, FileName = AgilePptx, DetectedMimeType = byteRequest.DetectedMimeType, Password = byteRequest.Password,
+            InputStream = stream,
+            FileName = AgilePptx,
+            DetectedMimeType = byteRequest.DetectedMimeType,
+            Password = byteRequest.Password,
         });
 
         Assert.Equal(Leaves(Extractor.Value.Extract(byteRequest)), Leaves(fromStream));
@@ -154,7 +159,10 @@ public class OoxmlPasswordExtractionTests
         var encrypted = EncryptedPackageDecryptorTests.EncryptStandard(bomb, password);
         var request = new ExtractionRequest
         {
-            FileBytes = encrypted, FileName = "bomb.docx", DetectedMimeType = MimeOf(".docx"), Password = password,
+            FileBytes = encrypted,
+            FileName = "bomb.docx",
+            DetectedMimeType = MimeOf(".docx"),
+            Password = password,
         };
         var limits = new MimeDetectionLimits { MaxDeclaredEntryBytes = 2_000_000, MaxDeclaredNestedContentBytes = 3_000_000 };
 
