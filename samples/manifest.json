@@ -3600,6 +3600,40 @@
       "detectable": true,
       "verifiedBy": "Research values (SlideCount 1, text 'Here is a PNG image:'), matched by MainExtractor.Extract since #439",
       "notes": "License: Apache-2.0 (Apache POI test data). The slide's only text box is one paragraph stored as two character runs ('H' + 'ere is a PNG image:'); #439 joins a paragraph's runs into one line."
+    },
+    {
+      "format": "xls",
+      "status": "curated",
+      "path": "samples/encrypted/xor-encryption-abc.xls",
+      "password": "abc",
+      "expectedFieldErrors": [],
+      "provenance": "third-party",
+      "generatedBy": "Copied verbatim (unmodified) from the repo's third_party/npoi/testcases/test-data/spreadsheet/xor-encryption-abc.xls (= POI trunk test-data/spreadsheet/xor-encryption-abc.xls, Apache-2.0). File sha256: C61C8714AE9CB77251235606CBFC84E5D289C7CE6BEF940DA57DD2518F3C90FA, 4096 bytes on disk. Fetched 2026-11-13.",
+      "compositionRule": "docs/specs/dataset-curation.md encrypted set",
+      "expectedDetectedFormat": {
+        "enum": "Xls",
+        "mimeType": "application/vnd.ms-excel"
+      },
+      "detectable": true,
+      "verifiedBy": "Observed 2026-11-13 at npoi 41873b800 (npoi#197 re-pin): MainExtractor.Extract with the password opens it with no FieldErrors; no password throws PASSWORD_PROTECTED and a wrong one INVALID_PASSWORD -- asserted by ExtractorOle/ExtractorOLE.Tests/Excel/XlsPasswordDecryptionTests.cs.",
+      "notes": "License: Apache-2.0 (Apache POI test data). BIFF8 FILEPASS XOR obfuscation, key 0x514A, verifier 0xCC1A. No unencrypted twin exists (dataset-curation.md allows omission for third-party samples without an Office-saved twin). Expected cells: one sheet 'Sheet1', A1..A3 = 1, 2, 3 (numeric cells; the xls text extractor emits string cells only, so ExtractedText is empty)."
+    },
+    {
+      "format": "xls",
+      "status": "curated",
+      "path": "samples/encrypted/xor_password_123456789012345.xls",
+      "password": "123456789012345",
+      "expectedFieldErrors": [],
+      "provenance": "third-party",
+      "generatedBy": "Downloaded verbatim (unmodified) from https://raw.githubusercontent.com/nolze/msoffcrypto-tool/master/tests/inputs/xor_password_123456789012345.xls (MIT, Copyright (c) 2015 nolze). md5 4578b1f33c9600c1c2d91b126e2ace20. File sha256: C75375186933E2413325C4E64CE76903452D51413816D0DF1D5FD677EA4DD76D, 91136 bytes on disk. Fetched 2026-11-13.",
+      "compositionRule": "docs/specs/dataset-curation.md encrypted set",
+      "expectedDetectedFormat": {
+        "enum": "Xls",
+        "mimeType": "application/vnd.ms-excel"
+      },
+      "detectable": true,
+      "verifiedBy": "Observed 2026-11-13 at npoi 41873b800 (npoi#197 re-pin): MainExtractor.Extract with the password opens it with no FieldErrors; no password throws PASSWORD_PROTECTED and a wrong one INVALID_PASSWORD -- asserted by ExtractorOle/ExtractorOLE.Tests/Excel/XlsPasswordDecryptionTests.cs.",
+      "notes": "License: MIT (msoffcrypto-tool test data, Copyright (c) 2015 nolze). BIFF8 FILEPASS XOR obfuscation. No unencrypted twin exists. Expected cells: one sheet named '420', rows 0..419, 10920 non-empty cells (numeric; the xls text extractor emits string cells only, so ExtractedText is empty)."
     }
   ],
   "$benchmarkSamplesNote": "T-f0963fc3: the 12 fixed benchmark samples (10MB tier: target 10,000,000 bytes; ~100MB tier: target 102,400,000 bytes = 97.66 MiB, under the 104,857,600-byte MaxFileSizeBytes cap; each file lands in [0.99 x target, target]). They are gitignored (samples/benchmark/) and regenerated on demand with `dotnet run --project SampleGenerator -- --benchmark`, which rewrites the files and compares each SHA-256 with this list (exit code 1 on mismatch). They live under 'benchmarkSamples', not 'samples', because the committed-corpus tests (DetectMimeTypeCorpusManifestTests) read every 'samples' entry from disk. sha256 values depend on the deflate output of the .NET runtime that built them (net10.0 target, built on the .NET 10 runtime), so a different runtime's zlib could change the docx/xlsx/pptx hashes; ExtractorOLE.Tests.SampleGeneration.BenchmarkSampleGeneratorTests validates size, SHA-256 and Extract() text for each present file.",

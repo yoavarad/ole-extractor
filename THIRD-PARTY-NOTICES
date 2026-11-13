@@ -41,6 +41,7 @@ unmodified.
   samples/encrypted/password_tika_binaryrc4.doc
   samples/encrypted/password_password_cryptoapi.doc
   samples/encrypted/PasswordProtected.doc
+  samples/encrypted/xor-encryption-abc.xls
   samples/encrypted/Password_Protected-hello.ppt
   samples/encrypted/Password_Protected-56-hello.ppt
   samples/encrypted/Password_Protected-np-hello.ppt
@@ -56,6 +57,7 @@ redistributed unmodified.
 
   samples/encrypted/rc4cryptoapi_password.doc
   samples/curated/doc/rc4cryptoapi_password_plain.doc
+  samples/encrypted/xor_password_123456789012345.xls
 
 The MIT License (MIT)
 

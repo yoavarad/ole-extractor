@@ -60,7 +60,7 @@ A caller holding a document's open password supplies it on [ydk:entity:extractio
 - **No password** for one of those files fails the call with [ydk:error:extraction/password-protected], as before.
 - **Wrong password** fails the call with [ydk:error:extraction/invalid-password]. The password is checked before any document content is decrypted, so a wrong password is never reported as a corrupt file and never produces a partial result.
 - **Encryptions the library does not decrypt** fail with [ydk:error:extraction/password-protected], with or without a password. These are XOR-obfuscated doc (deferred), doc schemes other than RC4 and RC4 CryptoAPI, and Office package encryption other than Agile or Standard, such as Extensible encryption or rights-management protection.
-- **XOR-obfuscated xls** is decrypted by the same mechanism as the other xls schemes once an upstream fix is pulled in (yoavarad/npoi#197). Until then the correct password fails as [ydk:error:extraction/corrupt-file].
+- **XOR-obfuscated xls** is decrypted by the same mechanism as the other xls schemes (upstream fix yoavarad/npoi#197, pinned at npoi 41873b800).
 - **Unencrypted file with a password.** The password is ignored for all six formats, doc and ppt included: the call proceeds normally and returns exactly the no-password result, with no error and no field error.
 - **xls with only Excel's built-in default key** has no open password. It extracts with or without a supplied password, and a supplied password is ignored.
 
