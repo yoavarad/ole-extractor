@@ -1,0 +1,9 @@
+# ydk 1.11.1 verified 2026-11-13 NOT to raise the built-in 110s budget; remove only once a manifest-only override or config key exists upstream (task 353 AC not met).
+name: dotnet-format
+description: Verify .NET code formatting (dotnet format --verify-no-changes)
+trigger: git:pre-push
+parallel: true
+timeout: 300
+requires: []
+supports_auto_fix: false
+command: dotnet format ExtractorOle/ExtractorOle.slnx --verify-no-changes
