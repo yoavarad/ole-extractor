@@ -106,10 +106,11 @@ rule: >
       It depends on yoavarad/npoi#198 (Method 2 primitives) and a
       Word-authored XOR fixture.
     - XOR-obfuscated xls (Method 1) is in scope under
-      [ydk:req:extraction/password-decryption] but BLOCKED on
-      yoavarad/npoi#197. At npoi 72ff7c7 the correct password fails with
-      RecordFormatException, which is mapped to CORRUPT_FILE. Its
-      acceptance test is gated on the re-pin.
+      [ydk:req:extraction/password-decryption] and works since the
+      yoavarad/npoi#197 re-pin (npoi 41873b800): the correct password
+      opens the workbook, a wrong one is INVALID_PASSWORD, none is
+      PASSWORD_PROTECTED. A RecordFormatException wrapping an
+      EncryptedDocumentException stays CORRUPT_FILE, never INVALID_PASSWORD.
     - ppt has no XOR scheme.
 
   Known gaps, each with its chosen behaviour. These have no fixture
@@ -174,4 +175,4 @@ acceptance_criteria:
   - "Test: a password supplied for every unencrypted doc/ppt corpus sample (including ppt_with_png.ppt and rc4cryptoapi_password_plain.doc) gives exactly the no-password result."
   - "Test: stream input of Password_Protected-hello.ppt and password_tika_binaryrc4.doc gives the same result as byte input."
   - "Test: the gaps G1 to G5 each have an entry in the top-level `$encryptedTestGaps` list of samples/manifest.json (shape in docs/specs/dataset-curation.md), plus a documented-limitation test on a crafted file where one can be built. G2's FieldError (path 'Metadata', CORRUPT_FILE) is asserted on a CryptoAPI doc whose properties are encrypted, once such a fixture exists."
-  - "Gated (not required to pass until the dependency lands): XOR xls 'xor-encryption-abc.xls' / 'abc' extracts to A1..A3 = 1, 2, 3 after the yoavarad/npoi#197 re-pin; cryptoapi-proc2356.ppt and ppt_with_png_encrypted.ppt text parity after the separate b2xtranslator fixes (FillMapping fillShadeType, 16-byte ClientAnchor, TextMasterStyleMapping.writepPr)."
+  - "XOR xls 'xor-encryption-abc.xls' / 'abc' opens with A1..A3 = 1, 2, 3 (numeric cells; the xls text extractor emits string cells only). Gated (not required to pass until the dependency lands): cryptoapi-proc2356.ppt and ppt_with_png_encrypted.ppt text parity after the separate b2xtranslator fixes (FillMapping fillShadeType, 16-byte ClientAnchor, TextMasterStyleMapping.writepPr)."

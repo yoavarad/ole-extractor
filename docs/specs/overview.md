@@ -52,7 +52,7 @@ This is an in-process library with no network surface, no users and no auth. Two
 - Curated + generated test corpus, time profiling, stress testing
 - Caller-supplied open password for encrypted docx/xlsx/pptx (Agile or Standard encryption) and encrypted xls, decrypted in memory ([ydk:req:extraction/password-decryption], ADR-012)
 - Caller-supplied open password for encrypted doc (RC4 or RC4 CryptoAPI) and encrypted ppt (RC4 CryptoAPI). These are decrypted and rebuilt in memory as a plain compound file that the existing doc/ppt pipeline reads unchanged ([ydk:req:extraction/legacy-decryption], [ydk:req:extraction/legacy-plaintext-rebuild], ADR-013)
-- XOR-obfuscated xls, in scope through the same mechanism as the other xls schemes, but blocked on an upstream fix (yoavarad/npoi#197). Until that fix is pulled in, the correct password fails as [ydk:error:extraction/corrupt-file]
+- XOR-obfuscated xls, in scope through the same mechanism as the other xls schemes (upstream fix yoavarad/npoi#197, pinned at npoi 41873b800)
 
 **OUT of scope (v1):**
 - Recovering, guessing or brute-forcing a password; the library only uses a password the caller supplies

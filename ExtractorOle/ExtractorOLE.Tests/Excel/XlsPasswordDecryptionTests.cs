@@ -7,6 +7,7 @@ using ExtractorOLE.Helpers.Guardrails;
 using ExtractorOLE.Helpers.Input;
 using Microsoft.Extensions.DependencyInjection;
 using NPOI.HSSF.Record.Crypto;
+using NPOI.SS.UserModel;
 using Xunit;
 
 namespace ExtractorOLE.Tests.Excel
@@ -21,6 +22,9 @@ namespace ExtractorOLE.Tests.Excel
         private const string Rc4Xls = "rc4-password.xls";
         private const string CryptoApiXls = "cryptoapi-encrypted-properties.xls";
         private const string DefaultKeyXls = "default-key.xls";
+        private const string XorAbcXls = "xor-encryption-abc.xls";
+        private const string XorLongXls = "xor_password_123456789012345.xls";
+        private static readonly double[] ExpectedAbcCells = { 1d, 2d, 3d };
         private const string WrongPassword = "not-the-password";
 
         private static readonly Lazy<MainExtractor> Extractor = new(() =>
@@ -80,6 +84,8 @@ namespace ExtractorOLE.Tests.Excel
         [Theory]
         [InlineData(Rc4Xls)]
         [InlineData(CryptoApiXls)]
+        [InlineData(XorAbcXls)]
+        [InlineData(XorLongXls)]
         public void Extract_NoPassword_ThrowsPasswordProtected(string fileName)
         {
             var bytes = File.ReadAllBytes(Sample(fileName).FullPath);
@@ -92,6 +98,8 @@ namespace ExtractorOLE.Tests.Excel
         [Theory]
         [InlineData(Rc4Xls)]
         [InlineData(CryptoApiXls)]
+        [InlineData(XorAbcXls)]
+        [InlineData(XorLongXls)]
         public void Extract_WrongPassword_ThrowsInvalidPassword(string fileName)
         {
             var bytes = File.ReadAllBytes(Sample(fileName).FullPath);
@@ -99,6 +107,43 @@ namespace ExtractorOLE.Tests.Excel
             var ex = Assert.Throws<InvalidPasswordException>(() => Extractor.Value.Extract(Request(bytes, WrongPassword)));
             Assert.DoesNotContain(WrongPassword, ex.ToString(), StringComparison.Ordinal);
             Assert.Null(Biff8EncryptionKey.CurrentUserPassword);
+        }
+
+        // #415: XOR obfuscation (FILEPASS key/verifier) opens since the npoi#197 re-pin. The xls text
+        // extractor emits string cells only and these fixtures hold numbers, so the sheet data is
+        // asserted through the workbook the same Load path produces, and Extract must succeed cleanly.
+        [Theory]
+        [InlineData(XorAbcXls, "Sheet1", 3, 3)]
+        [InlineData(XorLongXls, "420", 420, 10920)]
+        public void Extract_XorWithPassword_OpensAndSheetDataIsDecrypted(string fileName, string sheetName, int rows, int nonEmptyCells)
+        {
+            var sample = Sample(fileName);
+            var bytes = File.ReadAllBytes(sample.FullPath);
+
+            var result = Extractor.Value.Extract(Request(bytes, sample.Password));
+
+            var format = Assert.IsType<ExcelFormatMetadata>(result.FormatMetadata);
+            Assert.Equal(1, format.SheetCount);
+            Assert.Equal(sheetName, Assert.Single(format.SheetNames));
+            Assert.Empty(result.FieldErrors);
+
+            using var stream = new MemoryStream(bytes);
+            var sheet = XlsWorkbooks.Load(stream, sample.Password).GetSheetAt(0);
+            Assert.Equal(rows - 1, sheet.LastRowNum);
+            var actualNonEmpty = sheet.Cast<IRow>().Sum(r => r.Cast<ICell>().Count(c => c.CellType != CellType.Blank));
+            Assert.Equal(nonEmptyCells, actualNonEmpty);
+            Assert.Null(Biff8EncryptionKey.CurrentUserPassword);
+        }
+
+        [Fact]
+        public void Extract_XorAbcWithPassword_CellsAreOneTwoThree()
+        {
+            var sample = Sample(XorAbcXls);
+            using var stream = new MemoryStream(File.ReadAllBytes(sample.FullPath));
+
+            var sheet = XlsWorkbooks.Load(stream, sample.Password).GetSheetAt(0);
+
+            Assert.Equal(ExpectedAbcCells, Enumerable.Range(0, 3).Select(i => sheet.GetRow(i).GetCell(0).NumericCellValue));
         }
 
         [Fact]
