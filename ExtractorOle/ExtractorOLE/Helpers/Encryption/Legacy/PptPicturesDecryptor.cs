@@ -55,7 +55,7 @@ internal static class PptPicturesDecryptor
     // Returns a decrypted copy; pictures is not modified. Throws CorruptFileException when a record or
     // field runs past the stream or record end. A record whose decrypted type is neither FBSE nor a blip
     // stops decryption without error: its 8 header bytes stay decrypted and everything after it stays as
-    // stored, exactly as POI does.
+    // stored, exactly as POI does. A trailing run shorter than a record header also stays as stored.
     internal static byte[] Decrypt(byte[] pictures, CryptoAPIDecryptor decryptor, string detectedMimeType)
     {
         ArgumentNullException.ThrowIfNull(pictures);

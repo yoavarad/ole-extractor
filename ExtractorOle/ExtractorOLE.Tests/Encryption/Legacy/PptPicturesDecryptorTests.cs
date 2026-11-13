@@ -148,6 +148,46 @@ public class PptPicturesDecryptorTests
         Assert.Equal(patched[8..], output[8..]);
     }
 
+    // Crafted stream: an FBSE (cbName 4) embedding an EMF blip with recInstance 0x3D5 (two rgbUids,
+    // 34-byte metafile header), then a record of unknown type, then a 3-byte tail. The field partition
+    // below is written out by hand from MS-PPT 2.3.7 / MS-ODRAW, independently of the walker.
+    [Fact]
+    public void Decrypt_CraftedFbseWithEmfBlip_DecryptsEveryFieldAndStopsAtTheUnknownRecord()
+    {
+        var fixture = Load(LegacyFixtures.PngEncryptedPpt);
+        const int NameLength = 4;
+        const int BlipDataLength = 20;
+        const int BlipLength = 16 + 16 + 34 + BlipDataLength;
+        const int FbseLength = 36 + NameLength + 8 + BlipLength;
+        var plain = new byte[8 + FbseLength + 8 + 5 + 3];
+        for (var i = 0; i < plain.Length; i++)
+        {
+            plain[i] = (byte)(i * 7);
+        }
+
+        WriteHeader(plain, 0, 0x002F, 0xF007, FbseLength);
+        plain[8 + 33] = NameLength;
+        WriteHeader(plain, 8 + 36 + NameLength, 0x3D50, 0xF01A, BlipLength);
+        var unknown = 8 + FbseLength;
+        WriteHeader(plain, unknown, 0, 0x1234, 5);
+
+        int[] fields = [8, 1, 1, 16, 2, 4, 4, 4, 1, 1, 1, 1, NameLength, 8, 16, 16, 34, BlipDataLength, 8];
+        var key = ReferenceKey(fixture);
+        var cipher = (byte[])plain.Clone();
+        var pos = 0;
+        foreach (var size in fields)
+        {
+            Rc4(key, cipher.AsSpan(pos, size));
+            pos += size;
+        }
+
+        Assert.Equal(unknown + 8, pos);
+        var output = Decrypt(fixture, cipher);
+
+        Assert.Equal(plain[..pos], output[..pos]);
+        Assert.Equal(cipher[pos..], output[pos..]);
+    }
+
     [Fact]
     public void Decrypt_EmptyStream_ReturnsEmptyCopy()
     {
@@ -192,13 +232,7 @@ public class PptPicturesDecryptorTests
     // derivation by hand (SHA-1, block 0) and a hand-written RC4 restarted for every field.
     private static byte[] ReferenceDecrypt(Fixture fixture)
     {
-        var header = fixture.Header;
-        var salt = header.Payload.AsSpan(12 + header.HeaderSize + 4, 16);
-        var h0 = Sha1([.. salt, .. Encoding.Unicode.GetBytes(fixture.Password)]);
-        var hFinal = Sha1([.. h0, 0, 0, 0, 0]);
-        var key = new byte[Math.Max(16, header.KeySizeBits / 8)];
-        hFinal.AsSpan(0, header.KeySizeBits / 8).CopyTo(key);
-
+        var key = ReferenceKey(fixture);
         var data = (byte[])fixture.Pictures.Clone();
         var pos = 0;
         void Field(int count)
@@ -245,6 +279,26 @@ public class PptPicturesDecryptorTests
         }
 
         return data;
+    }
+
+    // Block-0 RC4 key: H0 = SHA1(salt || UTF-16LE password), Hfinal = SHA1(H0 || LE32(0)); a 40-bit
+    // key is padded with zeros to 16 bytes.
+    private static byte[] ReferenceKey(Fixture fixture)
+    {
+        var header = fixture.Header;
+        var salt = header.Payload.AsSpan(12 + header.HeaderSize + 4, 16);
+        var h0 = Sha1([.. salt, .. Encoding.Unicode.GetBytes(fixture.Password)]);
+        var hFinal = Sha1([.. h0, 0, 0, 0, 0]);
+        var key = new byte[Math.Max(16, header.KeySizeBits / 8)];
+        hFinal.AsSpan(0, header.KeySizeBits / 8).CopyTo(key);
+        return key;
+    }
+
+    private static void WriteHeader(byte[] data, int offset, ushort verInstance, ushort recType, int recLen)
+    {
+        BinaryPrimitives.WriteUInt16LittleEndian(data.AsSpan(offset), verInstance);
+        BinaryPrimitives.WriteUInt16LittleEndian(data.AsSpan(offset + 2), recType);
+        BinaryPrimitives.WriteInt32LittleEndian(data.AsSpan(offset + 4), recLen);
     }
 
     private static void Rc4(byte[] key, Span<byte> data)

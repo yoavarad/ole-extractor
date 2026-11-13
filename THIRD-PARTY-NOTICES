@@ -2,9 +2,9 @@ THIRD-PARTY NOTICES
 
 This repository redistributes unmodified third-party test files in its sample
 corpus (samples/), and also contains source code ported, with modifications,
-from NPOI and Apache POI (Apache-2.0). One section per upstream follows. Each file's manifest
-entry in samples/manifest.json also records its upstream URL, licence and
-SHA-256.
+from NPOI and Apache POI (Apache-2.0). One section per upstream follows.
+Each file's manifest entry in samples/manifest.json also records its upstream
+URL, licence and SHA-256.
 
 
 
@@ -28,6 +28,26 @@ agreed to in writing, software distributed under the License is distributed on a
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. The ported files have
 been modified: the XML descriptor is read with System.Xml, certificate decryption and the
 encryptor side are omitted, a spin-count cap is enforced, and a data-integrity HMAC check is added.
+
+
+
+--------------------------------------------------------------------------------
+Apache POI (Apache Software Foundation)
+License: Apache License, Version 2.0 - http://www.apache.org/licenses/LICENSE-2.0
+Source: https://github.com/apache/poi (trunk), retrieved 2026-11-10
+
+Ported files (source port, with modifications):
+  ExtractorOle/ExtractorOLE/Helpers/Encryption/Legacy/PptPicturesDecryptor.cs
+    from poi-scratchpad/src/main/java/org/apache/poi/hslf/usermodel/HSLFSlideShowEncrypted.java
+    (decryptPicture)
+
+Licensed to the Apache Software Foundation (ASF) under one or more contributor license
+agreements. The ASF licenses this code to you under the Apache License, Version 2.0; you may
+not use these files except in compliance with the License. Unless required by applicable law or
+agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. The ported code has been
+modified: it decrypts a copy of the whole Pictures stream, walks every record itself, and rejects a
+record or field that runs past the stream or record end.
 
 
 
