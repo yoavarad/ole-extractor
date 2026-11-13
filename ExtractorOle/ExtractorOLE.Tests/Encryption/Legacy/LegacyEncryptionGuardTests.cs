@@ -100,7 +100,10 @@ public sealed class LegacyEncryptionGuardTests : IDisposable
 
         AssertRejected<PasswordProtectedException>(new ExtractionRequest
         {
-            InputStream = stream, FileName = "fixture", DetectedMimeType = MimeOf(file), Password = password,
+            InputStream = stream,
+            FileName = "fixture",
+            DetectedMimeType = MimeOf(file),
+            Password = password,
         });
     }
 
