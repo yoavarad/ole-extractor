@@ -21,6 +21,7 @@ namespace ExtractorOLE.StressHarness
     ///
     /// Usage: dotnet run --project ExtractorOLE.StressHarness -- [concurrency] [iterations] [samplesDir]
     ///    or: dotnet run --project ExtractorOLE.StressHarness -- batch [repeat] [samplesDir]  (ADR-007)
+    ///    or: dotnet run --project ExtractorOLE.StressHarness -- password [repeat] [samplesDir] [--cross-wire]  (ADR-012)
     /// All arguments are optional.
     /// </summary>
     internal static class Program
@@ -33,6 +34,12 @@ namespace ExtractorOLE.StressHarness
             if (args.Length > 0 && args[0] == "batch")
             {
                 await BatchMode.RunAsync(args[1..]);
+                return;
+            }
+
+            if (args.Length > 0 && args[0] == "password")
+            {
+                await PasswordBatchMode.RunAsync(args[1..]);
                 return;
             }
 
@@ -201,6 +208,9 @@ namespace ExtractorOLE.StressHarness
 
             return samples;
         }
+
+        internal static string? ResolveSamplesDirectory(string? samplesDir) =>
+            !string.IsNullOrWhiteSpace(samplesDir) && Directory.Exists(samplesDir) ? samplesDir : FindDefaultSamplesDirectory();
 
         private static string? FindDefaultSamplesDirectory()
         {
