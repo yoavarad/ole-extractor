@@ -220,6 +220,14 @@ namespace ExtractorOLE.Tests.Registry
                 Password = standard.Password,
             }));
 
+            // An encrypted legacy .doc over the size limit: file-too-large wins over the legacy
+            // encryption check, which runs at preflight (#400).
+            var encryptedDoc = EncryptedSamples.ReadBytes("password_tika_binaryrc4.doc");
+            Assert.Throws<FileTooLargeException>(() => small.Extract(
+                new ExtractionRequest { FileBytes = encryptedDoc, FileName = "f", DetectedMimeType = DocMime }));
+            Assert.Throws<PasswordProtectedException>(() => normal.Extract(
+                new ExtractionRequest { FileBytes = encryptedDoc, FileName = "f", DetectedMimeType = DocMime }));
+
             // Within the limit the same bytes reach Preflight; the specific parse errors still fire.
             Assert.Throws<TruncatedContainerException>(() => normal.Extract(
                 new ExtractionRequest { FileBytes = Sample("truncated-container.docx"), FileName = "f", DetectedMimeType = DocxMime }));
