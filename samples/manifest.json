@@ -3254,7 +3254,7 @@
       "expectedSubfiles": [],
       "detectable": true,
       "verifiedBy": "research prototype + msoffcrypto-tool 6.0.0 oracle",
-      "notes": "License: Apache-2.0 (Apache POI test data). BinaryRC4 1.1, lKey 52. No decryption yet: Extract returns an empty result for this file (observed 2026-11-12), so the decrypted expectations below are not asserted by ExtractCorpusManifestTests until decryption lands; that test skips encrypted-folder entries without expectedBehavior."
+      "notes": "License: Apache-2.0 (Apache POI test data). BinaryRC4 1.1, lKey 52. Decrypted by Extract with the manifest password since task #406 (observed 2026-11-14): the expectations below are asserted by ExtractorOle/ExtractorOLE.Tests/Encryption/Legacy/DocDecryptionExtractTests.cs; ExtractCorpusManifestTests still skips encrypted-folder entries without expectedBehavior."
     },
     {
       "format": "doc",
@@ -3283,7 +3283,7 @@
       "expectedSubfiles": [],
       "detectable": true,
       "verifiedBy": "research prototype + msoffcrypto-tool 6.0.0 oracle",
-      "notes": "License: Apache-2.0 (Apache POI test data). RC4 CryptoAPI 4.2, flags 0x0C, keySize 128, lKey 198. No decryption yet: Extract returns an empty result for this file (observed 2026-11-12), so the decrypted expectations below are not asserted by ExtractCorpusManifestTests until decryption lands; that test skips encrypted-folder entries without expectedBehavior."
+      "notes": "License: Apache-2.0 (Apache POI test data). RC4 CryptoAPI 4.2, flags 0x0C, keySize 128, lKey 198. Decrypted by Extract with the manifest password since task #406 (observed 2026-11-14): the expectations below are asserted by ExtractorOle/ExtractorOLE.Tests/Encryption/Legacy/DocDecryptionExtractTests.cs; ExtractCorpusManifestTests still skips encrypted-folder entries without expectedBehavior."
     },
     {
       "format": "doc",
@@ -3301,7 +3301,7 @@
       },
       "detectable": true,
       "verifiedBy": "research prototype + msoffcrypto-tool 6.0.0 oracle",
-      "notes": "License: MIT (msoffcrypto-tool test data, Copyright (c) 2015 nolze). RC4 CryptoAPI 4.2, flags 0x0C, keySize 128, lKey 198. Decrypted expectations are those of unencryptedTwin. No decryption yet: Extract returns an empty result for this file (observed 2026-11-12), so the decrypted expectations below are not asserted by ExtractCorpusManifestTests until decryption lands; that test skips encrypted-folder entries without expectedBehavior."
+      "notes": "License: MIT (msoffcrypto-tool test data, Copyright (c) 2015 nolze). RC4 CryptoAPI 4.2, flags 0x0C, keySize 128, lKey 198. Decrypted expectations are those of unencryptedTwin. Decrypted by Extract with the manifest password since task #406 (observed 2026-11-14): the expectations below are asserted by ExtractorOle/ExtractorOLE.Tests/Encryption/Legacy/DocDecryptionExtractTests.cs; ExtractCorpusManifestTests still skips encrypted-folder entries without expectedBehavior."
     },
     {
       "format": "doc",

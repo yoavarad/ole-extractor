@@ -68,6 +68,14 @@ namespace ExtractorOLE.Helpers.Input
         public static ExtractionInput FromDecrypted(Stream decrypted) =>
             new(null, decrypted ?? throw new ArgumentNullException(nameof(decrypted)), ownsStream: true);
 
+        /// <summary>
+        /// Wraps a plain compound file rebuilt from an encrypted legacy file
+        /// ([ydk:req:extraction/legacy-plaintext-rebuild]); it is opened and extracted like byte[]
+        /// input. Owns nothing.
+        /// </summary>
+        internal static ExtractionInput FromPlaintext(byte[] plainBytes) =>
+            new(plainBytes ?? throw new ArgumentNullException(nameof(plainBytes)), null, ownsStream: false);
+
         public long Length => _bytes?.LongLength ?? _stream!.Length;
 
         /// <summary>The caller's byte[] when the request carried one; null for stream/path input.</summary>

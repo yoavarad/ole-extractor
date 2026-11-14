@@ -4,6 +4,7 @@ using ExtractorOLE.Helpers.Input;
 using ExtractorOLE.Configuration;
 using ExtractorOLE.DTOs;
 using ExtractorOLE.Helpers;
+using ExtractorOLE.Helpers.Encryption.Legacy;
 using ExtractorOLE.Helpers.FileTypeStrategy;
 using ExtractorOLE.Registry;
 using System;
@@ -104,16 +105,35 @@ namespace ExtractorOLE
             cancellationToken.ThrowIfCancellationRequested();
             // A decrypted package replaces the input for open and the text fallback; the telemetry
             // size stays that of the bytes the caller supplied.
-            using var decrypted = PreflightOrDecrypt(input, format, request, mime, size);
+            using var decrypted = PreflightOrDecrypt(input, format, request, mime, size, out var legacy);
             var source = decrypted ?? input;
             cancellationToken.ThrowIfCancellationRequested();
-            DocumentExtractionResult result;
-            using (ExtractionTelemetry.Stage("open", mime, size))
-                // The password applies only to the supplied container, never to the decrypted package.
-                result = ParseTimeErrorGuard.OpenOrThrow(_registry.GetOpenStrategy(format), source, request.DetectedMimeType,
-                    decrypted == null ? request.Password : null);
+            DocumentExtractionResult? result = null;
+            ExtractionInput? rebuilt = null;
             try
             {
+                LegacyPlaintext? plaintext = null;
+                using (ExtractionTelemetry.Stage("open", mime, size))
+                {
+                    // An encrypted legacy file is decrypted and rebuilt as a plain compound file, which
+                    // replaces the input for open and the text fallback ([ydk:req:extraction/legacy-decryption]).
+                    if (legacy != null)
+                    {
+                        plaintext = LegacyDecryption.Decrypt(input, legacy, request.Password!, _guardrails.Limits, request.DetectedMimeType);
+                        rebuilt = ExtractionInput.FromPlaintext(plaintext.Bytes);
+                        source = rebuilt;
+                    }
+
+                    // The password applies only to the supplied container, never to the decrypted package.
+                    result = ParseTimeErrorGuard.OpenOrThrow(_registry.GetOpenStrategy(format), source, request.DetectedMimeType,
+                        decrypted == null && rebuilt == null ? request.Password : null);
+                }
+
+                foreach (var (fieldPath, failure) in plaintext?.DeferredFieldFailures ?? [])
+                {
+                    FieldIsolation.TryPopulate(result, fieldPath, () => throw failure);
+                }
+
                 result.MimeType = request.DetectedMimeType;
                 cancellationToken.ThrowIfCancellationRequested();
 
@@ -140,7 +160,8 @@ namespace ExtractorOLE
             }
             finally
             {
-                ReleaseParsedDocument(result);
+                if (result != null) ReleaseParsedDocument(result);
+                rebuilt?.Dispose();
             }
 
             return result;
@@ -286,8 +307,11 @@ namespace ExtractorOLE
         // With a password, an encrypted OOXML package is decrypted here ([ydk:req:extraction/password-decryption])
         // and the decrypted package then passes the same nested-content guardrails and preflight as an
         // unencrypted one. Returns the decrypted input (owned by the caller), or null to use the original.
-        private ExtractionInput? PreflightOrDecrypt(ExtractionInput input, OfficeMimeType format, ExtractionRequest request, string mime, long size)
+        // An encrypted .doc/.ppt with a password comes back in legacy, for decryption at open.
+        private ExtractionInput? PreflightOrDecrypt(ExtractionInput input, OfficeMimeType format, ExtractionRequest request, string mime, long size,
+            out LegacyEncryptedFile? legacy)
         {
+            legacy = null;
             using var stage = ExtractionTelemetry.Stage("preflight", mime, size);
             var isOoxml = IsOoxml(format);
             using var bytesView = input.OriginalBytes != null ? new MemoryStream(input.OriginalBytes, writable: false) : null;
@@ -295,8 +319,7 @@ namespace ExtractorOLE
                 bytesView ?? input.Stream!, isOoxml, request.Password, _guardrails.MaxDeclaredEntryBytes, request.DetectedMimeType);
             if (package == null)
             {
-                var legacy = LegacyEncryptionGuard.Inspect(input, format, RequestPasswords.HasPassword(request.Password), request.DetectedMimeType);
-                if (legacy != null) throw new Exceptions.PasswordProtectedException(); // interim until T-lg-doc-wire / T-lg-ppt-wire
+                legacy = LegacyEncryptionGuard.Inspect(input, format, RequestPasswords.HasPassword(request.Password), request.DetectedMimeType);
                 return null;
             }
 
