@@ -95,17 +95,23 @@ public sealed class LegacyEncryptionGuardTests : IDisposable
         });
     }
 
-    // ---- S-lg-detect#2: XOR and unsupported doc schemes ----
+    // ---- S-lg-detect#2: XOR-obfuscated doc (decryptable; rejected without or with a wrong password) and unsupported doc schemes ----
 
-    [Theory]
-    [InlineData(null)]
-    [InlineData("x")]
-    public void Extract_XorObfuscatedDoc_IsPasswordProtected(string? password)
-    {
-        var xor = MutateWordDocument(LegacyFixtures.Bytes(LegacyFixtures.PasswordCryptoApiDoc),
+    // lKey of this mutated doc is the RC4 header length, so no password matches its XOR verifier.
+    private static byte[] XorObfuscatedDoc() =>
+        MutateWordDocument(LegacyFixtures.Bytes(LegacyFixtures.PasswordCryptoApiDoc),
             w => SetU16(w, OffFlags, (ushort)(BinaryPrimitives.ReadUInt16LittleEndian(w.AsSpan(OffFlags)) | 0x8000)));
 
-        AssertRejected<PasswordProtectedException>(xor, DocMime, password);
+    [Fact]
+    public void Extract_XorObfuscatedDocWithoutPassword_IsPasswordProtected()
+    {
+        AssertRejected<PasswordProtectedException>(XorObfuscatedDoc(), DocMime, null);
+    }
+
+    [Fact]
+    public void Extract_XorObfuscatedDocWrongPassword_IsInvalidPassword_AndNeverOpens()
+    {
+        AssertRejected<InvalidPasswordException>(XorObfuscatedDoc(), DocMime, "x");
     }
 
     [Theory]

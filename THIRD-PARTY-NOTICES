@@ -100,3 +100,24 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+
+openwall/john-samples test data (licence pending / to be resolved by the repo owner)
+------------------------------------------------------------------------------------
+Source: https://github.com/openwall/john-samples (Office/Office_Secrets/
+Office_2003/, commit f5b8e5281514f376fb560b360ac6722c937bed77). The
+repository has no LICENSE file; its source wiki is CC BY-NC-SA 3.0. Licence
+pending / to be resolved by the repo owner. The file is redistributed
+unmodified.
+
+  samples/encrypted/Test-weak-XOR_myhovercraftisfullofeels_.doc
+
+
+nono/xor_me test data (licence pending / to be resolved by the repo owner)
+--------------------------------------------------------------------------
+Source: https://github.com/nono/xor_me (samples/1234.doc, saved as
+xor_me-1234.doc). The repository is LGPL-3.0, but its samples carry no
+separate licence. Licence pending / to be resolved by the repo owner. The
+file is redistributed unmodified.
+
+  samples/encrypted/xor_me-1234.doc

@@ -3,7 +3,7 @@
 ## Status
 Accepted (2026-11-14; proposed 2026-11-10). Amends ADR-012: moves encrypted doc (RC4 and RC4
 CryptoAPI) and encrypted ppt (RC4 CryptoAPI) from "deferred" to "decrypted". XOR-obfuscated doc
-stays deferred.
+stayed deferred at acceptance. It is decrypted since task #413 (2026-11-14, decision 7).
 
 **Pins.** The pins named below (npoi `72ff7c7`, b2xtranslator `930217b`) are the spike pins and are
 kept as history. Current pins: npoi `41873b800`, b2xtranslator `9de642ba7` (#473).
@@ -54,7 +54,8 @@ Defects found in NPOI's helpers, all avoidable by validating first:
   count as an array size: a crafted count gives `OutOfMemoryException`, which escapes per-field
   isolation.
 - NPOI's XOR support was broken for xls Method 1 (fixed by yoavarad/npoi#197, pinned at npoi
-  `41873b800`) and is missing for Word Method 2 (yoavarad/npoi#198).
+  `41873b800`) and is missing for Word Method 2 (yoavarad/npoi#198). (2026-11-14: yoavarad/npoi#198
+  has since landed and is in the pinned npoi `41873b800`.)
 
 **How the plain compound file is written decides whether b2xtranslator can read it.** Rebuild
 matrix from the prototypes:
@@ -132,6 +133,30 @@ matrix from the prototypes:
    - **doc (Method 2)** is **not in scope for this increment**. An encrypted doc with
      `fObfuscated = 1` fails as `PASSWORD_PROTECTED` with or without a password. It is deferred
      until yoavarad/npoi#198 lands and a Word-authored XOR fixture exists.
+     **Amended 2026-11-14:** deferred at acceptance, decrypted since task #413 (MS-OFFCRYPTO
+     2.3.7.4-2.3.7.6, MS-DOC 2.2.6.1; FibBase `fEncrypted` + `fObfuscated`):
+     - The password is verified against FibBase `lKey` with NPOI
+       `CryptoFunctions.CreateXorVerifier2`. `lKey` is read as a little-endian uint32: XorKey in
+       the high 16 bits, verifier in the low 16 bits. This was settled empirically on both
+       fixtures (`0xCABEF705`, `0x5349CC3D`).
+     - The XOR array comes from `CreateXorArray2`. `XorTransform2` is applied to `WordDocument`
+       from offset 68 (the first 68 bytes are untouched), to the whole table stream and to the
+       whole `Data` stream. A byte is left unchanged when it is 0 or equals the key byte.
+     - `fEncrypted`, `fObfuscated` and `lKey` are cleared, the file is rebuilt with
+       `PlainCompoundFileBuilder`, and the unchanged doc pipeline runs.
+     - Password bytes: for each UTF-16 unit, the low byte, or the high byte if the low byte is 0,
+       truncated to 15 bytes. Windows-1252 is also tried, as a deterministic stand-in for the LCID
+       ANSI conversion. Limitation: a password that only matches under another ANSI code page is
+       rejected as `INVALID_PASSWORD`.
+     - No password -> `PASSWORD_PROTECTED`. Wrong password -> `INVALID_PASSWORD`, before any
+       stream is read.
+     - The NPOI primitives come from yoavarad/npoi#198, already in the pinned npoi `41873b800`.
+     - Fixtures: `samples/encrypted/Test-weak-XOR_myhovercraftisfullofeels_.doc`
+       (openwall/john-samples, 24-character password of which 15 count) and
+       `samples/encrypted/xor_me-1234.doc` (nono/xor_me). Both decrypt to coherent text and
+       metadata with 0 FieldErrors. They are third-party files, not authored by this project with
+       Word. The repo owner accepted them in place of the Word-authored fixture the gate asked
+       for. Their licences are pending, to be resolved by the repo owner.
    - **ppt and OOXML** have no XOR scheme.
 8. **Known gaps are stated, not hidden.** These have no fixture or are documented limitations, and
    `ydk:req:extraction/legacy-decryption` lists each one with its chosen behaviour:
@@ -163,12 +188,14 @@ matrix from the prototypes:
   and it throws when `fDocProps` is set and the stream is absent.
 - **Implement XOR doc now from the spec alone.** Rejected for this increment. No public fixture
   exists, no trustworthy reference implementation exists (POI's HWPF XOR path misreads `lKey`),
-  and one spec detail (the order of the two 16-bit halves inside `lKey`) is unverified.
+  and one spec detail (the order of the two 16-bit halves inside `lKey`) is unverified. The gate
+  was later resolved (task #413, 2026-11-14) by real third-party fixtures and yoavarad/npoi#198.
 
 ## Consequences
 - **Corrections to ADR-012.**
   - Decision 3: `PASSWORD_PROTECTED` for "encryption this library does not decrypt" now covers
     XOR-obfuscated doc and unsupported doc schemes, but no longer RC4/CryptoAPI doc or ppt.
+    Since task #413 (2026-11-14) it no longer covers XOR-obfuscated doc either.
   - The "Custom RC4/CryptoAPI decryptor" alternative is taken up here.
   - The consequence that called today's doc/ppt behaviour "unverified" is replaced by the measured
     behaviour above.
@@ -225,8 +252,8 @@ matrix from the prototypes:
   `ppt_with_png_encrypted.ppt` extract text with 0 FieldErrors. The earlier "task #470 re-pin"
   wording above is history.
 - **Still open or gated.**
-  - XOR doc (Method 2) stays `PASSWORD_PROTECTED` with or without a password: yoavarad/npoi#198;
-    task 413 deferred.
+  - Shipped since acceptance: XOR doc (Method 2) is decrypted since task #413 (2026-11-14),
+    using yoavarad/npoi#198 in the pinned npoi `41873b800` (decision 7).
   - XOR xls (Method 1) is decrypted: with the correct password it opens with no FieldErrors at
     npoi `41873b800` (yoavarad/npoi#197), asserted by `XlsPasswordDecryptionTests.cs`
     (`samples/manifest.json` `verifiedBy`).

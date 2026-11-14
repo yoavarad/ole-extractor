@@ -21,6 +21,7 @@ public sealed class DocDecryptionExtractTests : IDisposable
     private const string WrongPassword = "not-the-password";
     private const int OffFlags = 0x0A;
     private const ushort FlagEncrypted = 0x0100;
+    private const string HovercraftXorDoc = "Test-weak-XOR_myhovercraftisfullofeels_.doc";
     private static readonly byte[] CfbSignature = [0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0x1A, 0xE1];
 
     private readonly ServiceProvider _provider;
@@ -103,6 +104,18 @@ public sealed class DocDecryptionExtractTests : IDisposable
         Assert.Equal("lorem ipsum", decrypted.ExtractedText.Trim());
         Assert.Empty(decrypted.FieldErrors);
         Assert.Equal(Json(twin), Json(decrypted));
+    }
+
+    [Fact]
+    public void Extract_XorDocWithFirst15PasswordCharacters_EqualsFullPassword()
+    {
+        var bytes = LegacyFixtures.Bytes(HovercraftXorDoc);
+
+        var full = Extract(bytes, LegacyFixtures.Password(HovercraftXorDoc));
+        var truncated = Extract(bytes, "myhovercraftisf");
+
+        Assert.StartsWith("Lorem ipsum dolor sit amet", full.ExtractedText, StringComparison.Ordinal);
+        Assert.Equal(full.ExtractedText, truncated.ExtractedText);
     }
 
     // ---- S-lg-doc#2: wrong password; no password unchanged ----

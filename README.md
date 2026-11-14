@@ -61,10 +61,12 @@ The password applies to the supplied container only. Encrypted embedded subfiles
 |--------|-------------------|
 | `.docx`, `.xlsx`, `.pptx` | Agile (Office 2010+) and Standard (Office 2007) encryption |
 | `.xls` | RC4, CryptoAPI RC4 and XOR obfuscation |
-| `.doc` | BinaryRC4 and RC4 CryptoAPI |
+| `.doc` | BinaryRC4, RC4 CryptoAPI and XOR obfuscation |
 | `.ppt` | RC4 CryptoAPI |
 
 After decryption the file is extracted exactly like its unencrypted version.
+
+XOR-obfuscated doc passwords: only the first 15 characters count. Each UTF-16 unit becomes its low byte, or its high byte when the low byte is 0. A Windows-1252 conversion is also tried, as a stand-in for Word's locale ANSI conversion. A password that only matches in another ANSI code page is not accepted.
 
 Error codes:
 
@@ -78,7 +80,7 @@ A password supplied for an unencrypted file is ignored for all six formats: no e
 
 Confidentiality: the password, derived keys and decrypted bytes are never logged, never appear in exceptions, `FieldErrors` or results, and are not kept after the call.
 
-Still `PASSWORD_PROTECTED` even with a password: XOR-obfuscated doc (deferred, depends on yoavarad/npoi#198 and a fixture), doc schemes other than RC4 and RC4 CryptoAPI, Extensible encryption, and IRM/rights-management.
+Still `PASSWORD_PROTECTED` even with a password: doc schemes other than RC4, RC4 CryptoAPI and XOR obfuscation, Extensible encryption, and IRM/rights-management.
 
 Known limitations (legacy doc and ppt):
 

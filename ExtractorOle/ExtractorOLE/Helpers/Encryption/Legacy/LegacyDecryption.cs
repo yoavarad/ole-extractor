@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Globalization;
 using System.Security.Cryptography;
 using ExtractorOLE.Configuration;
@@ -14,7 +15,7 @@ namespace ExtractorOLE.Helpers.Encryption.Legacy;
 internal sealed record LegacyPlaintext(byte[] Bytes, IReadOnlyList<(string FieldPath, CorruptFileException Failure)> DeferredFieldFailures);
 
 // [ydk:req:extraction/legacy-decryption] [ydk:req:extraction/legacy-plaintext-rebuild]
-// Decrypts an encrypted .doc or .ppt that LegacyEncryptionGuard recognised and rebuilds it as a plain
+// Decrypts an encrypted .doc (RC4, RC4 CryptoAPI or XOR-obfuscated) or .ppt that LegacyEncryptionGuard recognised and rebuilds it as a plain
 // compound file, which the unchanged doc/ppt path then opens and extracts.
 internal static class LegacyDecryption
 {
@@ -41,7 +42,7 @@ internal static class LegacyDecryption
             return DecryptPpt(input, ppt, password, limits, detectedMimeType);
         }
 
-        if (file is not EncryptedDoc doc)
+        if (file is not (EncryptedDoc or XorObfuscatedDoc))
         {
             throw new ArgumentException($"unsupported legacy encrypted file {file.GetType().Name}", nameof(file));
         }
@@ -52,7 +53,12 @@ internal static class LegacyDecryption
         using var fs = CfbFileSystems.Open(new MemoryStream(bytes, writable: false));
 
         BeforeDocDecryptForTest.Value?.Invoke();
-        var streams = DocDecryptor.Decrypt(fs.Root, doc.Fib, doc.Header, password, limits.MaxDeclaredEntryBytes);
+        var streams = file switch
+        {
+            XorObfuscatedDoc xor => DocDecryptor.DecryptXor(fs.Root, xor.Fib, password, limits.MaxDeclaredEntryBytes),
+            EncryptedDoc doc => DocDecryptor.Decrypt(fs.Root, doc.Fib, doc.Header, password, limits.MaxDeclaredEntryBytes),
+            _ => throw new UnreachableException(),
+        };
         byte[] plain;
         try
         {
@@ -79,10 +85,11 @@ internal static class LegacyDecryption
         }
 
         // Gap G2: a CryptoAPI doc whose document properties are encrypted (fDocProps clear) keeps
-        // them in the "encryption" stream, which this version does not read.
+        // them in the "encryption" stream, which this version does not read. XOR has no deferred failures.
         var deferred = new List<(string, CorruptFileException)>();
-        if (doc.Header.Scheme == LegacyCipherScheme.CryptoApiRc4
-            && (doc.Header.Flags & LegacyEncryptionHeaderReader.FlagDocProps) == 0
+        if (file is EncryptedDoc cryptoDoc
+            && cryptoDoc.Header.Scheme == LegacyCipherScheme.CryptoApiRc4
+            && (cryptoDoc.Header.Flags & LegacyEncryptionHeaderReader.FlagDocProps) == 0
             && fs.Root.HasEntry(EncryptionStream))
         {
             deferred.Add(("Metadata", new CorruptFileException(detectedMimeType,
