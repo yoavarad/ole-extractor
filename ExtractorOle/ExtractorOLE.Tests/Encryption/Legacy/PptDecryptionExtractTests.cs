@@ -97,8 +97,10 @@ public sealed class PptDecryptionExtractTests : IDisposable
 
         var result = ExtractFixture(file);
 
-        Assert.Equal(length, result.ExtractedText.Length);
-        Assert.Equal(string.Join("\r\n", expectedLines), result.ExtractedText);
+        var text = result.ExtractedText.Replace("\r\n", "\n");
+        // length is the CRLF length from the manifest; separators are Environment.NewLine (LF on Linux).
+        Assert.Equal(length, text.Length + (expectedLines.Length - 1));
+        Assert.Equal(string.Join("\n", expectedLines), text);
         Assert.Equal("This is a protected document", result.Metadata.Title);
         Assert.Equal("Hogwarts", result.Metadata.Creator);
         Assert.Equal("Hogwarts", result.Metadata.LastModifiedBy);
