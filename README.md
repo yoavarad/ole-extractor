@@ -34,9 +34,62 @@ registering a new detection/open/text-extraction component set, without changing
 entry points (`MainExtractor` and the mime-detection helper). See
 `docs/specs/extraction.md` and [ADR-001](docs/adrs/001-extraction-library-stack.md).
 
-Out of scope for v1: password-protected files (fail cleanly instead of decrypting), and
-recursive unpacking of subfiles nested inside other subfiles (only first-layer embeddings are
-extracted). See `docs/specs/overview.md` for the full scope list.
+Password-protected files are supported with a caller-supplied password (see
+[Password-protected files](#password-protected-files)). Out of scope for v1: recursive unpacking
+of subfiles nested inside other subfiles (only first-layer embeddings are extracted). See
+`docs/specs/overview.md` for the full scope list.
+
+## Password-protected files
+
+Set `Password` (`string?`, init-only) on `ExtractionRequest` and on `MimeDetectionRequest`. Null or
+empty means no password. Each request in a batch carries its own password; the `ExtractMany` and
+`ExtractManyStreaming` signatures are unchanged.
+
+```csharp
+var request = new ExtractionRequest
+{
+    FileBytes = bytes,
+    FileName = "report.docx",
+    DetectedMimeType = mimeType,
+    Password = "secret"
+};
+```
+
+The password applies to the supplied container only. Encrypted embedded subfiles are returned opaque.
+
+| Format | Decrypted schemes |
+|--------|-------------------|
+| `.docx`, `.xlsx`, `.pptx` | Agile (Office 2010+) and Standard (Office 2007) encryption |
+| `.xls` | RC4, CryptoAPI RC4 and XOR obfuscation |
+| `.doc` | BinaryRC4 and RC4 CryptoAPI |
+| `.ppt` | RC4 CryptoAPI |
+
+After decryption the file is extracted exactly like its unencrypted version.
+
+Error codes:
+
+- `PASSWORD_PROTECTED`: no password was supplied, or the encryption is not decrypted by this library.
+- `INVALID_PASSWORD` (`InvalidPasswordException`, `StatusCode` 422): the password fails the format's verifier. It never returns a partial result and is never reported as `CORRUPT_FILE`.
+- `CORRUPT_FILE`: altered ciphertext with the right password (Agile integrity HMAC mismatch), or crafted encryption headers or a key-derivation cost over the format maximum.
+
+Detection: an encrypted docx, xlsx or pptx (`EncryptionInfo` and `EncryptedPackage` in a CFB wrapper) detects as `Unknown` when no password is supplied, because the inner format cannot be known. This includes Word wrappers with a `WordDocument` stub, which were formerly detected as `Doc`. The correct password gives the inner format; a wrong one throws `INVALID_PASSWORD`. Encrypted doc, xls and ppt are classified from their plain directory, and the password is not used for detection.
+
+A password supplied for an unencrypted file is ignored for all six formats: no error, no warning, identical result. An xls encrypted only with Excel's default VelvetSweatshop key counts as having no password.
+
+Confidentiality: the password, derived keys and decrypted bytes are never logged, never appear in exceptions, `FieldErrors` or results, and are not kept after the call.
+
+Still `PASSWORD_PROTECTED` even with a password: XOR-obfuscated doc (deferred, depends on yoavarad/npoi#198 and a fixture), doc schemes other than RC4 and RC4 CryptoAPI, Extensible encryption, and IRM/rights-management.
+
+Known limitations (legacy doc and ppt):
+
+- A CryptoAPI doc with encrypted document properties keeps its text and reports one `Metadata` `CORRUPT_FILE` field error.
+- OLE objects of a CryptoAPI doc are not returned (0 `EmbeddedFiles`, no field error).
+- Two ppt samples (`cryptoapi-proc2356.ppt`, `ppt_with_png_encrypted.ppt`) decrypt, but their text converts empty because of unrelated b2xtranslator conversion defects. Pictures and metadata are fine; text parity is pending those fixes.
+- Test-coverage gaps G1 to G5 (for example no Word-authored 40-bit CryptoAPI doc fixture) are recorded in `samples/manifest.json` under `$encryptedTestGaps`.
+
+Cost: Agile key derivation runs about 100,000 SHA-512 rounds per verification, so detect-then-extract pays it twice. Encrypted ppt extraction allocates about 23x its input after #465 (it was about 29.6x; the original 8x target was knowingly missed and accepted).
+
+See [ADR-012](docs/adrs/012-password-protected-decryption.md) and [ADR-013](docs/adrs/013-legacy-doc-ppt-decryption.md).
 
 ## Project structure
 
@@ -148,7 +201,10 @@ measures throughput and the peak heap of both methods.
   - [ADR-005](docs/adrs/005-legacy-doc-ppt-authoring.md) — authoring legacy `.doc`/`.ppt`/`.xls` test samples in SampleGenerator
   - [ADR-007](docs/adrs/007-batch-extraction-api.md) — batch extraction API with bounded parallelism
   - [ADR-009](docs/adrs/009-analyzer-compliance-over-api-stability.md) — fix analyzer findings instead of suppressing them (breaking enum renames, ParamName contract)
+  - [ADR-010](docs/adrs/010-partial-results-with-per-field-error-reporting.md) — partial results with per-field error reporting
   - [ADR-011](docs/adrs/011-streaming-batch-extraction.md) — streaming batch extraction to bound batch memory
+  - [ADR-012](docs/adrs/012-password-protected-decryption.md) — decrypt password-protected OOXML and xls with a caller-supplied password
+  - [ADR-013](docs/adrs/013-legacy-doc-ppt-decryption.md) — legacy `.doc`/`.ppt` decryption
 - [`CHANGELOG.md`](CHANGELOG.md) — breaking changes and migration notes
 - [`docs/project-rules.md`](docs/project-rules.md) — conventions, brownfield constraints, and known gotchas
 - [`docs/research/`](docs/research/) — research spikes backing the ADRs above
