@@ -56,6 +56,10 @@ namespace ExtractorOLE.Helpers
         internal static bool IsIsolatable(Exception exception)
         {
             ArgumentNullException.ThrowIfNull(exception);
+
+            // A password outcome escapes as PASSWORD_PROTECTED, never a FieldError.
+            if (Guardrails.ParseFailure.IsB2xEncryptedDocument(exception)) return false;
+
             var pending = new Stack<Exception>();
             pending.Push(exception);
             while (pending.Count > 0)
