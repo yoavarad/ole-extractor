@@ -1,5 +1,6 @@
 using ExtractorOLE.Helpers.Input;
 using ExtractorOLE.DTOs;
+using ExtractorOLE.Helpers.Encryption.Legacy;
 using NPOI.HSSF.Record;
 using NPOI.HSSF.UserModel;
 using System;
@@ -51,6 +52,7 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
             // Read from the directory, not workbook.SummaryInformation: NPOI's getter logs and
             // returns null for an unparsable property set, which would hide the failure (#288).
             MetadataConversions.ApplySummaryInformation(workbook.Directory, result);
+            ApplyEncryptedProperties(workbook, password, result);
 
             result.FormatMetadata = BuildExcelFormatMetadata(workbook, result);
 
@@ -59,6 +61,20 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
             result.ParsedDocument = workbook;
             result.MimeType = _helper.MimeFor(OfficeMimeType.ExcelLegacy);
             return result;
+        }
+
+        // CryptoAPI files that also encrypt their document properties carry no plain SummaryInformation stream;
+        // it is read from the "encryption" stream. A failure is reported at Metadata, never fatal.
+        private void ApplyEncryptedProperties(HSSFWorkbook workbook, string? password, DocumentExtractionResult result)
+        {
+            if (!RequestPasswords.HasPassword(password) || !XlsEncryptedProperties.AppliesTo(workbook.Directory)) return;
+
+            var mime = _helper.MimeFor(OfficeMimeType.ExcelLegacy);
+            FieldIsolation.TryPopulate(result, nameof(DocumentExtractionResult.Metadata), () =>
+            {
+                var header = XlsEncryptedProperties.ReadFilePassHeader(workbook.Directory, mime);
+                if (header is not null) XlsEncryptedProperties.Apply(workbook.Directory, header, password!, mime, result);
+            });
         }
 
         // NPOI uses a supplied password instead of Excel's default key, with no fallback, so a
