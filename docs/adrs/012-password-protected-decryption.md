@@ -1,7 +1,7 @@
 # ADR-012: Decrypt password-protected OOXML and xls with a caller-supplied password
 
 ## Status
-Proposed (2026-11-10). Spec branch `spec/password-decryption`.
+Accepted (2026-11-14). Spec branch `spec/password-decryption`.
 Amended 2026-11-10 by [ADR-013](013-legacy-doc-ppt-decryption.md). Encrypted doc (RC4, RC4 CryptoAPI)
 and ppt (RC4 CryptoAPI) are now decrypted, XOR-obfuscated doc stays deferred, and the statements
 below about today's doc/ppt behaviour are corrected. See "Amendment" at the end.
