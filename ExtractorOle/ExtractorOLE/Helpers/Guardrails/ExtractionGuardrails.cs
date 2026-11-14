@@ -58,6 +58,9 @@ namespace ExtractorOLE.Helpers.Guardrails
         /// <summary>The per-entry cap, also applied to a decrypted package's declared size.</summary>
         internal long MaxDeclaredEntryBytes => _limits.MaxDeclaredEntryBytes;
 
+        /// <summary>The limits these guardrails enforce, shared with legacy decryption.</summary>
+        internal MimeDetectionLimits Limits => _limits;
+
         // A decrypted package ([ydk:req:extraction/password-decryption]) goes through the same
         // declared-size and inflation caps as an unencrypted one. File-too-large is not re-judged:
         // it applies to the encrypted bytes as supplied, already checked by Enforce.

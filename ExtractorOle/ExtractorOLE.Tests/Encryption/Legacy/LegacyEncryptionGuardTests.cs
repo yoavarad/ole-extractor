@@ -48,8 +48,9 @@ public sealed class LegacyEncryptionGuardTests : IDisposable
 
     public static TheoryData<string> EncryptedFixtures => new(LegacyFixtures.EncryptedFileNames);
 
-    public static TheoryData<string> PasswordFixtures =>
-        new(LegacyFixtures.EncryptedFileNames.Where(f => LegacyFixtures.Password(f) != null));
+    // .doc decryption is wired (#406, DocDecryptionExtractTests); only .ppt keeps the interim rejection.
+    public static TheoryData<string> PptPasswordFixtures =>
+        new(LegacyFixtures.EncryptedFileNames.Where(f => LegacyFixtures.Password(f) != null && MimeOf(f) == PptMime));
 
     private static string MimeOf(string fileName) =>
         fileName.EndsWith(".doc", StringComparison.OrdinalIgnoreCase) ? DocMime : PptMime;
@@ -83,8 +84,8 @@ public sealed class LegacyEncryptionGuardTests : IDisposable
     }
 
     [Theory]
-    [MemberData(nameof(PasswordFixtures))]
-    public void Extract_EncryptedFixtureWithCorrectPassword_IsPasswordProtected_Interim_UntilDecryptionWired(string file)
+    [MemberData(nameof(PptPasswordFixtures))]
+    public void Extract_EncryptedPptWithCorrectPassword_IsPasswordProtected_Interim_UntilDecryptionWired(string file)
     {
         AssertRejected<PasswordProtectedException>(LegacyFixtures.Bytes(file), MimeOf(file), LegacyFixtures.Password(file));
     }
@@ -93,7 +94,6 @@ public sealed class LegacyEncryptionGuardTests : IDisposable
     [InlineData(LegacyFixtures.HelloPpt, null)]
     [InlineData(LegacyFixtures.TikaBinaryRc4Doc, null)]
     [InlineData(LegacyFixtures.HelloPpt, "hello")]
-    [InlineData(LegacyFixtures.TikaBinaryRc4Doc, "tika")]
     public void Extract_EncryptedStreamInput_IsPasswordProtected(string file, string? password)
     {
         using var stream = new MemoryStream(LegacyFixtures.Bytes(file), writable: false);
