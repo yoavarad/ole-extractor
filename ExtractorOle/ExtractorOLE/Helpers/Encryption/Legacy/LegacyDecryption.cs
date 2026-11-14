@@ -1,9 +1,11 @@
+using System.Globalization;
 using System.Security.Cryptography;
 using ExtractorOLE.Configuration;
 using ExtractorOLE.Exceptions;
 using ExtractorOLE.Helpers.FileTypeStrategy;
 using ExtractorOLE.Helpers.Guardrails;
 using ExtractorOLE.Helpers.Input;
+using NPOI.POIFS.FileSystem;
 
 namespace ExtractorOLE.Helpers.Encryption.Legacy;
 
@@ -12,13 +14,16 @@ namespace ExtractorOLE.Helpers.Encryption.Legacy;
 internal sealed record LegacyPlaintext(byte[] Bytes, IReadOnlyList<(string FieldPath, CorruptFileException Failure)> DeferredFieldFailures);
 
 // [ydk:req:extraction/legacy-decryption] [ydk:req:extraction/legacy-plaintext-rebuild]
-// Decrypts an encrypted .doc that LegacyEncryptionGuard recognised and rebuilds it as a plain
-// compound file, which the unchanged doc path then opens and extracts.
+// Decrypts an encrypted .doc or .ppt that LegacyEncryptionGuard recognised and rebuilds it as a plain
+// compound file, which the unchanged doc/ppt path then opens and extracts.
 internal static class LegacyDecryption
 {
     private const string WordDocumentStream = "WordDocument";
     private const string DataStream = "Data";
     private const string EncryptionStream = "encryption";
+    private const string CurrentUserStream = "Current User";
+    private const string PowerPointDocumentStream = "PowerPoint Document";
+    private const string PicturesStream = "Pictures";
 
     // Test seam: runs on the calling flow just before DocDecryptor starts (cancellation tests).
     internal static readonly AsyncLocal<Action?> BeforeDocDecryptForTest = new();
@@ -31,10 +36,12 @@ internal static class LegacyDecryption
         ArgumentNullException.ThrowIfNull(password);
         ArgumentNullException.ThrowIfNull(limits);
 
-        if (file is not EncryptedDoc doc)
+        if (file is EncryptedPpt ppt)
         {
-            throw new PasswordProtectedException(); // interim until T-lg-ppt-wire
+            return DecryptPpt(input, ppt, password, limits, detectedMimeType);
         }
+
+        var doc = (EncryptedDoc)file;
 
         // Stream/path input of an encrypted doc is buffered whole; the guard returned null for a
         // plain file, so unencrypted input never reaches this path.
@@ -80,5 +87,103 @@ internal static class LegacyDecryption
         }
 
         return new LegacyPlaintext(plain, deferred);
+    }
+
+    // ppt: persist objects (PptDecryptor), Pictures (PptPicturesDecryptor) and the EncryptedSummary
+    // property streams (CryptoApiEncryptedSummaryReader) go into the rebuilt file. A Pictures stream
+    // that cannot be decrypted is left out and recorded as a CORRUPT_FILE FieldError at
+    // EmbeddedFiles[Pictures]; an unreadable EncryptedSummary is container-level and propagates.
+    private static LegacyPlaintext DecryptPpt(ExtractionInput input, EncryptedPpt ppt, string password,
+        MimeDetectionLimits limits, string detectedMimeType)
+    {
+        var bytes = input.OriginalBytes ?? input.Bytes;
+        using var fs = CfbFileSystems.Open(new MemoryStream(bytes, writable: false));
+
+        var core = PptDecryptor.DecryptCore(ppt.Layout, ppt.Header, password, detectedMimeType);
+        var rootStreams = new Dictionary<string, byte[]?>(StringComparer.Ordinal)
+        {
+            [CurrentUserStream] = core.CurrentUser,
+            [PowerPointDocumentStream] = core.PowerPointDocument,
+        };
+        var deferred = new List<(string, CorruptFileException)>();
+        try
+        {
+            if (fs.Root.HasEntry(PicturesStream) && fs.Root.GetEntry(PicturesStream) is DocumentEntry pictures)
+            {
+                var cipher = ReadStream(fs.Root, pictures, limits.MaxDeclaredEntryBytes, detectedMimeType);
+                try
+                {
+                    rootStreams[PicturesStream] = PptPicturesDecryptor.Decrypt(cipher, core.Decryptor, detectedMimeType);
+                }
+                catch (CorruptFileException ex)
+                {
+                    rootStreams[PicturesStream] = null;
+                    deferred.Add((FieldIsolation.SubfilePath(PicturesStream), ex));
+                }
+            }
+
+            // Decided by the stream's presence, not by the header flag. The decrypted property streams
+            // replace the plain placeholders; a descriptor naming a stream already replaced above is ignored.
+            if (fs.Root.HasEntry(CryptoApiEncryptedSummaryReader.PptStreamName))
+            {
+                if (fs.Root.GetEntry(CryptoApiEncryptedSummaryReader.PptStreamName) is not DocumentEntry summary)
+                {
+                    throw new CorruptFileException(detectedMimeType, "encrypted presentation: EncryptedSummary is not a stream");
+                }
+
+                var encryptedSummary = ReadStream(fs.Root, summary, limits.MaxDeclaredEntryBytes, detectedMimeType);
+                foreach (var stream in CryptoApiEncryptedSummaryReader.Read(encryptedSummary, core.Decryptor, detectedMimeType))
+                {
+                    if (!rootStreams.TryAdd(stream.Name, stream.Data))
+                    {
+                        CryptographicOperations.ZeroMemory(stream.Data);
+                    }
+                }
+
+                rootStreams[CryptoApiEncryptedSummaryReader.PptStreamName] = null;
+            }
+
+            return new LegacyPlaintext(
+                PlainCompoundFileBuilder.Build(fs.Root, rootStreams, limits.MaxDeclaredEntryBytes, detectedMimeType),
+                deferred);
+        }
+        finally
+        {
+            foreach (var data in rootStreams.Values)
+            {
+                if (data is not null)
+                {
+                    CryptographicOperations.ZeroMemory(data);
+                }
+            }
+        }
+    }
+
+    // [ydk:error:extraction/corrupt-file] The declared size is checked against the per-entry cap before
+    // the buffer is allocated; a stream shorter than its declared size is corrupt.
+    private static byte[] ReadStream(DirectoryNode root, DocumentEntry entry, long maxEntryBytes, string detectedMimeType)
+    {
+        if (entry.Size > maxEntryBytes)
+        {
+            throw new OversizedNestedContentException(string.Create(CultureInfo.InvariantCulture,
+                $"{entry.Name} stream declares {entry.Size} bytes (per-entry limit {maxEntryBytes})"));
+        }
+
+        var buffer = new byte[entry.Size];
+        using var stream = root.CreateDocumentInputStream(entry);
+        var read = 0;
+        while (read < buffer.Length)
+        {
+            var n = stream.Read(buffer, read, buffer.Length - read);
+            if (n <= 0)
+            {
+                throw new CorruptFileException(detectedMimeType,
+                    $"encrypted presentation: {entry.Name} stream is truncated");
+            }
+
+            read += n;
+        }
+
+        return buffer;
     }
 }
