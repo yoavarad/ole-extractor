@@ -1,3 +1,4 @@
+using System.Buffers.Binary;
 using ExtractorOLE.Configuration;
 using ExtractorOLE.DTOs;
 using ExtractorOLE.Exceptions;
@@ -5,12 +6,13 @@ using ExtractorOLE.Helpers;
 using ExtractorOLE.Helpers.Encryption.Legacy;
 using ExtractorOLE.Helpers.Guardrails;
 using ExtractorOLE.Helpers.Input;
+using NPOI.POIFS.FileSystem;
 using Xunit;
 
 namespace ExtractorOLE.Tests.Encryption.Legacy;
 
-// #406: LegacyDecryption.Decrypt on its own. End-to-end behaviour through MainExtractor is in
-// DocDecryptionExtractTests.
+// #406/#407: LegacyDecryption.Decrypt on its own. End-to-end behaviour through MainExtractor is in
+// DocDecryptionExtractTests and PptDecryptionExtractTests.
 public sealed class LegacyDecryptionTests
 {
     private const string DocMime = "application/msword";
@@ -36,10 +38,27 @@ public sealed class LegacyDecryptionTests
         Assert.Null(LegacyEncryptionGuard.Inspect(input, OfficeMimeType.WordLegacy, hasPassword: true, DocMime));
     }
 
-    [Fact]
-    public void Decrypt_EncryptedPpt_IsPasswordProtected_Interim_UntilDecryptionWired()
+    [Theory]
+    [InlineData(LegacyFixtures.HelloPpt)]
+    [InlineData(LegacyFixtures.HelloNoPropsPpt)]
+    [InlineData(LegacyFixtures.PngEncryptedPpt)]
+    public void Decrypt_EncryptedPpt_ReturnsPlainCompoundFileWithNoDeferredFailures(string file)
     {
-        Assert.Throws<PasswordProtectedException>(() => Decrypt(LegacyFixtures.HelloPpt, PptMime, OfficeMimeType.PowerPointLegacy));
+        var plaintext = Decrypt(file, PptMime, OfficeMimeType.PowerPointLegacy);
+
+        // UserEditAtoms and the CryptSession10Container stay in place (PptDecryptor keeps offsets), so the
+        // rebuild is recognised by its plain Current User token and the missing EncryptedSummary.
+        Assert.Empty(plaintext.DeferredFieldFailures);
+        using var fs = new NPOIFSFileSystem(new MemoryStream(plaintext.Bytes, writable: false));
+        var entry = (DocumentEntry)fs.Root.GetEntry("Current User");
+        var currentUser = new byte[entry.Size];
+        using (var stream = fs.Root.CreateDocumentInputStream(entry))
+        {
+            stream.ReadFully(currentUser);
+        }
+
+        Assert.Equal(PptEncryptionProbe.TokenPlain, BinaryPrimitives.ReadUInt32LittleEndian(currentUser.AsSpan(12)));
+        Assert.False(fs.Root.HasEntry(CryptoApiEncryptedSummaryReader.PptStreamName));
     }
 
     [Fact]
@@ -49,5 +68,14 @@ public sealed class LegacyDecryptionTests
 
         Assert.Throws<OversizedNestedContentException>(() =>
             Decrypt(LegacyFixtures.PasswordCryptoApiDoc, DocMime, OfficeMimeType.WordLegacy, limits));
+    }
+
+    [Fact]
+    public void Decrypt_PptPicturesOverPerEntryCap_IsOversizedNestedContent()
+    {
+        var limits = new MimeDetectionLimits { MaxDeclaredEntryBytes = 512 * 1024 };
+
+        Assert.Throws<OversizedNestedContentException>(() =>
+            Decrypt(LegacyFixtures.CryptoApiProc2356Ppt, PptMime, OfficeMimeType.PowerPointLegacy, limits));
     }
 }
