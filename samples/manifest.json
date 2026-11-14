@@ -3446,23 +3446,7 @@
       "status": "curated",
       "path": "samples/encrypted/cryptoapi-proc2356.ppt",
       "password": "crypto",
-      "expectedFieldErrors": [
-        {
-          "fieldPath": "FormatMetadata.SlideCount",
-          "code": "UnexpectedFieldFailure",
-          "notes": "b2xtranslator FillMapping.cs:265 KeyNotFoundException 'fillShadeType' (not encryption related); becomes [] after T-lg-ppt-b2x-text"
-        },
-        {
-          "fieldPath": "FormatMetadata.NotesSlideCount",
-          "code": "UnexpectedFieldFailure",
-          "notes": "b2xtranslator FillMapping.cs:265 KeyNotFoundException 'fillShadeType' (not encryption related); becomes [] after T-lg-ppt-b2x-text"
-        },
-        {
-          "fieldPath": "ExtractedText",
-          "code": "UnexpectedFieldFailure",
-          "notes": "b2xtranslator FillMapping.cs:265 KeyNotFoundException 'fillShadeType' (not encryption related); becomes [] after T-lg-ppt-b2x-text"
-        }
-      ],
+      "expectedFieldErrors": [],
       "provenance": "third-party",
       "generatedBy": "Downloaded verbatim (unmodified) from https://raw.githubusercontent.com/apache/poi/trunk/test-data/slideshow/cryptoapi-proc2356.ppt (Apache-2.0). File sha256: C97E74D7137915251DF14CD5937B97DE490F12FA83A46D5AE570900DEC590F4D, 1341952 bytes on disk. Fetched 2026-11-12.",
       "compositionRule": "docs/specs/dataset-curation.md encrypted set",
@@ -3470,6 +3454,12 @@
         "enum": "Ppt",
         "mimeType": "application/vnd.ms-powerpoint"
       },
+      "bodyTextLines": [
+        "Dominic Salemno",
+        "This file was created to demonstrate the RC4 CryptoAPI Encryption password verification process detailed in Section 2.3.5.6 of the [MS-OFFCRYPTO].pdf document.",
+        "<#>"
+      ],
+      "expectedFormatMetadata": { "slideCount": 1, "notesSlideCount": 1, "hasMacros": false },
       "metadata": {
         "Title": "RC4 CryptoAPI Encryption",
         "Author": "Dominic Salemno",
@@ -3490,30 +3480,14 @@
       ],
       "detectable": true,
       "verifiedBy": "research prototype, own == NPOI decryption",
-      "notes": "License: Apache-2.0 (Apache POI test data). RC4 CryptoAPI, EncryptionInfo 3.2, flags 0x04, KeySize 0 (read as 40), CryptSession10Container persist id 13. Times are UTC. The Pictures sha256 was computed 2026-11-12 from msoffcrypto-tool 6.0.0 key derivation (its ppt97 decrypt does not decrypt the Pictures stream) plus per-record Pictures decryption as described in docs/research/legacy-encryption/ppt-encryption.md; the 16-hex prefix matches the research run. Decrypted by Extract with the manifest password since task #407 (observed 2026-11-14): the expectations below are asserted by ExtractorOle/ExtractorOLE.Tests/Encryption/Legacy/PptDecryptionExtractTests.cs; ExtractCorpusManifestTests still skips encrypted-folder entries without expectedBehavior."
+      "notes": "License: Apache-2.0 (Apache POI test data). RC4 CryptoAPI, EncryptionInfo 3.2, flags 0x04, KeySize 0 (read as 40), CryptSession10Container persist id 13. Times are UTC. The Pictures sha256 was computed 2026-11-12 from msoffcrypto-tool 6.0.0 key derivation (its ppt97 decrypt does not decrypt the Pictures stream) plus per-record Pictures decryption as described in docs/research/legacy-encryption/ppt-encryption.md; the 16-hex prefix matches the research run. Decrypted by Extract with the manifest password since task #407 (observed 2026-11-14): the expectations below (text, slide counts, no FieldErrors since the b2xtranslator re-pin of task #470, observed 2026-11-14) are asserted by ExtractorOle/ExtractorOLE.Tests/Encryption/Legacy/PptDecryptionExtractTests.cs; ExtractCorpusManifestTests still skips encrypted-folder entries without expectedBehavior."
     },
     {
       "format": "ppt",
       "status": "curated",
       "path": "samples/encrypted/ppt_with_png_encrypted.ppt",
       "password": "password",
-      "expectedFieldErrors": [
-        {
-          "fieldPath": "FormatMetadata.SlideCount",
-          "code": "UnexpectedFieldFailure",
-          "notes": "b2xtranslator ClientAnchor.cs:20-47 16-byte anchor -> NRE ShapeTreeMapping.cs:2302, then TextMasterStyleMapping.writepPr"
-        },
-        {
-          "fieldPath": "FormatMetadata.NotesSlideCount",
-          "code": "UnexpectedFieldFailure",
-          "notes": "b2xtranslator ClientAnchor.cs:20-47 16-byte anchor -> NRE ShapeTreeMapping.cs:2302, then TextMasterStyleMapping.writepPr"
-        },
-        {
-          "fieldPath": "ExtractedText",
-          "code": "UnexpectedFieldFailure",
-          "notes": "b2xtranslator ClientAnchor.cs:20-47 16-byte anchor -> NRE ShapeTreeMapping.cs:2302, then TextMasterStyleMapping.writepPr"
-        }
-      ],
+      "expectedFieldErrors": [],
       "provenance": "third-party",
       "generatedBy": "Downloaded verbatim (unmodified) from https://raw.githubusercontent.com/apache/poi/trunk/test-data/slideshow/ppt_with_png_encrypted.ppt (Apache-2.0). File sha256: 35DC3CBF31660872A3C1BB26F4200DFB94736A7BC95E72AC626B2D033C250EB3, 26112 bytes on disk. Fetched 2026-11-12.",
       "compositionRule": "docs/specs/dataset-curation.md encrypted set",
@@ -3521,6 +3495,10 @@
         "enum": "Ppt",
         "mimeType": "application/vnd.ms-powerpoint"
       },
+      "bodyTextLines": [
+        "Here is a PNG image:"
+      ],
+      "expectedFormatMetadata": { "slideCount": 1, "notesSlideCount": 0, "hasMacros": false },
       "metadata": {},
       "expectedSubfileCount": 1,
       "expectedSubfiles": [
@@ -3534,7 +3512,7 @@
       ],
       "detectable": true,
       "verifiedBy": "research prototype, own == NPOI decryption",
-      "notes": "License: Apache-2.0 (Apache POI test data). RC4 CryptoAPI, EncryptionInfo 4.2, flags 0x04, KeySize 40, CryptSession10Container persist id 5. Decrypted property sets hold only the codepage. ppt_with_png.ppt is a different save, not a twin. The Pictures sha256 was computed 2026-11-12 from msoffcrypto-tool 6.0.0 key derivation (its ppt97 decrypt does not decrypt the Pictures stream) plus per-record Pictures decryption as described in docs/research/legacy-encryption/ppt-encryption.md; the 16-hex prefix matches the research run. Decrypted by Extract with the manifest password since task #407 (observed 2026-11-14): the expectations below are asserted by ExtractorOle/ExtractorOLE.Tests/Encryption/Legacy/PptDecryptionExtractTests.cs; ExtractCorpusManifestTests still skips encrypted-folder entries without expectedBehavior."
+      "notes": "License: Apache-2.0 (Apache POI test data). RC4 CryptoAPI, EncryptionInfo 4.2, flags 0x04, KeySize 40, CryptSession10Container persist id 5. Decrypted property sets hold only the codepage. ppt_with_png.ppt is a different save, not a twin. The Pictures sha256 was computed 2026-11-12 from msoffcrypto-tool 6.0.0 key derivation (its ppt97 decrypt does not decrypt the Pictures stream) plus per-record Pictures decryption as described in docs/research/legacy-encryption/ppt-encryption.md; the 16-hex prefix matches the research run. Decrypted by Extract with the manifest password since task #407 (observed 2026-11-14): the expectations below (text, slide counts, no FieldErrors since the b2xtranslator re-pin of task #470, observed 2026-11-14) are asserted by ExtractorOle/ExtractorOLE.Tests/Encryption/Legacy/PptDecryptionExtractTests.cs; ExtractCorpusManifestTests still skips encrypted-folder entries without expectedBehavior."
     },
     {
       "format": "doc",

@@ -34,13 +34,7 @@ For each of the 6 supported formats, the corpus contains at minimum:
 
 Where no Office-saved twin exists, the sample's manifest entry records its own exact expectations. They are observed by running an independent decryptor's plaintext (msoffcrypto-tool, version recorded in the entry) through the unencrypted pipeline, never written from prose. The decrypted pictures' SHA-256 is recorded the same way: as a `sha256` field (the full 64 hex digits, compared case-insensitively) on that picture subfile's object in the entry's own `expectedSubfiles` list, next to its `sizeInBytes`. It is not a top-level field of the entry and is not stored in `notes` or `generatedBy`.
 
-Two ppt samples need care: `cryptoapi-proc2356.ppt` and `ppt_with_png_encrypted.ppt`. They decrypt correctly, but their plaintext converts to empty text because of b2xtranslator conversion defects that have nothing to do with encryption:
-
-- a missing `fillShadeType` lookup in `FillMapping`;
-- 16-byte client anchors read as 8-byte, leading to a null reference in `ShapeTreeMapping`;
-- a nullable value in `TextMasterStyleMapping.writepPr`.
-
-Their recorded expectation is whatever the unencrypted-equivalent pipeline produces for their plaintext. Text-parity assertions for them are gated on those separate b2xtranslator fixes; decrypted pictures and metadata are asserted now.
+Two ppt samples, `cryptoapi-proc2356.ppt` and `ppt_with_png_encrypted.ppt`, used to convert to empty text with three FieldErrors, because of b2xtranslator conversion defects that have nothing to do with encryption (a missing `fillShadeType` lookup in `FillMapping`, 16-byte client anchors read as 8-byte, a nullable value in `TextMasterStyleMapping.writepPr`). Those defects are fixed in the pinned b2xtranslator fork (re-pin of task #470). Both samples now record their exact observed text (`bodyTextLines`), slide counts and an empty `expectedFieldErrors`, like every other decryptable sample.
 
 Not yet available, and listed as test gaps in [ydk:req:extraction/legacy-decryption]:
 
