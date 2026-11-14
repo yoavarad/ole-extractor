@@ -13,7 +13,7 @@ namespace ExtractorOLE.Tests.Encryption.Legacy;
 
 // The statics snapshot/compare tests read process-wide state, so nothing else may run alongside them.
 [CollectionDefinition(Name, DisableParallelization = true)]
-public sealed class LegacyStaticsCollection
+public sealed class LegacyStaticsCollectionDefinition
 {
     public const string Name = "LegacyStatics";
 }
@@ -24,7 +24,7 @@ public sealed class LegacyStaticsCollection
 /// never reach the guardrail log, an exception, a FieldError, a serialized result or telemetry, and
 /// the legacy encryption types must retain no text in static state. Reuses the #385 helpers.
 /// </summary>
-[Collection(LegacyStaticsCollection.Name)]
+[Collection(LegacyStaticsCollectionDefinition.Name)]
 public class LegacyConfidentialityTests
 {
     private const string Sentinel = "SENTINEL-pw-9X7qLk3M-ZzTop";
