@@ -34,10 +34,6 @@ public sealed class PptDecryptionExtractTests : IDisposable
         "Just for the hell of it, we have some notes",
     ];
 
-    // b2xtranslator conversion failures recorded in the manifest (gated: T-lg-ppt-b2x-text turns them
-    // into text assertions).
-    private static readonly string[] B2xFieldPaths = ["FormatMetadata.SlideCount", "FormatMetadata.NotesSlideCount", "ExtractedText"];
-
     private readonly ServiceProvider _provider;
     private readonly MainExtractor _extractor;
 
@@ -178,7 +174,7 @@ public sealed class PptDecryptionExtractTests : IDisposable
             result.FieldErrors.Select(e => (e.FieldPath, e.Code)).Order());
     }
 
-    // ---- S-lg-ppt#2: decrypted Pictures and metadata; FieldErrors are exactly the b2xtranslator ones ----
+    // ---- S-lg-ppt#2: decrypted Pictures and metadata; no FieldErrors ----
 
     [Fact]
     public void Extract_CryptoApiProc2356_ReturnsDecryptedPicturesAndMetadata()
@@ -191,7 +187,7 @@ public sealed class PptDecryptionExtractTests : IDisposable
         Assert.Equal(PicturesStream, pictures.PackagePath);
         Assert.Equal(1026524, pictures.BinaryData.Length);
         Assert.StartsWith("EB85DE0ED697EC2F", Sha256(pictures.BinaryData), StringComparison.Ordinal);
-        AssertOnlyB2xFieldErrors(result);
+        AssertOnlyFieldErrors(result);
         AssertMatchesManifest(LegacyFixtures.CryptoApiProc2356Ppt, result);
     }
 
@@ -206,16 +202,12 @@ public sealed class PptDecryptionExtractTests : IDisposable
         Assert.StartsWith("8018CAA4D0530831", Sha256(pictures.BinaryData), StringComparison.Ordinal);
         Assert.Null(result.Metadata.Title);
         Assert.Null(result.Metadata.Creator);
-        AssertOnlyB2xFieldErrors(result);
+        AssertOnlyFieldErrors(result);
         AssertMatchesManifest(LegacyFixtures.PngEncryptedPpt, result);
     }
 
-    private static void AssertOnlyB2xFieldErrors(DocumentExtractionResult result, params string[] extra)
-    {
-        Assert.Equal(B2xFieldPaths.Concat(extra).Order(), result.FieldErrors.Select(e => e.FieldPath).Order());
-        Assert.All(result.FieldErrors.Where(e => B2xFieldPaths.Contains(e.FieldPath)),
-            e => Assert.Equal(FieldErrorCode.UnexpectedFieldFailure, e.Code));
-    }
+    private static void AssertOnlyFieldErrors(DocumentExtractionResult result, params string[] expected) =>
+        Assert.Equal(expected.Order(), result.FieldErrors.Select(e => e.FieldPath).Order());
 
     [Theory]
     [MemberData(nameof(PptFixtures))]
@@ -285,7 +277,8 @@ public sealed class PptDecryptionExtractTests : IDisposable
         Assert.Empty(result.EmbeddedFiles);
         var pictures = Assert.Single(result.FieldErrors, e => e.FieldPath == "EmbeddedFiles[Pictures]");
         Assert.Equal(FieldErrorCode.CorruptFile, pictures.Code);
-        AssertOnlyB2xFieldErrors(result, "EmbeddedFiles[Pictures]");
+        // A half-truncated Pictures stream also makes the pptx conversion fail (observed), so the three conversion errors remain.
+        AssertOnlyFieldErrors(result, "EmbeddedFiles[Pictures]", "ExtractedText", "FormatMetadata.NotesSlideCount", "FormatMetadata.SlideCount");
     }
 
     // An unreadable EncryptedSummary is container-level: the whole extraction fails, no partial result.

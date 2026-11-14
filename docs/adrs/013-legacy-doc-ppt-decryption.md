@@ -180,13 +180,15 @@ matrix from the prototypes:
   bounded by `FILE_TOO_LARGE` on the input. Decryption never grows a stream.
 - **Fixtures.** Encrypted doc/ppt samples join `samples/encrypted/` with `password` and, where one
   exists, `unencryptedTwin`. Two ppt fixtures (`cryptoapi-proc2356.ppt`,
-  `ppt_with_png_encrypted.ppt`) decrypt correctly but convert to empty text today because of
+  `ppt_with_png_encrypted.ppt`) decrypted correctly but converted to empty text at first because of
   b2xtranslator defects that have nothing to do with encryption:
   - `FillMapping.cs:265` and `:558`: missing `fillShadeType`;
   - 16-byte `ClientAnchor`, leading to an NRE at `ShapeTreeMapping.cs:2302`;
   - `TextMasterStyleMapping.writepPr`.
 
-  Their text-parity assertions are gated on those separate fixes.
+  These are fixed in the pinned b2xtranslator fork (task #470 re-pin). Since task #412 both fixtures
+  assert exact text ("Dominic Salemno" for `cryptoapi-proc2356.ppt`, "Here is a PNG image:" for
+  `ppt_with_png_encrypted.ppt`), slide counts, and zero FieldErrors.
 - **Unverified items** stay as explicit test-gap statements in `ydk:req:extraction/legacy-decryption`,
   together with the dependencies that would close them (fixtures, yoavarad/npoi#198,
   yoavarad/npoi#199).
