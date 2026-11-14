@@ -136,7 +136,7 @@ namespace ExtractorOLE.Tests.Excel
 
         // Rewrites the encrypted streamDescriptorCount to 0x7FFFFFFF. RC4 is a keystream XOR, so encrypting
         // the new plaintext with the cipher for block 0 at the array offset yields the matching ciphertext.
-        private static byte[] CorruptEncryptionStreamDescriptorCount(byte[] fileBytes, string password)
+        internal static byte[] CorruptEncryptionStreamDescriptorCount(byte[] fileBytes, string password)
         {
             using var fs = new NPOI.POIFS.FileSystem.POIFSFileSystem(new MemoryStream(fileBytes));
             var header = XlsEncryptedProperties.ReadFilePassHeader(fs.Root, XlsMime)!;
