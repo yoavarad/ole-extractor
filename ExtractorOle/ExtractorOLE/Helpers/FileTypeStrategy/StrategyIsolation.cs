@@ -25,6 +25,6 @@ namespace ExtractorOLE.Helpers.FileTypeStrategy
         // disposed, cancelled, own typed errors) is never absorbed; an encrypted document is left to
         // ParseTimeErrorGuard (password-protected).
         internal static bool IsOpenFailure(Exception ex) =>
-            ex is not NPOI.EncryptedDocumentException && ParseFailure.IsParseFailure(ex);
+            ex is not NPOI.EncryptedDocumentException && !ParseFailure.IsB2xEncryptedDocument(ex) && ParseFailure.IsParseFailure(ex);
     }
 }

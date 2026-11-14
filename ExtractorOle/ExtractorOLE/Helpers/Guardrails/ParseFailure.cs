@@ -10,6 +10,13 @@ namespace ExtractorOLE.Helpers.Guardrails
     // caller's stream. Only a parse failure may be reported as corrupt-file.
     internal static class ParseFailure
     {
+        // b2xtranslator's typed encrypted-document signal (doc and ppt conversion). Defence in depth:
+        // the legacy-encryption guard keeps encrypted files away from b2xtranslator, so this only
+        // fires if that detection is bypassed. It is a password outcome, never a parse failure or a
+        // per-field error.
+        public static bool IsB2xEncryptedDocument(Exception ex) =>
+            ex is b2xtranslator.StructuredStorage.Common.EncryptedDocumentException;
+
         public static bool IsParseFailure(Exception ex, FaultTrackingStream? source = null)
         {
             if (source?.Fault != null) return false;

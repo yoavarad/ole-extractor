@@ -3,6 +3,7 @@ using ExtractorOLE.Helpers.Guardrails;
 using ExtractorOLE.Helpers.Input;
 using ExtractorOLE.Configuration;
 using ExtractorOLE.DTOs;
+using ExtractorOLE.Exceptions;
 using ExtractorOLE.Helpers;
 using ExtractorOLE.Helpers.Encryption.Legacy;
 using ExtractorOLE.Helpers.FileTypeStrategy;
@@ -147,14 +148,22 @@ namespace ExtractorOLE
                     // A throwing extractor leaves the empty default and records one FieldError. A failure
                     // confined to one part (one worksheet) keeps the text of the other parts and still
                     // records one FieldError at ExtractedText (#288).
-                    FieldIsolation.TryPopulate(result, nameof(DocumentExtractionResult.ExtractedText), () =>
+                    try
                     {
-                        result.TextExtractionFailure?.Throw();
-                        ExceptionDispatchInfo? partFailure = null;
-                        result.ExtractedText = ExtractText(extractor, result, () => source.Bytes,
-                            ex => partFailure ??= ExceptionDispatchInfo.Capture(ex));
-                        partFailure?.Throw();
-                    });
+                        FieldIsolation.TryPopulate(result, nameof(DocumentExtractionResult.ExtractedText), () =>
+                        {
+                            result.TextExtractionFailure?.Throw();
+                            ExceptionDispatchInfo? partFailure = null;
+                            result.ExtractedText = ExtractText(extractor, result, () => source.Bytes,
+                                ex => partFailure ??= ExceptionDispatchInfo.Capture(ex));
+                            partFailure?.Throw();
+                        });
+                    }
+                    catch (Exception ex) when (ParseFailure.IsB2xEncryptedDocument(ex))
+                    {
+                        // Not isolated into a FieldError (see FieldIsolation.IsIsolatable).
+                        throw new PasswordProtectedException();
+                    }
                 }
                 cancellationToken.ThrowIfCancellationRequested();
             }

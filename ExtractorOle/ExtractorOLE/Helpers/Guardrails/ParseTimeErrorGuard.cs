@@ -170,11 +170,11 @@ namespace ExtractorOLE.Helpers.Guardrails
                 ExceptionDispatchInfo.Throw(source.Fault);
                 throw; // unreachable: ExceptionDispatchInfo.Throw never returns; kept for flow analysis
             }
-            catch (NPOI.EncryptedDocumentException) when (hasPassword)
+            catch (Exception ex) when (IsLibraryEncrypted(ex) && hasPassword)
             {
                 throw new InvalidPasswordException();
             }
-            catch (NPOI.EncryptedDocumentException)
+            catch (Exception ex) when (IsLibraryEncrypted(ex))
             {
                 throw new PasswordProtectedException();
             }
@@ -185,6 +185,11 @@ namespace ExtractorOLE.Helpers.Guardrails
 
             return result ?? throw new CorruptFileException(detectedMimeType, "the container structure could not be opened by the format library");
         }
+
+        // NPOI's or b2xtranslator's top-level encrypted-document exception (b2xtranslator is a
+        // defence in depth behind the legacy-encryption guard).
+        internal static bool IsLibraryEncrypted(Exception ex) =>
+            ex is NPOI.EncryptedDocumentException || ParseFailure.IsB2xEncryptedDocument(ex);
 
         // An EOCD record that declares a central directory ending past where the EOCD itself
         // sits means bytes are missing. An absent EOCD is a destroyed structure, not a
