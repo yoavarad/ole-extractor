@@ -1,5 +1,7 @@
 using System.Buffers.Binary;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
+using System.Text;
 using ExtractorOLE.Exceptions;
 using NPOI.POIFS.Crypt;
 using NPOI.POIFS.FileSystem;
@@ -14,6 +16,10 @@ internal sealed record DecryptedDocStreams(byte[] WordDocument, string TableStre
 // after its 68-byte FibBase, the table stream after its lKey header, and the whole Data stream. Each
 // stream is RC4 in 512-byte blocks keyed per block from stream offset 0, so the clear prefix still
 // consumes keystream (NPOI's ChunkedCipherInputStream.ReadPlain). Decryption is length-preserving.
+// Also de-obfuscates XOR Method 2 docs (MS-OFFCRYPTO 2.3.7.4-2.3.7.6, MS-DOC 2.2.6.1): WordDocument after
+// its 68 bytes, the whole table and Data streams, keyed by stream offset; per 2.3.7.6 a byte stays unchanged
+// when 0 or equal to the key byte, so the transform is an involution. The password is accepted if either
+// conversion matches lKey: NPOI's per-UTF-16-unit low/high byte rule, or Windows-1252 bytes (ANSI stand-in).
 internal static class DocDecryptor
 {
     internal const int ChunkSize = 512;
@@ -68,9 +74,152 @@ internal static class DocDecryptor
         }
     }
 
+    // Throws InvalidPasswordException when neither password conversion matches lKey, before any stream is read.
+    internal static DecryptedDocStreams DecryptXor(DirectoryNode root, DocFibProbe fib, string password, long maxEntryBytes)
+    {
+        ArgumentNullException.ThrowIfNull(root);
+        ArgumentNullException.ThrowIfNull(fib);
+        ArgumentNullException.ThrowIfNull(password);
+        ArgumentOutOfRangeException.ThrowIfNegative(maxEntryBytes);
+        if (fib.Kind != DocEncryptionKind.Xor)
+        {
+            throw new ArgumentException("DecryptXor requires an Xor probe.", nameof(fib));
+        }
+
+        var matched = password;
+        if (!MatchesXorKey(matched, fib.LKey))
+        {
+            matched = AnsiPasswordCandidate(password);
+            if (matched is null || !MatchesXorKey(matched, fib.LKey))
+            {
+                throw new InvalidPasswordException();
+            }
+        }
+
+        var xorArray = CryptoFunctions.CreateXorArray2(matched);
+        byte[]? wordDocument = null;
+        byte[]? table = null;
+        try
+        {
+            wordDocument = ReadRawStream(root, WordDocumentStream, DocEncryptionProbe.FibBaseLength, maxEntryBytes)
+                ?? throw new CorruptFileException(DocMimeType, "encrypted document: WordDocument stream missing");
+            CryptoFunctions.XorTransform2(
+                wordDocument, DocEncryptionProbe.FibBaseLength, wordDocument.Length - DocEncryptionProbe.FibBaseLength,
+                xorArray, DocEncryptionProbe.FibBaseLength);
+            table = ReadRawStream(root, fib.TableStreamName, 0, maxEntryBytes)
+                ?? throw new CorruptFileException(DocMimeType, "encrypted document: table stream missing");
+            CryptoFunctions.XorTransform2(table, 0, table.Length, xorArray, 0);
+            var data = ReadRawStream(root, DataStream, 0, maxEntryBytes);
+            if (data is not null)
+            {
+                CryptoFunctions.XorTransform2(data, 0, data.Length, xorArray, 0);
+            }
+
+            ClearFibEncryptionMarkers(wordDocument);
+            return new DecryptedDocStreams(wordDocument, fib.TableStreamName, table, data);
+        }
+        catch
+        {
+            if (wordDocument is not null)
+            {
+                CryptographicOperations.ZeroMemory(wordDocument);
+            }
+
+            if (table is not null)
+            {
+                CryptographicOperations.ZeroMemory(table);
+            }
+
+            throw;
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(xorArray);
+        }
+    }
+
+    // The uint32 LE at FibBase 0x0E equals CreateXorVerifier2 (high 16 bits XorKey, low 16 verifier), checked on real fixtures.
+    private static bool MatchesXorKey(string candidate, uint lKey) =>
+        candidate.Length > 0 && unchecked((uint)CryptoFunctions.CreateXorVerifier2(candidate)) == lKey;
+
+    // Windows-1252 stand-in for the LCID/ANSI conversion; one char per byte so NPOI's low-byte rule yields the same bytes.
+    // Null when any char has no 1252 mapping, so a lossy '?' substitution can never verify a different password.
+    private static string? AnsiPasswordCandidate(string password)
+    {
+        byte[] bytes;
+        try
+        {
+            bytes = CodePagesEncodingProvider.Instance
+                .GetEncoding(1252, EncoderFallback.ExceptionFallback, DecoderFallback.ExceptionFallback)!
+                .GetBytes(password);
+        }
+        catch (EncoderFallbackException)
+        {
+            return null;
+        }
+
+        var chars = new char[Math.Min(15, bytes.Length)];
+        try
+        {
+            for (var i = 0; i < chars.Length; i++)
+            {
+                chars[i] = (char)bytes[i];
+            }
+
+            // The returned string cannot be zeroed (same limit as the password string itself).
+            return new string(chars);
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(bytes);
+            CryptographicOperations.ZeroMemory(MemoryMarshal.AsBytes(chars.AsSpan()));
+        }
+    }
+
     // Returns null when the stream does not exist.
     private static byte[]? DecryptStream(
         DirectoryNode root, Decryptor decryptor, string name, long clearPrefix, long maxEntryBytes)
+    {
+        var cipher = ReadRawStream(root, name, clearPrefix, maxEntryBytes);
+        if (cipher is null)
+        {
+            return null;
+        }
+
+        var plain = new byte[cipher.Length];
+        try
+        {
+            using var stream = (ChunkedCipherInputStream)decryptor.GetDataStream(
+                new ByteArrayInputStream(cipher), cipher.Length, 0);
+            stream.ReadPlain(plain, 0, (int)clearPrefix);
+            var offset = (int)clearPrefix;
+            while (offset < plain.Length)
+            {
+                var n = stream.Read(plain, offset, plain.Length - offset);
+                if (n <= 0)
+                {
+                    throw Truncated(name);
+                }
+
+                offset += n;
+            }
+        }
+        catch (EndOfStreamException)
+        {
+            CryptographicOperations.ZeroMemory(plain);
+            throw Truncated(name);
+        }
+        catch
+        {
+            CryptographicOperations.ZeroMemory(plain);
+            throw;
+        }
+
+        return plain;
+    }
+
+    // Returns null when the stream does not exist.
+    private static byte[]? ReadRawStream(DirectoryNode root, string name, long clearPrefix, long maxEntryBytes)
     {
         ExtractionCancellation.ThrowIfCancellationRequested();
 
@@ -111,36 +260,7 @@ internal static class DocDecryptor
             }
         }
 
-        var plain = new byte[cipher.Length];
-        try
-        {
-            using var stream = (ChunkedCipherInputStream)decryptor.GetDataStream(
-                new ByteArrayInputStream(cipher), cipher.Length, 0);
-            stream.ReadPlain(plain, 0, (int)clearPrefix);
-            var offset = (int)clearPrefix;
-            while (offset < plain.Length)
-            {
-                var n = stream.Read(plain, offset, plain.Length - offset);
-                if (n <= 0)
-                {
-                    throw Truncated(name);
-                }
-
-                offset += n;
-            }
-        }
-        catch (EndOfStreamException)
-        {
-            CryptographicOperations.ZeroMemory(plain);
-            throw Truncated(name);
-        }
-        catch
-        {
-            CryptographicOperations.ZeroMemory(plain);
-            throw;
-        }
-
-        return plain;
+        return cipher;
     }
 
     // fEncrypted and fObfuscated off, lKey 0, so the rebuilt file reads as an unencrypted document.

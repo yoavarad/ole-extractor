@@ -3321,6 +3321,94 @@
       "negativeOnly": true
     },
     {
+      "format": "doc",
+      "status": "curated",
+      "path": "samples/encrypted/Test-weak-XOR_myhovercraftisfullofeels_.doc",
+      "password": "myhovercraftisfullofeels",
+      "expectedFieldErrors": [],
+      "provenance": "third-party",
+      "generatedBy": "Downloaded verbatim (unmodified) from https://github.com/openwall/john-samples (path Office/Office_Secrets/Office_2003/Test-weak-XOR_myhovercraftisfullofeels_.doc, commit f5b8e5281514f376fb560b360ac6722c937bed77). File sha256: 7D31ED37CE8DB81B510B57493041DE05240856717568512EA0D2DE9EBF0EF818, 53248 bytes on disk. Fetched 2026-11-14.",
+      "compositionRule": "docs/specs/dataset-curation.md encrypted set",
+      "expectedDetectedFormat": {
+        "enum": "Doc",
+        "mimeType": "application/msword"
+      },
+      "bodyTextLines": [
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque scelerisque tincidunt ante, eu ultricies est molestie ac. Donec in libero mi. Mauris sit amet iaculis ipsum. Phasellus rhoncus, felis et gravida vestibulum, velit magna sodales orci, non pharetra turpis ante non metus. Morbi euismod, tortor id bibendum porta, ligula augue suscipit elit, nec egestas justo ipsum ut mauris. Praesent sodales est ac massa iaculis at dictum risus malesuada. Aliquam a lacus sit amet tellus pharetra placerat sit amet quis risus. Donec tempus iaculis quam, iaculis eleifend arcu commodo quis. Mauris suscipit quam nec quam commodo nec luctus nisl dictum. Maecenas euismod, diam pellentesque eleifend bibendum, nisl dui porta massa, nec fermentum quam tortor nec turpis. Aenean et felis et mauris laoreet tempor. Cras nec accumsan ante. Nam at lacus nec tortor laoreet rutrum ac at magna. Praesent et orci nec ante volutpat egestas. Vestibulum nunc metus, pretium sit amet consequat at, posuere sit amet urna. ",
+        "Nullam urna erat, tempus eu interdum in, pulvinar in dui. Aliquam erat volutpat. Integer vitae viverra elit. Vivamus ac massa urna, sit amet gravida dolor. Ut diam purus, cursus vitae imperdiet sit amet, sollicitudin et leo. Fusce non dui sit amet sapien elementum venenatis. Morbi ac cursus lacus. Sed vulputate, purus eu semper gravida, libero dui pellentesque enim, non cursus tortor orci sit amet sapien. Sed eu est ante. Etiam suscipit, sapien in suscipit convallis, nisl urna sodales urna, ac feugiat ligula ligula eget eros. Pellentesque consequat mi eu turpis dictum luctus. ",
+        "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Suspendisse eget tincidunt massa. Maecenas ac magna vel metus fermentum luctus. Curabitur magna lacus, rutrum vitae mattis sed, sodales et urna. Nunc lectus neque, commodo vitae tempus eu, sollicitudin in lacus. Nulla cursus eleifend tincidunt. Praesent mattis ultricies massa id congue. In non dui leo. Mauris sapien tellus, malesuada tristique ultrices id, commodo eget dui. Vivamus fringilla enim libero. Nam et imperdiet magna. Donec enim erat, porta sed faucibus pellentesque, vehicula non tortor. Duis lacinia mollis libero quis tempor. Aliquam massa quam, luctus in egestas vel, placerat eu arcu. Praesent vulputate fermentum semper. ",
+        "Suspendisse congue ante id dolor suscipit tristique. Donec congue tincidunt ullamcorper. Nullam ultricies ipsum non purus tincidunt nec tempor arcu fringilla. Curabitur et leo id lorem congue congue et non enim. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Curabitur id nibh velit. Sed luctus lorem vitae libero consequat nec adipiscing massa semper. Sed aliquam venenatis ultricies. Curabitur mattis varius adipiscing. ",
+        "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Donec congue enim quis ligula molestie luctus accumsan dolor rhoncus. Nunc id mi magna. Duis sed nisi et elit luctus tincidunt et ac massa. Nam commodo volutpat odio, ut convallis purus tristique non. Quisque malesuada lacus sed sapien euismod rhoncus. Praesent id felis velit. Sed eu tellus est. Vestibulum pellentesque sodales risus ut scelerisque. Proin pellentesque consectetur arcu sed pellentesque. ",
+        "Integer aliquet blandit tellus ac iaculis. Nulla rutrum accumsan nulla, ut fermentum massa sodales nec. Etiam placerat risus malesuada leo porta viverra. Phasellus luctus molestie gravida. Etiam felis dui, vulputate non sagittis aliquet, laoreet eget orci. Sed sem tellus, volutpat ut iaculis at, lobortis quis ligula. Nam lacinia nibh sed nunc luctus ac vehicula ante molestie. In vehicula commodo dapibus. Donec tempus aliquam placerat. Suspendisse ut sollicitudin ligula. Vivamus tincidunt pretium pulvinar. Nullam ut mauris et est ultricies sodales quis eleifend ligula. ",
+        "Nullam dignissim dolor in turpis dignissim vel pellentesque ligula iaculis. Phasellus tincidunt, nisl dictum mattis viverra, sapien felis semper diam, ac mollis nulla orci at orci. Nulla at nisl a elit dictum dapibus eget sit amet erat. Aliquam erat volutpat. In hac habitasse platea dictumst. Sed varius eros nec ligula congue sed elementum arcu luctus. Pellentesque ornare nisi vitae mi ullamcorper pharetra. In a lorem a massa mollis malesuada et a tellus. Proin pellentesque libero sit amet quam dignissim bibendum. Nulla facilisis, turpis quis rhoncus elementum, risus elit laoreet erat, placerat fringilla ipsum lorem ac turpis. Pellentesque ullamcorper, justo eget convallis volutpat, justo enim lacinia magna, at varius mi orci id dolor. ",
+        "Nam adipiscing iaculis ipsum a malesuada. Pellentesque nulla purus, lacinia eu sodales id, imperdiet iaculis nunc. Proin et metus mauris. Nam eros purus, ornare suscipit consequat a, ultricies volutpat leo. Vivamus tempor, sapien id rutrum vehicula, magna elit feugiat sem, nec elementum odio eros ac neque. Aliquam in velit erat, in luctus augue. Aliquam erat volutpat. Aenean nisl leo, interdum hendrerit ullamcorper at, faucibus id nulla. Sed placerat feugiat ultricies. Nulla eu erat nec erat tincidunt elementum. Donec aliquam, enim ac luctus convallis, lectus leo rhoncus nunc, sit amet porta eros ipsum posuere velit. Curabitur in nibh sapien, et gravida magna. Vestibulum libero ligula, mattis elementum interdum quis, laoreet quis quam. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. ",
+        "Sed ac tortor nisi. Quisque vel dui quis lectus ultricies faucibus. Phasellus sit amet elit non lorem elementum commodo. Duis sodales viverra aliquet. Donec ornare gravida massa placerat euismod. Nam euismod porttitor posuere. Suspendisse aliquet urna ac felis tempus sed luctus dui ornare. Morbi diam dolor, pellentesque ac vulputate eu, viverra quis magna. Sed cursus mattis velit. Nam accumsan rutrum orci ac consectetur. ",
+        "Fusce venenatis, ligula quis ultrices laoreet, nisi mauris laoreet libero, ut eleifend dui risus hendrerit erat. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam convallis risus vel mi sollicitudin id sollicitudin velit lacinia. Mauris in ante diam. Morbi elementum blandit dolor sit amet euismod. Etiam ac aliquet mauris. Cras vel diam et sapien accumsan malesuada sit amet et massa. Phasellus sit amet lorem erat. Cras vestibulum velit sed tortor tempor et blandit leo adipiscing. Aenean laoreet, augue vel tempor placerat, felis urna condimentum risus, et pretium arcu orci et felis. Sed vitae dolor ac purus rutrum congue. Mauris ac cursus turpis. Vestibulum aliquam, turpis ut luctus pulvinar, nisl metus dignissim risus, non suscipit elit eros vitae turpis. Sed lacus felis, tempus eu faucibus ut, pellentesque sagittis sem. Nulla id pharetra enim. Morbi id ligula nulla. ",
+        "Ut adipiscing purus ac velit ultrices iaculis. Nunc iaculis feugiat massa, id fringilla felis hendrerit vitae. Nulla egestas tempor odio quis imperdiet. Praesent quis aliquet metus. Donec felis ante, dapibus sed suscipit ac, mollis non arcu. Nulla luctus accumsan erat, elementum consectetur eros vestibulum a. Quisque bibendum mattis erat, non facilisis felis fermentum non. Fusce laoreet, risus sed gravida dignissim, magna libero varius purus, eu mattis lacus quam ac arcu. Ut elementum feugiat neque, at dictum arcu elementum ut. Curabitur lectus nisl, feugiat nec eleifend sit amet, commodo et elit. Aenean id nisi sapien. Morbi faucibus felis ac nisl suscipit ullamcorper. Integer sit amet nulla neque, eget suscipit ligula. Morbi suscipit, sem nec semper ultrices, lectus felis bibendum felis, ac facilisis est neque quis nisl. Nulla nec erat libero, sed auctor massa. Nunc porta pellentesque purus, vitae faucibus diam mollis at. ",
+        "Pellentesque hendrerit interdum ligula, in rutrum turpis ornare id. Ut odio ligula, tincidunt vitae semper quis, ultricies eu erat. Proin id turpis nec eros auctor aliquet at ac erat. Proin eget sem dolor, vitae auctor odio. Proin commodo magna et urna porttitor quis pellentesque orci egestas. Morbi egestas placerat dolor, id laoreet arcu accumsan non. Nullam sollicitudin massa at dui consectetur imperdiet. Donec placerat justo id purus viverra aliquet. Aenean dolor nulla, vestibulum at rutrum id, tempus eu lorem. Donec nisl elit, facilisis tincidunt venenatis quis, ultricies quis orci. Duis tortor erat, lacinia pretium scelerisque sed, mattis vel lectus. Nam scelerisque metus leo, ac sagittis urna. Aliquam facilisis mollis nulla, a vestibulum nibh mattis vitae. Aliquam vitae lorem faucibus lectus ullamcorper placerat vitae a odio. Sed adipiscing dignissim est in iaculis. Curabitur a viverra massa. ",
+        "In et lorem eu lorem facilisis imperdiet non eget urna. Nam tempus varius justo, sit amet imperdiet erat aliquam id. Vestibulum eget sapien nisi, ut feugiat eros. Nulla adipiscing dapibus dolor, non sagittis dolor auctor ac. Praesent et metus nisi. Etiam fringilla diam nec mauris tempus et eleifend ipsum tincidunt. In elementum accumsan dui, sit amet ultricies elit tristique quis. Morbi eget quam quam. Nam vel ullamcorper libero. Nullam vitae nisi et est ultricies laoreet eget id magna. Donec sed metus lectus, et venenatis mi. ",
+        "Sed magna nisl, suscipit non semper vel, rutrum nec sem. Pellentesque mollis, urna quis scelerisque tincidunt, diam orci tincidunt nisl, ut ullamcorper massa nunc vel est. Proin iaculis blandit viverra. Mauris auctor, odio sit amet faucibus egestas, eros diam condimentum mi, vitae ullamcorper libero ante quis massa. Nam eleifend dapibus auctor. Cras neque arcu, gravida eget posuere eu, hendrerit et nibh. Sed eget cursus arcu. Aenean pretium rutrum volutpat. ",
+        "Aenean ac elit quam. In id ante aliquet eros suscipit varius. In non orci ultrices nisi viverra eleifend. Fusce hendrerit orci non justo elementum et blandit velit tincidunt. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec lacinia mattis sagittis. Maecenas tristique imperdiet fermentum. In ac velit sapien. Etiam blandit ullamcorper ipsum a scelerisque. ",
+        "In eget tempus turpis. In hac habitasse platea dictumst. Etiam in nisl nulla. Integer a erat dui, quis rutrum sem. Duis rutrum accumsan elit eu dignissim. Nam tincidunt pellentesque facilisis. In in nunc vitae enim interdum semper vitae sed neque. Nunc malesuada auctor gravida. Nam fermentum, enim non volutpat cursus, eros mi hendrerit magna, eu congue dui mauris a lorem. Fusce ullamcorper semper nulla vitae aliquet. Ut consequat tempus mi, volutpat ultricies dolor vulputate et. Curabitur tellus dolor, aliquet non molestie sit amet, blandit sit amet nisi. Nullam non turpis vitae libero fringilla ullamcorper nec sed diam. Praesent sed lacus risus. Vestibulum et lectus turpis. ",
+        "Suspendisse porta risus vitae ante eleifend eu viverra odio rutrum. Suspendisse eu magna at lacus faucibus tempus eget interdum leo. Cras tempor porttitor fringilla. Maecenas aliquam eros eget augue dapibus varius. Cras eget nisi vitae libero hendrerit ultricies non vitae erat. Mauris at augue id lacus adipiscing egestas. Etiam erat purus, ullamcorper eleifend rutrum in, rutrum at augue. Etiam dictum velit non massa pulvinar et venenatis metus feugiat. Mauris enim augue, tincidunt quis tempus vel, tristique et turpis. Morbi eleifend, lacus nec blandit ultrices, leo enim eleifend odio, eu posuere leo arcu eget nisl. Nulla et nisi neque, ac egestas augue. ",
+        "Phasellus vel orci sed dolor posuere suscipit. Integer lectus est, facilisis sed semper in, commodo id neque. Suspendisse mollis adipiscing turpis, id vehicula eros sagittis quis. Donec consectetur imperdiet auctor. Pellentesque non tellus ante, a aliquam nibh. Quisque ultricies varius consectetur. Aliquam erat volutpat. Mauris et nisi et odio rutrum tincidunt. ",
+        "Curabitur interdum mollis sem nec vestibulum. Phasellus tellus erat, blandit auctor molestie ullamcorper, semper non ante. Phasellus convallis, mauris vitae egestas lobortis, leo libero luctus sapien, in bibendum lorem lectus eu nunc. Pellentesque neque eros, laoreet sit amet condimentum at, luctus a est. Duis id pulvinar dolor. Fusce condimentum tincidunt mauris, vitae malesuada erat dignissim vel. Sed laoreet lectus eu urna interdum accumsan. Nunc scelerisque bibendum hendrerit. Vestibulum accumsan luctus justo, at pellentesque odio consequat non. Phasellus vel urna dui. Aenean metus lacus, eleifend non pulvinar id, lacinia at mauris. Mauris in imperdiet sapien. ",
+        "Duis laoreet, justo vel viverra vehicula, ipsum ipsum fermentum metus, ac accumsan orci turpis vitae dolor. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Aenean dictum, libero eget fermentum sollicitudin, tellus dui pellentesque nunc, nec eleifend ante sem nec massa. Nunc lacus est, lacinia et suscipit in, placerat id nisl. Curabitur eget porttitor elit. Suspendisse potenti. Duis tincidunt rhoncus neque a congue. In eu nibh nec velit tincidunt tristique. Nunc lorem nisi, gravida interdum pulvinar quis, iaculis ut ante. Praesent eu risus sit amet augue gravida blandit sit amet id massa. Aliquam sodales luctus faucibus. Morbi ut arcu eget erat suscipit consequat. Fusce vestibulum nisl feugiat leo congue rutrum. Mauris tempus, lorem ut tempus pulvinar, sem risus iaculis massa, eu posuere tellus nisi quis tortor. Nulla consectetur volutpat massa vel malesuada. ",
+        "Generated 20 paragraphs, 1984 words, 13279 bytes of  HYPERLINK \"http://www.lipsum.com/\" \\o \"Lorem Ipsum\" Lorem Ipsum"
+      ],
+      "metadata": {
+        "Title": "Test File For Cracking",
+        "Author": "RichRumble",
+        "LastModifiedBy": " ",
+        "ApplicationName": "Microsoft Office Word",
+        "RevisionNumber": 2,
+        "Created": "2012-03-19T19:44:00Z",
+        "Modified": "2012-03-19T19:44:00Z"
+      },
+      "expectedFormatMetadata": {
+        "wordCount": 2005
+      },
+      "expectedSubfileCount": 0,
+      "expectedSubfiles": [],
+      "detectable": true,
+      "verifiedBy": "Observed 2026-11-14 by running MainExtractor.Extract with the manifest password (task #413)",
+      "notes": "Licence pending / to be resolved by the repo owner: openwall/john-samples has no LICENSE file; its source wiki is CC BY-NC-SA 3.0. XOR obfuscation (Word Method 2, MS-DOC 2.2.6.1): FibBase flags 0x93F0 (fEncrypted, fObfuscated), lKey 0xCABEF705 = CryptoFunctions.CreateXorVerifier2(password) (XorKey 0xCABE in the high word, verifier 0xF705 in the low word). The password has 24 characters and only the first 15 count (MS-OFFCRYPTO 2.3.7.4), so 'myhovercraftisf' opens it too. Its document properties say 'RC4, 40-bit' (the file's own text); the FIB says XOR. Decrypted by Extract with the manifest password since task #413 (observed 2026-11-14): text and metadata asserted by ExtractorOle/ExtractorOLE.Tests/Encryption/Legacy/LegacyEncryptedCorpusTests.cs; ExtractCorpusManifestTests still skips encrypted-folder entries without expectedBehavior."
+    },
+    {
+      "format": "doc",
+      "status": "curated",
+      "path": "samples/encrypted/xor_me-1234.doc",
+      "password": "1234",
+      "expectedFieldErrors": [],
+      "provenance": "third-party",
+      "generatedBy": "Downloaded verbatim (unmodified) from https://github.com/nono/xor_me (samples/1234.doc), saved as xor_me-1234.doc so the name stays unique in samples/encrypted/. File sha256: 0EC94EB0553C25405E1AA88F36EB493003CE7E5270194AC8AA2416C1344A0C4F, 20480 bytes on disk. Fetched 2026-11-14.",
+      "compositionRule": "docs/specs/dataset-curation.md encrypted set",
+      "expectedDetectedFormat": {
+        "enum": "Doc",
+        "mimeType": "application/msword"
+      },
+      "bodyTextLines": [
+        "1234"
+      ],
+      "metadata": {
+        "Title": "1234",
+        "Author": "SIBAUD Benoît",
+        "LastModifiedBy": "SIBAUD Benoît",
+        "ApplicationName": "Microsoft Office Word",
+        "RevisionNumber": 1,
+        "Created": "2011-06-20T06:02:00Z",
+        "Modified": "2011-06-20T06:09:00Z"
+      },
+      "expectedFormatMetadata": {
+        "wordCount": 0
+      },
+      "expectedSubfileCount": 0,
+      "expectedSubfiles": [],
+      "detectable": true,
+      "verifiedBy": "Observed 2026-11-14 by running MainExtractor.Extract with the manifest password (task #413)",
+      "notes": "Licence pending / to be resolved by the repo owner: nono/xor_me is LGPL-3.0 but its samples carry no separate licence. XOR obfuscation (Word Method 2): FibBase flags 0x93F0, lKey 0x5349CC3D = CryptoFunctions.CreateXorVerifier2(\"1234\"). The password is not documented upstream; '1234' was confirmed with the verifier. No Data stream. Decrypted by Extract with the manifest password since task #413 (observed 2026-11-14): text and metadata asserted by ExtractorOle/ExtractorOLE.Tests/Encryption/Legacy/LegacyEncryptedCorpusTests.cs; ExtractCorpusManifestTests still skips encrypted-folder entries without expectedBehavior."
+    },
+    {
       "format": "ppt",
       "status": "curated",
       "path": "samples/encrypted/Password_Protected-hello.ppt",

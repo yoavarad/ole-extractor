@@ -28,6 +28,8 @@ public sealed class LegacyStaticsCollectionDefinition
 public class LegacyConfidentialityTests
 {
     private const string Sentinel = "SENTINEL-pw-9X7qLk3M-ZzTop";
+    private const string HovercraftXorDoc = "Test-weak-XOR_myhovercraftisfullofeels_.doc";
+    private const string HovercraftPassword = "myhovercraftisfullofeels";
     private const string DocMime = "application/msword";
     private const string PptMime = "application/vnd.ms-powerpoint";
     private const string LegacyNamespace = "ExtractorOLE.Helpers.Encryption.Legacy";
@@ -47,6 +49,7 @@ public class LegacyConfidentialityTests
         "It only has the one slide",
         "It does have notes",
         "Just for the hell of it, we have some notes",
+        "Lorem ipsum dolor sit amet",
     ];
 
     // Decrypted content each success / FieldError scenario must really return (so the needles above are not vacuous).
@@ -54,6 +57,7 @@ public class LegacyConfidentialityTests
     {
         ["doc-success-tika"] = ["This is an encrypted Word 2007 File."],
         ["doc-g2-field-error"] = ["This is a test"],
+        ["doc-xor-success-hovercraft"] = ["Lorem ipsum dolor sit amet", "Test File For Cracking"],
         ["ppt-success-hello"] = ["This is a protected document", "It only has the one slide", "It does have notes", "Just for the hell of it, we have some notes"],
     };
 
@@ -87,6 +91,14 @@ public class LegacyConfidentialityTests
         CfbMutator.ReplaceStream(CryptoApiDoc(), "1Table", t =>
         {
             BinaryPrimitives.WriteUInt32LittleEndian(t.AsSpan(OffKeySize), 41);
+            return t;
+        });
+
+    private static byte[] DocWithVersion44() =>
+        CfbMutator.ReplaceStream(CryptoApiDoc(), "1Table", t =>
+        {
+            BinaryPrimitives.WriteUInt16LittleEndian(t.AsSpan(0), 4);
+            BinaryPrimitives.WriteUInt16LittleEndian(t.AsSpan(2), 4);
             return t;
         });
 
@@ -165,7 +177,9 @@ public class LegacyConfidentialityTests
         new("doc-invalid-password", Sentinel, () => Req(LegacyFixtures.Bytes(LegacyFixtures.TikaBinaryRc4Doc), "fixture-b.doc", DocMime, Sentinel), typeof(InvalidPasswordException)),
         new("doc-corrupt-lkey-max", Sentinel, () => Req(DocWithLKeyMax(), "lkey.doc", DocMime, Sentinel), typeof(CorruptFileException)),
         new("doc-corrupt-keysize-41", Sentinel, () => Req(DocWithKeySize41(), "keysize.doc", DocMime, Sentinel), typeof(CorruptFileException)),
-        new("doc-xor-password-protected", Sentinel, () => Req(XorDoc(), "xor.doc", DocMime, Sentinel), typeof(PasswordProtectedException)),
+        new("doc-xor-invalid-password", Sentinel, () => Req(XorDoc(), "xor.doc", DocMime, Sentinel), typeof(InvalidPasswordException)),
+        new("doc-v44-password-protected", Sentinel, () => Req(DocWithVersion44(), "v44.doc", DocMime, Sentinel), typeof(PasswordProtectedException)),
+        new("doc-xor-success-hovercraft", HovercraftPassword, () => Req(LegacyFixtures.Bytes(HovercraftXorDoc), "fixture-x.doc", DocMime, HovercraftPassword), null),
         new("doc-g2-field-error", "password", () => Req(G2Doc(), "g2.doc", DocMime, "password"), null, true),
         new("ppt-success-hello", "hello", () => Req(LegacyFixtures.Bytes(LegacyFixtures.HelloPpt), "fixture-a.ppt", PptMime, "hello"), null),
         new("ppt-invalid-password", Sentinel, () => Req(LegacyFixtures.Bytes(LegacyFixtures.HelloPpt), "fixture-a.ppt", PptMime, Sentinel), typeof(InvalidPasswordException)),

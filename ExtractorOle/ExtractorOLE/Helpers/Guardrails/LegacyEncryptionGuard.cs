@@ -8,11 +8,14 @@ using NPOI.POIFS.FileSystem;
 
 namespace ExtractorOLE.Helpers.Guardrails;
 
-internal abstract record LegacyEncryptedFile(LegacyEncryptionHeader Header);
+internal abstract record LegacyEncryptedFile;
 
-internal sealed record EncryptedDoc(DocFibProbe Fib, LegacyEncryptionHeader Header) : LegacyEncryptedFile(Header);
+internal sealed record EncryptedDoc(DocFibProbe Fib, LegacyEncryptionHeader Header) : LegacyEncryptedFile;
 
-internal sealed record EncryptedPpt(PptEncryptionLayout Layout, LegacyEncryptionHeader Header) : LegacyEncryptedFile(Header);
+internal sealed record EncryptedPpt(PptEncryptionLayout Layout, LegacyEncryptionHeader Header) : LegacyEncryptedFile;
+
+// XOR obfuscation Method 2 (MS-DOC 2.2.6.1): no encryption header; FibBase lKey is the password verifier.
+internal sealed record XorObfuscatedDoc(DocFibProbe Fib) : LegacyEncryptedFile;
 
 // [ydk:req:extraction/legacy-decryption] [ydk:error:extraction/password-protected]
 // [ydk:error:extraction/corrupt-file] Stops an encrypted .doc/.ppt before its open strategy (and
@@ -75,7 +78,7 @@ internal static class LegacyEncryptionGuard
         }
     }
 
-    private static EncryptedDoc? InspectDoc(DirectoryNode root, bool hasPassword, string detectedMimeType, FaultTrackingStream? tracked)
+    private static LegacyEncryptedFile? InspectDoc(DirectoryNode root, bool hasPassword, string detectedMimeType, FaultTrackingStream? tracked)
     {
         DocFibProbe? fib;
         try
@@ -93,10 +96,14 @@ internal static class LegacyEncryptionGuard
             return null;
         }
 
-        // XOR obfuscation is a deferred scheme: never decryptable here, password or not.
-        if (fib.Kind == DocEncryptionKind.Xor || !hasPassword)
+        if (!hasPassword)
         {
             throw new PasswordProtectedException();
+        }
+
+        if (fib.Kind == DocEncryptionKind.Xor)
+        {
+            return new XorObfuscatedDoc(fib);
         }
 
         return new EncryptedDoc(fib, DocEncryptionProbe.ReadHeader(root, fib, detectedMimeType));

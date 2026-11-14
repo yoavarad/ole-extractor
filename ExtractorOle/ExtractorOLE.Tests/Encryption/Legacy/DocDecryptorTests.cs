@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using ExtractorOLE.Exceptions;
 using ExtractorOLE.Helpers;
 using ExtractorOLE.Helpers.Encryption.Legacy;
+using NPOI.POIFS.Crypt;
 using NPOI.POIFS.FileSystem;
 using Xunit;
 
@@ -15,6 +16,8 @@ public class DocDecryptorTests
     private const long NoCap = long.MaxValue;
     private const int OffFlags = 0x0A;
     private const int OffLKey = 0x0E;
+    private const string HovercraftXorDoc = "Test-weak-XOR_myhovercraftisfullofeels_.doc";
+    private const string XorMe1234Doc = "xor_me-1234.doc";
 
     private static DecryptedDocStreams DecryptFixture(string file, string password, long maxEntryBytes = NoCap) =>
         DecryptBytes(LegacyFixtures.Bytes(file), password, maxEntryBytes);
@@ -272,6 +275,85 @@ public class DocDecryptorTests
         Assert.Equal(twinTable.AsSpan(LKey).ToArray(), streams.Table.AsSpan(LKey).ToArray());
         Assert.Equal(encryptedTable.AsSpan(0, LKey).ToArray(), streams.Table.AsSpan(0, LKey).ToArray());
         Assert.Equal(twin.Root.HasEntry("Data"), streams.Data is not null);
+    }
+
+    private static DecryptedDocStreams DecryptXorBytes(byte[] cfb, string password)
+    {
+        using var fs = new NPOIFSFileSystem(new MemoryStream(cfb));
+        var fib = DocEncryptionProbe.ReadFib(fs.Root)!;
+        return DocDecryptor.DecryptXor(fs.Root, fib, password, NoCap);
+    }
+
+    [Theory]
+    [InlineData(HovercraftXorDoc, true)]
+    [InlineData(XorMe1234Doc, false)]
+    public void DecryptXor_RightPassword_PreservesLengthsAndClearsFibMarkersOnly(string file, bool hasData)
+    {
+        var cfb = LegacyFixtures.Bytes(file);
+        using var fs = new NPOIFSFileSystem(new MemoryStream(cfb));
+        var fib = DocEncryptionProbe.ReadFib(fs.Root)!;
+        var original = ReadAll(fs.Root, "WordDocument");
+        var originalTable = ReadAll(fs.Root, fib.TableStreamName);
+
+        var streams = DocDecryptor.DecryptXor(fs.Root, fib, LegacyFixtures.Password(file)!, NoCap);
+
+        Assert.Equal(original.Length, streams.WordDocument.Length);
+        Assert.Equal(originalTable.Length, streams.Table.Length);
+        Assert.Equal(original.AsSpan(0, OffFlags).ToArray(), streams.WordDocument.AsSpan(0, OffFlags).ToArray());
+        var originalFlags = BinaryPrimitives.ReadUInt16LittleEndian(original.AsSpan(OffFlags));
+        Assert.Equal(originalFlags & ~0x8100, BinaryPrimitives.ReadUInt16LittleEndian(streams.WordDocument.AsSpan(OffFlags)));
+        Assert.Equal(original.AsSpan(OffFlags + 2, 2).ToArray(), streams.WordDocument.AsSpan(OffFlags + 2, 2).ToArray());
+        Assert.Equal(0u, BinaryPrimitives.ReadUInt32LittleEndian(streams.WordDocument.AsSpan(OffLKey)));
+        Assert.Equal(
+            original.AsSpan(OffLKey + 4, DocEncryptionProbe.FibBaseLength - OffLKey - 4).ToArray(),
+            streams.WordDocument.AsSpan(OffLKey + 4, DocEncryptionProbe.FibBaseLength - OffLKey - 4).ToArray());
+        Assert.Equal(hasData, streams.Data is not null);
+    }
+
+    [Theory]
+    [InlineData(HovercraftXorDoc, "wrong")]
+    [InlineData(XorMe1234Doc, "12345")]
+    public void DecryptXor_WrongPassword_ThrowsInvalidPassword(string file, string password)
+    {
+        Assert.Throws<InvalidPasswordException>(() => DecryptXorBytes(LegacyFixtures.Bytes(file), password));
+    }
+
+    [Fact]
+    public void DecryptXor_OnlyFirst15PasswordCharactersCount()
+    {
+        var cfb = LegacyFixtures.Bytes(HovercraftXorDoc);
+
+        var full = DecryptXorBytes(cfb, LegacyFixtures.Password(HovercraftXorDoc)!);
+        var truncated = DecryptXorBytes(cfb, "myhovercraftisf");
+
+        Assert.Equal(full.WordDocument, truncated.WordDocument);
+        Assert.Equal(full.Table, truncated.Table);
+    }
+
+    // Euro sign: NPOI's low-byte rule gives 0xAC, Windows-1252 gives 0x80, so only the 1252 path matches lKey.
+    [Fact]
+    public void DecryptXor_Windows1252StandIn_MatchesWhenRawConversionDoesNot()
+    {
+        var euroX = new string([(char)0x20AC, 'x']);
+        var lKey = unchecked((uint)CryptoFunctions.CreateXorVerifier2("\u0080x"));
+        var cfb = CfbMutator.ReplaceStream(LegacyFixtures.Bytes(XorMe1234Doc), "WordDocument", w =>
+        {
+            BinaryPrimitives.WriteUInt32LittleEndian(w.AsSpan(OffLKey), lKey);
+            return w;
+        });
+
+        Assert.NotEqual(lKey, unchecked((uint)CryptoFunctions.CreateXorVerifier2(euroX)));
+        var streams = DecryptXorBytes(cfb, euroX);
+        Assert.NotNull(streams.WordDocument);
+    }
+
+    [Fact]
+    public void DecryptXor_NonXorProbe_ThrowsArgumentException()
+    {
+        using var fs = new NPOIFSFileSystem(new MemoryStream(LegacyFixtures.Bytes(XorMe1234Doc)));
+        var fib = DocEncryptionProbe.ReadFib(fs.Root)! with { Kind = DocEncryptionKind.Rc4 };
+
+        Assert.Throws<ArgumentException>(() => DocDecryptor.DecryptXor(fs.Root, fib, "1234", NoCap));
     }
 
     private static byte[] ReadAll(DirectoryNode root, string name)
