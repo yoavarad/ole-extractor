@@ -6,7 +6,7 @@ CryptoAPI) and encrypted ppt (RC4 CryptoAPI) from "deferred" to "decrypted". XOR
 stayed deferred at acceptance. It is decrypted since task #413 (2026-11-14, decision 7).
 
 **Pins.** The pins named below (npoi `72ff7c7`, b2xtranslator `930217b`) are the spike pins and are
-kept as history. Current pins: npoi `41873b800`, b2xtranslator `9de642ba7` (#473).
+kept as history. Current pins: npoi `502ca85` (#477), b2xtranslator `9de642ba7` (#473).
 
 ## Context
 ADR-012 deferred doc/ppt decryption ("Custom RC4/CryptoAPI decryptor for doc/ppt. Deferred") and
@@ -55,7 +55,7 @@ Defects found in NPOI's helpers, all avoidable by validating first:
   isolation.
 - NPOI's XOR support was broken for xls Method 1 (fixed by yoavarad/npoi#197, pinned at npoi
   `41873b800`) and is missing for Word Method 2 (yoavarad/npoi#198). (2026-11-14: yoavarad/npoi#198
-  has since landed and is in the pinned npoi `41873b800`.)
+  has since landed, already in npoi `41873b800`; current pin `502ca85`, #477.)
 
 **How the plain compound file is written decides whether b2xtranslator can read it.** Rebuild
 matrix from the prototypes:
@@ -150,7 +150,8 @@ matrix from the prototypes:
        rejected as `INVALID_PASSWORD`.
      - No password -> `PASSWORD_PROTECTED`. Wrong password -> `INVALID_PASSWORD`, before any
        stream is read.
-     - The NPOI primitives come from yoavarad/npoi#198, already in the pinned npoi `41873b800`.
+     - The NPOI primitives come from yoavarad/npoi#198, present since npoi `41873b800`;
+       built and tested at the current pin `502ca85` (#477).
      - Fixtures: `samples/encrypted/Test-weak-XOR_myhovercraftisfullofeels_.doc`
        (openwall/john-samples, 24-character password of which 15 count) and
        `samples/encrypted/xor_me-1234.doc` (nono/xor_me). Both decrypt to coherent text and
@@ -253,7 +254,8 @@ matrix from the prototypes:
   wording above is history.
 - **Still open or gated.**
   - Shipped since acceptance: XOR doc (Method 2) is decrypted since task #413 (2026-11-14),
-    using yoavarad/npoi#198 in the pinned npoi `41873b800` (decision 7).
+    using yoavarad/npoi#198, present since npoi `41873b800`; built and tested at the current
+    pin `502ca85` (#477) (decision 7).
   - XOR xls (Method 1) is decrypted: with the correct password it opens with no FieldErrors at
     npoi `41873b800` (yoavarad/npoi#197), asserted by `XlsPasswordDecryptionTests.cs`
     (`samples/manifest.json` `verifiedBy`).

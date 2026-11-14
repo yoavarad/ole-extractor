@@ -1,4 +1,5 @@
 using System.Buffers.Binary;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using ExtractorOLE.Exceptions;
@@ -89,7 +90,7 @@ internal static class DocDecryptor
         if (!MatchesXorKey(matched, fib.LKey))
         {
             matched = AnsiPasswordCandidate(password);
-            if (!MatchesXorKey(matched, fib.LKey))
+            if (matched is null || !MatchesXorKey(matched, fib.LKey))
             {
                 throw new InvalidPasswordException();
             }
@@ -142,23 +143,36 @@ internal static class DocDecryptor
         candidate.Length > 0 && unchecked((uint)CryptoFunctions.CreateXorVerifier2(candidate)) == lKey;
 
     // Windows-1252 stand-in for the LCID/ANSI conversion; one char per byte so NPOI's low-byte rule yields the same bytes.
-    private static string AnsiPasswordCandidate(string password)
+    // Null when any char has no 1252 mapping, so a lossy '?' substitution can never verify a different password.
+    private static string? AnsiPasswordCandidate(string password)
     {
-        var bytes = CodePagesEncodingProvider.Instance.GetEncoding(1252)!.GetBytes(password);
+        byte[] bytes;
         try
         {
-            var length = Math.Min(15, bytes.Length);
-            var chars = new char[length];
-            for (var i = 0; i < length; i++)
+            bytes = CodePagesEncodingProvider.Instance
+                .GetEncoding(1252, EncoderFallback.ExceptionFallback, DecoderFallback.ExceptionFallback)!
+                .GetBytes(password);
+        }
+        catch (EncoderFallbackException)
+        {
+            return null;
+        }
+
+        var chars = new char[Math.Min(15, bytes.Length)];
+        try
+        {
+            for (var i = 0; i < chars.Length; i++)
             {
                 chars[i] = (char)bytes[i];
             }
 
+            // The returned string cannot be zeroed (same limit as the password string itself).
             return new string(chars);
         }
         finally
         {
             CryptographicOperations.ZeroMemory(bytes);
+            CryptographicOperations.ZeroMemory(MemoryMarshal.AsBytes(chars.AsSpan()));
         }
     }
 
