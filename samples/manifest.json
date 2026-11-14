@@ -3846,5 +3846,42 @@
       },
       "committed": false
     }
-  ]
+  ],
+  "$encryptedTestGaps": [
+    {
+      "id": "G1",
+      "description": "The 40-bit RC4 CryptoAPI path of a .doc is unverified against a Word-authored file; only a crafted file re-encrypted with NPOI is self-consistent.",
+      "behaviour": "Decrypts with the 40-bit key derived per MS-OFFCRYPTO 2.3.5.2 and extracts the plaintext.",
+      "coveredBy": "LegacyKnownGapTests.Extract_Crafted40BitCryptoApiDoc_WithRightPassword_ReturnsTheFixtureText; LegacyKnownGapTests.Extract_Crafted40BitCryptoApiDoc_WithWrongPasswordOrNone_IsRejected",
+      "blockedOn": "no Word-authored 40-bit CryptoAPI .doc fixture"
+    },
+    {
+      "id": "G2",
+      "description": "A CryptoAPI .doc with encrypted document properties has no real fixture; its encryption stream is not read, so metadata is lost. The Read_Doc* test only shows the follow-up is feasible (feasibility only).",
+      "behaviour": "FieldError Metadata CORRUPT_FILE",
+      "coveredBy": "DocDecryptionExtractTests.Extract_CryptoApiDocWithEncryptedProperties_KeepsTextAndRecordsOneMetadataFieldError; LegacyKnownGapTests.Read_DocEncryptionStreamWrittenWithTheFixtureHeader_ReturnsTheSummaryInformation",
+      "blockedOn": "fixture; restore metadata by reading 'encryption' with CryptoApiEncryptedSummaryReader (follow-up)"
+    },
+    {
+      "id": "G3",
+      "description": "A CryptoAPI .doc with OLE objects in the Data stream behind FOBJH has no fixture, so no test is possible.",
+      "behaviour": "0 EmbeddedFiles, no FieldError; body text expected to survive",
+      "coveredBy": null,
+      "blockedOn": "no CryptoAPI .doc with OLE objects; needs a Data-stream FOBJH walker (follow-up)"
+    },
+    {
+      "id": "G4",
+      "description": "The ppt Current User token and the encryption structure can disagree; no real file does, only crafted ones.",
+      "behaviour": "Plain token with encrypted structure decrypts; encrypted token without structure is PASSWORD_PROTECTED without a password and CORRUPT_FILE with one.",
+      "coveredBy": "LegacyKnownGapTests.Extract_HelloPptWithPlainTokenButEncryptedStructure_DecryptsLikeHello; LegacyKnownGapTests.Extract_HelloPptWithPlainTokenButEncryptedStructure_WithoutPassword_IsPasswordProtected; LegacyKnownGapTests.Extract_PlainPptWithEncryptedToken_NeedsAPasswordAndIsCorruptWithOne",
+      "blockedOn": "no real ppt where token and structure disagree"
+    },
+    {
+      "id": "G5",
+      "description": "A storage-flagged descriptor in the ppt EncryptedSummary stream has no real fixture; only a crafted file exercises it.",
+      "behaviour": "The storage descriptor is skipped; extraction equals the file without it, 0 FieldErrors.",
+      "coveredBy": "LegacyKnownGapTests.Extract_HelloPptWithStorageDescriptorInEncryptedSummary_ExtractsLikeHello",
+      "blockedOn": "no PowerPoint-authored ppt with a storage descriptor in EncryptedSummary"
+    }
+]
 }
