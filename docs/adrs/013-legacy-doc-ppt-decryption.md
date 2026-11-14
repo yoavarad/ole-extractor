@@ -1,8 +1,12 @@
 # ADR-013: Decrypt password-protected legacy doc and ppt into a plain compound file
 
 ## Status
-Proposed (2026-11-10). Amends ADR-012: moves encrypted doc (RC4 and RC4 CryptoAPI) and encrypted
-ppt (RC4 CryptoAPI) from "deferred" to "decrypted". XOR-obfuscated doc stays deferred.
+Accepted (2026-11-14; proposed 2026-11-10). Amends ADR-012: moves encrypted doc (RC4 and RC4
+CryptoAPI) and encrypted ppt (RC4 CryptoAPI) from "deferred" to "decrypted". XOR-obfuscated doc
+stays deferred.
+
+**Pins.** The pins named below (npoi `72ff7c7`, b2xtranslator `930217b`) are the spike pins and are
+kept as history. Current pins: npoi `41873b800`, b2xtranslator `9de642ba7` (#473).
 
 ## Context
 ADR-012 deferred doc/ppt decryption ("Custom RC4/CryptoAPI decryptor for doc/ppt. Deferred") and
@@ -20,7 +24,9 @@ assumed that encrypted doc/ppt would fail as `PASSWORD_PROTECTED`. Two research 
   on the encrypted Current User token. Where the file has pictures it also returns the
   **ciphertext** `Pictures` stream as a subfile.
 - `ParseTimeErrorGuard.CheckCfbNotEncrypted` only recognises the OOXML `EncryptionInfo` /
-  `EncryptedPackage` pair, so neither format is caught before parsing.
+  `EncryptedPackage` pair, so neither format is caught before parsing. (Superseded:
+  `CheckCfbNotEncrypted` detection has since been replaced by `LegacyEncryptionGuard`,
+  `Helpers/Guardrails/LegacyEncryptionGuard.cs`.)
 
 **Decryption is feasible with what we already reference.** In both formats the compound-file
 directory stays plain, and only some stream contents are encrypted:
@@ -175,9 +181,27 @@ matrix from the prototypes:
 
   It is validated against the Apache POI and msoffcrypto-tool fixtures, against
   msoffcrypto-tool's independent plaintext, and against crafted header mutations.
-- **Memory.** Encrypted doc/ppt must be fully buffered, including stream input (ADR-008). Peak
-  memory is about 3 to 6 times the input (decrypted streams plus the rebuilt file). That is still
-  bounded by `FILE_TOO_LARGE` on the input. Decryption never grows a stream.
+- **Memory (measured).** Encrypted doc/ppt must be fully buffered, including stream input
+  (ADR-008). The earlier "3 to 6 times the input" estimate is replaced by measurement. Encrypted
+  ppt `Extract` (`cryptoapi-proc2356.ppt`, 1341952 B) allocated 29.04x its input before PR #468 and
+  23.41x after (`GC.GetTotalAllocatedBytes`, precise); `PlainCompoundFileBuilder.Build` went from
+  9.34x to 3.70x. These are one-off precise measurements recorded in PR #468's description, not
+  reproduced by a committed test. The committed, reproducible figure is the baseline `ppt-100mb`
+  row below. The original 8x target was missed and knowingly accepted. The remainder is in
+  decrypt, open and downstream extraction, and in NPOI `CreateBlockIfNeeded`, which cannot be fixed
+  without editing third_party. For scale, the baseline `ppt-100mb` row is 23.31 B allocated per
+  input B (`docs/benchmarks/baseline/ExtractorOLE.Benchmarks.Extract100MbBenchmarks-report-github.md`).
+  Input stays bounded by `FILE_TOO_LARGE`. Decryption never grows a stream.
+- **Key material and plaintext hygiene.** The code zeroes (`CryptographicOperations.ZeroMemory`) the
+  decrypted doc streams (`WordDocument`, table, `Data`) after the rebuild
+  (`LegacyDecryption.cs`), the ppt cloned `PowerPoint Document` on a decrypt failure
+  (`PptDecryptor.cs`), the ppt root streams, including Current User, Pictures and
+  EncryptedSummary-derived streams, after the rebuild (`LegacyDecryption.cs`), the doc plain buffer
+  on a read failure (`DocDecryptor.cs`), and the Pictures output buffer on failure
+  (`PptPicturesDecryptor.cs`). We do not zero NPOI-internal key and cipher objects (`Decryptor`,
+  `CryptoAPIDecryptor`, per-block ciphers): no code under `Helpers/Encryption/Legacy/` does it,
+  and they are NPOI-owned. The rebuilt plain compound file returned by `PlainCompoundFileBuilder`
+  is not zeroed in `LegacyDecryption.cs`.
 - **Fixtures.** Encrypted doc/ppt samples join `samples/encrypted/` with `password` and, where one
   exists, `unencryptedTwin`. Two ppt fixtures (`cryptoapi-proc2356.ppt`,
   `ppt_with_png_encrypted.ppt`) decrypted correctly but converted to empty text at first because of
@@ -186,9 +210,40 @@ matrix from the prototypes:
   - 16-byte `ClientAnchor`, leading to an NRE at `ShapeTreeMapping.cs:2302`;
   - `TextMasterStyleMapping.writepPr`.
 
-  These are fixed in the pinned b2xtranslator fork (task #470 re-pin). Since task #412 both fixtures
+  These were fixed in the b2xtranslator fork by the task #470 re-pin, which is superseded history:
+  #473 replaced it (current pin `9de642ba7`). Since task #412 both fixtures
   assert exact text ("Dominic Salemno" for `cryptoapi-proc2356.ppt`, "Here is a PNG image:" for
   `ppt_with_png_encrypted.ppt`), slide counts, and zero FieldErrors.
+- **Where it runs.** doc/ppt decryption happens inside `Extract`, in `LegacyDecryption.cs`
+  (`MainExtractor.cs` calls `LegacyDecryption.Decrypt`).
+- **Defence in depth (#474).** A b2xtranslator typed `EncryptedDocumentException` is mapped to
+  two places, for the case where the guard is bypassed. Open path (`ParseTimeErrorGuard`,
+  `IsLibraryEncrypted`, `ParseFailure.IsB2xEncryptedDocument`): `PASSWORD_PROTECTED`, or
+  `INVALID_PASSWORD` when a password was supplied. Text-extraction path (`MainExtractor`): always
+  `PASSWORD_PROTECTED`, regardless of password.
+- **b2xtranslator re-pin (#473).** With b2xtranslator at `9de642ba7`, `cryptoapi-proc2356.ppt` and
+  `ppt_with_png_encrypted.ppt` extract text with 0 FieldErrors. The earlier "task #470 re-pin"
+  wording above is history.
+- **Still open or gated.**
+  - XOR doc (Method 2) stays `PASSWORD_PROTECTED` with or without a password: yoavarad/npoi#198;
+    task 413 deferred.
+  - XOR xls (Method 1) is decrypted: with the correct password it opens with no FieldErrors at
+    npoi `41873b800` (yoavarad/npoi#197), asserted by `XlsPasswordDecryptionTests.cs`
+    (`samples/manifest.json` `verifiedBy`).
+  - `samples/manifest.json` `$encryptedTestGaps`, each with its `blockedOn`:
+    - G1, 40-bit RC4 CryptoAPI doc: no Word-authored 40-bit CryptoAPI .doc fixture.
+    - G2, CryptoAPI doc with encrypted document properties (behaviour: FieldError `Metadata`
+      `CORRUPT_FILE`): fixture; restore metadata by reading `encryption` with
+      `CryptoApiEncryptedSummaryReader` (follow-up).
+    - G3, CryptoAPI doc with OLE objects in `Data` behind FOBJH: expected behaviour only,
+      unverified (manifest `coveredBy` is null, no fixture). No CryptoAPI .doc with OLE
+      objects; needs a Data-stream FOBJH walker (follow-up).
+    - G4, ppt Current User token disagreeing with the encryption structure: no real ppt where
+      token and structure disagree.
+    - G5, storage-flagged descriptor in ppt `EncryptedSummary`: no PowerPoint-authored ppt with a
+      storage descriptor in `EncryptedSummary`.
+
+    G1-G5 are cited by manifest key only.
 - **Unverified items** stay as explicit test-gap statements in `ydk:req:extraction/legacy-decryption`,
   together with the dependencies that would close them (fixtures, yoavarad/npoi#198,
   yoavarad/npoi#199).

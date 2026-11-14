@@ -83,11 +83,10 @@ Still `PASSWORD_PROTECTED` even with a password: XOR-obfuscated doc (deferred, d
 Known limitations (legacy doc and ppt):
 
 - A CryptoAPI doc with encrypted document properties keeps its text and reports one `Metadata` `CORRUPT_FILE` field error.
-- OLE objects of a CryptoAPI doc are not returned (0 `EmbeddedFiles`, no field error).
-- Two ppt samples (`cryptoapi-proc2356.ppt`, `ppt_with_png_encrypted.ppt`) decrypt, but their text converts empty because of unrelated b2xtranslator conversion defects. Pictures and metadata are fine; text parity is pending those fixes.
+- OLE objects of a CryptoAPI doc are expected not to be returned (0 `EmbeddedFiles`, no field error). Unverified: no fixture exists (G3, no CryptoAPI `.doc` with OLE objects).
 - Test-coverage gaps G1 to G5 (for example no Word-authored 40-bit CryptoAPI doc fixture) are recorded in `samples/manifest.json` under `$encryptedTestGaps`.
 
-Cost: Agile key derivation runs about 100,000 SHA-512 rounds per verification, so detect-then-extract pays it twice. Encrypted ppt extraction allocates about 23x its input after #465 (it was about 29.6x; the original 8x target was knowingly missed and accepted).
+Cost: Agile key derivation runs about 100,000 SHA-512 rounds per verification, so detect-then-extract pays it twice. Encrypted ppt extraction allocates 23.41x its input after #468 (task 465), down from 29.04x before (measured once on `cryptoapi-proc2356.ppt`, 1341952 B input, recorded in PR #468). The reproducible baseline is `ppt-100mb` at 23.31 B allocated per input B in `docs/benchmarks/baseline`. The original 8x target was missed and accepted.
 
 See [ADR-012](docs/adrs/012-password-protected-decryption.md) and [ADR-013](docs/adrs/013-legacy-doc-ppt-decryption.md).
 
