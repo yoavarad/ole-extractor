@@ -41,7 +41,10 @@ internal static class LegacyDecryption
             return DecryptPpt(input, ppt, password, limits, detectedMimeType);
         }
 
-        var doc = (EncryptedDoc)file;
+        if (file is not EncryptedDoc doc)
+        {
+            throw new ArgumentException($"unsupported legacy encrypted file {file.GetType().Name}", nameof(file));
+        }
 
         // Stream/path input of an encrypted doc is buffered whole; the guard returned null for a
         // plain file, so unencrypted input never reaches this path.
@@ -110,6 +113,8 @@ internal static class LegacyDecryption
         {
             if (fs.Root.HasEntry(PicturesStream) && fs.Root.GetEntry(PicturesStream) is DocumentEntry pictures)
             {
+                // Reading the stream is container-level (oversized or broken CFB chain); only a failure
+                // to decrypt its records costs just the Pictures subfile.
                 var cipher = ReadStream(fs.Root, pictures, limits.MaxDeclaredEntryBytes, detectedMimeType);
                 try
                 {
@@ -123,7 +128,8 @@ internal static class LegacyDecryption
             }
 
             // Decided by the stream's presence, not by the header flag. The decrypted property streams
-            // replace the plain placeholders; a descriptor naming a stream already replaced above is ignored.
+            // replace the plain placeholders; a descriptor naming a stream already replaced above (or
+            // EncryptedSummary itself) is ignored and zeroed.
             if (fs.Root.HasEntry(CryptoApiEncryptedSummaryReader.PptStreamName))
             {
                 if (fs.Root.GetEntry(CryptoApiEncryptedSummaryReader.PptStreamName) is not DocumentEntry summary)
@@ -132,6 +138,7 @@ internal static class LegacyDecryption
                 }
 
                 var encryptedSummary = ReadStream(fs.Root, summary, limits.MaxDeclaredEntryBytes, detectedMimeType);
+                rootStreams[CryptoApiEncryptedSummaryReader.PptStreamName] = null;
                 foreach (var stream in CryptoApiEncryptedSummaryReader.Read(encryptedSummary, core.Decryptor, detectedMimeType))
                 {
                     if (!rootStreams.TryAdd(stream.Name, stream.Data))
@@ -139,8 +146,6 @@ internal static class LegacyDecryption
                         CryptographicOperations.ZeroMemory(stream.Data);
                     }
                 }
-
-                rootStreams[CryptoApiEncryptedSummaryReader.PptStreamName] = null;
             }
 
             return new LegacyPlaintext(

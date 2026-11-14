@@ -286,6 +286,16 @@ public sealed class PptDecryptionExtractTests : IDisposable
         AssertOnlyB2xFieldErrors(result, "EmbeddedFiles[Pictures]");
     }
 
+    // An unreadable EncryptedSummary is container-level: the whole extraction fails, no partial result.
+    [Fact]
+    public void Extract_HelloPptWithTruncatedEncryptedSummary_IsCorruptFile()
+    {
+        var bytes = CfbMutator.ReplaceStream(LegacyFixtures.Bytes(LegacyFixtures.HelloPpt), CryptoApiEncryptedSummaryReader.PptStreamName,
+            s => s.AsSpan(0, 4).ToArray());
+
+        Assert.Throws<CorruptFileException>(() => Extract(bytes, "hello"));
+    }
+
     // ---- S-lg-detect#4 (ppt half): stream input equals byte input ----
 
     [Fact]

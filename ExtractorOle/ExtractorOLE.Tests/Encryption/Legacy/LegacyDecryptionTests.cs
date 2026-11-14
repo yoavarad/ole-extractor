@@ -69,4 +69,13 @@ public sealed class LegacyDecryptionTests
         Assert.Throws<OversizedNestedContentException>(() =>
             Decrypt(LegacyFixtures.PasswordCryptoApiDoc, DocMime, OfficeMimeType.WordLegacy, limits));
     }
+
+    [Fact]
+    public void Decrypt_PptPicturesOverPerEntryCap_IsOversizedNestedContent()
+    {
+        var limits = new MimeDetectionLimits { MaxDeclaredEntryBytes = 512 * 1024 };
+
+        Assert.Throws<OversizedNestedContentException>(() =>
+            Decrypt(LegacyFixtures.CryptoApiProc2356Ppt, PptMime, OfficeMimeType.PowerPointLegacy, limits));
+    }
 }
